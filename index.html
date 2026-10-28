@@ -72,10 +72,18 @@
   .toolbar input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; background: #fff; flex: 1; min-width: 200px; }
   .client-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
   .client-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #e5e7eb; }
+  .client-card .top { display:flex; gap:14px; align-items:flex-start; }
+  .client-card .avatar { width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb; flex-shrink:0; background:#f3f4f6; }
+  .client-card .info { flex:1; min-width:0; }
   .client-card h3 { font-size: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-  .client-card .row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #f0f1f3; }
+  .client-card .row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 1px dashed #f0f1f3; }
   .client-card .row .k { color: #6b7280; }
   .client-card .row .v { color: #1f2937; text-align: right; }
+  .progress-note { background:#fffbeb; border-left:3px solid #d97706; padding:8px 10px; font-size:11px; color:#6b7280; margin-top:10px; border-radius:0 6px 6px 0; line-height:1.6; }
+  .doc-icon { width:64px;height:76px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-decoration:none; }
+  .doc-icon:hover { background:#eef2ff;border-color:#4338ca; }
+  .doc-icon svg { width:22px;height:22px;color:#6b7280;margin-bottom:4px; }
+  .doc-icon .lbl { font-size:10px;color:#6b7280;text-align:center;padding:0 2px; }
   .docs-row { display:flex;gap:8px;margin-top:10px;flex-wrap:wrap; }
   .doc-thumb { width:64px;height:64px;border-radius:6px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:10px;color:#9ca3af;text-align:center;border:1px dashed #d1d5db;padding:4px;text-decoration:none; }
   .month-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -229,73 +237,113 @@
       </div>
       <div class="client-grid" id="clientGrid">
         <div class="client-card" data-name="immunora kashay poway borderbuddy">
-          <h3>Immunora Bio LLC <span class="pill run" data-i18n-st-review2>審批中</span></h3>
-          <div class="row"><span class="k" data-i18n-c-founder>法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
-          <div class="row"><span class="k" data-i18n-c-email>郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
-          <div class="row"><span class="k" data-i18n-c-phone>電話</span><span class="v">209 776 5124</span></div>
-          <div class="row"><span class="k" data-i18n-c-addr>地址</span><span class="v">12759 Poway Rd Ste 202 Poway CA 92064</span></div>
-          <div class="row"><span class="k" data-i18n-c-product>產品</span><span class="v">home textile bedding sets，China，HTS 6302.31</span></div>
-          <div class="row"><span class="k" data-i18n-c-broker>對接</span><span class="v">BorderBuddy Katrina 604-245-7353</span></div>
-          <div class="row"><span class="k" data-i18n-c-amt>金額</span><span class="v">INV-5533 795.60 USD 待確認</span></div>
+          <div class="top">
+            <img class="avatar" src="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg">
+            <div class="info">
+              <h3>Immunora Bio LLC <span class="pill run" data-i18n-st-review2>審批中</span></h3>
+              <div class="row"><span class="k" data-i18n-c-founder>法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
+              <div class="row"><span class="k" data-i18n-c-email>郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
+              <div class="row"><span class="k" data-i18n-c-phone>電話</span><span class="v">209 776 5124</span></div>
+              <div class="row"><span class="k" data-i18n-c-addr>地址</span><span class="v">12759 Poway Rd Ste 202 Poway CA 92064</span></div>
+              <div class="row"><span class="k" data-i18n-c-product>產品</span><span class="v">home textile bedding sets，China，HTS 6302.31</span></div>
+              <div class="row"><span class="k" data-i18n-c-broker>對接</span><span class="v">BorderBuddy Katrina 604-245-7353</span></div>
+              <div class="row"><span class="k" data-i18n-c-amt>金額</span><span class="v">INV-5533 795.60 USD 待確認</span></div>
+            </div>
+          </div>
+          <div class="progress-note" data-i18n-prog-imm>BorderBuddy POA 已簽，Annual Bond Application 經 JotForm 提交，章程已發。發票 INV-5533 共 795.60 USD 已轉公司付款，待確認到賬。首輪 30 封開發信中，Known/Priority/Mercury/SuretyPlace 已回覆，Shapiro/Importivity 婉拒關閉。</div>
           <div class="docs-row">
-            <a class="doc-thumb" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94EIN.pdf" data-i18n-doc-ein>EIN 通知</a>
-            <a class="doc-thumb" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A7%9C%E7%85%A7%E8%83%8C%E9%9D%A2.jpg" data-i18n-doc-license>駕照</a>
-            <a class="doc-thumb" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AB%8B%E9%80%9A%E7%9F%A5%E6%9B%B8.pdf" data-i18n-doc-ss4>申請通知</a>
-            <a class="doc-thumb" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf" data-i18n-doc-articles>公司章程</a>
-            <a class="doc-thumb" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg" data-i18n-doc-poa>法人照片</a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94EIN.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A9%BE%E7%85%A7%E8%83%8C%E9%9D%A2.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg><span class="lbl">駕照</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="lbl">公司章程</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span class="lbl">法人照片</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E5%9C%B0%E5%9D%80%E8%A1%97%E6%99%AF.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="lbl">地址街景</span></a>
           </div>
         </div>
         <div class="client-card" data-name="oliveware horacio carlsbad 42-5322248">
-          <h3>Oliveware LLC <span class="pill ready" data-i18n-st-ready4>可啟動</span></h3>
-          <div class="row"><span class="k" data-i18n-c-founder2>法人</span><span class="v">Horacio L Sanchez</span></div>
-          <div class="row"><span class="k" data-i18n-c-email2>郵箱</span><span class="v">horaciolsanchez@olivewareinc.com</span></div>
-          <div class="row"><span class="k" data-i18n-c-phone2>電話</span><span class="v">209 776 4799</span></div>
-          <div class="row"><span class="k" data-i18n-c-addr2>地址</span><span class="v">2725 Jefferson St Ste 6 Carlsbad CA 92008</span></div>
-          <div class="row"><span class="k">EIN</span><span class="v">42-5322248</span></div>
-          <div class="row"><span class="k" data-i18n-c-ca>CA 實體號</span><span class="v">B20260423624</span></div>
-          <div class="row"><span class="k" data-i18n-c-ssn>SSN 尾號</span><span class="v">8981，DOB 1990-04-03</span></div>
+          <div class="top">
+            <img class="avatar" src="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg">
+            <div class="info">
+              <h3>Oliveware LLC <span class="pill ready" data-i18n-st-ready4>可啟動</span></h3>
+              <div class="row"><span class="k" data-i18n-c-founder2>法人</span><span class="v">Horacio L Sanchez</span></div>
+              <div class="row"><span class="k" data-i18n-c-email2>郵箱</span><span class="v">horaciolsanchez@olivewareinc.com</span></div>
+              <div class="row"><span class="k" data-i18n-c-phone2>電話</span><span class="v">209 776 4799</span></div>
+              <div class="row"><span class="k" data-i18n-c-addr2>地址</span><span class="v">2725 Jefferson St Ste 6 Carlsbad CA 92008</span></div>
+              <div class="row"><span class="k">EIN</span><span class="v">42-5322248</span></div>
+              <div class="row"><span class="k" data-i18n-c-ca>CA 實體號</span><span class="v">B20260423624</span></div>
+              <div class="row"><span class="k" data-i18n-c-ssn>SSN 尾號</span><span class="v">8981，DOB 1990-04-03</span></div>
+            </div>
+          </div>
+          <div class="progress-note" data-i18n-prog-ol>材料齊全，40 封差異化開發信已開始發送，前 8 封已成功。合作過的 BorderBuddy Katrina 已跟進。</div>
           <div class="docs-row">
-            <div class="doc-thumb">EIN</div><div class="doc-thumb" data-i18n-doc-license2>駕照</div>
-            <div class="doc-thumb" data-i18n-doc-articles2>公司章程</div><div class="doc-thumb" data-i18n-doc-utility>水電賬單</div>
+            <a class="doc-icon" target="_blank" href="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94EIN.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A9%BE%E7%85%A7%E6%AD%A3%E9%9D%A2.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/></svg><span class="lbl">駕照</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="lbl">公司章程</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6Business%20Entity%20Filing%20Acknowledgment_B20260423624.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E5%9C%B0%E5%9D%80%E8%A1%97%E6%99%AF.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="lbl">地址街景</span></a>
           </div>
         </div>
         <div class="client-card" data-name="pebblehome christopher los angeles 42-5322611">
-          <h3>Pebblehome LLC <span class="pill block" data-i18n-st-block2>待補件</span></h3>
-          <div class="row"><span class="k" data-i18n-c-founder3>法人</span><span class="v">Christopher Robin Hodge</span></div>
-          <div class="row"><span class="k" data-i18n-c-email3>郵箱</span><span class="v">christopherhodge@pebblehomeinc.com</span></div>
-          <div class="row"><span class="k" data-i18n-c-phone3>電話</span><span class="v">209 776 5910</span></div>
-          <div class="row"><span class="k" data-i18n-c-addr3>地址</span><span class="v">11111 W Olympic Blvd Ste 201 LA CA 90064</span></div>
-          <div class="row"><span class="k">EIN</span><span class="v">42-5322611</span></div>
-          <div class="row"><span class="k" data-i18n-c-todo>待辦</span><span class="v" data-i18n-c-todo-v>佛州駕照過期，EIN 拼 ROBIM 待核</span></div>
+          <div class="top">
+            <img class="avatar" src="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.png">
+            <div class="info">
+              <h3>Pebblehome LLC <span class="pill block" data-i18n-st-block2>待補件</span></h3>
+              <div class="row"><span class="k" data-i18n-c-founder3>法人</span><span class="v">Christopher Robin Hodge</span></div>
+              <div class="row"><span class="k" data-i18n-c-email3>郵箱</span><span class="v">christopherhodge@pebblehomeinc.com</span></div>
+              <div class="row"><span class="k" data-i18n-c-phone3>電話</span><span class="v">209 776 5910</span></div>
+              <div class="row"><span class="k" data-i18n-c-addr3>地址</span><span class="v">11111 W Olympic Blvd Ste 201 LA CA 90064</span></div>
+              <div class="row"><span class="k">EIN</span><span class="v">42-5322611</span></div>
+              <div class="row"><span class="k" data-i18n-c-todo>待辦</span><span class="v" data-i18n-c-todo-v>佛州駕照 10/20/2026 過期，EIN 名字 ROBIM 拼寫不一致，已轉上游</span></div>
+            </div>
+          </div>
+          <div class="progress-note" data-i18n-prog-peb>材料驗收發現兩處問題：佛州駕照已過期，EIN 通知法人名字 ROBIM 與公司章程 ROBIN 不一致。問題已轉上游同事確認，待客戶補件後再啟動開發信。</div>
           <div class="docs-row">
-            <div class="doc-thumb">EIN</div><div class="doc-thumb" data-i18n-doc-license3>駕照過期</div>
-            <div class="doc-thumb" data-i18n-doc-articles3>公司章程</div>
+            <a class="doc-icon" target="_blank" href="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94EIN.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A9%BE%E7%85%A7%E6%AD%A3%E9%9D%A2.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/></svg><span class="lbl">駕照過期</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="lbl">公司章程</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6Business%20Entity%20Filing%20Acknowledgment_B20260423057.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
           </div>
         </div>
         <div class="client-card" data-name="sageware jaliar west hollywood 42-5322451">
-          <h3>Sageware LLC <span class="pill ready" data-i18n-st-ready5>可啟動</span></h3>
-          <div class="row"><span class="k" data-i18n-c-founder4>法人</span><span class="v">Jaliar Antrez Thomas</span></div>
-          <div class="row"><span class="k" data-i18n-c-email4>郵箱</span><span class="v">jaliarthomas@sagewareinc.com</span></div>
-          <div class="row"><span class="k" data-i18n-c-phone4>電話</span><span class="v">209 776 5047</span></div>
-          <div class="row"><span class="k" data-i18n-c-addr4>地址</span><span class="v">349 N La Cienega Blvd West Hollywood CA 90048</span></div>
-          <div class="row"><span class="k">EIN</span><span class="v">42-5322451</span></div>
-          <div class="row"><span class="k" data-i18n-c-ca2>CA 實體號</span><span class="v">B20260423648</span></div>
+          <div class="top">
+            <img class="avatar" src="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg">
+            <div class="info">
+              <h3>Sageware LLC <span class="pill ready" data-i18n-st-ready5>可啟動</span></h3>
+              <div class="row"><span class="k" data-i18n-c-founder4>法人</span><span class="v">Jaliar Antrez Thomas</span></div>
+              <div class="row"><span class="k" data-i18n-c-email4>郵箱</span><span class="v">jaliarthomas@sagewareinc.com</span></div>
+              <div class="row"><span class="k" data-i18n-c-phone4>電話</span><span class="v">209 776 5047</span></div>
+              <div class="row"><span class="k" data-i18n-c-addr4>地址</span><span class="v">349 N La Cienega Blvd West Hollywood CA 90048</span></div>
+              <div class="row"><span class="k">EIN</span><span class="v">42-5322451</span></div>
+              <div class="row"><span class="k" data-i18n-c-ca2>CA 實體號</span><span class="v">B20260423648</span></div>
+            </div>
+          </div>
+          <div class="progress-note" data-i18n-prog-sag>材料齊全，等待開發信排隊發送。</div>
           <div class="docs-row">
-            <div class="doc-thumb">EIN</div><div class="doc-thumb" data-i18n-doc-license4>駕照</div>
-            <div class="doc-thumb" data-i18n-doc-articles4>公司章程</div>
+            <a class="doc-icon" target="_blank" href="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94EIN.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A9%BE%E7%85%A7%E6%AD%A3%E9%9D%A2.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/></svg><span class="lbl">駕照</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="lbl">公司章程</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6Business%20Entity%20Filing%20Acknowledgment_B20260423648.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
           </div>
         </div>
         <div class="client-card" data-name="nervaqon christian stockton 43-2215794">
-          <h3>Nervaqon LLC <span class="pill ready" data-i18n-st-ready6>可啟動</span></h3>
-          <div class="row"><span class="k" data-i18n-c-founder5>法人</span><span class="v">Christian Jacob Gonzales Punzalan</span></div>
-          <div class="row"><span class="k" data-i18n-c-email5>郵箱</span><span class="v">christianjgpunzalan@nervaqon.live</span></div>
-          <div class="row"><span class="k" data-i18n-c-phone5>電話</span><span class="v">475 274 2069</span></div>
-          <div class="row"><span class="k" data-i18n-c-addr5>地址</span><span class="v">2626 West Ln Ste A Stockton CA 95205</span></div>
-          <div class="row"><span class="k">EIN</span><span class="v">43-2215794</span></div>
-          <div class="row"><span class="k" data-i18n-c-todo2>待辦</span><span class="v" data-i18n-c-todo2-v>人像照換穿著上衣版本</span></div>
+          <div class="top">
+            <img class="avatar" src="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E4%BA%BA%E5%83%8F.jpg">
+            <div class="info">
+              <h3>Nervaqon LLC <span class="pill ready" data-i18n-st-ready6>可啟動</span></h3>
+              <div class="row"><span class="k" data-i18n-c-founder5>法人</span><span class="v">Christian Jacob Gonzales Punzalan</span></div>
+              <div class="row"><span class="k" data-i18n-c-email5>郵箱</span><span class="v">christianjgpunzalan@nervaqon.live</span></div>
+              <div class="row"><span class="k" data-i18n-c-phone5>電話</span><span class="v">475 274 2069</span></div>
+              <div class="row"><span class="k" data-i18n-c-addr5>地址</span><span class="v">2626 West Ln Ste A Stockton CA 95205</span></div>
+              <div class="row"><span class="k">EIN</span><span class="v">43-2215794</span></div>
+              <div class="row"><span class="k" data-i18n-c-todo2>待辦</span><span class="v" data-i18n-c-todo2-v>人像照需換穿著上衣版本</span></div>
+            </div>
+          </div>
+          <div class="progress-note" data-i18n-prog-ner>材料基本齊全，法人自拍照未著上衣需客戶更換。更換後即可啟動開發信。</div>
           <div class="docs-row">
-            <div class="doc-thumb">EIN</div><div class="doc-thumb" data-i18n-doc-headshot>人頭照待換</div>
-            <div class="doc-thumb" data-i18n-doc-articles5>公司章程</div>
+            <a class="doc-icon" target="_blank" href="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94EIN.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E4%BA%BA%E5%83%8F.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><span class="lbl">人頭照待換</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="lbl">公司章程</span></a>
+            <a class="doc-icon" target="_blank" href="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
           </div>
         </div>
       </div>
