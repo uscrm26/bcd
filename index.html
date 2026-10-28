@@ -345,6 +345,19 @@
         <p data-i18n-p4-body>綠色審批中：已提交 broker 等待回覆；藍色可啟動：材料齊全待發信；紅色待補件：材料有缺需客戶補充。已關閉客戶不再跟進。</p>
       </div>
     </div>
+    <div class="card">
+      <h2 data-i18n-broker-title>Broker 資源池</h2>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:10px;" data-i18n-broker-desc>共 2412 家報關行與擔保公司，輸入關鍵字即時過濾。</div>
+      <div class="toolbar">
+        <input type="text" id="brokerSearch" data-i18n-broker-ph placeholder="搜索公司名、地址、郵箱..." onkeyup="filterBroker()">
+      </div>
+      <div style="max-height:500px;overflow-y:auto;">
+        <table id="brokerTable">
+          <thead><tr><th data-i18n-b-name>公司</th><th data-i18n-b-addr>地址</th><th data-i18n-b-contact>聯絡</th><th data-i18n-b-email>郵箱</th></tr></thead>
+          <tbody id="brokerBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -406,6 +419,20 @@ function updateRefreshTime() {
 }
 updateRefreshTime();
 setInterval(updateRefreshTime, 1000);
+
+var brokers = [];
+fetch('brokers.json').then(r=>r.json()).then(function(data){ brokers = data; renderBroker(brokers.slice(0,50)); });
+function renderBroker(list) {
+  document.getElementById('brokerBody').innerHTML = list.map(function(b){
+    return '<tr><td>'+esc(b.n)+'</td><td style="max-width:260px;font-size:11px;color:#6b7280;">'+esc(b.a)+'</td><td style="font-size:11px;">'+esc(b.c)+'</td><td style="font-size:11px;">'+esc(b.m)+'</td></tr>';
+  }).join('');
+}
+function esc(s){ return (s||'').replace(/</g,'&lt;'); }
+function filterBroker() {
+  var q = document.getElementById('brokerSearch').value.toLowerCase();
+  if (!q) { renderBroker(brokers.slice(0,50)); return; }
+  renderBroker(brokers.filter(function(b){ return (b.n+b.a+b.m).toLowerCase().indexOf(q)>=0; }).slice(0,100));
+}
 
 var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
