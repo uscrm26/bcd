@@ -193,6 +193,34 @@
     <div id="gateErr" style="color:#b91c1c;font-size:12px;margin-top:10px;height:16px;"></div>
   </div>
 </div>
+<script>
+var code = '';
+var PIN = '0521';
+function press(d) {
+  if (code.length >= 4) return;
+  code += d;
+  document.getElementById('d'+(code.length)).style.background = '#374151';
+  if (code.length === 4) {
+    if (code === PIN) { document.getElementById('gate').style.display='none'; }
+    else {
+      document.getElementById('gateErr').innerText = '密碼錯誤';
+      setTimeout(function(){
+        code='';
+        for(var i=1;i<=4;i++) document.getElementById('d'+i).style.background='transparent';
+        document.getElementById('gateErr').innerText='';
+      },800);
+    }
+  }
+}
+function backspace() {
+  code = code.slice(0,-1);
+  document.getElementById('d'+(code.length+1)).style.background='transparent';
+}
+function clearGate() {
+  code='';
+  for(var i=1;i<=4;i++) document.getElementById('d'+i).style.background='transparent';
+}
+</script>
 <div class="wrap">
   <div id="updateBar" onclick="location.reload()"><span data-i18n-update>有新版本，點擊刷新</span></div>
   <header>
@@ -876,18 +904,6 @@ function scrollToClientMail(clientName) {
   filterMail();
 }
 var code = '';
-var CORRECT_PIN = '0521';
-function press(d) {
-  if (code.length >= 4) return;
-  code += d;
-  for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length);
-  if (code.length === 4) {
-    if (code === CORRECT_PIN) { document.getElementById('gate').style.display='none'; }
-    else { document.getElementById('gateErr').innerText = '密碼錯誤 / Wrong PIN'; setTimeout(function(){code='';for(var i=1;i<=4;i++)document.getElementById('d'+i).classList.remove('on');document.getElementById('gateErr').innerText='';},800); }
-  }
-}
-function backspace() { code = code.slice(0,-1); for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length); }
-function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.remove('on'); }
 function askAI() { alert('請回到豆包對話窗，告訴我你要處理的事項即可。看板數據由我這邊自動更新。'); }
 
 var clocks = [
