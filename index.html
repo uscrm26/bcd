@@ -61,8 +61,9 @@
   .pill.ready { background: #eef2ff; color: #4338ca; }
   .pill.block { background: #fee2e2; color: #b91c1c; }
   .funnel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .funnel-row { display: flex; align-items: center; margin: 8px 0; font-size: 12px; }
-  .funnel-row .bar { height: 26px; color: #fff; display: flex; align-items: center; padding-left: 10px; border-radius: 4px; margin-right: 10px; }
+  .funnel-row { display: flex; align-items: center; margin: 8px 0; font-size: 12px; gap: 10px; }
+  .funnel-row .bar { height: 20px; border-radius: 4px; flex-shrink: 0; }
+  .funnel-row .label { color: #374151; white-space: nowrap; }
   .ring-wrap { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 0; }
   .ring { width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#4338ca 0 60%, #0f766e 60% 80%, #b91c1c 80% 100%); display: flex; align-items: center; justify-content: center; }
   .ring .inner { width: 104px; height: 104px; border-radius: 50%; background: #fff; display:flex; align-items:center; justify-content:center; flex-direction: column; }
@@ -247,11 +248,10 @@
     <div class="funnel-grid">
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span data-i18n-funnel>開發信漏斗</span></h2>
-        <div class="funnel-row"><div class="bar" style="width:100%;background:#9ca3af;"><span data-i18n-f1>已發開發信 70</span></div></div>
-        <div class="funnel-row"><div class="bar" style="width:40%;background:#6b7280;"><span data-i18n-f2>收到回覆 7</span></div></div>
-        <div class="funnel-row"><div class="bar" style="width:15%;background:#4b5563;"><span data-i18n-f3>對接開單 1</span></div></div>
-        <div class="funnel-row"><div class="bar" style="width:5%;background:#374151;min-width:60px;"><span data-i18n-f4>獲得海關擔保文件 0</span></div></div>
-        <div style="font-size:11px;color:#8a8f98;margin-top:8px;" data-i18n-f4>獲得海關擔保文件 0</div>
+        <div class="funnel-row"><div class="bar" style="width:100px;background:#9ca3af;"></div><span class="label" data-i18n-f1>已發開發信 70</span></div>
+        <div class="funnel-row"><div class="bar" style="width:50px;background:#6b7280;"></div><span class="label" data-i18n-f2>收到回覆 7</span></div>
+        <div class="funnel-row"><div class="bar" style="width:20px;background:#4b5563;"></div><span class="label" data-i18n-f3>對接開單 1</span></div>
+        <div class="funnel-row"><div class="bar" style="width:8px;background:#374151;"></div><span class="label" data-i18n-f4>獲得海關擔保文件 0</span></div>
       </div>
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span data-i18n-ring>在處理客戶狀態</span></h2>
@@ -727,7 +727,7 @@ var i18n = {
   },
   en: { gateTitle:'Enter 4-digit PIN', gateSub:'輸入 4 位數字密碼', update:'New version available, click to refresh', ai:'Ask AI',
     title:"Kevin's Bond Deal Dashboard",
-    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail',
+    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail','nav-policy':'Company Docs','nav-broker':'Broker Pool',
     newmail:'New Email Alert', newmailBody:'',
     kpi1l:'Active Clients', kpi1s:'This month', kpi2l:'Invoiced', kpi2s:'Immunora in payment',
     kpi3l:'Bond Secured', kpi3s:'None yet', kpi4l:'Monthly Target', kpi4s:'Target 30 bonds / month',
