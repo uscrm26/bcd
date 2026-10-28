@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>凱文的代辦業務看板</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    background: #f0f1f3; color: #2b2f36; padding: 24px;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; }
+  header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; }
+  header h1 { font-size: 22px; font-weight: 600; }
+  header .updated { font-size: 12px; color: #8a8f98; }
+
+  nav { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  nav button {
+    border: 1px solid #d1d5db; background: #fff; padding: 8px 18px; border-radius: 8px;
+    font-size: 13px; cursor: pointer; color: #4b5563;
+  }
+  nav button.active { background: #374151; color: #fff; border-color: #374151; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+  .card {
+    background: #fff; border-radius: 12px; padding: 18px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; margin-bottom: 16px;
+  }
+  .card .label { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .card .value { font-size: 30px; font-weight: 600; color: #1f2937; }
+  .card .sub { font-size: 12px; margin-top: 6px; color: #6b7280; }
+  .card .sub.warn { color: #d97706; }
+
+  h2 { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; color: #6b7280; font-weight: 500; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
+  td { padding: 9px 10px; border-bottom: 1px solid #f0f1f3; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .pill.run { background: #e0f2f1; color: #0f766e; }
+  .pill.ready { background: #eef2ff; color: #4338ca; }
+  .pill.block { background: #fee2e2; color: #b91c1c; }
+
+  .funnel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .funnel-row { display: flex; align-items: center; margin: 8px 0; font-size: 12px; }
+  .funnel-row .bar { height: 26px; color: #fff; display: flex; align-items: center; padding-left: 10px; border-radius: 4px; margin-right: 10px; }
+  .ring-wrap { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 0; }
+  .ring {
+    width: 160px; height: 160px; border-radius: 50%;
+    background: conic-gradient(#4338ca 0 60%, #0f766e 60% 80%, #b91c1c 80% 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ring .inner { width: 110px; height: 110px; border-radius: 50%; background: #fff; display:flex; align-items:center; justify-content:center; flex-direction: column; }
+  .legend { font-size: 12px; color: #4b5563; line-height: 2; }
+  .legend span.dot { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:middle; }
+
+  .toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
+  .toolbar input, .toolbar select {
+    padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; background: #fff;
+  }
+  .toolbar input { flex: 1; min-width: 200px; }
+
+  .client-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
+  .client-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #e5e7eb; }
+  .client-card h3 { font-size: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .client-card .row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #f0f1f3; }
+  .client-card .row .k { color: #6b7280; }
+  .client-card .row .v { color: #1f2937; text-align: right; }
+
+  .month-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .month-tabs button { padding: 6px 14px; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; cursor: pointer; font-size: 12px; }
+  .month-tabs button.active { background: #374151; color: #fff; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>凱文的代辦業務看板</h1>
+    <div class="updated">中國時區 UTC+8，每日 05:00 清算</div>
+  </header>
+
+  <nav>
+    <button class="active" onclick="show('now',this)">在處理看板</button>
+    <button onclick="show('daily',this)">每日工作</button>
+    <button onclick="show('clients',this)">客戶檔案</button>
+    <button onclick="show('mail',this)">郵件明細</button>
+    <button onclick="show('webmail',this)">郵箱登錄</button>
+  </nav>
+
+  <div id="now" class="page active">
+    <div class="card" style="background:#fffbeb;border:1px solid #fde68a;">
+      <h2 style="color:#92400e;">新郵件提醒</h2>
+      <div style="font-size:13px;color:#78350f;line-height:1.8;">
+        目前待你人工覈對的新郵件：暫無。定時任務每小時查一次五個郵箱，有新真人回信會寫在這裡。
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="card">
+        <div class="label">在處理客戶</div>
+        <div class="value">5</div>
+        <div class="sub">本月立項</div>
+      </div>
+      <div class="card">
+        <div class="label">對接開單中</div>
+        <div class="value">1</div>
+        <div class="sub warn">Immunora 付款階段</div>
+      </div>
+      <div class="card">
+        <div class="label">獲得海關擔保文件</div>
+        <div class="value">0</div>
+        <div class="sub warn">尚無</div>
+      </div>
+      <div class="card">
+        <div class="label">月度目標達成</div>
+        <div class="value">0%</div>
+        <div class="sub warn">目標每月下 bond 30 家</div>
+      </div>
+    </div>
+
+    <div class="funnel-grid">
+      <div class="card">
+        <h2>開發信漏斗</h2>
+        <div class="funnel-row"><div class="bar" style="width:100%;background:#9ca3af;">已發開發信 70</div></div>
+        <div class="funnel-row"><div class="bar" style="width:40%;background:#6b7280;">收到回覆 7</div></div>
+        <div class="funnel-row"><div class="bar" style="width:15%;background:#4b5563;">對接開單 1</div></div>
+        <div class="funnel-row"><div class="bar" style="width:5%;background:#374151;min-width:60px;">0</div></div>
+        <div style="font-size:11px;color:#8a8f98;margin-top:8px;">獲得海關擔保文件 0</div>
+      </div>
+      <div class="card">
+        <h2>在處理客戶狀態</h2>
+        <div class="ring-wrap">
+          <div class="ring"><div class="inner"><div style="font-size:22px;font-weight:600;">5</div><div style="font-size:11px;color:#6b7280;">總客戶</div></div></div>
+          <div class="legend">
+            <div><span class="dot" style="background:#0f766e;"></span>審批中 1 家</div>
+            <div><span class="dot" style="background:#4338ca;"></span>可啟動 3 家</div>
+            <div><span class="dot" style="background:#b91c1c;"></span>待補件 1 家</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>在處理客戶</h2>
+      <table>
+        <thead><tr><th>客戶</th><th>法人</th><th>狀態</th><th>備註</th></tr></thead>
+        <tbody>
+          <tr><td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run">審批中</span></td><td>BorderBuddy，INV-5533 已轉公司付款待確認</td></tr>
+          <tr><td>Oliveware LLC</td><td>Horacio Sanchez</td><td><span class="pill ready">可啟動</span></td><td>材料齊全，開發信已發</td></tr>
+          <tr><td>Pebblehome LLC</td><td>Christopher Hodge</td><td><span class="pill block">待補件</span></td><td>駕照過期，EIN 拼寫待核</td></tr>
+          <tr><td>Sageware LLC</td><td>Jaliar Thomas</td><td><span class="pill ready">可啟動</span></td><td>材料齊全，開發信已發</td></tr>
+          <tr><td>Nervaqon LLC</td><td>Christian Punzalan</td><td><span class="pill ready">可啟動</span></td><td>人像照待更換</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="daily" class="page">
+    <div class="card">
+      <h2>每日工作記錄</h2>
+      <div class="month-tabs">
+        <button class="active">2026 年 10 月</button>
+        <button>2026 年 11 月</button>
+      </div>
+      <table>
+        <thead><tr><th style="width:110px;">日期</th><th style="width:180px;">涉及客戶</th><th>工作內容</th><th style="width:200px;">產出</th></tr></thead>
+        <tbody>
+          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>Oliveware、Pebblehome、Sageware、Nervaqon</td><td>歸檔四家全套材料，飛書主表更新 5 行</td><td>4 個客戶檔案夾建立</td></tr>
+          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>Pebblehome</td><td>覈驗發現佛州駕照 10/20 過期，EIN 名字 ROBIM 拼寫不一致</td><td>問題已轉上游同事</td></tr>
+          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>新四家</td><td>啟動 40 封差異化開發信，按客戶郵箱依次發送</td><td>每封間隔約 3 分鐘</td></tr>
+          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Immunora</td><td>BorderBuddy POA 簽署，Annual Bond Application 經 JotForm 提交</td><td>公司章程已作為支持文件發送</td></tr>
+          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Immunora</td><td>BorderBuddy 開出發票 INV-5533，金額 795.60 USD</td><td>已轉公司付款，待確認到賬</td></tr>
+          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Known、Priority、Mercury、Surety Place</td><td>4 封誤判進 Junk 的真人回信逐一回覆</td><td>SMTP 發送並 APPEND 到 Sent</td></tr>
+          <tr><td><b>10 月 26 日</b><br><span style="color:#8a8f98;font-size:11px;">週一</span></td><td>Immunora</td><td>從 2400 家資源池挑約 30 家首輪群發</td><td>首輪諮詢信發出</td></tr>
+          <tr><td><b>10 月 26 日</b><br><span style="color:#8a8f98;font-size:11px;">週一</span></td><td>全部郵箱</td><td>SOGo 白屏確認死路，改用 IMAP4_SSL 993 收信、SMTP 465 發信</td><td>郵件通道穩定</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="clients" class="page">
+    <div class="card">
+      <div class="toolbar">
+        <input type="text" id="clientSearch" placeholder="搜索客戶名、法人、地址、EIN..." onkeyup="filterClients()">
+      </div>
+      <div class="client-grid" id="clientGrid">
+        <div class="client-card" data-name="immunora kashay poway borderbuddy">
+          <h3>Immunora Bio LLC <span class="pill run">審批中</span></h3>
+          <div class="row"><span class="k">法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
+          <div class="row"><span class="k">郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
+          <div class="row"><span class="k">電話</span><span class="v">209 776 5124</span></div>
+          <div class="row"><span class="k">地址</span><span class="v">12759 Poway Rd Ste 202 Poway CA 92064</span></div>
+          <div class="row"><span class="k">產品</span><span class="v">home textile bedding sets，China，HTS 6302.31</span></div>
+          <div class="row"><span class="k">對接</span><span class="v">BorderBuddy Katrina 604-245-7353</span></div>
+          <div class="row"><span class="k">金額</span><span class="v">INV-5533 795.60 USD 待確認</span></div>
+        </div>
+        <div class="client-card" data-name="oliveware horacio carlsbad 42-5322248">
+          <h3>Oliveware LLC <span class="pill ready">可啟動</span></h3>
+          <div class="row"><span class="k">法人</span><span class="v">Horacio L Sanchez</span></div>
+          <div class="row"><span class="k">郵箱</span><span class="v">horaciolsanchez@olivewareinc.com</span></div>
+          <div class="row"><span class="k">電話</span><span class="v">209 776 4799</span></div>
+          <div class="row"><span class="k">地址</span><span class="v">2725 Jefferson St Ste 6 Carlsbad CA 92008</span></div>
+          <div class="row"><span class="k">EIN</span><span class="v">42-5322248</span></div>
+          <div class="row"><span class="k">CA 實體號</span><span class="v">B20260423624</span></div>
+          <div class="row"><span class="k">SSN 尾號</span><span class="v">8981，DOB 1990-04-03</span></div>
+        </div>
+        <div class="client-card" data-name="pebblehome christopher los angeles 42-5322611">
+          <h3>Pebblehome LLC <span class="pill block">待補件</span></h3>
+          <div class="row"><span class="k">法人</span><span class="v">Christopher Robin Hodge</span></div>
+          <div class="row"><span class="k">郵箱</span><span class="v">christopherhodge@pebblehomeinc.com</span></div>
+          <div class="row"><span class="k">電話</span><span class="v">209 776 5910</span></div>
+          <div class="row"><span class="k">地址</span><span class="v">11111 W Olympic Blvd Ste 201 LA CA 90064</span></div>
+          <div class="row"><span class="k">EIN</span><span class="v">42-5322611</span></div>
+          <div class="row"><span class="k">待辦</span><span class="v">佛州駕照過期，EIN 拼 ROBIM 待核</span></div>
+        </div>
+        <div class="client-card" data-name="sageware jaliar west hollywood 42-5322451">
+          <h3>Sageware LLC <span class="pill ready">可啟動</span></h3>
+          <div class="row"><span class="k">法人</span><span class="v">Jaliar Antrez Thomas</span></div>
+          <div class="row"><span class="k">郵箱</span><span class="v">jaliarthomas@sagewareinc.com</span></div>
+          <div class="row"><span class="k">電話</span><span class="v">209 776 5047</span></div>
+          <div class="row"><span class="k">地址</span><span class="v">349 N La Cienega Blvd West Hollywood CA 90048</span></div>
+          <div class="row"><span class="k">EIN</span><span class="v">42-5322451</span></div>
+          <div class="row"><span class="k">CA 實體號</span><span class="v">B20260423648</span></div>
+        </div>
+        <div class="client-card" data-name="nervaqon christian stockton 43-2215794">
+          <h3>Nervaqon LLC <span class="pill ready">可啟動</span></h3>
+          <div class="row"><span class="k">法人</span><span class="v">Christian Jacob Gonzales Punzalan</span></div>
+          <div class="row"><span class="k">郵箱</span><span class="v">christianjgpunzalan@nervaqon.live</span></div>
+          <div class="row"><span class="k">電話</span><span class="v">475 274 2069</span></div>
+          <div class="row"><span class="k">地址</span><span class="v">2626 West Ln Ste A Stockton CA 95205</span></div>
+          <div class="row"><span class="k">EIN</span><span class="v">43-2215794</span></div>
+          <div class="row"><span class="k">待辦</span><span class="v">人像照換穿著上衣版本</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="mail" class="page">
+    <div class="card">
+      <h2>郵件往來明細</h2>
+      <div class="toolbar">
+        <input type="text" id="mailSearch" placeholder="搜索收件人、公司、主題..." onkeyup="filterMail()">
+      </div>
+      <table id="mailTable">
+        <thead><tr><th>日期</th><th>發件客戶</th><th>收件人</th><th>主題</th><th>狀態</th><th>備註</th></tr></thead>
+        <tbody>
+          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td>海關擔保業務諮詢</td><td><span class="pill ready">等待回覆</span></td><td>首輪群發</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已成交在途</span></td><td>Katrina 對接順利，已開發票</td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td>bond 申請後續跟進</td><td><span class="pill ready">已發送</span></td><td>合作過的 Katrina</td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td>差異化開發信</td></tr>
+          <tr><td colspan="6" style="color:#8a8f98;">其餘開發信後台發送中，完成後自動補入此表</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="webmail" class="page">
+    <div class="card">
+      <h2>Webmail 一鍵登錄</h2>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:14px;">所有客戶郵箱密碼統一 123456，伺服器 mail.pony-it.com，IMAP 993 / SMTP 465。點擊下方按鈕新窗口打開登錄頁。</div>
+      <table>
+        <thead><tr><th>客戶</th><th>登錄郵箱</th><th>密碼</th><th>操作</th></tr></thead>
+        <tbody>
+          <tr><td>Immunora Bio LLC</td><td>kashayisisramonaodom@immunora-bio.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
+          <tr><td>Oliveware LLC</td><td>horaciolsanchez@olivewareinc.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
+          <tr><td>Pebblehome LLC</td><td>christopherhodge@pebblehomeinc.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
+          <tr><td>Sageware LLC</td><td>jaliarthomas@sagewareinc.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
+          <tr><td>Nervaqon LLC</td><td>christianjgpunzalan@nervaqon.live</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function filterClients() {
+  var q = document.getElementById('clientSearch').value.toLowerCase();
+  document.querySelectorAll('#clientGrid .client-card').forEach(function(c){
+    c.style.display = (c.dataset.name.indexOf(q)>=0 || c.innerText.toLowerCase().indexOf(q)>=0) ? '' : 'none';
+  });
+}
+function filterMail() {
+  var q = document.getElementById('mailSearch').value.toLowerCase();
+  document.querySelectorAll('#mailTable tbody tr').forEach(function(r){
+    r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
