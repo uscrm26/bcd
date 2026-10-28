@@ -27,9 +27,11 @@
   .lang-btn.on { background:#374151;color:#fff; }
   .ai-btn { background:#4338ca;color:#fff;border:none;border-radius:6px;padding:6px 14px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px; }
   .clock-row { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:16px; }
-  .clock-card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:10px 14px; }
+  .clock-card { background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:12px 16px; display:flex; align-items:center; gap:14px; }
+  .clock-card .flag { font-size:28px; }
+  .clock-card .info { flex:1; }
   .clock-card .tz { font-size:11px;color:#6b7280; }
-  .clock-card .time { font-size:20px;font-weight:600;color:#1f2937;font-variant-numeric:tabular-nums; }
+  .clock-card .time { font-size:22px;font-weight:600;color:#1f2937;font-variant-numeric:tabular-nums; }
   .clock-card .date { font-size:11px;color:#8a8f98; }
   .clock-card.cn { border-left:3px solid #b91c1c; }
   #updateBar { display:none; background:#4338ca;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;margin-bottom:14px;cursor:pointer; }
@@ -82,6 +84,18 @@
   .newmail h2 { color:#92400e; }
   .newmail p { font-size:13px;color:#78350f;line-height:1.8; }
   a.webmail-link { color:#4338ca; }
+  #modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:10000; align-items:center; justify-content:center; }
+  #modal .box { background:#fff; border-radius:12px; padding:16px; max-width:90vw; max-height:90vh; overflow:auto; position:relative; }
+  #modal .close { position:absolute; top:10px; right:14px; font-size:22px; cursor:pointer; color:#9ca3af; }
+  #modal img { max-width:85vw; max-height:80vh; border-radius:8px; }
+  #modal iframe { width:85vw; height:80vh; border:none; border-radius:8px; }
+  .doc-icon { width:64px;height:80px;border-radius:8px;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s; }
+  .doc-icon:hover { background:#eef2ff;border-color:#4338ca; }
+  .doc-icon svg { width:24px;height:24px;color:#6b7280;margin-bottom:4px; }
+  .doc-icon .lbl { font-size:10px;color:#6b7280;text-align:center;padding:0 2px; }
+  .doc-cat { font-size:11px;color:#8a8f98;margin:10px 0 6px; }
+  .view-thread { background:#eef2ff;color:#4338ca;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;margin-top:10px; }
+  .progress-note { background:#f9fafb;border-left:3px solid #d97706;padding:8px 10px;font-size:11px;color:#6b7280;margin-top:10px;border-radius:0 6px 6px 0;line-height:1.6; }
 </style>
 </head>
 <body>
@@ -108,7 +122,6 @@
     </h1>
     <div class="right">
       <div id="lastRefresh" style="font-size:11px;color:#8a8f98;"></div>
-      <button class="ai-btn" onclick="askAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg><span>AI</span></button>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
       <button class="lang-btn on" id="btnZh" onclick="setLang('zh')">繁中</button>
     </div>
@@ -362,6 +375,13 @@
 
 </div>
 
+<div id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="box">
+    <span class="close" onclick="closeModal()">×</span>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
 <script>
 function show(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -396,18 +416,18 @@ function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('
 function askAI() { alert('請回到豆包對話窗，告訴我你要處理的事項即可。看板數據由我這邊自動更新。'); }
 
 var clocks = [
-  {tz:'Asia/Shanghai', name:'中國', cn:true, flag:'🌏'},
-  {tz:'America/Los_Angeles', name:'美西 PT', flag:'🌉'},
-  {tz:'America/Denver', name:'美山 MT', flag:'🏔️'},
-  {tz:'America/Chicago', name:'美中 CT', flag:'🌆'},
-  {tz:'America/New_York', name:'美東 ET', flag:'🗽'}
+  {tz:'Asia/Shanghai', name:'中國時間', cn:true, flag:'🏙️'},
+  {tz:'America/Los_Angeles', name:'美西 洛杉磯/西雅圖 PT', flag:'🌉'},
+  {tz:'America/Denver', name:'美山 丹佛 MT', flag:'🏔️'},
+  {tz:'America/Chicago', name:'美中 芝加哥 CT', flag:'🌆'},
+  {tz:'America/New_York', name:'美東 紐約 ET', flag:'🗽'}
 ];
 function tickClocks() {
   var now = new Date();
   document.getElementById('clockRow').innerHTML = clocks.map(function(c){
     var t = now.toLocaleTimeString('en-US',{timeZone:c.tz,hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true});
     var d = now.toLocaleDateString('zh-Hans',{timeZone:c.tz,month:'2-digit',day:'2-digit',weekday:'short'});
-    return '<div class="clock-card'+(c.cn?' cn':'')+'"><div class="tz">'+c.flag+' '+c.name+'</div><div class="time">'+t+'</div><div class="date">'+d+'</div></div>';
+    return '<div class="clock-card'+(c.cn?' cn':'')+'"><div class="flag">'+c.flag+'</div><div class="info"><div class="tz">'+c.name+'</div><div class="time">'+t+'</div><div class="date">'+d+'</div></div></div>';
   }).join('');
 }
 tickClocks();
