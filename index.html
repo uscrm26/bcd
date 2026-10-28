@@ -71,15 +71,31 @@
   .toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
   .toolbar input { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; background: #fff; flex: 1; min-width: 200px; }
   .client-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
-  .client-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #e5e7eb; }
-  .client-card .top { display:flex; gap:14px; align-items:flex-start; }
-  .client-card .avatar { width:72px; height:72px; border-radius:50%; object-fit:cover; border:2px solid #e5e7eb; flex-shrink:0; background:#f3f4f6; }
+  .client-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #e5e7eb; border-top: 3px solid #d1d5db; }
+  .client-card.st-review { border-top-color: #059669; }
+  .client-card.st-paid { border-top-color: #d97706; }
+  .client-card.st-ready { border-top-color: #4338ca; }
+  .client-card.st-block { border-top-color: #b91c1c; }
+  .client-card .top { display:flex; gap:16px; align-items:flex-start; }
+  .client-card .avatar { width:110px; height:140px; border-radius:10px; object-fit:cover; border:1px solid #e5e7eb; flex-shrink:0; background:#f3f4f6; cursor:pointer; }
   .client-card .info { flex:1; min-width:0; }
-  .client-card h3 { font-size: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+  .client-card h3 { font-size: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap:8px; }
   .client-card .row { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; border-bottom: 1px dashed #f0f1f3; }
-  .client-card .row .k { color: #6b7280; }
-  .client-card .row .v { color: #1f2937; text-align: right; }
+  .client-card .row .k { color: #6b7280; flex-shrink:0; }
+  .client-card .row .v { color: #1f2937; text-align: right; word-break: break-all; }
   .progress-note { background:#fffbeb; border-left:3px solid #d97706; padding:8px 10px; font-size:11px; color:#6b7280; margin-top:10px; border-radius:0 6px 6px 0; line-height:1.6; }
+  .progress-title { font-size:11px;font-weight:600;color:#92400e;margin-top:12px;margin-bottom:4px; }
+  @media (max-width: 768px) {
+    body { padding: 10px; }
+    .clock-row { grid-template-columns: repeat(2,1fr); }
+    .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .client-grid { grid-template-columns: 1fr; }
+    .client-card .top { flex-direction: column; }
+    .client-card .avatar { width:100%; height:180px; }
+    nav { overflow-x: auto; flex-wrap: nowrap; }
+    nav button { white-space: nowrap; }
+    .wrap { padding: 0; }
+  }
   .doc-icon { width:64px;height:76px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-decoration:none; }
   .doc-icon:hover { background:#eef2ff;border-color:#4338ca; }
   .doc-icon svg { width:22px;height:22px;color:#6b7280;margin-bottom:4px; }
@@ -237,11 +253,11 @@
         <input type="text" id="clientSearch" data-i18n-search-clients placeholder="搜索客戶名、法人、地址、EIN..." onkeyup="filterClients()">
       </div>
       <div class="client-grid" id="clientGrid">
-        <div class="client-card" data-name="immunora kashay poway borderbuddy">
+        <div class="client-card st-paid" data-name="immunora kashay poway borderbuddy">
           <div class="top">
-            <img class="avatar" src="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg">
+            <img class="avatar" src="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg" onclick="openModalImg(this.src)">
             <div class="info">
-              <h3>Immunora Bio LLC <span class="pill run" data-i18n-st-review2>審批中</span></h3>
+              <h3>Immunora Bio LLC <span class="pill" style="background:#fef3c7;color:#92400e;" data-i18n-st-paid>支付確認中</span></h3>
               <div class="row"><span class="k" data-i18n-c-founder>法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
               <div class="row"><span class="k" data-i18n-c-email>郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
               <div class="row"><span class="k" data-i18n-c-phone>電話</span><span class="v">209 776 5124</span></div>
@@ -261,9 +277,9 @@
             <a class="doc-icon" target="_blank" href="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E5%9C%B0%E5%9D%80%E8%A1%97%E6%99%AF.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="lbl">地址街景</span></a>
           </div>
         </div>
-        <div class="client-card" data-name="oliveware horacio carlsbad 42-5322248">
+        <div class="client-card st-ready" data-name="oliveware horacio carlsbad 42-5322248">
           <div class="top">
-            <img class="avatar" src="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg">
+            <img class="avatar" src="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg" onclick="openModalImg(this.src)">
             <div class="info">
               <h3>Oliveware LLC <span class="pill ready" data-i18n-st-ready4>可啟動</span></h3>
               <div class="row"><span class="k" data-i18n-c-founder2>法人</span><span class="v">Horacio L Sanchez</span></div>
@@ -284,9 +300,9 @@
             <a class="doc-icon" target="_blank" href="docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94%E5%9C%B0%E5%9D%80%E8%A1%97%E6%99%AF.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="lbl">地址街景</span></a>
           </div>
         </div>
-        <div class="client-card" data-name="pebblehome christopher los angeles 42-5322611">
+        <div class="client-card st-block" data-name="pebblehome christopher los angeles 42-5322611">
           <div class="top">
-            <img class="avatar" src="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.png">
+            <img class="avatar" src="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.png" onclick="openModalImg(this.src)">
             <div class="info">
               <h3>Pebblehome LLC <span class="pill block" data-i18n-st-block2>待補件</span></h3>
               <div class="row"><span class="k" data-i18n-c-founder3>法人</span><span class="v">Christopher Robin Hodge</span></div>
@@ -305,9 +321,9 @@
             <a class="doc-icon" target="_blank" href="docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6Business%20Entity%20Filing%20Acknowledgment_B20260423057.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
           </div>
         </div>
-        <div class="client-card" data-name="sageware jaliar west hollywood 42-5322451">
+        <div class="client-card st-ready" data-name="sageware jaliar west hollywood 42-5322451">
           <div class="top">
-            <img class="avatar" src="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg">
+            <img class="avatar" src="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg" onclick="openModalImg(this.src)">
             <div class="info">
               <h3>Sageware LLC <span class="pill ready" data-i18n-st-ready5>可啟動</span></h3>
               <div class="row"><span class="k" data-i18n-c-founder4>法人</span><span class="v">Jaliar Antrez Thomas</span></div>
@@ -326,9 +342,9 @@
             <a class="doc-icon" target="_blank" href="docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5%E4%B9%A6Business%20Entity%20Filing%20Acknowledgment_B20260423648.pdf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
           </div>
         </div>
-        <div class="client-card" data-name="nervaqon christian stockton 43-2215794">
+        <div class="client-card st-ready" data-name="nervaqon christian stockton 43-2215794">
           <div class="top">
-            <img class="avatar" src="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E4%BA%BA%E5%83%8F.jpg">
+            <img class="avatar" src="docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E4%BA%BA%E5%83%8F.jpg" onclick="openModalImg(this.src)">
             <div class="info">
               <h3>Nervaqon LLC <span class="pill ready" data-i18n-st-ready6>可啟動</span></h3>
               <div class="row"><span class="k" data-i18n-c-founder5>法人</span><span class="v">Christian Jacob Gonzales Punzalan</span></div>
@@ -451,6 +467,15 @@
 </div>
 
 <script>
+function openModalImg(src){
+  document.getElementById('modalContent').innerHTML='<img src="'+src+'">';
+  document.getElementById('modal').style.display='flex';
+}
+function openModalPdf(src){
+  document.getElementById('modalContent').innerHTML='<iframe src="'+src+'"></iframe>';
+  document.getElementById('modal').style.display='flex';
+}
+function closeModal(){ document.getElementById('modal').style.display='none'; }
 function show(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
