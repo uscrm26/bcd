@@ -108,7 +108,7 @@
     </h1>
     <div class="right">
       <div id="lastRefresh" style="font-size:11px;color:#8a8f98;"></div>
-      <button class="ai-btn" onclick="askAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg><span data-i18n-ai>找 AI 處理</span></button>
+      <button class="ai-btn" onclick="askAI()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg><span>AI</span></button>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
       <button class="lang-btn on" id="btnZh" onclick="setLang('zh')">繁中</button>
     </div>
@@ -383,18 +383,18 @@ function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('
 function askAI() { alert('請回到豆包對話窗，告訴我你要處理的事項即可。看板數據由我這邊自動更新。'); }
 
 var clocks = [
-  {tz:'Asia/Shanghai', name:'中國', cn:true},
-  {tz:'America/Los_Angeles', name:'美西 PT'},
-  {tz:'America/Denver', name:'美山 MT'},
-  {tz:'America/Chicago', name:'美中 CT'},
-  {tz:'America/New_York', name:'美東 ET'}
+  {tz:'Asia/Shanghai', name:'中國', cn:true, flag:'🌏'},
+  {tz:'America/Los_Angeles', name:'美西 PT', flag:'🌉'},
+  {tz:'America/Denver', name:'美山 MT', flag:'🏔️'},
+  {tz:'America/Chicago', name:'美中 CT', flag:'🌆'},
+  {tz:'America/New_York', name:'美東 ET', flag:'🗽'}
 ];
 function tickClocks() {
   var now = new Date();
   document.getElementById('clockRow').innerHTML = clocks.map(function(c){
-    var t = now.toLocaleTimeString('zh-Hans',{timeZone:c.tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    var t = now.toLocaleTimeString('en-US',{timeZone:c.tz,hour:'numeric',minute:'2-digit',second:'2-digit',hour12:true});
     var d = now.toLocaleDateString('zh-Hans',{timeZone:c.tz,month:'2-digit',day:'2-digit',weekday:'short'});
-    return '<div class="clock-card'+(c.cn?' cn':'')+'"><div class="tz">'+c.name+'</div><div class="time">'+t+'</div><div class="date">'+d+'</div></div>';
+    return '<div class="clock-card'+(c.cn?' cn':'')+'"><div class="tz">'+c.flag+' '+c.name+'</div><div class="time">'+t+'</div><div class="date">'+d+'</div></div>';
   }).join('');
 }
 tickClocks();
