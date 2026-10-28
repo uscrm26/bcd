@@ -41,7 +41,8 @@
   nav button svg { width:14px;height:14px; }
   nav button.active { background: #374151; color: #fff; border-color: #374151; }
   .page { display: none; }
-  .page.active { display: block; }
+  .page.active { display: block; min-height: 500px; }
+  .page.active > .card:last-child { margin-bottom: 0; }
   .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
   .card { background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; margin-bottom: 14px; }
   .card .label { font-size: 12px; color: #6b7280; margin-bottom: 8px; display:flex; align-items:center; gap:6px; }
