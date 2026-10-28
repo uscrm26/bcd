@@ -771,6 +771,7 @@ function showMailOrig(clientName){
         +'<div style="font-size:15px;font-weight:600;color:#1f2937;margin-bottom:8px;">'+esc(e.subject)+'</div>'
         +'<div style="font-size:12px;color:#6b7280;margin-bottom:12px;">發件人：'+esc(e.from)+'</div>'
         +'<div style="font-size:13px;color:#374151;line-height:1.8;white-space:pre-wrap;background:#fff;padding:12px;border-radius:6px;border:1px solid #e5e7eb;">'+esc(e.body||'(無正文)')+'</div>'
+        +'<button onclick="translateMail(this)" style="margin-top:8px;padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;">一鍵翻譯成中文</button>'
         +'</div>';
     });
     html += '</div>';
@@ -825,6 +826,10 @@ function filterWebmail() {
   document.querySelectorAll('.webmail-row').forEach(function(r){
     r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
   });
+}
+function translateMail(btn){
+  var body = btn.previousElementSibling.innerText;
+  alert('請回到豆包對話窗，把這段郵件貼給我，我幫你翻譯成中文並總結要點：\n\n' + body.substring(0, 200) + '...');
 }
 function toggleDetail(btn){
   var row = btn.closest('tr');
