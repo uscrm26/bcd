@@ -371,16 +371,15 @@
           <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td data-i18n-sub9>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-deal>已成交在途</span></td><td>Katrina 對接順利，已開發票</td></tr>
           <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td data-i18n-sub10>bond 申請後續跟進</td><td><span class="pill ready" data-i18n-sent>已發送</span></td><td data-i18n-n10>合作過的 Katrina</td></tr>
           <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td data-i18n-sub11>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td data-i18n-n11>差異化開發信</td></tr>
-          <tr><td colspan="6" style="color:#8a8f98;" data-i18n-more>其餘開發信後台發送中，完成後自動補入此表</td></tr>
         </tbody>
       </table>
-      <h3 style="font-size:13px;margin:18px 0 8px;color:#1f2937;" data-i18n-live-title>郵箱同步記錄</h3>
-      <div style="max-height:400px;overflow-y:auto;">
-        <table style="width:100%;">
-          <thead><tr><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">客戶</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">收件匣</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">時間</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">發件人</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">主旨</th></tr></thead>
-          <tbody id="liveMailBody"></tbody>
-        </table>
+    </div>
+    <div class="card">
+      <h2 data-i18n-live-title>郵箱同步記錄</h2>
+      <div class="toolbar">
+        <input type="text" id="liveSearch" data-i18n-live-ph placeholder="搜索客戶、發件人、主旨..." onkeyup="renderLive()">
       </div>
+      <div id="liveList"></div>
     </div>
   </div>
 
@@ -422,7 +421,15 @@
       <h2 data-i18n-broker-title>Broker 資源池</h2>
       <div style="font-size:12px;color:#6b7280;margin-bottom:10px;" data-i18n-broker-desc>共 2412 家報關行與擔保公司，輸入關鍵字即時過濾全部記錄。</div>
       <div class="toolbar">
-        <input type="text" id="brokerSearch" data-i18n-broker-ph placeholder="搜索公司名、地址、郵箱..." onkeyup="filterBroker()">
+        <input type="text" id="brokerSearch" data-i18n-broker-ph placeholder="搜索公司名、地址、郵箱..." onkeyup="brokerPage=1;renderBroker()">
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+        <button onclick="brokerFilter='';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;background:#fff;cursor:pointer;" id="f-all">全部</button>
+        <button onclick="brokerFilter='deal';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #059669;background:#d1fae5;color:#059669;cursor:pointer;">已成交</button>
+        <button onclick="brokerFilter='replied';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #047857;background:#d1fae5;color:#047857;cursor:pointer;">已回覆</button>
+        <button onclick="brokerFilter='pending';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #4338ca;background:#eef2ff;color:#4338ca;cursor:pointer;">等待回覆</button>
+        <button onclick="brokerFilter='closed';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #b91c1c;background:#fee2e2;color:#b91c1c;cursor:pointer;">已關閉</button>
+        <button onclick="brokerFilter='new';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;background:#f3f4f6;color:#6b7280;cursor:pointer;">未聯繫</button>
       </div>
       <div style="max-height:600px;overflow-y:auto;">
         <table id="brokerTable">
@@ -430,6 +437,7 @@
           <tbody id="brokerBody"></tbody>
         </table>
       </div>
+      <div id="brokerPager" style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;font-size:12px;color:#6b7280;"></div>
     </div>
   </div>
 
@@ -519,28 +527,44 @@ function statusLabel(s) {
   var v = m[s]||m.new;
   return '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;color:'+v[1]+';background:'+v[2]+';">'+v[0]+'</span>';
 }
-fetch('brokers.json').then(r=>r.json()).then(function(data){ brokers = data; renderBroker(brokers.slice(0,30)); });
-function renderBroker(list) {
-  document.getElementById('brokerBody').innerHTML = list.map(function(b){
-    var s = brokerStatus(b.n);
+var brokerPage=1; var brokerFilter='';
+function esc(s){ return (s||'').replace(/</g,'&lt;'); }
+function brokerFiltered(){
+  var q=(document.getElementById('brokerSearch').value||'').toLowerCase();
+  return brokers.filter(function(b){
+    if(brokerFilter && brokerStatus(b.n)!==brokerFilter) return false;
+    if(q && (b.n+b.a+b.m).toLowerCase().indexOf(q)<0) return false;
+    return true;
+  });
+}
+function renderBroker(){
+  var res=brokerFiltered(); var per=50; var total=Math.ceil(res.length/per);
+  if(brokerPage>total) brokerPage=total||1;
+  var slice=res.slice((brokerPage-1)*per, brokerPage*per);
+  document.getElementById('brokerBody').innerHTML = slice.map(function(b){
+    var s=brokerStatus(b.n);
     return '<tr style="border-top:1px solid #f0f1f3;"><td style="padding:6px;font-size:12px;font-weight:500;">'+esc(b.n)+'</td><td style="padding:6px;font-size:11px;color:#6b7280;max-width:220px;">'+esc(b.a)+'</td><td style="padding:6px;font-size:11px;">'+esc(b.c)+'</td><td style="padding:6px;font-size:11px;">'+esc(b.m)+'</td><td style="padding:6px;">'+statusLabel(s)+'</td></tr>';
   }).join('');
+  document.getElementById('brokerPager').innerHTML='<span>共 '+res.length+' 家，第 '+brokerPage+' / '+total+' 頁</span><span><button onclick="if(brokerPage>1){brokerPage--;renderBroker();}" style="margin-right:6px;padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">上一頁</button><button onclick="if(brokerPage<total){brokerPage++;renderBroker();}" style="padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">下一頁</button></span>';
 }
-function esc(s){ return (s||'').replace(/</g,'&lt;'); }
-function filterBroker() {
-  var q = document.getElementById('brokerSearch').value.toLowerCase();
-  if (!q) { renderBroker(brokers.slice(0,30)); return; }
-  var res = brokers.filter(function(b){ return (b.n+b.a+b.m).toLowerCase().indexOf(q)>=0; });
-  renderBroker(res.slice(0,200));
-}
+fetch('brokers.json').then(r=>r.json()).then(function(data){ brokers=data; renderBroker(); });
 
-fetch('emails.json').then(r=>r.json()).then(function(list){
-  document.getElementById('liveMailBody').innerHTML = list.map(function(e){
-    var box = e.box==='Sent' ? '已寄件' : '收件匣';
-    var d = (e.date||'').replace(/ GMT.*/,'');
-    return '<tr style="border-top:1px solid #f0f1f3;"><td style="padding:6px;font-size:12px;font-weight:500;">'+esc(e.client)+'</td><td style="padding:6px;font-size:11px;color:#6b7280;">'+box+'</td><td style="padding:6px;font-size:11px;color:#6b7280;white-space:nowrap;">'+d+'</td><td style="padding:6px;font-size:11px;color:#374151;max-width:200px;overflow:hidden;text-overflow:ellipsis;">'+esc(e.from)+'</td><td style="padding:6px;font-size:12px;">'+esc(e.subject)+'</td></tr>';
-  }).join('');
-});
+var liveMail=[];
+fetch('emails.json').then(r=>r.json()).then(function(list){ liveMail=list; renderLive(); });
+function renderLive(){
+  var q=(document.getElementById('liveSearch').value||'').toLowerCase();
+  var list=liveMail.filter(function(e){ return !q || (e.client+e.from+e.subject+(e.body||'')).toLowerCase().indexOf(q)>=0; });
+  document.getElementById('liveList').innerHTML = list.map(function(e,i){
+    var box = e.box==='Sent' ? '<span style="color:#4338ca;">已寄件</span>' : '<span style="color:#059669;">收件匣</span>';
+    var d=(e.date||'').replace(/ GMT.*/,'');
+    return '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;" onclick="var b=this.nextElementSibling;b.style.display=b.style.display==\'none\'?\'block\':\'none\'">'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:4px;"><span>'+esc(e.client)+' · '+box+'</span><span>'+d+'</span></div>'
+      +'<div style="font-size:13px;font-weight:500;color:#1f2937;">'+esc(e.subject)+'</div>'
+      +'<div style="font-size:11px;color:#6b7280;margin-top:2px;">'+esc(e.from)+'</div>'
+      +'<div style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap;">'+esc(e.body||'(無正文)')+'</div>'
+      +'</div>';
+  }).join('') || '<div style="color:#9ca3af;font-size:12px;padding:20px;text-align:center;">無匹配記錄</div>';
+}
 
 var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
