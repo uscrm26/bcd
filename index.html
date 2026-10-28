@@ -126,6 +126,9 @@
   .doc-icon:hover { background:#eef2ff;border-color:#4338ca; }
   .doc-icon svg { width:22px;height:22px;color:#6b7280;margin-bottom:4px; }
   .doc-icon .lbl { font-size:10px;color:#6b7280;text-align:center;padding:0 2px; }
+  .orig-btn { font-size:11px;padding:4px 12px;border-radius:6px;border:1px solid #4338ca;background:#eef2ff;color:#4338ca;cursor:pointer; }
+  .orig-btn:hover { background:#4338ca;color:#fff; }
+  .progress-title { font-size:12px;font-weight:600;color:#6b7280;margin:12px 0 6px; }
   .docs-row { display:flex;gap:8px;margin-top:10px;flex-wrap:wrap; }
   .doc-thumb { width:64px;height:64px;border-radius:6px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:10px;color:#9ca3af;text-align:center;border:1px dashed #d1d5db;padding:4px;text-decoration:none; }
   .month-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -200,7 +203,7 @@
     <button onclick="show('mail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span data-i18n-nav-mail>郵件明細</span></button>
     <button onclick="show('webmail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-webmail>郵箱登錄</span></button>
     <button onclick="show('policy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n-nav-policy>公司資料</span></button>
-    <button onclick="show('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>公司資源</span></button>
+    <button onclick="show('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>報關經紀資源池</span></button>
   </nav>
   <div id="newmail" class="card newmail">
     <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span data-i18n-newmail>新郵件提醒</span></h2>
@@ -215,7 +218,7 @@
     <button onclick="drawerGo('mail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span data-i18n-nav-mail>郵件明細</span></button>
     <button onclick="drawerGo('webmail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-webmail>郵箱登錄</span></button>
     <button onclick="drawerGo('policy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n-nav-policy>公司資料</span></button>
-    <button onclick="drawerGo('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>公司資源</span></button>
+    <button onclick="drawerGo('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>報關經紀資源池</span></button>
   </div>
 
   <div id="now" class="page active">
@@ -319,6 +322,7 @@
               <div class="row"><span class="k" data-i18n-c-amt>金額</span><span class="v">INV-5533 795.60 USD 待確認</span></div>
             </div>
           </div>
+          <div class="progress-title" data-i18n-prog-title>跟進進度</div>
           <div class="progress-note" data-i18n-prog-imm>BorderBuddy POA 已簽，Annual Bond Application 經 JotForm 提交，章程已發。發票 INV-5533 共 795.60 USD 已轉公司付款，待確認到賬。首輪 30 封開發信中，Known/Priority/Mercury/SuretyPlace 已回覆，Shapiro/Importivity 婉拒關閉。</div>
           <div class="docs-row">
             <a class="doc-icon" onclick="openDoc('docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
@@ -348,6 +352,7 @@
               <div class="row"><span class="k" data-i18n-c-ssn>SSN 尾號</span><span class="v">8981，DOB 1990-04-03</span></div>
             </div>
           </div>
+          <div class="progress-title" data-i18n-prog-title>跟進進度</div>
           <div class="progress-note" data-i18n-prog-ol>材料齊全，40 封差異化開發信已開始發送，前 8 封已成功。合作過的 BorderBuddy Katrina 已跟進。</div>
           <div class="docs-row">
             <a class="doc-icon" onclick="openDoc('docs/clients/Oliveware/Oliveware%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
@@ -370,6 +375,7 @@
               <div class="row"><span class="k" data-i18n-c-todo>待辦</span><span class="v" data-i18n-c-todo-v>佛州駕照 10/20/2026 過期，EIN 名字 ROBIM 拼寫不一致，已轉上游</span></div>
             </div>
           </div>
+          <div class="progress-title" data-i18n-prog-title>跟進進度</div>
           <div class="progress-note" data-i18n-prog-peb>材料驗收發現兩處問題：佛州駕照已過期，EIN 通知法人名字 ROBIM 與公司章程 ROBIN 不一致。問題已轉上游同事確認，待客戶補件後再啟動開發信。</div>
           <div class="docs-row">
             <a class="doc-icon" onclick="openDoc('docs/clients/Pebblehome/Pebblehome%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
@@ -391,6 +397,7 @@
               <div class="row"><span class="k" data-i18n-c-ca2>CA 實體號</span><span class="v">B20260423648</span></div>
             </div>
           </div>
+          <div class="progress-title" data-i18n-prog-title>跟進進度</div>
           <div class="progress-note" data-i18n-prog-sag>材料齊全，等待開發信排隊發送。</div>
           <div class="docs-row">
             <a class="doc-icon" onclick="openDoc('docs/clients/Sageware/Sageware%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
@@ -412,6 +419,7 @@
               <div class="row"><span class="k" data-i18n-c-todo2>待辦</span><span class="v" data-i18n-c-todo2-v>人像照需換穿著上衣版本</span></div>
             </div>
           </div>
+          <div class="progress-title" data-i18n-prog-title>跟進進度</div>
           <div class="progress-note" data-i18n-prog-ner>材料基本齊全，法人自拍照未著上衣需客戶更換。更換後即可啟動開發信。</div>
           <div class="docs-row">
             <a class="doc-icon" onclick="openDoc('docs/clients/Nervaqon/Nervaqon%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
@@ -431,19 +439,19 @@
         <input type="text" id="mailSearch" data-i18n-search-mail placeholder="搜索收件人、公司、主題..." onkeyup="filterMail()">
       </div>
       <table id="mailTable">
-        <thead><tr><th data-i18n-col-date2>日期</th><th data-i18n-col-sender>發件客戶</th><th data-i18n-col-recv>收件人</th><th data-i18n-col-subject>主題</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note2>備註</th></tr></thead>
+        <thead><tr><th data-i18n-col-date2>日期</th><th data-i18n-col-sender>發件客戶</th><th data-i18n-col-recv>收件人</th><th data-i18n-col-subject>主題</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note2>備註</th><th>原文</th></tr></thead>
         <tbody>
-          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td data-i18n-sub1>海關擔保業務諮詢</td><td><span class="pill ready" data-i18n-wait>等待回覆</span></td><td data-i18n-n1>首輪群發</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td data-i18n-sub2>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-replied>已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td data-i18n-sub3>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td data-i18n-sub4>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td data-i18n-sub5>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td data-i18n-sub6>海關擔保業務諮詢</td><td><span class="pill block" data-i18n-closed>已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td data-i18n-sub7>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td data-i18n-sub8>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td data-i18n-sub9>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-deal>已成交在途</span></td><td>Katrina 對接順利，已開發票</td></tr>
-          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td data-i18n-sub10>bond 申請後續跟進</td><td><span class="pill ready" data-i18n-sent>已發送</span></td><td data-i18n-n10>合作過的 Katrina</td></tr>
-          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td data-i18n-sub11>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td data-i18n-n11>差異化開發信</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td data-i18n-sub1>海關擔保業務諮詢</td><td><span class="pill ready" data-i18n-wait>等待回覆</span></td><td data-i18n-n1>首輪群發</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td data-i18n-sub2>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-replied>已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td data-i18n-sub3>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td data-i18n-sub4>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td data-i18n-sub5>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td data-i18n-sub6>海關擔保業務諮詢</td><td><span class="pill block" data-i18n-closed>已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td data-i18n-sub7>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td data-i18n-sub8>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td data-i18n-sub9>海關擔保業務諮詢</td><td><span class="pill run" style="background:#d1fae5;color:#059669;">已合作</span></td><td>Katrina 對接順利，已開發票</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td data-i18n-sub10>bond 申請後續跟進</td><td><span class="pill ready" data-i18n-sent>已發送</span></td><td data-i18n-n10>合作過的 Katrina</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td data-i18n-sub11>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td data-i18n-n11>差異化開發信</td><td><button class="orig-btn" onclick="scrollToLive()">原文</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -484,23 +492,25 @@
         <h3 style="font-size:14px;margin:14px 0 6px;color:#1f2937;" data-i18n-p3-title>三、月度目標</h3>
         <p data-i18n-p3-body>每月成功獲得海關擔保文件不少於 30 家。在處理客戶不少於 5 家在途。</p>
         <h3 style="font-size:14px;margin:14px 0 6px;color:#1f2937;" data-i18n-p4-title>四、狀態顏色標註</h3>
-        <p data-i18n-p4-body>綠色審批中：已提交 broker 等待回覆；藍色可啟動：材料齊全待發信；紅色待補件：材料有缺需客戶補充。已關閉客戶不再跟進。</p>
+        <p data-i18n-p4-body>客戶狀態四級：紅色待補件、藍色可啟動、黃色支付確認中、綠色已完成。報關經紀資源池五級：灰色未聯繫、藍色已發信、綠色已回覆、深綠色已合作、紅色已關閉。已合作代表有成功對接記錄，不等同於客戶 bond 成交。</p>
+        <h3 style="font-size:14px;margin:14px 0 6px;color:#1f2937;" data-i18n-p5-title>五、等待回覆判定規則</h3>
+        <p data-i18n-p5-body>從不同客戶郵箱向同一報關經紀發送開發信，累計達 3 個工作日仍未收到回覆，即判定為不回覆。計算工作日時自動排除美國聯邦假期及週末。判定不回覆後標記為已關閉，不再繼續跟進。每次發信前均按此規則篩選名單，避免浪費精力在無回覆意願的對像上。</p>
       </div>
     </div>
   </div>
 
   <div id="broker" class="page">
     <div class="card">
-      <h2 data-i18n-broker-title>Broker 資源池</h2>
+      <h2 data-i18n-broker-title>報關經紀資源池</h2>
       <div style="font-size:12px;color:#6b7280;margin-bottom:10px;" data-i18n-broker-desc>共 2412 家報關行與擔保公司，輸入關鍵字即時過濾全部記錄。</div>
       <div class="toolbar">
         <input type="text" id="brokerSearch" data-i18n-broker-ph placeholder="搜索公司名、地址、郵箱..." onkeyup="brokerPage=1;renderBroker()">
       </div>
       <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
         <button onclick="brokerFilter='';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;background:#fff;cursor:pointer;" id="f-all">全部</button>
-        <button onclick="brokerFilter='deal';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #059669;background:#d1fae5;color:#059669;cursor:pointer;">已成交</button>
+        <button onclick="brokerFilter='partner';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #059669;background:#d1fae5;color:#059669;cursor:pointer;">已合作</button>
         <button onclick="brokerFilter='replied';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #047857;background:#d1fae5;color:#047857;cursor:pointer;">已回覆</button>
-        <button onclick="brokerFilter='pending';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #4338ca;background:#eef2ff;color:#4338ca;cursor:pointer;">等待回覆</button>
+        <button onclick="brokerFilter='sent';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #4338ca;background:#eef2ff;color:#4338ca;cursor:pointer;">已發信</button>
         <button onclick="brokerFilter='closed';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #b91c1c;background:#fee2e2;color:#b91c1c;cursor:pointer;">已關閉</button>
         <button onclick="brokerFilter='new';brokerPage=1;renderBroker()" style="font-size:11px;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;background:#f3f4f6;color:#6b7280;cursor:pointer;">未聯繫</button>
       </div>
@@ -537,6 +547,9 @@ function openDoc(src){
   var lower = src.toLowerCase();
   if(lower.indexOf('.pdf')>=0){ openModalPdf(src); }
   else { openModalImg(src); }
+}
+function scrollToLive(){
+  document.getElementById('liveList').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function toggleDrawer(){
   var d=document.getElementById('drawer');
@@ -615,12 +628,12 @@ setInterval(updateRefreshTime, 1000);
 
 var brokers = [];
 var contacted = {
-  "borderbuddy":"deal","known":"replied","shipmercury":"replied","prioritycb":"replied","suretyplace":"replied",
-  "shapiro":"closed","importivity":"closed","gamboa":"pending","avalonrisk":"pending","jmrodgers":"pending",
-  "juniperco":"pending","frcustoms":"pending","fg-brokers":"pending","farias":"pending","fzuniga":"pending",
-  "expresslinecorp":"pending","iiacorp":"pending","internationalsureties":"pending","accb":"pending",
-  "rfbarnes":"pending","fleischer":"pending","atlantacustoms":"pending","magicbrokers":"pending",
-  "bringer":"pending","savannahcustoms":"pending","thekeatingagency":"pending"
+  "borderbuddy":"partner","known":"replied","shipmercury":"replied","prioritycb":"replied","suretyplace":"replied",
+  "shapiro":"closed","importivity":"closed","gamboa":"sent","avalonrisk":"sent","jmrodgers":"sent",
+  "juniperco":"sent","frcustoms":"sent","fg-brokers":"sent","farias":"sent","fzuniga":"sent",
+  "expresslinecorp":"sent","iiacorp":"sent","internationalsureties":"sent","accb":"sent",
+  "rfbarnes":"sent","fleischer":"sent","atlantacustoms":"sent","magicbrokers":"sent",
+  "bringer":"sent","savannahcustoms":"sent","thekeatingagency":"sent"
 };
 function brokerStatus(n) {
   var k = (n||"").toLowerCase();
@@ -628,7 +641,7 @@ function brokerStatus(n) {
   return "new";
 }
 function statusLabel(s) {
-  var m = {deal:["已成交","#059669","#d1fae5"],replied:["已回覆","#047857","#d1fae5"],pending:["等待回覆","#4338ca","#eef2ff"],closed:["已關閉","#b91c1c","#fee2e2"],new:["未聯繫","#6b7280","#f3f4f6"]};
+  var m = {partner:["已合作","#059669","#d1fae5"],replied:["已回覆","#047857","#d1fae5"],sent:["已發信","#4338ca","#eef2ff"],closed:["已關閉","#b91c1c","#fee2e2"],new:["未聯繫","#6b7280","#f3f4f6"]};
   var v = m[s]||m.new;
   return '<span style="display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:500;color:'+v[1]+';background:'+v[2]+';">'+v[0]+'</span>';
 }
@@ -674,14 +687,14 @@ function renderLive(){
 var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
     title:'凱文的代辦業務看板',
-    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄',
+    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄','nav-broker':'報關經紀資源池','nav-policy':'公司資料',
     newmail:'新郵件提醒', newmailBody:'',
-    kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 付款階段',
+    kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 支付確認中',
     kpi3l:'獲得海關擔保文件', kpi3s:'尚無', kpi4l:'月度目標達成', kpi4s:'目標每月下 bond 30 家',
     funnel:'開發信漏斗', f1:'已發開發信 70', f2:'收到回覆 7', f3:'對接開單 1', f4:'獲得海關擔保文件 0',
-    ring:'在處理客戶狀態', ringtotal:'總客戶', l1:'審批中 1 家', l2:'可啟動 3 家', l3:'待補件 1 家',
+    ring:'在處理客戶狀態', ringtotal:'總客戶', l1:'支付確認中 1 家', l2:'可啟動 3 家', l3:'待補件 1 家',
     clientsTitle:'在處理客戶', colClient:'客戶', colFounder:'法人', colStatus:'狀態', colNote:'備註',
-    stReview:'審批中', stReady:'可啟動', stBlock:'待補件',
+    stReview:'支付確認中', stReady:'可啟動', stBlock:'待補件', stDone:'已完成', stPaid:'支付確認中',
     noteOliveware:'材料齊全，開發信已發', notePebblehome:'駕照過期，EIN 拼寫待核', noteSageware:'材料齊全，開發信已發', noteNervaqon:'人像照待更換',
     dailyTitle:'每日工作記錄', colDate:'日期', colClients:'涉及客戶', colWork:'工作內容', colOutput:'產出',
     d1:'歸檔四家全套材料，飛書主表更新 5 行', o1:'4 個客戶檔案夾建立',
