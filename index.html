@@ -10,6 +10,17 @@
     font-family: -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
     background: #f0f1f3; color: #2b2f36; padding: 24px;
   }
+  #gate { position: fixed; inset: 0; background: #1f2937; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+  .gate-box { background: #fff; padding: 32px; border-radius: 16px; text-align: center; width: 300px; }
+  .gate-box h3 { font-size: 16px; color: #374151; margin-bottom: 16px; }
+  .gate-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+  .gate-dots span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #9ca3af; }
+  .gate-dots span.on { background: #374151; border-color: #374151; }
+  .keypad { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+  .keypad button { padding: 14px; font-size: 18px; border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 10px; cursor: pointer; }
+  .keypad button:active { background: #e5e7eb; }
+  .gate-err { color: #b91c1c; font-size: 12px; margin-top: 10px; height: 16px; }
+</style>
   .wrap { max-width: 1280px; margin: 0 auto; }
   header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; }
   header h1 { font-size: 22px; font-weight: 600; }
@@ -77,6 +88,19 @@
 </style>
 </head>
 <body>
+<div id="gate">
+  <div class="gate-box">
+    <h3>輸入 4 位數字密碼</h3>
+    <div class="gate-dots"><span id="d1"></span><span id="d2"></span><span id="d3"></span><span id="d4"></span></div>
+    <div class="keypad">
+      <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
+      <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
+      <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
+      <button onclick="clearGate()">C</button><button onclick="press('0')">0</button><button onclick="backspace()">⌫</button>
+    </div>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
 <div class="wrap">
   <header>
     <h1>凱文的代辦業務看板</h1>
@@ -303,6 +327,19 @@ function filterMail() {
     r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
   });
 }
+
+var code = '';
+function press(d) {
+  if (code.length >= 4) return;
+  code += d;
+  for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length);
+  if (code.length === 4) {
+    if (code === '0521') { document.getElementById('gate').style.display='none'; }
+    else { document.getElementById('gateErr').innerText = '密碼錯誤，請重試'; setTimeout(function(){code='';for(var i=1;i<=4;i++)document.getElementById('d'+i).classList.remove('on');document.getElementById('gateErr').innerText='';},800); }
+  }
+}
+function backspace() { code = code.slice(0,-1); for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length); }
+function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.remove('on'); }
 </script>
 </body>
 </html>
