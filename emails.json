@@ -1,634 +1,306 @@
 [
- {
-  "client": "Pebblehome",
-  "box": "Sent",
-  "from": "Christopher Hodge <christopherhodge@pebblehomeinc.com>",
-  "to": "dylan@gowithknown.com",
-  "subject": "another bond question from a new CA importer",
-  "date": "Wed, 28 Oct 2026 19:46:39 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "mlauther@driworldwide.com",
-  "subject": "continuous customs bond pricing",
-  "date": "Wed, 28 Oct 2026 19:43:39 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "emily@bluebirdchb.com",
-  "subject": "first-time importer, who do I talk to?",
-  "date": "Wed, 28 Oct 2026 19:40:44 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "info@auroracustomsbrokerage.com",
-  "subject": "new CA importer, bond question",
-  "date": "Wed, 28 Oct 2026 19:37:33 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "info@netbonds.net",
-  "subject": "continuous bond quote comparison",
-  "date": "Wed, 28 Oct 2026 19:34:14 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "dprice@cjinternational.com",
-  "subject": "referred by Shapiro for bond services",
-  "date": "Wed, 28 Oct 2026 19:30:40 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "info@suretyplace.com",
-  "subject": "bond referral from a colleague",
-  "date": "Wed, 28 Oct 2026 19:27:55 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "support@shipmercury.com",
-  "subject": "bumping this for a new importer bond",
-  "date": "Wed, 28 Oct 2026 19:25:10 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "imports@prioritycb.com",
-  "subject": "continuous bond quote for first-time importer",
-  "date": "Wed, 28 Oct 2026 19:22:21 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "dylan@gowithknown.com",
-  "subject": "who handles continuous customs bonds?",
-  "date": "Wed, 28 Oct 2026 19:18:50 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "to": "service@borderbuddy.com",
-  "subject": "quick follow-up on our bond application",
-  "date": "Wed, 28 Oct 2026 19:15:33 +0800"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
-  "to": "calasu@suretyplace.com",
-  "subject": "Re: Connecting About Continuous Bond",
-  "date": "Wed, 28 Oct 2026 15:09:47 +0800"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
-  "to": "bravosquad@shipmercury.com",
-  "subject": "Re: New Importer Seeking Customs Bond",
-  "date": "Wed, 28 Oct 2026 15:09:46 +0800"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
-  "to": "dylan@gowithknown.com",
-  "subject": "RE: Question About Customs Bonds",
-  "date": "Wed, 28 Oct 2026 15:09:45 +0800"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
-  "to": "imports@prioritycb.com",
-  "subject": "Re: Looking For A Broker To Handle Bond And Entry",
-  "date": "Wed, 28 Oct 2026 15:09:45 +0800"
- },
- {
-  "client": "Oliveware",
-  "box": "INBOX",
-  "from": "\"Matthew Lauther (DRI Worldwide)\" <Mlauther@driworldwide.com>",
-  "to": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
-  "subject": "Automatic reply: continuous customs bond pricing",
-  "date": "Wed, 28 Oct 2026 11:43:57 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Importivity Team <info@importivity.com>",
-  "to": "Kashay Isis Ramona Odom Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Re: Setting Up A Bond For Our First Shipment",
-  "date": "Wed, 28 Oct 2026 02:52:36 +0800"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Importivity Team <info@importivity.com>",
-  "to": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Re: Setting Up A Bond For Our First Shipment",
-  "date": "Wed, 28 Oct 2026 02:38:58 +0800"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Docs.usa <messaging-service@post.xero.com>",
-  "to": "Kashay Odom <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Invoice INV-5533 from Border Buddy Technologies USA Inc for Immunora Bio LLC",
-  "date": "Tue, 27 Oct 2026 23:21:27 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Cristina Alasu <calasu@suretyplace.com>",
-  "to": "\"kashayisisramonaodom@immunora-bio.com\"\r\n\t<kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Re: Connecting About Continuous Bond",
-  "date": "Tue, 27 Oct 2026 21:15:20 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Sam Bloomberg <sbloombe@shapiro.com>",
-  "to": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n\t<kashayisisramonaodom@immunora-bio.com>",
-  "subject": "RE: Continuous Customs Bond Inquiry",
-  "date": "Tue, 27 Oct 2026 20:45:10 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Imports Department <imports@PriorityCB.com>",
-  "to": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n\t<kashayisisramonaodom@immunora-bio.com>, Imports Department\r\n\t<imports@PriorityCB.com>",
-  "subject": "Re: Looking For A Broker To Handle Bond And Entry",
-  "date": "Tue, 27 Oct 2026 20:38:16 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Dylan Dickman <dylan@gowithknown.com>",
-  "to": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n\t<kashayisisramonaodom@immunora-bio.com>",
-  "subject": "RE: Question About Customs Bonds",
-  "date": "Tue, 27 Oct 2026 20:34:30 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Sam Bloomberg <sbloombe@shapiro.com>",
-  "to": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n\t<kashayisisramonaodom@immunora-bio.com>",
-  "subject": "RE: Continuous Customs Bond Inquiry",
-  "date": "Tue, 27 Oct 2026 20:26:38 +0000"
- },
- {
-  "client": "Nervaqon",
-  "box": "INBOX",
-  "from": "SPG Anova Marine Bond Department <bonds@anovamarine.com>",
-  "to": "Christian Jacob Gonzales Punzalan | Nervaqon LLC\r\n\t<christianjgpunzalan@nervaqon.live>",
-  "subject": "RE: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC",
-  "date": "Tue, 27 Oct 2026 19:47:41 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Katrina <service@borderbuddy.com>",
-  "to": "\"kashayisisramonaodom@immunora-bio.com\"\r\n <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Re: Welcome to BorderBuddy",
-  "date": "Tue, 27 Oct 2026 18:30:38 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "noreply@zipments.io",
-  "to": "kashayisisramonaodom@immunora-bio.com",
-  "subject": "Continue onboarding with BorderBuddy",
-  "date": "Tue, 27 Oct 2026 17:48:28 +0000 (UTC)"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "\"Sam Bloomberg\" <sbloombe@shapiro.com>",
-  "subject": "RE: Continuous Customs Bond Inquiry",
-  "date": "Tue, 27 Oct 2026 17:07:56 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Katrina <service@borderbuddy.com>",
-  "to": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\"\r\n <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Re: Looking For Customs Bond Support",
-  "date": "Tue, 27 Oct 2026 16:48:51 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "\"Sam Bloomberg\" <sbloombe@shapiro.com>",
-  "subject": "RE: Continuous Customs Bond Inquiry",
-  "date": "Tue, 27 Oct 2026 16:38:14 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Bravo Squad <bravosquad@shipmercury.com>",
-  "to": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n\t<kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Re: New Importer Seeking Customs Bond",
-  "date": "Tue, 27 Oct 2026 16:26:22 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "\"Importivity Team\" <info@importivity.com>",
-  "subject": "Re: Setting Up A Bond For Our First Shipment",
-  "date": "Tue, 27 Oct 2026 16:15:41 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "service@borderbuddy.com",
-  "subject": "Supporting Documents for Immunora Bio LLC Annual Bond Application",
-  "date": "Tue, 27 Oct 2026 16:13:52 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Jotform <noreply@jotform.com>",
-  "to": "kashayisisramonaodom@immunora-bio.com",
-  "subject": "We’ve Received Your Annual Bond Form Request",
-  "date": "Tue, 27 Oct 2026 16:04:14 -0400"
- },
- {
-  "client": "Oliveware",
-  "box": "INBOX",
-  "from": "Aryeh Hoffman <info@iiacorp.net>",
-  "to": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "subject": "Re: Customs Bond Inquiry for Oliveware LLC",
-  "date": "Tue, 27 Oct 2026 15:27:55 -0600"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@profreight.us",
-  "subject": "New Importer Needing A Continuous Bond",
-  "date": "Tue, 27 Oct 2026 14:54:21 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "imports@prioritycb.com",
-  "subject": "Looking For A Broker To Handle Bond And Entry",
-  "date": "Tue, 27 Oct 2026 14:48:40 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "\"Importivity Team\" <info@importivity.com>",
-  "subject": "Re: Setting Up A Bond For Our First Shipment",
-  "date": "Tue, 27 Oct 2026 14:47:17 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@beyondlogix.com",
-  "subject": "Question About Annual Customs Bonds",
-  "date": "Tue, 27 Oct 2026 14:38:38 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@importivity.com",
-  "subject": "Setting Up A Bond For Our First Shipment",
-  "date": "Tue, 27 Oct 2026 14:32:04 -0400"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "to": "info@IIACorp.net",
-  "subject": "Customs Bond Inquiry for Oliveware LLC",
-  "date": "Tue, 27 Oct 2026 14:29:01 -0400"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "to": "info@jmrodgers.com",
-  "subject": "Customs Bond Inquiry for Oliveware LLC",
-  "date": "Tue, 27 Oct 2026 14:27:08 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "web@shapiro.com",
-  "subject": "Continuous Customs Bond Inquiry",
-  "date": "Tue, 27 Oct 2026 14:25:44 -0400"
- },
- {
-  "client": "Oliveware",
-  "box": "Sent",
-  "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "to": "letsconnect@avalonrisk.com",
-  "subject": "Customs Bond Inquiry for Oliveware LLC",
-  "date": "Tue, 27 Oct 2026 14:24:47 -0400"
- },
- {
-  "client": "Oliveware",
-  "box": "INBOX",
-  "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "to": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "subject": "\"Personal Address Book\" has been created",
-  "date": "Tue, 27 Oct 2026 14:14:19 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "BorderBuddy <service@borderbuddy.com>",
-  "to": "kashayisisramonaodom@immunora-bio.com",
-  "subject": "Welcome to BorderBuddy",
-  "date": "Tue, 27 Oct 2026 13:11:09 -0500"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "bonds@thekeatingagency.com",
-  "subject": "Quick Question About Customs Bonds",
-  "date": "Tue, 27 Oct 2026 12:43:49 -0400"
- },
- {
-  "client": "Oliveware",
-  "box": "INBOX",
-  "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "to": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
-  "subject": "\"Personal Calendar\" has been created",
-  "date": "Tue, 27 Oct 2026 12:36:41 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@savannahcustomsclearance.com",
-  "subject": "Getting A Bond Before Clearance",
-  "date": "Tue, 27 Oct 2026 12:31:31 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "broker@bringer.com",
-  "subject": "Customs Bond Provider Needed",
-  "date": "Tue, 27 Oct 2026 12:25:44 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@magicbrokers.com",
-  "subject": "First Shipment Customs Bond Question",
-  "date": "Tue, 27 Oct 2026 12:19:14 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@suretyplace.com",
-  "subject": "Connecting About Continuous Bond",
-  "date": "Tue, 27 Oct 2026 12:12:53 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "ship@atlantacustomsbrokers.com",
-  "subject": "Customs Bond For Incoming Shipments",
-  "date": "Tue, 27 Oct 2026 12:06:56 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@fleischer-chb.com",
-  "subject": "Setting Up Our First Customs Bond",
-  "date": "Tue, 27 Oct 2026 12:00:40 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "blaire@rfbarnes.com",
-  "subject": "Who Handles Customs Bonds On Your Team",
-  "date": "Tue, 27 Oct 2026 11:55:15 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "imports@accb.us",
-  "subject": "Need A Continuous Customs Bond",
-  "date": "Tue, 27 Oct 2026 11:48:36 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@internationalsureties.com",
-  "subject": "Customs Bond Question For Our First Shipments",
-  "date": "Tue, 27 Oct 2026 11:42:10 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "support@shipmercury.com",
-  "subject": "New Importer Seeking Customs Bond",
-  "date": "Tue, 27 Oct 2026 11:35:13 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@iiacorp.net",
-  "subject": "Continuous Customs Bond Setup",
-  "date": "Tue, 27 Oct 2026 11:30:05 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "service@borderbuddy.com",
-  "subject": "Looking For Customs Bond Support",
-  "date": "Tue, 27 Oct 2026 11:24:35 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "letsconnect@avalonrisk.com",
-  "subject": "Customs Bond Inquiry",
-  "date": "Tue, 27 Oct 2026 11:17:37 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@jmrodgers.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Tue, 27 Oct 2026 11:10:16 -0400"
- },
- {
-  "client": "Nervaqon",
-  "box": "INBOX",
-  "from": "Staff Underwriters <StaffUnderwriters@SuretyOne.com>",
-  "to": "Christian Jacob Gonzales Punzalan | Nervaqon LLC\r\n <christianjgpunzalan@nervaqon.live>",
-  "subject": "Re: Inquiry About Obtaining Customs Bond for Nervaqon LLC",
-  "date": "Sat, 24 Oct 2026 23:28:25 -0400"
- },
- {
-  "client": "Nervaqon",
-  "box": "Sent",
-  "from": "\"Christian Jacob Gonzales Punzalan | Nervaqon LLC\" <christianjgpunzalan@nervaqon.live>",
-  "to": "info@jmrodgers.com, letsconnect@avalonrisk.com, info@noatumlogistics.com, service@borderbuddy.com, Info@IIACorp.net, info@mytempleinsurance.com, sales@dedola.com, support@shipmercury.com, contactus@gaig.com, contactsales@reloadlogistics.com, surety@fcainsurance.com, askanexpert@traderiskguaranty.com, info@internationalsureties.com, underwriting@customs-bonds.com, imports@accb.us, sales@camtomx.com, Blaire@rfbarnes.com, info@fleischer-chb.com, ship@atlantacustomsbrokers.com, info@suretyplace.com, INFO@MAGICBROKERS.COM, hello@justyourbroker.com, info@globalexportnetwork.com, broker@bringer.com, info@SavannahCustomsClearance.com, info@phoenixglobalshipping.com, bonds@anovamarine.com, info@customscity.com",
-  "subject": "Inquiry About Obtaining Customs Bond for Nervaqon LLC",
-  "date": "Sat, 24 Oct 2026 22:01:05 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Gabrielle Petrucelli <Gabrielle@gowithknown.com>",
-  "to": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n\t<kashayisisramonaodom@immunora-bio.com>",
-  "subject": "Automatic reply: Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 17:37:25 +0000"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "dylan@gowithknown.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:47:24 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "sarah.wang@expresslinecorp.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:44:38 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "zuniga@fzuniga.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:43:56 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "farias@farias.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:43:23 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "eduardo@fg-brokers.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:42:37 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "info@frscustoms.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:41:52 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "funfreightlogistics@gmail.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:41:06 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "raquelec1223@yahoo.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:40:04 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "gabriela@juniperco.net",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:39:10 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "gabrielle@known.dev",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:37:17 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "Sent",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "janie@gamboainternational.com",
-  "subject": "Question About Customs Bonds",
-  "date": "Mon, 26 Oct 2026 13:36:13 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "\"Personal Address Book\" has been created",
-  "date": "Mon, 26 Oct 2026 13:33:34 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "to": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
-  "subject": "\"Personal Calendar\" has been created",
-  "date": "Mon, 26 Oct 2026 13:20:42 -0400"
- },
- {
-  "client": "Immunora",
-  "box": "INBOX",
-  "from": "Kashay Odom <kashayisisramonaodom@immunora-bio.com>",
-  "to": "kashayisisramonaodom@immunora-bio.com",
-  "subject": "Delivery Self Test 1028",
-  "date": ""
- }
+  {
+    "client": "Pebblehome",
+    "box": "Sent",
+    "from": "Christopher Hodge <christopherhodge@pebblehomeinc.com>",
+    "subject": "another bond question from a new CA importer",
+    "date": "Wed, 28 Oct 2026 19:46:39 +0800",
+    "body": "Hi Dylan,\n\nWe followed up with you a few weeks ago on a different file. We've since onboarded another LLC that needs its own continuous customs bond. Since you were straightforward the last time, I wanted to come back and ask what you'd need to quote this one. We're still comparing options.\n\nChristopher Hodge\nPebblehome LLC\n(209) 776 5910"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "continuous customs bond pricing",
+    "date": "Wed, 28 Oct 2026 19:43:39 +0800",
+    "body": "Hello,\n\nWe're a new importer in California and we're gathering quotes for a 12-month continuous customs bond. Could your brokerage provide pricing and a list of required documents? We expect roughly 10 to 15 entries in year one, consumer goods out of Asia.\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "first-time importer, who do I talk to?",
+    "date": "Wed, 28 Oct 2026 19:40:44 +0800",
+    "body": "Hi Emily,\n\nSorry to cold email. We just registered a new LLC in California and we need a continuous customs bond before we start bringing goods in. I wasn't sure who at Bluebird handles the bond side. Could you point me to the right person?\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "new CA importer, bond question",
+    "date": "Wed, 28 Oct 2026 19:37:33 +0800",
+    "body": "Hi Aurora team,\n\nI came across your brokerage while searching for customs brokers in California that handle continuous bonds for new entities. We're a small importer in Carlsbad getting ready for our first shipments. Do you offer bond origination in-house, and roughly what's the cost for a $50k minimum bond?\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "continuous bond quote comparison",
+    "date": "Wed, 28 Oct 2026 19:34:14 +0800",
+    "body": "Hello,\n\nWe were referred to netbonds.net by another brokerage when we asked who handles straightforward continuous customs bonds for first-time importers. Could you send over a ballpark annual premium and the documentation list? We're pulling three quotes together this week.\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "referred by Shapiro for bond services",
+    "date": "Wed, 28 Oct 2026 19:30:40 +0800",
+    "body": "Hi Doug,\n\nSam over at Shapiro mentioned that CJ International handles continuous customs bonds for new importers, and suggested I reach out directly. We're a California LLC looking to get set up before our first ocean freight moves. What's the typical process and turnaround on your side?\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "bond referral from a colleague",
+    "date": "Wed, 28 Oct 2026 19:27:55 +0800",
+    "body": "Hi there,\n\nA colleague in the customs brokerage space mentioned your name when we were shopping around for a continuous customs bond provider. We're a California-based importer getting ready to bring in our first shipments. Could you tell me what underwriting looks like on your end for a new LLC?\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "bumping this for a new importer bond",
+    "date": "Wed, 28 Oct 2026 19:25:10 +0800",
+    "body": "Hi,\n\nA few weeks back we reached out about a customs bond and had a quick chat with your team. We're now onboarding another importer and wanted to know if you'd be open to quoting a continuous bond for this second entity. Totally understand if you're focused on existing customers.\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "continuous bond quote for first-time importer",
+    "date": "Wed, 28 Oct 2026 19:22:21 +0800",
+    "body": "Hello,\n\nWe're a new LLC out of Carlsbad, CA and we're putting together our import compliance setup. One of the pieces we need is a continuous customs bond. Could your team walk me through what you'd need from us to get a quote? We're comparing a couple of brokers right now.\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "who handles continuous customs bonds?",
+    "date": "Wed, 28 Oct 2026 19:18:50 +0800",
+    "body": "Hi Dylan,\n\nI'm reaching out for a new California importer that needs a continuous customs bond for its first year of shipments. You helped us with a similar question a few weeks back. Are you still the right person to talk to for a fresh bond quote?\n\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Sent",
+    "from": "Horacio L Sanchez <horaciolsanchez@olivewareinc.com>",
+    "subject": "quick follow-up on our bond application",
+    "date": "Wed, 28 Oct 2026 19:15:33 +0800",
+    "body": "Hi Katrina,\n\nWe're setting up a second importer under our management and wanted to loop you in early. Same workflow as the first file, continuous customs bond, new LLC in California. Can you send over the annual bond application for this entity when you have a moment?\n\nThanks,\nHoracio L Sanchez\nOliveware LLC\n(209) 776 4799"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Re: Connecting About Continuous Bond",
+    "date": "Wed, 28 Oct 2026 15:09:47 +0800",
+    "body": "Hi Cristina,\n\nThanks for the detailed list and for calling. At this point we are first-time importers and are going through a licensed customs broker for our continuous bond application, so we will not be submitting the full surety package for now. We appreciate you taking the time, and will keep The Surety Place in mind should we need a surety alternative down the road.\n\nBest regards,\nKashay Isis Ramona Odom\nOwner, Immunora Bio LLC\n(209) 776-5124\nkashayisisramonaodom@immunora-bio.com"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Re: New Importer Seeking Customs Bond",
+    "date": "Wed, 28 Oct 2026 15:09:46 +0800",
+    "body": "Hi Lukas,\n\nThanks for looping in Melissa. We appreciate the introduction. At this stage we are still gathering and comparing a few bond quotes, so we do not need to set up a call just yet. If we would like to move forward with Mercury, we will reach out and schedule a time that works for both sides.\n\nBest regards,\nKashay Isis Ramona Odom\nOwner, Immunora Bio LLC\n(209) 776-5124\nkashayisisramonaodom@immunora-bio.com"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "RE: Question About Customs Bonds",
+    "date": "Wed, 28 Oct 2026 15:09:45 +0800",
+    "body": "Hi Dylan,\n\nThanks for getting back to us. We are still comparing a couple of broker options before we commit to one, but to help you size things up, here are the details:\n\n- Product: home textile bedding sets\n- Country of origin: China\n- HTS code: 6302.31\n- Anti-dumping / countervailing duty cases: none that we are aware of\n- Anticipated volume: roughly 10 to 20 entries over the next 12 months\n- These are non-Amazon shipments, and we are first-time importers.\n\nCould you let us know what continuous bond amount and annual premium you would recommend based on the above, so we can factor it into our comparison?\n\nBest regards,\nKashay Isis Ramona Odom\nOwner, Immunora Bio LLC\n(209) 776-5124\nkashayisisramonaodom@immunora-bio.com"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "Kashay Isis Ramona Odom | Immunora Bio LLC\r\n <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Re: Looking For A Broker To Handle Bond And Entry",
+    "date": "Wed, 28 Oct 2026 15:09:45 +0800",
+    "body": "Hi Jairo,\n\nThanks for the quick reply. We are importing home textile bedding sets, country of origin China, and we are still comparing a few providers before we decide.\n\nWe would like support both setting up a continuous bond and walking through our first customs entry. Could you let us know whether you are able to help, along with the bond amount you would recommend and your fees?\n\nBest regards,\nKashay Isis Ramona Odom\nOwner, Immunora Bio LLC\n(209) 776-5124\nkashayisisramonaodom@immunora-bio.com"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Inbox",
+    "from": "\"Matthew Lauther (DRI Worldwide)\" <Mlauther@driworldwide.com>",
+    "subject": "Automatic reply: continuous customs bond pricing",
+    "date": "Wed, 28 Oct 2026 11:43:57 +0000",
+    "body": "I will be out of the office until 10/28/26 with very limited to no access to my email.\r\n\r\n\r\nIf you need assistance during my absence please contact our Customs Department at 724-962-4286 ext. 1519.\r\n\r\nThank you,\r\n\r\nMatthew Lauther\r\n\r\n. . . . . The contents of this email are the property of DALKO Resources, Inc. & DRI Worldwide. If it was not addressed to you, you have no legal right to read it. If you think you have received this message in error, please notify the sender. DO NOT forward or copy without permission of the sender. This message may contain an advertisement of a product or service and thus may constitute a commercial electronic mail message under U.S. Law. DALKO Resources, Inc. & DRI Worldwide's postal address: P.O. Box 98, Sharpsville, PA 16150."
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Importivity Team <info@importivity.com>",
+    "subject": "Re: Setting Up A Bond For Our First Shipment",
+    "date": "Wed, 28 Oct 2026 02:52:36 +0800",
+    "body": "Kashay,Import Smarternetbonds.netThis is my personal recommendation, and we have no affiliation with them. I hope this helps. Please let me know if there is anything else I can help with. Thanks,Tanner On Oct 28, 2026, at 2:47 AM, Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com> wrote:﻿Hi Tanner,We are importing into the United States.Thanks,KashayOn Tuesday, October 27, 2026 14:38 EDT, Importivity Team <info@importivity.com> wrote: Kashay, What country are you importing into?  Thanks,Tanner  On Wed, Oct 28, 2026 at 2:32 AM Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com> wrote: Hi Importivity Team,We are a small life sciences company just getting ready to import our first commercial shipment. Timing is important to us, and we want to make sure our continuous customs bond is in place well before the cargo is released. Could you point us to the right contact for new importers and give us a rough sense of your setup timeline?Thank you,Kashay"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Docs.usa <messaging-service@post.xero.com>",
+    "subject": "Invoice INV-5533 from Border Buddy Technologies USA Inc for Immunora Bio LLC",
+    "date": "Tue, 27 Oct 2026 23:21:27 +0000",
+    "body": "Invoice INV-5533 from Border Buddy Technologies USA Inc for Immunora Bio LLC\r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n  \r\n    \r\n        \r\n        \r\n        \r\n            \r\n        \r\n    \r\n    \r\n        \r\n            \r\n            \r\n            \r\n        \r\n        \r\n            \r\n            \r\n        \r\n        \r\n        \r\n        \r\n        \r\n            \r\n            \r\n        \r\n    \r\n    \r\n\r\n\r\n\r\n\r\n\r\n  \r\n  \r\n    \r\n    \r\n      \r\n        \r\n          \r\n            \r\n              \r\n            \r\n          \r\n        \r\n      \r\n    \r\n    \r\n    \r\n      \r\n        \r\n          \r\n            \r\n              \r\n              \r\n              \r\n              \r\n                \r\n                  \r\n                    \r\n                      \r\n                        \r\n                        \r\n                          \r\n                            \r\n                              \r\n                                \r\n                                  \r\n                                    \r\n                                      \r\n                                        \r\n                                          \r\n                                            \r\n                                              \r\n                                                \r\n                                                  \r\n                                                \r\n                                              \r\n                                            \r\n                                          \r\n                                        \r\n                                      \r\n                                    \r\n                                  \r\n                                \r\n                              \r\n                            \r\n                          \r\n                        \r\n                        \r\n                      \r\n                    \r\n                  \r\n                \r\n              \r\n              \r\n              \r\n              \r\n              \r\n                \r\n                  \r\n                    \r\n                      \r\n                        \r\n                        \r\n                          \r\n                            \r\n                              \r\n                                \r\n                                  Border Buddy Technologies USA Inc\r\n                                \r\n                              \r\n                              \r\n                                \r\n                                  $795.60\r\n                                    \r\n                                      USD\r\n                                  \r\n                                \r\n                              \r\n                              \r\n                                \r\n                                  Due Oct 27 2026\r\n                                \r\n                              \r\n                              \r\n                                \r\n                                  Invoice #: INV-5533\r\n           "
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Cristina Alasu <calasu@suretyplace.com>",
+    "subject": "Re: Connecting About Continuous Bond",
+    "date": "Tue, 27 Oct 2026 21:15:20 +0000",
+    "body": "Good afternoon, Kashay,\r\n\r\nI just called to discuss. We're happy to assist with getting you approved for a customs bond. To start that process, we will need the following:\r\n\r\n\r\n  1.\r\nCompleted application - attached: Please make sure to include the information on all owners and spouses and also make sure to include the information on the “Activity Code”   The activity code and amount of the bond will come from CBP.\r\n  2.\r\nLetter from US Customs requesting new bond\r\n  3.\r\nHow much in dues do you expect over the next 12-month period? This will help calculate the new estimated bond amount.\r\n  4.\r\nBusiness plan\r\n  5.\r\nResumes of owners highlighting relevant experience - attached is a blank format\r\n\r\n\r\nLikely required, depending on bond amount:\r\n\r\n  1.\r\nBusiness Financials - Fiscal Year End 2025 & Year To Date 2026\r\n  2.\r\nOwnership Financials - current - attached is a blank form\r\n\r\n\r\nFeel free to reach out with any questions you may have.\r\n\r\nBest,\r\n\r\n\r\n\r\n\r\n\r\n  [cid:f9a710e7-cd6f-482b-83e6-82214bc94b30]\r\n\r\n\r\nCristina Alasu\r\n\r\nSurety Agent\r\n\r\nAZ Lic #20610278\r\n\r\nCA Lic #4281735\r\n\r\n[cid:c90679b8-db29-48e7-b41d-c5a48b075282]\r\n\r\ncalasu@suretyplace.com<mailto:calasu@suretyplace.com>\r\n\r\nToll Free: 866.430.3322 ext. 1584\r\nDirect: 480.543.1584\r\nPhone: 480.419.2456\r\nFax: 480.419.8532\r\n\r\nSurety Placement Services, LLC\r\ndba The Surety Place\r\n\r\n8767 East Via de Ventura, Suite 100\r\nScottsdale, AZ 85258\r\n\r\nwww.suretyplace.com<http://www.suretyplace.com/>\r\n\r\n[Facebook]\r\n\r\n[Twitter]<https://twitter.com/thesuretyplace>\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n________________________________\r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com>\r\nSent: Tuesday, October 27, 2026 9:12 AM\r\nTo: Info <info@suretyplace.com>\r\nSubject: Connecting About Continuous Bond\r\n\r\n\r\nHi Surety Place team,\r\n\r\nI am reaching out from Immunora Bio LLC, a biotech importer based in Poway, California. We are a new importer preparing our first shipments and are looking to establish a continuous customs bond.\r\n\r\nWho would be the best person to speak with about opening a bond account?\r\n\r\n\r\n\r\nKind regards,\r\n\r\nKashay Odom\r\n\r\nImmunora Bio LLC\r\n\r\n209 776 5124"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Sam Bloomberg <sbloombe@shapiro.com>",
+    "subject": "RE: Continuous Customs Bond Inquiry",
+    "date": "Tue, 27 Oct 2026 20:45:10 +0000",
+    "body": "Hi Kashay,\r\n\r\nThank you for your interest in Shapiro. We regret to say this, but we are not very well equipped for shippers with 1-40 shipments a year or fewer.\r\n\r\nI would like to refer you, however, to CJ International https://www.cjinternational.com/. They operate out of our home base (Baltimore) and are very competitive in the market for smaller volume shippers.\r\n\r\nApologies that we could not be of more assistance at this time.\r\n\r\nEnjoy the rest of your week!\r\n\r\nSam\r\n\r\n‑‑‑‑‑‑‑‑‑‑‑‑‑‑\r\nSAM BLOOMBERG\r\n​​Commercial Development\r\n​​sbloombe@shapiro.com\r\n\r\nSHAPIRO We Deliver. Problem Solved.™\r\n www.shapiro.com<http://www.shapiro.com/>\r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •\r\nA 1215 E. Fort Avenue, Suite 201 | Baltimore, MD 21230\r\nP  410.539.0540 |\r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •\r\n​​​​​\r\n\r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com>\r\nSent: Tuesday, October 27, 2026 3:38 PM\r\nTo: Sam Bloomberg <sbloombe@shapiro.com>\r\nSubject: RE: Continuous Customs Bond Inquiry\r\n\r\nCAUTION: External content may be unsafe\r\n________________________________\r\n\r\nHi Sam,\r\n\r\nThank you for your quick response. Here are the details you requested:\r\n\r\n- We do not currently have a company website; we are a newly formed LLC and it is under development.\r\n\r\n- We plan to have approximately 10 to 20 shipments annually in our first year.\r\n\r\n- Our main commodities are home textiles, bedding sets, and general consumer merchandise.\r\n\r\n- These are non-Amazon shipments.\r\n\r\n- We are first-time importers into the United States.\r\n\r\n- We are in the process of setting up our US Customs Bond and expect it to be in place shortly.\r\n\r\n- We have not worked with Shapiro previously.\r\n\r\nPlease let us know if you need any further information to prepare your quote.\r\n\r\nBest regards,\r\n\r\nKashay Isis Ramona Odom\r\n\r\nOwner, Immunora Bio LLC\r\n\r\n(209) 776-5124\r\n\r\nkashayisisramonaodom@immunora-bio.com<mailto:kashayisisramonaodom@immunora-bio.com>\r\n\r\nOn Tuesday, October 27, 2026 16:26 EDT, Sam Bloomberg <sbloombe@shapiro.com<mailto:sbloombe@shapiro.com>> wrote:\r\n\r\n\r\nHi Kashay,\r\n\r\nThanks for taking the time to reach out to Shapiro. I see you are looking for a continuous bond. Before we are able to quote, I need a few more details about your company and shipments. Can you please advise the following:\r\n\r\n\r\n  *   Do you have a website for your company?\r\n  *   How many shipments do you plan on having annually?\r\n  *   What is the commodity?\r\n  *   Are these Amazon or non- Amazon shipments?\r\n  *   Are you a first-time importer, or experienced?\r\n  *   Do you currently have a US Customs Bond in place?\r\n  *   Have you ever worked with Shapiro in the past? If yes, with what company?\r\n\r\nI look forward to hearing back from you.\r\nBest,\r\n\r\nSam\r\n\r\n‑‑‑‑‑‑‑‑‑‑‑‑‑‑\r\nSAM BLOOMBERG\r\n​​Commercial Development\r\n​​sbloombe@shapiro.com<mailto:sbloombe@shapiro.com>\r\n\r\nSHAPIRO We Deliver. Problem Solved.™\r\n ww"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Imports Department <imports@PriorityCB.com>",
+    "subject": "Re: Looking For A Broker To Handle Bond And Entry",
+    "date": "Tue, 27 Oct 2026 20:38:16 +0000",
+    "body": "Good afternoon Kashay,\r\n\r\nThank for contacting us, first we need to know what products you are importing and country of origin. For us to determine if we can help you.\r\n\r\n\r\n\r\n\r\n\r\n\r\nBest regards,\r\n\r\n\r\n\r\nJairo Lazo\r\n\r\nImports Customer Service\r\n\r\n\r\n\r\nPriority Customs Broker, Inc.\r\n\r\n3650 N.W. 82nd Ave, Suite 407\r\n\r\nDoral, Fl 33166\r\n\r\nPh: 305-591-1440 | Fax: 305-591-2332 | Cell: 305-746-1809\r\n\r\nE-mail: imports@prioritycb.com<mailto:imports@prioritycb.com>\r\n\r\nWeb page: www.prioritycb.com<http://www.prioritycb.com/>\r\n\r\n\r\n\r\n[logo Broker (2)]\r\n\r\n\r\n\r\n\r\n\r\n________________________________\r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com>\r\nSent: Tuesday, October 27, 2026 2:48 PM\r\nTo: Imports Department <imports@PriorityCB.com>\r\nSubject: Looking For A Broker To Handle Bond And Entry\r\n\r\n\r\nHi Priority Customs Broker Team,\r\n\r\nBeyond just the bond itself, we are also looking for guidance on our first customs entry process. Could your team support both setting up the continuous bond and walking us through the first entry? If so, could you share who we should contact and what information you would need from us?\r\n\r\nThank you,\r\n\r\nKashay"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Dylan Dickman <dylan@gowithknown.com>",
+    "subject": "RE: Question About Customs Bonds",
+    "date": "Tue, 27 Oct 2026 20:34:30 +0000",
+    "body": "Hi Kashay -\r\n\r\nThanks for reaching out - I could definitely help you with that.\r\n\r\nCould you provide some details on your imports that you're looking to get a bond set up for?\r\n\r\nHTS code\r\nCountry of origin\r\nAny known Anti-Dumping/ Countervailing Duty cases against your imports\r\nAnticipated volume over the next 12 months\r\n\r\nThis will be helpful in rightsizing the bond for y'all. feel free to give me a call if you have any questions.\r\n\r\nBest,\r\n\r\nDylan Dickman\r\nCEO\r\n469-301-4711\r\ndylan@gowithknown.com<mailto:dylan@gowithknown.com>\r\n[A black background with green letters  Description automatically generated]<https://d2fmjp04.na2.hs-sales-engage.com/Ctc/RK+23284/d2FmJP04/Jks2-6qcW69sMD-6lZ3nLW5pS_Bv1VNmf7VbR9fm47xQdMW14_MqH99vGrQW654_hB7Dsw_5W87cpTp4Q8HnvW5QnJkQ688M7VW1_vbYH5P7JkmW1fqYws8ZxQHQW6KR4zK22sGMpW8DdjBK6ZN56TN7ZwMb2NSzn1W6nqqN01NRWz8W2Rwzbq6_WSflW90mkQ28n-kV4VWVJnt7ff2ypW6n8C_Q406g1dVjL8Hv1BdqXZW72F3fw53cRcBW8lhNnD9bPSRXW52rqGh7Vp9XWf9fXhz804>\r\n\r\n\r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com>\r\nSent: Monday, October 26, 2026 12:47 PM\r\nTo: Dylan Dickman <dylan@gowithknown.com>\r\nSubject: Question About Customs Bonds\r\n\r\n\r\nHi Dylan,\r\n\r\nI'm Kashay from Immunora Bio LLC, a biotech importer based in Poway, California. I originally reached out to Gabrielle, and her auto-reply recommended I contact you. We're getting ready to bring in our first shipments and need to set up a continuous customs bond.\r\n\r\nCould you point me to who handles this on your team?\r\n\r\nThanks,\r\n\r\nKashay Odom\r\n Immunora Bio LLC\r\n (209) 776 5124"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Sam Bloomberg <sbloombe@shapiro.com>",
+    "subject": "RE: Continuous Customs Bond Inquiry",
+    "date": "Tue, 27 Oct 2026 20:26:38 +0000",
+    "body": "Hi Kashay,\r\n\r\nThanks for taking the time to reach out to Shapiro. I see you are looking for a continuous bond. Before we are able to quote, I need a few more details about your company and shipments. Can you please advise the following:\r\n\r\n\r\n  *   Do you have a website for your company?\r\n  *   How many shipments do you plan on having annually?\r\n  *   What is the commodity?\r\n  *   Are these Amazon or non- Amazon shipments?\r\n  *   Are you a first-time importer, or experienced?\r\n  *   Do you currently have a US Customs Bond in place?\r\n  *   Have you ever worked with Shapiro in the past? If yes, with what company?\r\n\r\nI look forward to hearing back from you.\r\nBest,\r\n\r\nSam\r\n\r\n‑‑‑‑‑‑‑‑‑‑‑‑‑‑\r\nSAM BLOOMBERG\r\n​​Commercial Development\r\n​​sbloombe@shapiro.com\r\n\r\nSHAPIRO We Deliver. Problem Solved.™\r\n www.shapiro.com<http://www.shapiro.com/>\r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •\r\nA 1215 E. Fort Avenue, Suite 201 | Baltimore, MD 21230\r\nP  410.539.0540 |\r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • •\r\n​​​​​\r\n\r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com>\r\nSent: Tuesday, October 27, 2026 1:26 PM\r\nTo: Web <web@shapiro.com>\r\nSubject: Continuous Customs Bond Inquiry\r\n\r\nCAUTION: External content may be unsafe\r\n________________________________\r\n\r\nHi Shapiro Team,\r\n\r\nWe are a newly formed importer based in Poway, California, and we are preparing for our first shipments into the US. We need to set up a continuous customs bond before the cargo arrives. Could you let us know who on your team handles new bond applications, and what the typical process and fees look like from your side? Happy to share more details once we reach the right person.\r\n\r\nThanks,\r\n\r\nKashay\r\n\r\n(209) 776-5124"
+  },
+  {
+    "client": "Nervaqon",
+    "box": "Inbox",
+    "from": "SPG Anova Marine Bond Department <bonds@anovamarine.com>",
+    "subject": "RE: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC",
+    "date": "Tue, 27 Oct 2026 19:47:41 +0000",
+    "body": "Hi Christian,\r\n\r\nThank you for reaching out — we’re happy to help get this started.\r\n\r\nAttached is the bond application form; please complete it in full.\r\n\r\nPlease let us know if you have any questions.\r\n\r\nThanks,\r\nGreetings/Saludos,\r\n---------------------------------------------------------------------------\r\nNo trees were harmed during the making of this email.\r\n\r\n[https://ci4.googleusercontent.com/proxy/f-ciTpsaLsYZcYzUuK4_9FYAtdP1jLwTup20nXwR90kXCSXgUabFpoDzmg4aEdjgkcYAbrmNYIYkOveykp9YLmkBttXNRo4u62UH_HkOXV3j5sU=s0-d-e1-ft#https://drive.google.com/uc?id=19RwvCr1hZ4TSDu6oUzBw8MhKhC8s8gtV]\r\nPaloma Zhou\r\nCustomer Service Representative\r\nANOVA Marine Insurance\r\n[https://ci6.googleusercontent.com/proxy/Xq3hntJEq2rjJzR0uWCVm3clsSla7NsI7xyRuy0B6esGxKEs0TJKSCBJd0PTJnw80_-gOm3yRwJoGtSWipm4TqjnmSCEllHm6WPq2oze68mmA8DO6Mj2dGBHroByKflVGCBL0c-wyQ3vCF92=s0-d-e1-ft#https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/phone-icon-2x.png]\r\n1 877 295 9997\r\n[https://ci5.googleusercontent.com/proxy/u9Dqq8IRTYcA9pxGhij8X1100IBTEBNk6GfgLex2wy5mIUGt4EvtpI__1csTElV-MUMrqJCa2SjWZkRDmYNbTv260GIk6RQb8BWD6Fub4s38olgLolJ-Y0ZMzSkDaCxhCmOgByGso4GxlMz7=s0-d-e1-ft#https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/email-icon-2x.png]\r\nbonds@anovamarine.com<mailto:cargo@anovamarine.com>\r\n[https://ci5.googleusercontent.com/proxy/bDGbdhNSZAZaKWHjXdHMW3DL3PklwLU9F5lSquHVukVuOVNDm_0LSPw8ckOtJwduaqdVOyJnATN5reUqPaX3QjUNCZkwbG2Ac8UdOzrywgI_nREPLk66UFxOhX3uiKMJOqLfWEBJyXQ51Tk=s0-d-e1-ft#https://cdn2.hubspot.net/hubfs/53/tools/email-signature-generator/icons/link-icon-2x.png]\r\nwww.anovamarine.com<https://www.anovamarine.com/>\r\n\r\n\r\n\r\n\r\n\r\nFrom: Christian Jacob Gonzales Punzalan | Nervaqon LLC <christianjgpunzalan@nervaqon.live>\r\nSent: Saturday, October 24, 2026 10:01 PM\r\nTo: info@jmrodgers.com; letsconnect@avalonrisk.com; info@noatumlogistics.com; service@borderbuddy.com; Info@iiacorp.net; info@mytempleinsurance.com; sales@dedola.com; support@shipmercury.com; contactus@gaig.com; contactsales@reloadlogistics.com; surety@fcainsurance.com; askanexpert@traderiskguaranty.com; info@internationalsureties.com; underwriting@customs-bonds.com; imports@accb.us; sales@camtomx.com; Blaire@rfbarnes.com; info@fleischer-chb.com; ship@atlantacustomsbrokers.com; info@suretyplace.com; INFO@magicbrokers.com; hello@justyourbroker.com; info@globalexportnetwork.com; broker@bringer.com; info@savannahcustomsclearance.com; info@phoenixglobalshipping.com; SPG Anova Marine Bond Department <bonds@anovamarine.com>; info@customscity.com\r\nSubject: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC\r\n\r\n\r\nDear Sir or Madam,\r\n\r\nI am the specialist responsible for Nervaqon LLC with a preliminary inquiry regarding the process for obtaining  Customs bond.\r\n\r\nCompany information:\r\n\r\nLegal name: Nervaqon LLC\r\nEntity type: California limited liability company\r\nBusiness address: 2626 West Ln, Ste A, Stockton, CA 95205\r\n\r\nThe company is currently reviewing the requirements for "
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "RE: Continuous Customs Bond Inquiry",
+    "date": "Tue, 27 Oct 2026 17:07:56 -0400",
+    "body": "Hi Sam,\r\n\r\nThank you very much for letting us know, and for taking the time to recommend CJ International. We truly appreciate the guidance.\r\n\r\nBest regards,\r\nKashay Isis Ramona Odom\r\nOwner, Immunora Bio LLC\r\n\r\nOn Tuesday, October 27, 2026 16:45 EDT, Sam Bloomberg <sbloombe@shapiro.com> wrote:\r\n\r\n \r\nHi Kashay,\r\n\r\n \r\nThank you for your interest in Shapiro. We regret to say this, but we are not very well equipped for shippers with 1-40 shipments a year or fewer.\r\n\r\n \r\nI would like to refer you, however, to CJ International https://www.cjinternational.com/. They operate out of our home base (Baltimore) and are very competitive in the market for smaller volume shippers.\r\n\r\n \r\nApologies that we could not be of more assistance at this time.\r\n\r\n \r\nEnjoy the rest of your week!\r\n\r\n \r\nSam\r\n\r\n \r\n‑‑‑‑‑‑‑‑‑‑‑‑‑‑\r\nSAM BLOOMBERG\r\n​​Commercial Development\r\n​​sbloombe@shapiro.com\r\n\r\nSHAPIRO We Deliver. Problem Solved.™\r\n www.shapiro.com\r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • \r\nA 1215 E. Fort Avenue, Suite 201 | Baltimore, MD 21230\r\nP  410.539.0540 | \r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • \r\n​​​​​\r\n\r\n \r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com> \r\nSent: Tuesday, October 27, 2026 3:38 PM\r\nTo: Sam Bloomberg <sbloombe@shapiro.com>\r\nSubject: RE: Continuous Customs Bond Inquiry\r\n\r\n \r\nCAUTION: External content may be unsafe______________________________________________________________________________\r\n\r\nHi Sam,\r\nThank you for your quick response. Here are the details you requested:\r\n- We do not currently have a company website; we are a newly formed LLC and it is under development.\r\n- We plan to have approximately 10 to 20 shipments annually in our first year.\r\n- Our main commodities are home textiles, bedding sets, and general consumer merchandise.\r\n- These are non-Amazon shipments.\r\n- We are first-time importers into the United States.\r\n- We are in the process of setting up our US Customs Bond and expect it to be in place shortly.\r\n- We have not worked with Shapiro previously.\r\nPlease let us know if you need any further information to prepare your quote.\r\nBest regards,\r\nKashay Isis Ramona Odom\r\nOwner, Immunora Bio LLC\r\n(209) 776-5124\r\nkashayisisramonaodom@immunora-bio.com\r\n\r\nOn Tuesday, October 27, 2026 16:26 EDT, Sam Bloomberg <sbloombe@shapiro.com> wrote:\r\n\r\n \r\nHi Kashay,\r\n \r\nThanks for taking the time to reach out to Shapiro. I see you are looking for a continuous bond. Before we are able to quote, I need a few more details about your company and shipments. Can you please advise the following:\r\n \r\n * Do you have a website for your company? * How many shipments do you plan on having annually? * What is the commodity? * Are these Amazon or non- Amazon shipments? * Are you a first-time importer, or experienced? * Do you currently have a US Customs Bond in place? * Have you ever worked with Shapiro in the past? If yes, with what company?\r\n"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "RE: Continuous Customs Bond Inquiry",
+    "date": "Tue, 27 Oct 2026 16:38:14 -0400",
+    "body": "Hi Sam,\r\nThank you for your quick response. Here are the details you requested:\r\n- We do not currently have a company website; we are a newly formed LLC and it is under development.\r\n- We plan to have approximately 10 to 20 shipments annually in our first year.\r\n- Our main commodities are home textiles, bedding sets, and general consumer merchandise.\r\n- These are non-Amazon shipments.\r\n- We are first-time importers into the United States.\r\n- We are in the process of setting up our US Customs Bond and expect it to be in place shortly.\r\n- We have not worked with Shapiro previously.\r\nPlease let us know if you need any further information to prepare your quote.\r\nBest regards,\r\nKashay Isis Ramona Odom\r\nOwner, Immunora Bio LLC\r\n(209) 776-5124\r\nkashayisisramonaodom@immunora-bio.com\r\n\r\nOn Tuesday, October 27, 2026 16:26 EDT, Sam Bloomberg <sbloombe@shapiro.com> wrote:\r\n\r\n \r\nHi Kashay,\r\n\r\n\r\n \r\nThanks for taking the time to reach out to Shapiro. I see you are looking for a continuous bond. Before we are able to quote, I need a few more details about your company and shipments. Can you please advise the following:\r\n\r\n \r\n\r\n * Do you have a website for your company?\r\n * How many shipments do you plan on having annually?\r\n * What is the commodity?\r\n * Are these Amazon or non- Amazon shipments?\r\n * Are you a first-time importer, or experienced?\r\n * Do you currently have a US Customs Bond in place?\r\n * Have you ever worked with Shapiro in the past? If yes, with what company?\r\n\r\n \r\n\r\nI look forward to hearing back from you.\r\n\r\nBest,\r\n\r\n \r\n\r\nSam\r\n\r\n\r\n \r\n‑‑‑‑‑‑‑‑‑‑‑‑‑‑\r\nSAM BLOOMBERG\r\n​​Commercial Development\r\n​​sbloombe@shapiro.com\r\n\r\nSHAPIRO We Deliver. Problem Solved.™\r\n www.shapiro.com\r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • \r\nA 1215 E. Fort Avenue, Suite 201 | Baltimore, MD 21230\r\nP  410.539.0540 | \r\n • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • • \r\n\r\n​​​​​\r\n\r\n\r\n \r\nFrom: Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com> \r\nSent: Tuesday, October 27, 2026 1:26 PM\r\nTo: Web <web@shapiro.com>\r\nSubject: Continuous Customs Bond Inquiry\r\n\r\n\r\n \r\nCAUTION: External content may be unsafe\r\n______________________________________________________________________________\r\n\r\nHi Shapiro Team,\r\n\r\nWe are a newly formed importer based in Poway, California, and we are preparing for our first shipments into the US. We need to set up a continuous customs bond before the cargo arrives. Could you let us know who on your team handles new bond applications, and what the typical process and fees look like from your side? Happy to share more details once we reach the right person.\r\n\r\nThanks,\r\n\r\nKashay\r\n\r\n(209) 776-5124"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Bravo Squad <bravosquad@shipmercury.com>",
+    "subject": "Re: New Importer Seeking Customs Bond",
+    "date": "Tue, 27 Oct 2026 16:26:22 +0000",
+    "body": "Good Day Kashay,\r\n\r\nThank you for contacting us. I'd like to introduce you to Melissa, a Business Development Manager at Mercury. When you have a chance, we'd like to connect with you to learn more about your company, shipping needs, and find the best customized solution to your needs.\r\n\r\nPlease don't hesitate to let us know some times and days that work best for you.\r\n\r\nBest Regards,\r\n\r\n\r\n[cid:4b2978334d0f0ef366c42b06f4d97286]  Lukas Mosimann\r\nSquad Leader\r\nwww.shipmercury.com<https://www.shipmercury.com/>\r\n+1 (617) 723 5205<tel:+16177235205>\r\n[Sent from Front]\r\nOn October 27, 2026 at 11:35 AM EDT kashayisisramonaodom@immunora-bio.com<mailto:kashayisisramonaodom@immunora-bio.com> wrote:\r\n\r\nYou don't often get email from kashayisisramonaodom@immunora-bio.com. Learn why this is important Hi Mercury team, I ho͏​​﻿‌͏\r\n[Spam]<https://summary.us1.defend.egress.com/v3/summary?ref=email&crId=6ae0c4b98c76764222efcba3&token=NmFlMGM0Yjk4Yzc2NzY0MjIyZWZjYmEzfHN1cHBvcnRAc2hpcG1lcmN1cnkuY29tfDE3OTY1NzEzMjE.yfqaROLchlt4q2X6Kn-ovU0c2blxce7nxOrsX5PkX8o&lang=en>\r\n[External email]<https://summary.us1.defend.egress.com/v3/summary?ref=email&crId=6ae0c4b98c76764222efcba3&token=NmFlMGM0Yjk4Yzc2NzY0MjIyZWZjYmEzfHN1cHBvcnRAc2hpcG1lcmN1cnkuY29tfDE3OTY1NzEzMjE.yfqaROLchlt4q2X6Kn-ovU0c2blxce7nxOrsX5PkX8o&lang=en>\r\n\r\nYou don't often get email from kashayisisramonaodom@immunora-bio.com<mailto:kashayisisramonaodom@immunora-bio.com>. Learn why this is important<https://links.us1.defend.egress.com/Warning?crId=6ae0c4b98c76764222efcba3&Domain=shipmercury.com&Threat=eNpzrShJLcpLzAEADmkDRA%3D%3D&Lang=en&@OriginalLink=aka.ms&Base64Url=eNrLKCkpKLbS10_MTtTLLdb3SU0synNMyi8tCU7NS0kt8kxJzSvJTMtMTizJzM8DAH5uES4%3D>\r\n\r\nHi Mercury team,\r\n\r\nI hope this note finds you well. I am with Immunora Bio LLC, a biotech importer based in Poway, California, and we are preparing our first commercial shipments into the US. We are looking to set up a continuous customs bond before those shipments arrive.\r\n\r\nWho on your team would be the best contact for this?\r\n\r\n\r\n\r\nThanks,\r\n\r\nKashay Odom\r\n\r\nImmunora Bio LLC\r\n\r\n209 776 5124"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Re: Setting Up A Bond For Our First Shipment",
+    "date": "Tue, 27 Oct 2026 16:15:41 -0400",
+    "body": "Hi Tanner,\r\nThank you so much for the recommendation, we really appreciate it. We have already started the bond application process with another provider, but we will keep netbonds.net in mind for future needs.\r\nThanks again,\r\nKashay\r\n \r\n\r\n\r\nOn Tuesday, October 27, 2026 14:52 EDT, Importivity Team <info@importivity.com> wrote:\r\n\r\n \r\nKashay,Import Smarternetbonds.netThis is my personal recommendation, and we have no affiliation with them. I hope this helps.  Please let me know if there is anything else I can help with.  Thanks,Tanner \r\n\r\n \r\nOn Oct 28, 2026, at 2:47 AM, Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com> wrote:\r\n\r\n \r\nHi Tanner,\r\nWe are importing into the United States.\r\nThanks,\r\nKashay\r\n\r\n \r\nOn Tuesday, October 27, 2026 14:38 EDT, Importivity Team <info@importivity.com> wrote:\r\n\r\n Kashay, What country are you importing into?  Thanks,Tanner \r\n\r\n On Wed, Oct 28, 2026 at 2:32 AM Kashay Isis Ramona Odom | Immunora Bio LLC <kashayisisramonaodom@immunora-bio.com> wrote:\r\n \r\nHi Importivity Team,\r\nWe are a small life sciences company just getting ready to import our first commercial shipment. Timing is important to us, and we want to make sure our continuous customs bond is in place well before the cargo is released. Could you point us to the right contact for new importers and give us a rough sense of your setup timeline?\r\nThank you,\r\nKashay"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Supporting Documents for Immunora Bio LLC Annual Bond Application",
+    "date": "Tue, 27 Oct 2026 16:13:52 -0400",
+    "body": "Hi Katrina,\r\nThank you for your email. We have submitted the Annual Bond Application through the JotForm link. Attached please find our company's Articles of Organization for Immunora Bio LLC as the supporting business document.\r\nPlease let us know if you need any additional information.\r\nBest regards,\r\nKashay Isis Ramona Odom\r\nOwner, Immunora Bio LLC\r\n(209) 776-5124"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Jotform <noreply@jotform.com>",
+    "subject": "We’ve Received Your Annual Bond Form Request",
+    "date": "Tue, 27 Oct 2026 16:04:14 -0400",
+    "body": "Hello,\r\nWe’re writing to confirm that we’ve received your annual bond form request.\r\nFor your convenience, we’ve attached the application PDF to this email so you\r\ncan review and complete it at your leisure.\r\nOur team is currently processing your request, and someone will get back to you\r\nas soon as possible with the next steps or if any additional information is\r\nneeded.\r\nIf you have any questions in the meantime, feel free to reply to this email —\r\nwe’re happy to help.\r\nKind regards.\r\n\r\n© BorderBuddy Technologies Inc."
+  },
+  {
+    "client": "Oliveware",
+    "box": "Inbox",
+    "from": "Aryeh Hoffman <info@iiacorp.net>",
+    "subject": "Re: Customs Bond Inquiry for Oliveware LLC",
+    "date": "Tue, 27 Oct 2026 15:27:55 -0600",
+    "body": "Hi there,\r\n\r\n\r\n\r\nSorry, but we can not help direct importers right now. Please work with a Custom House Broker that is licensed to do these types of entries into the USA.\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nWe can also help you with:\r\n\r\nTransit Insurance\r\n\r\nWarehouse Coverage\r\n\r\nNVOCC, OFF, and FMCSA Bonds\r\n\r\nUS Customs Code # 1, 2, or 3 Bonds.\r\n\r\nProfessional Liability Insurance\r\n\r\nCredit Insurance\r\n\r\n\r\nJust reply to this email with any questions.\r\n\r\n\r\n\r\n\r\n\r\nAll the best,\r\n\r\nAryeh Hoffman  \r\n\r\n\r\n\r\n\r\nCA License # 0L05732.                        \r\n\r\n\r\nNPN # 18062158\r\n\r\n\r\n\r\n\r\n\r\nInternational Insurance Associates\r\n\r\nCA Corp. License # O476540\r\n\r\n\r\nIIACorp.net\r\n(562) 861-0309\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nFrom: Horacio L Sanchez | Oliveware LLC <horaciolsanchez@olivewareinc.com>\r\nTo: <info@iiacorp.net>\r\nDate: Tue, 27 Oct 2026 12:29:03 -0600\r\nSubject: Customs Bond Inquiry for Oliveware LLC\r\n\r\n\r\n\r\nHello,\r\n\r\nWe are seeking assistance with obtaining a U.S. Customs Bond for Oliveware LLC.\r\n\r\nCould you please let us know if your team handles Customs Bond applications and what documents would be needed to get started?\r\n\r\nWe would also appreciate information on the estimated processing time and fees.\r\n\r\nBest regards,\r\nOliveware LLC"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "New Importer Needing A Continuous Bond",
+    "date": "Tue, 27 Oct 2026 14:54:21 -0400",
+    "body": "Hi Profreight Team,\r\nWe are a newly formed LLC that recently received our EIN, and this will be our first time going through a US customs bond application. We want to work with a broker that is comfortable walking first-time importers through the required paperwork. Could you let us know what documents you typically need and who would be our main contact?\r\nAppreciate your help,\r\nKashay"
+  },
+  {
+    "client": "Immunora",
+    "box": "Sent",
+    "from": "\"Kashay Isis Ramona Odom | Immunora Bio LLC\" <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Looking For A Broker To Handle Bond And Entry",
+    "date": "Tue, 27 Oct 2026 14:48:40 -0400",
+    "body": "Hi Priority Customs Broker Team,\r\nBeyond just the bond itself, we are also looking for guidance on our first customs entry process. Could your team support both setting up the continuous bond and walking us through the first entry? If so, could you share who we should contact and what information you would need from us?\r\nThank you,\r\nKashay"
+  },
+  {
+    "client": "Oliveware",
+    "box": "Inbox",
+    "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
+    "subject": "\"Personal Address Book\" has been created",
+    "date": "Tue, 27 Oct 2026 14:14:19 -0400",
+    "body": "The \"Personal Address Book\" folder has been created."
+  },
+  {
+    "client": "Oliveware",
+    "box": "Inbox",
+    "from": "\"Horacio L Sanchez | Oliveware LLC\" <horaciolsanchez@olivewareinc.com>",
+    "subject": "\"Personal Calendar\" has been created",
+    "date": "Tue, 27 Oct 2026 12:36:41 -0400",
+    "body": "The \"Personal Calendar\" folder has been created."
+  },
+  {
+    "client": "Nervaqon",
+    "box": "Inbox",
+    "from": "Staff Underwriters <StaffUnderwriters@SuretyOne.com>",
+    "subject": "Re: Inquiry About Obtaining Customs Bond for Nervaqon LLC",
+    "date": "Sat, 24 Oct 2026 23:28:25 -0400",
+    "body": "Thank you for your interest in our bonding company’s support of this \r\nneed, Christian. You may learn more about the various CBP bond \r\nobligations at https://Customs-Bonds.com  We have attached a helpful \r\nguide to the application requirements as well. In order to quote you we \r\nwill need the following, . . .\r\n\r\n  * Customs bond application and release (attached).\r\n  * Current personal financial statement of owner(s). (You may use the\r\n    attached template if you wish.)\r\n  * Business financial statement, current balance sheet and year-to-date\r\n    P&L.\r\n  * Any correspondence between the applicant and CBP regarding\r\n    regulation of the importer’s/exporter’s business.\r\n  * Please indicate if any of the goods being imported are subject to\r\n    antidumping or prevailing/counterprevailing duties.\r\n\r\n\r\nBecause of the nature of these bonds, we must accomplish a review of the \r\napplicant’s credit and financial statement in order to properly quote \r\npremium. I will do so and respond to you immediately. We look forward to \r\nhelping you!\r\n\r\n\r\n*_Please give us a “Like” on Facebook. Go to \r\nhttps://www.facebook.com/Surety1  or on your mobile telephone text ‘like \r\nsurety1' to 32665 or on ‘X’ at https://x.com/suretyone._*\r\n\r\n\r\n\r\n\r\nOn 10/24/2026 10:01 PM, Christian Jacob Gonzales Punzalan | Nervaqon LLC \r\nwrote:\r\n>\r\n> Dear Sir or Madam,\r\n>\r\n> I am the specialist responsible for Nervaqon LLC with a preliminary \r\n> inquiry regarding the process for obtaining  Customs bond.\r\n>\r\n> Company information:\r\n>\r\n> Legal name: Nervaqon LLC\r\n> Entity type: California limited liability company\r\n> Business address: 2626 West Ln, Ste A, Stockton, CA 95205\r\n>\r\n> The company is currently reviewing the requirements for customs bond \r\n> coverage in connection with potential import activity. Could you \r\n> please advise:\r\n>\r\n>  1. Whether you provide customs bonds for newly established U.S.\r\n>     companies;\r\n>  2. Whether a single-entry or continuous bond may be appropriate;\r\n>  3. What company, ownership, import and financial information is\r\n>     required for an initial quotation;\r\n>  4. Whether the application must be submitted or signed directly by\r\n>     the company’s owner or an authorized officer; and\r\n>  5. Whether you require a written authorization or power of attorney\r\n>     before communicating with an administrative assistant.\r\n>\r\n> At this stage, I am only assisting with the preliminary inquiry and \r\n> collection of application requirements. Any formal application, \r\n> authorization, certification or signature will be completed by the \r\n> company’s owner or another duly authorized representative.\r\n>\r\n> Please send the applicable application form and a list of the required \r\n> supporting documents.\r\n>\r\n> Best regards,\r\n>"
+  },
+  {
+    "client": "Nervaqon",
+    "box": "Sent",
+    "from": "\"Christian Jacob Gonzales Punzalan | Nervaqon LLC\" <christianjgpunzalan@nervaqon.live>",
+    "subject": "Inquiry About Obtaining Customs Bond for Nervaqon LLC",
+    "date": "Sat, 24 Oct 2026 22:01:05 -0400",
+    "body": "Dear Sir or Madam,\r\nI am the specialist responsible for Nervaqon LLC with a preliminary inquiry regarding the process for obtaining  Customs bond.\r\nCompany information:\r\nLegal name: Nervaqon LLC\r\nEntity type: California limited liability company\r\nBusiness address: 2626 West Ln, Ste A, Stockton, CA 95205\r\nThe company is currently reviewing the requirements for customs bond coverage in connection with potential import activity. Could you please advise: * Whether you provide customs bonds for newly established U.S. companies; * Whether a single-entry or continuous bond may be appropriate; * What company, ownership, import and financial information is required for an initial quotation; * Whether the application must be submitted or signed directly by the company’s owner or an authorized officer; and * Whether you require a written authorization or power of attorney before communicating with an administrative assistant.\r\nAt this stage, I am only assisting with the preliminary inquiry and collection of application requirements. Any formal application, authorization, certification or signature will be completed by the company’s owner or another duly authorized representative.\r\nPlease send the applicable application form and a list of the required supporting documents.\r\nBest regards,"
+  },
+  {
+    "client": "Immunora",
+    "box": "Inbox",
+    "from": "Kashay Odom <kashayisisramonaodom@immunora-bio.com>",
+    "subject": "Delivery Self Test 1028",
+    "date": "",
+    "body": "Delivery self-test for bond replies, ignore."
+  }
 ]
