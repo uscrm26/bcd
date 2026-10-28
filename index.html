@@ -87,14 +87,20 @@
   .progress-title { font-size:11px;font-weight:600;color:#92400e;margin-top:12px;margin-bottom:4px; }
   @media (max-width: 768px) {
     body { padding: 10px; }
-    .clock-row { grid-template-columns: repeat(2,1fr); }
+    .clock-row { grid-template-columns: 1fr; gap: 6px; }
+    .clock-card { padding: 8px 12px; gap: 10px; }
+    .clock-card .flag { font-size: 22px; }
+    .clock-card .time { font-size: 17px; }
+    .clock-card .date { font-size: 10px; }
     .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .funnel-grid { grid-template-columns: 1fr; }
     .client-grid { grid-template-columns: 1fr; }
     .client-card .top { flex-direction: column; }
     .client-card .avatar { width:100%; height:180px; }
     nav { overflow-x: auto; flex-wrap: nowrap; }
     nav button { white-space: nowrap; }
     .wrap { padding: 0; }
+    .funnel-row .bar { height: 22px; font-size: 11px; }
   }
   .doc-icon { width:64px;height:76px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;text-decoration:none; }
   .doc-icon:hover { background:#eef2ff;border-color:#4338ca; }
@@ -195,7 +201,7 @@
         <div class="funnel-row"><div class="bar" style="width:100%;background:#9ca3af;"><span data-i18n-f1>已發開發信 70</span></div></div>
         <div class="funnel-row"><div class="bar" style="width:40%;background:#6b7280;"><span data-i18n-f2>收到回覆 7</span></div></div>
         <div class="funnel-row"><div class="bar" style="width:15%;background:#4b5563;"><span data-i18n-f3>對接開單 1</span></div></div>
-        <div class="funnel-row"><div class="bar" style="width:5%;background:#374151;min-width:60px;">0</div></div>
+        <div class="funnel-row"><div class="bar" style="width:5%;background:#374151;min-width:60px;"><span data-i18n-f4>獲得海關擔保文件 0</span></div></div>
         <div style="font-size:11px;color:#8a8f98;margin-top:8px;" data-i18n-f4>獲得海關擔保文件 0</div>
       </div>
       <div class="card">
