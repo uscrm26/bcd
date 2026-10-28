@@ -194,6 +194,7 @@
     <div class="right">
       <div id="lastRefresh" style="font-size:11px;color:#8a8f98;"></div>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" id="btnHans" onclick="setLang('hans')">簡中</button>
       <button class="lang-btn on" id="btnZh" onclick="setLang('zh')">繁中</button>
     </div>
   </header>
@@ -270,15 +271,15 @@
     <div class="card">
       <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span data-i18n-clients-title>在處理客戶</span></h2>
       <div class="toolbar">
-        <input type="text" id="clientTableSearch" placeholder="搜索客戶、法人、狀態..." onkeyup="filterClientTable()">
+        <input type="text" id="clientTableSearch" data-i18n-search-client-table placeholder="搜索客戶、法人、狀態..." onkeyup="filterClientTable()">
         <select id="clientTimeFilter" onchange="filterClientTable()" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;">
-          <option value="">全部時間</option>
-          <option value="48h">最近48小時</option>
-          <option value="month">本月內</option>
+          <option value="" data-i18n-time-filter-all>全部時間</option>
+          <option value="48h" data-i18n-time-filter-48h>最近48小時</option>
+          <option value="month" data-i18n-time-filter-month>本月內</option>
         </select>
       </div>
       <table>
-        <thead><tr><th data-i18n-col-client>客戶</th><th data-i18n-col-founder>法人</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note>備註</th><th>詳情</th></tr></thead>
+        <thead><tr><th data-i18n-col-client>客戶</th><th data-i18n-col-founder>法人</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note>備註</th><th data-i18n-detail>詳情</th></tr></thead>
         <tbody id="clientTableBody">
           <tr class="client-row" data-client="Immunora" data-founder="Kashay Odom" data-status="審批中">
             <td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run" data-i18n-st-review>審批中</span></td><td>BorderBuddy，INV-5533 已轉公司付款待確認</td>
@@ -594,8 +595,8 @@
 
   <div id="company" class="page">
     <div class="card">
-      <h2>公司檔案庫</h2>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:14px;">公司提供的參考文件、話術手冊、財務範本、報關行名單，點擊即可預覽或下載。</div>
+      <h2 data-i18n-company-title>公司檔案庫</h2>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:14px;" data-i18n-company-desc>公司提供的參考文件、話術手冊、財務範本、報關行名單，點擊即可預覽或下載。</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
         <div style="border:1px solid #e5e7eb;border-radius:12px;padding:16px;background:#f9fafb;">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
@@ -882,7 +883,12 @@ function renderLive(){
 var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
     title:'凱文的代辦業務看板',
-    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄','nav-broker':'報關經紀資源池','nav-policy':'公司資料',
+    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄','nav-broker':'報關經紀資源池','nav-policy':'公司資料','nav-company':'公司檔案',
+    searchClientTable:'搜索客戶、法人、狀態...', timeFilterAll:'全部時間', timeFilter48h:'最近48小時', timeFilterMonth:'本月內',
+    detail:'詳情', expand:'展開', collapse:'收起',
+    timeline:'處理時間線（北京時間）', doneItems:'已完成事項', todoItems:'待辦事項',
+    companyTitle:'公司檔案庫', companyDesc:'公司提供的參考文件、話術手冊、財務範本、報關行名單，點擊即可預覽或下載。',
+    preview:'預覽', download:'下載',
     newmail:'新郵件提醒', newmailBody:'',
     kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 支付確認中',
     kpi3l:'獲得海關擔保文件', kpi3s:'尚無', kpi4l:'月度目標達成', kpi4s:'目標每月下 bond 30 家',
@@ -922,7 +928,12 @@ var i18n = {
   },
   en: { gateTitle:'Enter 4-digit PIN', gateSub:'輸入 4 位數字密碼', update:'New version available, click to refresh', ai:'Ask AI',
     title:"Kevin's Bond Deal Dashboard",
-    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail','nav-policy':'Company Docs','nav-broker':'Broker Pool',
+    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail','nav-policy':'Company Info','nav-company':'Documents','nav-broker':'Broker Pool',
+    searchClientTable:'Search client, founder, status...', timeFilterAll:'All time', timeFilter48h:'Last 48h', timeFilterMonth:'This month',
+    detail:'Details', expand:'Expand', collapse:'Collapse',
+    timeline:'Processing Timeline (Beijing time)', doneItems:'Completed', todoItems:'To-do',
+    companyTitle:'Company Document Library', companyDesc:'Internal reference docs, scripts, financial templates, broker lists. Preview or download below.',
+    preview:'Preview', download:'Download',
     newmail:'New Email Alert', newmailBody:'',
     kpi1l:'Active Clients', kpi1s:'This month', kpi2l:'Invoiced', kpi2s:'Immunora in payment',
     kpi3l:'Bond Secured', kpi3s:'None yet', kpi4l:'Monthly Target', kpi4s:'Target 30 bonds / month',
@@ -962,6 +973,25 @@ var i18n = {
   }
 };
 function setLang(l) {
+  if (l === 'hans') {
+    var tsMap = {'發':'发','個':'个','們':'们','這':'这','國':'国','與':'与','業':'业','務':'务','報':'报','關':'关','擔':'担','保':'保','險':'险','資':'资','源':'源','池':'池','經':'经','紀':'纪','檔':'档','案':'案','庫':'库','預':'预','覽':'览','載':'载','詳':'详','展':'展','開':'开','收':'收','縮':'缩','時':'时','間':'间','線':'线','內':'内','處':'处','理':'理','過':'过','程':'程','標':'标','準':'准','則':'则','規':'规','則':'则','標':'标','註':'注','顏':'颜','色':'色','狀':'状','態':'态','單':'单','據':'据','為':'为','從':'从','後':'后','個':'个','這':'这','們':'们','對':'对','應':'应','該':'该','嗎':'吗','著':'着','說':'说','話':'话','語':'语','詞':'词','彙':'汇','總':'总','結':'结','計':'计','劃':'划','執':'执','行':'行','績':'绩','效':'效','優':'优','化':'化','產':'产','品':'品','開':'开','發':'发','發':'发','送':'送','郵':'邮','件':'件','箱':'箱','戶':'户','號':'号','碼':'码','密':'密','碼':'码','登':'登','錄':'录','頁':'页','面':'面','設':'设','置':'置','選':'选','擇':'择','按':'按','鈕':'钮','單':'单','擊':'击','菜':'菜','單':'单','功':'功','能':'能','模':'模','組':'组','塊':'块','區':'区','域':'域','顯':'显','示':'示','隱':'隐','藏':'藏','展':'展','開':'开','收':'收','合':'合','滾':'滚','動':'动','欄':'栏','目':'目','錄':'录','表':'表','格':'格','列':'列','行':'行','單':'单','元':'元','格':'格','邊':'边','框':'框','間':'间','距':'距','填':'填','補':'补','對':'对','齊':'齐','排':'排','版':'版','布':'布','局':'局','風':'风','格':'格','主':'主','題':'题','副':'副','標':'标','題':'题','正':'正','文':'文','段':'段','落':'落','字':'字','體':'体','號':'号','顏':'颜','色':'色','粗':'粗','體':'体','斜':'斜','體':'体','底':'底','色':'色','邊':'边','框':'框','圓':'圆','角':'角','陰':'阴','影':'影','漸':'渐','變':'变','過':'过','渡':'渡','動':'动','畫':'画','效':'效','果':'果','反':'反','饋':'馈','提':'提','交':'交','審':'审','核':'核','通':'通','過':'过','駁':'驳','回':'回','修':'修','改':'改','編':'编','輯':'辑','刪':'删','除':'除','新':'新','增':'增','加':'加','減':'减','導':'导','入':'入','出':'出','導':'导','下':'下','載':'载','上':'上','傳':'传','預':'预','覽':'览','查':'查','詢':'询','搜':'搜','索':'索','篩':'筛','選':'选','過':'过','濾':'滤','分':'分','類':'类','匯':'汇','總':'总','統':'统','計':'计','分':'分','析':'析','報':'报','表':'表','儀':'仪','表':'表','圖':'图','表':'表','折':'折','線':'线','柱':'柱','狀':'状','餅':'饼','圖':'图','趨':'趋','勢':'势','數':'数','據':'据','庫':'库','後':'后','台':'台','系':'系','統':'统','權':'权','限':'限','管':'管','理':'理','員':'员','客':'客','戶':'户','員':'员','工':'工','上':'上','級':'级','下':'下','屬':'属','部':'部','門':'门','組':'组','織':'织','團':'团','隊':'队','會':'会','議':'议','記':'记','錄':'录','待':'待','辦':'办','事':'事','項':'项','進':'进','度':'度','優':'优','先':'先','級':'级','緊':'紧','急':'急','重':'重','要':'要','時':'时','間':'间','日':'日','期':'期','時':'时','刻':'刻','提':'提','醒':'醒','鬧':'闹','鐘':'钟','日':'日','曆':'历','簽':'签','到':'到','請':'请','假':'假','出':'出','差':'差','報':'报','銷':'销','審':'审','批':'批','流':'流','程':'程','節':'节','點':'点','裡':'里','面':'面','左':'左','右':'右','上':'上','下':'下','中':'中','間':'间','頂':'顶','部':'部','底':'底','邊':'边','緣':'缘','寬':'宽','度':'度','高':'高','度':'度','邊':'边','距':'距','內':'内','外':'外','層':'层','次':'次','級':'级','別':'别','等':'等','級':'级','種':'种','類':'类','型':'型','式':'式','樣':'样','風':'风','格':'格','質':'质','感':'感','視':'视','覺':'觉','效':'效','果':'果','驗':'验','證':'证','測':'测','試':'试','運':'运','行':'行','狀':'状','態':'态','報':'报','錯':'错','誤':'误','警':'警','告':'告','日':'日','誌':'志','日':'日','報':'报','週':'周','報':'报','月':'月','報':'报','年':'年','報':'报','總':'总','結':'结','反':'反','思':'思','改':'改','進':'进','優':'优','化':'化','創':'创','新':'新','突':'突','破':'破','進':'进','展':'展','規':'规','劃':'划','目':'目','標':'标','預':'预','算':'算','預':'预','測':'测','判':'判','斷':'断','決':'决','策':'策','戰':'战','略':'略','戰':'战','術':'术','方':'方','法':'法','技':'技','巧':'巧','經':'经','驗':'验','教':'教','訓':'训','練':'练','習':'习','課':'课','程':'程','考':'考','試':'试','評':'评','估':'估','考':'考','核':'核','獎':'奖','懲':'惩','激':'激','勵':'励','福':'福','利':'利','薪':'薪','資':'资','待':'待','遇':'遇','離':'离','職':'职','入':'入','職':'职','轉':'转','正':'正','試':'试','用':'用','期':'期','滿':'满','續':'续','約':'约','解':'解','雇':'雇','賠':'赔','償':'偿','勞':'劳','動':'动','合':'合','同':'同','勞':'劳','務':'务','合':'合','同':'同','外':'外','包':'包','採':'采','購':'购','供':'供','應':'应','商':'商','合':'合','作':'作','夥':'伙','伴':'伴','競':'竞','爭':'争','對':'对','手':'手','市':'市','場':'场','份':'份','額':'额','佔':'占','有':'有','率':'率','增':'增','長':'长','跌':'跌','幅':'幅','波':'波','動':'动','趨':'趋','勢':'势','週':'周','期':'期','循':'循','環':'环','穩':'稳','定':'定','波':'波','動':'动','風':'风','險':'险','控':'控','制':'制','管':'管','理':'理','合':'合','規':'规','合':'合','法':'法','審':'审','計':'计','稅':'税','務':'务','財':'财','務':'务','會':'会','計':'计','審':'审','計':'计','資':'资','金':'金','現':'现','金':'金','銀':'银','行':'行','賬':'账','戶':'户','餘':'余','額':'额','流':'流','水':'水','明':'明','細':'细','單':'单','發':'发','票':'票','收':'收','據':'据','支':'支','出':'出','收':'收','入':'入','利':'利','潤':'润','虧':'亏','損':'损','成':'成','本':'本','費':'费','用':'用','預':'预','算':'算','決':'决','算':'算','結':'结','餘':'余','營':'营','收':'收','毛':'毛','利':'利','淨':'净','利':'利','股':'股','東':'东','權':'权','益':'益','資':'资','產':'产','負':'负','債':'债','現':'现','金':'金','流':'流','量':'量','表':'表','資':'资','產':'产','負':'负','債':'债','表':'表','損':'损','益':'益','表':'表','現':'现','金':'金','流':'流','量':'量','表':'表'};
+    document.querySelectorAll('body *').forEach(function(el){
+      if (el.children.length === 0 && el.innerText) {
+        var t = el.innerText;
+        for (var k in tsMap) t = t.split(k).join(tsMap[k]);
+        el.innerText = t;
+      }
+      if (el.placeholder) {
+        var p = el.placeholder;
+        for (var k in tsMap) p = p.split(k).join(tsMap[k]);
+        el.placeholder = p;
+      }
+    });
+    document.getElementById('btnEn').classList.toggle('on', false);
+    document.getElementById('btnZh').classList.toggle('on', false);
+    document.getElementById('btnHans').classList.toggle('on', true);
+    return;
+  }
   var d = i18n[l];
   document.querySelector('h1 span').innerText = d.title;
   document.querySelector('.gate-box h3').innerText = d.gateTitle;
@@ -973,11 +1003,13 @@ function setLang(l) {
         var hyphen = a.substring(10);
         var camel = hyphen.replace(/-([a-z])/g, function(g){return g[1].toUpperCase();});
         if (d[camel] !== undefined && d[camel] !== '') el.innerText = d[camel];
+        if (camel === 'searchClientTable' && d[camel]) el.placeholder = d[camel];
       }
     }
   });
   document.getElementById('btnEn').classList.toggle('on', l==='en');
   document.getElementById('btnZh').classList.toggle('on', l==='zh');
+  document.getElementById('btnHans').classList.toggle('on', l==='hans');
 }
 var lastHash = null;
 function checkUpdate() {
