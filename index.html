@@ -177,60 +177,22 @@
       <span id="d4" style="width:14px;height:14px;border-radius:50%;border:2px solid #9ca3af;"></span>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
-      <button onclick="press('1')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">1</button>
-      <button onclick="press('2')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">2</button>
-      <button onclick="press('3')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">3</button>
-      <button onclick="press('4')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">4</button>
-      <button onclick="press('5')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">5</button>
-      <button onclick="press('6')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">6</button>
-      <button onclick="press('7')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">7</button>
-      <button onclick="press('8')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">8</button>
-      <button onclick="press('9')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">9</button>
-      <button onclick="clearGate()" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">C</button>
-      <button onclick="press('0')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">0</button>
-      <button onclick="backspace()" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">⌫</button>
+      <button onclick="alert('test1')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">1</button>
+      <button onclick="alert('test2')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">2</button>
+      <button onclick="alert('test3')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">3</button>
+      <button onclick="alert('test4')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">4</button>
+      <button onclick="alert('test5')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">5</button>
+      <button onclick="alert('test6')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">6</button>
+      <button onclick="alert('test7')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">7</button>
+      <button onclick="alert('test8')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">8</button>
+      <button onclick="alert('test9')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">9</button>
+      <button onclick="alert('C')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">C</button>
+      <button onclick="alert('0')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">0</button>
+      <button onclick="alert('back')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">⌫</button>
     </div>
     <div id="gateErr" style="color:#b91c1c;font-size:12px;margin-top:10px;height:16px;"></div>
   </div>
 </div>
-<script>
-var gateCode = '';
-var PIN = '0521';
-function press(n) {
-  if (gateCode.length >=4) return;
-  gateCode += n;
-  for(var i=1;i<=4;i++) {
-    document.getElementById('d'+i).style.background = gateCode.length >= i ? '#374151' : 'transparent';
-  }
-  if (gateCode.length === 4) {
-    if (gateCode === PIN) {
-      document.getElementById('gate').style.display = 'none';
-    } else {
-      document.getElementById('gateErr').innerText = '密碼錯誤';
-      setTimeout(function(){
-        gateCode = '';
-        document.getElementById('gateErr').innerText = '';
-        for(var i=1;i<=4;i++) {
-          document.getElementById('d'+i).style.background = 'transparent';
-        }
-      }, 800);
-    }
-  }
-}
-function backspace() {
-  gateCode = gateCode.slice(0,-1);
-  for(var i=1;i<=4;i++) {
-    document.getElementById('d'+i).style.background = gateCode.length >= i ? '#374151' : 'transparent';
-  }
-}
-function clearGate() {
-  gateCode = '';
-  document.getElementById('gateErr').innerText = '';
-  for(var i=1;i<=4;i++) {
-    document.getElementById('d'+i).style.background = 'transparent';
-  }
-}
-</script>
 <div class="wrap">
   <div id="updateBar" onclick="location.reload()"><span data-i18n-update>有新版本，點擊刷新</span></div>
   <header>
