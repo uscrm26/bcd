@@ -166,20 +166,71 @@
 </style>
 </head>
 <body>
-<div id="gate">
-  <div class="gate-box">
-    <h3 data-gate-title>輸入 4 位數字密碼</h3>
-    <p class="sub" data-gate-sub>Enter the 4-digit PIN to access</p>
-    <div class="gate-dots"><span id="d1"></span><span id="d2"></span><span id="d3"></span><span id="d4"></span></div>
-    <div class="keypad">
-      <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
-      <button onclick="press('4')">4</button><button onclick="press('5')">5</button><button onclick="press('6')">6</button>
-      <button onclick="press('7')">7</button><button onclick="press('8')">8</button><button onclick="press('9')">9</button>
-      <button onclick="clearGate()">C</button><button onclick="press('0')">0</button><button onclick="backspace()">⌫</button>
+<div id="gate" style="position:fixed;inset:0;background:#1f2937;display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:#fff;padding:32px;border-radius:16px;text-align:center;width:300px;">
+    <h3 style="font-size:16px;color:#374151;margin:0 0 6px 0;">輸入 4 位數字密碼</h3>
+    <p style="font-size:12px;color:#8a8f98;margin:0 0 20px 0;">Enter the 4-digit PIN to access</p>
+    <div style="display:flex;justify-content:center;gap:10px;margin-bottom:20px;">
+      <span id="d1" style="width:14px;height:14px;border-radius:50%;border:2px solid #9ca3af;"></span>
+      <span id="d2" style="width:14px;height:14px;border-radius:50%;border:2px solid #9ca3af;"></span>
+      <span id="d3" style="width:14px;height:14px;border-radius:50%;border:2px solid #9ca3af;"></span>
+      <span id="d4" style="width:14px;height:14px;border-radius:50%;border:2px solid #9ca3af;"></span>
     </div>
-    <div class="gate-err" id="gateErr"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <button onclick="press('1')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">1</button>
+      <button onclick="press('2')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">2</button>
+      <button onclick="press('3')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">3</button>
+      <button onclick="press('4')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">4</button>
+      <button onclick="press('5')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">5</button>
+      <button onclick="press('6')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">6</button>
+      <button onclick="press('7')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">7</button>
+      <button onclick="press('8')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">8</button>
+      <button onclick="press('9')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">9</button>
+      <button onclick="clearGate()" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">C</button>
+      <button onclick="press('0')" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">0</button>
+      <button onclick="backspace()" style="padding:14px;font-size:18px;border:1px solid #e5e7eb;background:#f9fafb;border-radius:10px;cursor:pointer;">⌫</button>
+    </div>
+    <div id="gateErr" style="color:#b91c1c;font-size:12px;margin-top:10px;height:16px;"></div>
   </div>
 </div>
+<script>
+var gateCode = '';
+var PIN = '0521';
+function press(n) {
+  if (gateCode.length >=4) return;
+  gateCode += n;
+  for(var i=1;i<=4;i++) {
+    document.getElementById('d'+i).style.background = gateCode.length >= i ? '#374151' : 'transparent';
+  }
+  if (gateCode.length === 4) {
+    if (gateCode === PIN) {
+      document.getElementById('gate').style.display = 'none';
+    } else {
+      document.getElementById('gateErr').innerText = '密碼錯誤';
+      setTimeout(function(){
+        gateCode = '';
+        document.getElementById('gateErr').innerText = '';
+        for(var i=1;i<=4;i++) {
+          document.getElementById('d'+i).style.background = 'transparent';
+        }
+      }, 800);
+    }
+  }
+}
+function backspace() {
+  gateCode = gateCode.slice(0,-1);
+  for(var i=1;i<=4;i++) {
+    document.getElementById('d'+i).style.background = gateCode.length >= i ? '#374151' : 'transparent';
+  }
+}
+function clearGate() {
+  gateCode = '';
+  document.getElementById('gateErr').innerText = '';
+  for(var i=1;i<=4;i++) {
+    document.getElementById('d'+i).style.background = 'transparent';
+  }
+}
+</script>
 <div class="wrap">
   <div id="updateBar" onclick="location.reload()"><span data-i18n-update>有新版本，點擊刷新</span></div>
   <header>
@@ -863,17 +914,6 @@ function scrollToClientMail(clientName) {
   filterMail();
 }
 var code = '';
-function press(d) {
-  if (code.length >= 4) return;
-  code += d;
-  for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length);
-  if (code.length === 4) {
-    if (code === '0521') { document.getElementById('gate').style.display='none'; }
-    else { document.getElementById('gateErr').innerText = '密碼錯誤 / Wrong PIN'; setTimeout(function(){code='';for(var i=1;i<=4;i++)document.getElementById('d'+i).classList.remove('on');document.getElementById('gateErr').innerText='';},800); }
-  }
-}
-function backspace() { code = code.slice(0,-1); for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length); }
-function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.remove('on'); }
 function askAI() { alert('請回到豆包對話窗，告訴我你要處理的事項即可。看板數據由我這邊自動更新。'); }
 
 var clocks = [
