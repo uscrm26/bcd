@@ -291,11 +291,11 @@
       <table>
         <thead><tr><th data-i18n-col-client2>客戶</th><th data-i18n-col-email>登錄郵箱</th><th data-i18n-col-pwd>密碼</th><th data-i18n-col-action>操作</th></tr></thead>
         <tbody>
-          <tr><td>Immunora Bio LLC</td><td>kashayisisramonaodom@immunora-bio.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open>打開 Webmail</a></td></tr>
-          <tr><td>Oliveware LLC</td><td>horaciolsanchez@olivewareinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open2>打開 Webmail</a></td></tr>
-          <tr><td>Pebblehome LLC</td><td>christopherhodge@pebblehomeinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open3>打開 Webmail</a></td></tr>
-          <tr><td>Sageware LLC</td><td>jaliarthomas@sagewareinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open4>打開 Webmail</a></td></tr>
-          <tr><td>Nervaqon LLC</td><td>christianjgpunzalan@nervaqon.live</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open5>打開 Webmail</a></td></tr>
+          <tr><td>Immunora Bio LLC</td><td>kashayisisramonaodom@immunora-bio.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/?username=kashayisisramonaodom@immunora-bio.com" target="_blank" data-i18n-open>打開 Webmail</a></td></tr>
+          <tr><td>Oliveware LLC</td><td>horaciolsanchez@olivewareinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/?username=horaciolsanchez@olivewareinc.com" target="_blank" data-i18n-open2>打開 Webmail</a></td></tr>
+          <tr><td>Pebblehome LLC</td><td>christopherhodge@pebblehomeinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/?username=christopherhodge@pebblehomeinc.com" target="_blank" data-i18n-open3>打開 Webmail</a></td></tr>
+          <tr><td>Sageware LLC</td><td>jaliarthomas@sagewareinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/?username=jaliarthomas@sagewareinc.com" target="_blank" data-i18n-open4>打開 Webmail</a></td></tr>
+          <tr><td>Nervaqon LLC</td><td>christianjgpunzalan@nervaqon.live</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/?username=christianjgpunzalan@nervaqon.live" target="_blank" data-i18n-open5>打開 Webmail</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -402,14 +402,22 @@ var i18n = {
 function setLang(l) {
   var d = i18n[l];
   document.querySelector('h1 span').innerText = d.title;
-  document.querySelector('.updated').innerText = d.tz;
   document.getElementById('gateErr').innerText = '';
   document.querySelector('.gate-box h3').innerText = d.gateTitle;
   document.querySelector('.gate-box p.sub').innerText = d.gateSub;
-  Object.keys(d).forEach(function(k){
-    if (k==='title'||k==='tz'||k==='gateTitle'||k==='gateSub'||k==='update') return;
-    var el = document.querySelector('[data-i18n-'+k+']');
-    if (el) el.innerText = d[k];
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k = el.getAttribute('data-i18n');
+    if (d[k] !== undefined) el.innerText = d[k];
+  });
+  document.querySelectorAll('body *').forEach(function(el){
+    for (var i=0;i<el.attributes.length;i++){
+      var a = el.attributes[i].name;
+      if (a && a.indexOf('data-i18n-')===0) {
+        var hyphen = a.substring(10);
+        var camel = hyphen.replace(/-([a-z])/g, function(g){return g[1].toUpperCase();});
+        if (d[camel] !== undefined) el.innerText = d[camel];
+      }
+    }
   });
   document.getElementById('btnEn').classList.toggle('on', l==='en');
   document.getElementById('btnZh').classList.toggle('on', l==='zh');
