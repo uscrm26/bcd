@@ -3,16 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>凱文的代辦業務看板</title>
+<title>凱文的代辦業務看板 / Kevin's Bond Deal Dashboard</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
-    background: #f0f1f3; color: #2b2f36; padding: 24px;
-  }
+  body { font-family: -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif; background: #f0f1f3; color: #2b2f36; padding: 24px; }
   #gate { position: fixed; inset: 0; background: #1f2937; display: flex; align-items: center; justify-content: center; z-index: 9999; }
   .gate-box { background: #fff; padding: 32px; border-radius: 16px; text-align: center; width: 300px; }
-  .gate-box h3 { font-size: 16px; color: #374151; margin-bottom: 16px; }
+  .gate-box h3 { font-size: 16px; color: #374151; margin-bottom: 6px; }
+  .gate-box p.sub { font-size: 12px; color: #8a8f98; margin-bottom: 20px; }
   .gate-dots { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
   .gate-dots span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #9ca3af; }
   .gate-dots span.on { background: #374151; border-color: #374151; }
@@ -22,30 +20,28 @@
   .gate-err { color: #b91c1c; font-size: 12px; margin-top: 10px; height: 16px; }
   .wrap { max-width: 1280px; margin: 0 auto; }
   header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; }
-  header h1 { font-size: 22px; font-weight: 600; }
+  header h1 { font-size: 22px; font-weight: 600; display:flex; align-items:center; gap:8px; }
+  header h1 svg { width:22px;height:22px; }
+  header .right { display:flex; align-items:center; gap:12px; }
   header .updated { font-size: 12px; color: #8a8f98; }
-
+  .lang-btn { border:1px solid #d1d5db;background:#fff;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px; }
+  .lang-btn.on { background:#374151;color:#fff; }
+  #updateBar { display:none; background:#4338ca;color:#fff;padding:8px 16px;border-radius:8px;font-size:13px;margin-bottom:14px;cursor:pointer; }
   nav { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-  nav button {
-    border: 1px solid #d1d5db; background: #fff; padding: 8px 18px; border-radius: 8px;
-    font-size: 13px; cursor: pointer; color: #4b5563;
-  }
+  nav button { border: 1px solid #d1d5db; background: #fff; padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; color: #4b5563; display:flex; align-items:center; gap:6px; }
+  nav button svg { width:14px;height:14px; }
   nav button.active { background: #374151; color: #fff; border-color: #374151; }
-
   .page { display: none; }
   .page.active { display: block; }
-
   .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
-  .card {
-    background: #fff; border-radius: 12px; padding: 18px 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; margin-bottom: 16px;
-  }
-  .card .label { font-size: 12px; color: #6b7280; margin-bottom: 8px; }
+  .card { background: #fff; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; margin-bottom: 16px; }
+  .card .label { font-size: 12px; color: #6b7280; margin-bottom: 8px; display:flex; align-items:center; gap:6px; }
+  .card .label svg { width:14px;height:14px; }
   .card .value { font-size: 30px; font-weight: 600; color: #1f2937; }
   .card .sub { font-size: 12px; margin-top: 6px; color: #6b7280; }
   .card .sub.warn { color: #d97706; }
-
-  h2 { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+  h2 { font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 12px; display:flex; align-items:center; gap:6px; }
+  h2 svg { width:16px;height:16px; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th { text-align: left; color: #6b7280; font-weight: 500; padding: 8px 10px; border-bottom: 1px solid #e5e7eb; }
   td { padding: 9px 10px; border-bottom: 1px solid #f0f1f3; vertical-align: top; }
@@ -54,42 +50,37 @@
   .pill.run { background: #e0f2f1; color: #0f766e; }
   .pill.ready { background: #eef2ff; color: #4338ca; }
   .pill.block { background: #fee2e2; color: #b91c1c; }
-
   .funnel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .funnel-row { display: flex; align-items: center; margin: 8px 0; font-size: 12px; }
   .funnel-row .bar { height: 26px; color: #fff; display: flex; align-items: center; padding-left: 10px; border-radius: 4px; margin-right: 10px; }
   .ring-wrap { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 0; }
-  .ring {
-    width: 160px; height: 160px; border-radius: 50%;
-    background: conic-gradient(#4338ca 0 60%, #0f766e 60% 80%, #b91c1c 80% 100%);
-    display: flex; align-items: center; justify-content: center;
-  }
+  .ring { width: 160px; height: 160px; border-radius: 50%; background: conic-gradient(#4338ca 0 60%, #0f766e 60% 80%, #b91c1c 80% 100%); display: flex; align-items: center; justify-content: center; }
   .ring .inner { width: 110px; height: 110px; border-radius: 50%; background: #fff; display:flex; align-items:center; justify-content:center; flex-direction: column; }
   .legend { font-size: 12px; color: #4b5563; line-height: 2; }
   .legend span.dot { display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:middle; }
-
   .toolbar { display: flex; gap: 10px; margin-bottom: 14px; align-items: center; flex-wrap: wrap; }
-  .toolbar input, .toolbar select {
-    padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; background: #fff;
-  }
+  .toolbar input, .toolbar select { padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 13px; background: #fff; }
   .toolbar input { flex: 1; min-width: 200px; }
-
   .client-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
   .client-card { background: #fff; border-radius: 12px; padding: 18px; border: 1px solid #e5e7eb; }
   .client-card h3 { font-size: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
   .client-card .row { display: flex; justify-content: space-between; font-size: 12px; padding: 4px 0; border-bottom: 1px dashed #f0f1f3; }
   .client-card .row .k { color: #6b7280; }
   .client-card .row .v { color: #1f2937; text-align: right; }
-
   .month-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
   .month-tabs button { padding: 6px 14px; border: 1px solid #d1d5db; background: #fff; border-radius: 6px; cursor: pointer; font-size: 12px; }
   .month-tabs button.active { background: #374151; color: #fff; }
+  .newmail { background:#fffbeb;border:1px solid #fde68a; }
+  .newmail h2 { color:#92400e; }
+  .newmail p { font-size:13px;color:#78350f;line-height:1.8; }
+  a.webmail-link { color:#4338ca; }
 </style>
 </head>
 <body>
 <div id="gate">
   <div class="gate-box">
-    <h3>輸入 4 位數字密碼</h3>
+    <h3 data-gate-title>輸入 4 位數字密碼</h3>
+    <p class="sub" data-gate-sub>Enter the 4-digit PIN to access</p>
     <div class="gate-dots"><span id="d1"></span><span id="d2"></span><span id="d3"></span><span id="d4"></span></div>
     <div class="keypad">
       <button onclick="press('1')">1</button><button onclick="press('2')">2</button><button onclick="press('3')">3</button>
@@ -101,49 +92,51 @@
   </div>
 </div>
 <div class="wrap">
+  <div id="updateBar" onclick="location.reload()"><span data-i18n-update>有新版本，點擊刷新</span></div>
   <header>
-    <h1 data-i18n-title>凱文的代辦業務看板</h1>
-    <div style="display:flex;align-items:center;gap:14px;">
-      <button onclick="setLang('en')" id="btnEn" style="border:1px solid #d1d5db;background:#fff;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px;">EN</button>
-      <button onclick="setLang('zh')" id="btnZh" style="border:1px solid #d1d5db;background:#374151;color:#fff;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px;">繁中</button>
+    <h1>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg>
+      <span data-i18n-title>凱文的代辦業務看板</span>
+    </h1>
+    <div class="right">
+      <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn on" id="btnZh" onclick="setLang('zh')">繁中</button>
       <div class="updated" data-i18n-tz>中國時區 UTC+8，每日 05:00 清算</div>
     </div>
   </header>
 
   <nav>
-    <button class="active" onclick="show('now',this)" data-i18n-nav-now>在處理看板</button>
-    <button onclick="show('daily',this)" data-i18n-nav-daily>每日工作</button>
-    <button onclick="show('clients',this)" data-i18n-nav-clients>客戶檔案</button>
-    <button onclick="show('mail',this)" data-i18n-nav-mail>郵件明細</button>
-    <button onclick="show('webmail',this)" data-i18n-nav-webmail>郵箱登錄</button>
+    <button class="active" onclick="show('now',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span data-i18n-nav-now>在處理看板</span></button>
+    <button onclick="show('daily',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span data-i18n-nav-daily>每日工作</span></button>
+    <button onclick="show('clients',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n-nav-clients>客戶檔案</span></button>
+    <button onclick="show('mail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span data-i18n-nav-mail>郵件明細</span></button>
+    <button onclick="show('webmail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-webmail>郵箱登錄</span></button>
   </nav>
 
   <div id="now" class="page active">
-    <div class="card" style="background:#fffbeb;border:1px solid #fde68a;">
-      <h2 style="color:#92400e;">新郵件提醒</h2>
-      <div style="font-size:13px;color:#78350f;line-height:1.8;">
-        目前待你人工覈對的新郵件：暫無。定時任務每小時查一次五個郵箱，有新真人回信會寫在這裡。
-      </div>
+    <div class="card newmail">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span data-i18n-newmail>新郵件提醒</span></h2>
+      <p data-i18n-newmail-body>目前待你人工覈對的新郵件：暫無。定時任務每小時查一次五個郵箱，有新真人回信會寫在這裡。</p>
     </div>
 
     <div class="kpi-row">
       <div class="card">
-        <div class="label" data-i18n-kpi1l>在處理客戶</div>
+        <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span data-i18n-kpi1l>在處理客戶</span></div>
         <div class="value">5</div>
         <div class="sub" data-i18n-kpi1s>本月立項</div>
       </div>
       <div class="card">
-        <div class="label" data-i18n-kpi2l>對接開單中</div>
+        <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span data-i18n-kpi2l>對接開單中</span></div>
         <div class="value">1</div>
         <div class="sub warn" data-i18n-kpi2s>Immunora 付款階段</div>
       </div>
       <div class="card">
-        <div class="label" data-i18n-kpi3l>獲得海關擔保文件</div>
+        <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n-kpi3l>獲得海關擔保文件</span></div>
         <div class="value">0</div>
         <div class="sub warn" data-i18n-kpi3s>尚無</div>
       </div>
       <div class="card">
-        <div class="label" data-i18n-kpi4l>月度目標達成</div>
+        <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span data-i18n-kpi4l>月度目標達成</span></div>
         <div class="value">0%</div>
         <div class="sub warn" data-i18n-kpi4s>目標每月下 bond 30 家</div>
       </div>
@@ -151,36 +144,36 @@
 
     <div class="funnel-grid">
       <div class="card">
-        <h2>開發信漏斗</h2>
-        <div class="funnel-row"><div class="bar" style="width:100%;background:#9ca3af;">已發開發信 70</div></div>
-        <div class="funnel-row"><div class="bar" style="width:40%;background:#6b7280;">收到回覆 7</div></div>
-        <div class="funnel-row"><div class="bar" style="width:15%;background:#4b5563;">對接開單 1</div></div>
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span data-i18n-funnel>開發信漏斗</span></h2>
+        <div class="funnel-row"><div class="bar" style="width:100%;background:#9ca3af;"><span data-i18n-f1>已發開發信 70</span></div></div>
+        <div class="funnel-row"><div class="bar" style="width:40%;background:#6b7280;"><span data-i18n-f2>收到回覆 7</span></div></div>
+        <div class="funnel-row"><div class="bar" style="width:15%;background:#4b5563;"><span data-i18n-f3>對接開單 1</span></div></div>
         <div class="funnel-row"><div class="bar" style="width:5%;background:#374151;min-width:60px;">0</div></div>
-        <div style="font-size:11px;color:#8a8f98;margin-top:8px;">獲得海關擔保文件 0</div>
+        <div style="font-size:11px;color:#8a8f98;margin-top:8px;" data-i18n-f4>獲得海關擔保文件 0</div>
       </div>
       <div class="card">
-        <h2>在處理客戶狀態</h2>
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span data-i18n-ring>在處理客戶狀態</span></h2>
         <div class="ring-wrap">
-          <div class="ring"><div class="inner"><div style="font-size:22px;font-weight:600;">5</div><div style="font-size:11px;color:#6b7280;">總客戶</div></div></div>
+          <div class="ring"><div class="inner"><div style="font-size:22px;font-weight:600;">5</div><div style="font-size:11px;color:#6b7280;" data-i18n-ringtotal>總客戶</div></div></div>
           <div class="legend">
-            <div><span class="dot" style="background:#0f766e;"></span>審批中 1 家</div>
-            <div><span class="dot" style="background:#4338ca;"></span>可啟動 3 家</div>
-            <div><span class="dot" style="background:#b91c1c;"></span>待補件 1 家</div>
+            <div><span class="dot" style="background:#0f766e;"></span><span data-i18n-l1>審批中 1 家</span></div>
+            <div><span class="dot" style="background:#4338ca;"></span><span data-i18n-l2>可啟動 3 家</span></div>
+            <div><span class="dot" style="background:#b91c1c;"></span><span data-i18n-l3>待補件 1 家</span></div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>在處理客戶</h2>
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span data-i18n-clients-title>在處理客戶</span></h2>
       <table>
-        <thead><tr><th>客戶</th><th>法人</th><th>狀態</th><th>備註</th></tr></thead>
+        <thead><tr><th data-i18n-col-client>客戶</th><th data-i18n-col-founder>法人</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note>備註</th></tr></thead>
         <tbody>
-          <tr><td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run">審批中</span></td><td>BorderBuddy，INV-5533 已轉公司付款待確認</td></tr>
-          <tr><td>Oliveware LLC</td><td>Horacio Sanchez</td><td><span class="pill ready">可啟動</span></td><td>材料齊全，開發信已發</td></tr>
-          <tr><td>Pebblehome LLC</td><td>Christopher Hodge</td><td><span class="pill block">待補件</span></td><td>駕照過期，EIN 拼寫待核</td></tr>
-          <tr><td>Sageware LLC</td><td>Jaliar Thomas</td><td><span class="pill ready">可啟動</span></td><td>材料齊全，開發信已發</td></tr>
-          <tr><td>Nervaqon LLC</td><td>Christian Punzalan</td><td><span class="pill ready">可啟動</span></td><td>人像照待更換</td></tr>
+          <tr><td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run" data-i18n-st-review>審批中</span></td><td>BorderBuddy，INV-5533 已轉公司付款待確認</td></tr>
+          <tr><td>Oliveware LLC</td><td>Horacio Sanchez</td><td><span class="pill ready" data-i18n-st-ready>可啟動</span></td><td data-i18n-note-oliveware>材料齊全，開發信已發</td></tr>
+          <tr><td>Pebblehome LLC</td><td>Christopher Hodge</td><td><span class="pill block" data-i18n-st-block>待補件</span></td><td data-i18n-note-pebblehome>駕照過期，EIN 拼寫待核</td></tr>
+          <tr><td>Sageware LLC</td><td>Jaliar Thomas</td><td><span class="pill ready" data-i18n-st-ready2>可啟動</span></td><td data-i18n-note-sageware>材料齊全，開發信已發</td></tr>
+          <tr><td>Nervaqon LLC</td><td>Christian Punzalan</td><td><span class="pill ready" data-i18n-st-ready3>可啟動</span></td><td data-i18n-note-nervaqon>人像照待更換</td></tr>
         </tbody>
       </table>
     </div>
@@ -188,22 +181,21 @@
 
   <div id="daily" class="page">
     <div class="card">
-      <h2>每日工作記錄</h2>
+      <h2 data-i18n-daily-title>每日工作記錄</h2>
       <div class="month-tabs">
         <button class="active">2026 年 10 月</button>
         <button>2026 年 11 月</button>
       </div>
       <table>
-        <thead><tr><th style="width:110px;">日期</th><th style="width:180px;">涉及客戶</th><th>工作內容</th><th style="width:200px;">產出</th></tr></thead>
+        <thead><tr><th style="width:110px;" data-i18n-col-date>日期</th><th style="width:180px;" data-i18n-col-clients>涉及客戶</th><th data-i18n-col-work>工作內容</th><th style="width:200px;" data-i18n-col-output>產出</th></tr></thead>
         <tbody>
-          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>Oliveware、Pebblehome、Sageware、Nervaqon</td><td>歸檔四家全套材料，飛書主表更新 5 行</td><td>4 個客戶檔案夾建立</td></tr>
-          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>Pebblehome</td><td>覈驗發現佛州駕照 10/20 過期，EIN 名字 ROBIM 拼寫不一致</td><td>問題已轉上游同事</td></tr>
-          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>新四家</td><td>啟動 40 封差異化開發信，按客戶郵箱依次發送</td><td>每封間隔約 3 分鐘</td></tr>
-          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Immunora</td><td>BorderBuddy POA 簽署，Annual Bond Application 經 JotForm 提交</td><td>公司章程已作為支持文件發送</td></tr>
-          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Immunora</td><td>BorderBuddy 開出發票 INV-5533，金額 795.60 USD</td><td>已轉公司付款，待確認到賬</td></tr>
-          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Known、Priority、Mercury、Surety Place</td><td>4 封誤判進 Junk 的真人回信逐一回覆</td><td>SMTP 發送並 APPEND 到 Sent</td></tr>
-          <tr><td><b>10 月 26 日</b><br><span style="color:#8a8f98;font-size:11px;">週一</span></td><td>Immunora</td><td>從 2400 家資源池挑約 30 家首輪群發</td><td>首輪諮詢信發出</td></tr>
-          <tr><td><b>10 月 26 日</b><br><span style="color:#8a8f98;font-size:11px;">週一</span></td><td>全部郵箱</td><td>SOGo 白屏確認死路，改用 IMAP4_SSL 993 收信、SMTP 465 發信</td><td>郵件通道穩定</td></tr>
+          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>Oliveware、Pebblehome、Sageware、Nervaqon</td><td data-i18n-d1>歸檔四家全套材料，飛書主表更新 5 行</td><td data-i18n-o1>4 個客戶檔案夾建立</td></tr>
+          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td>Pebblehome</td><td data-i18n-d2>核驗發現佛州駕照 10/20 過期，EIN 名字 ROBIM 拼寫不一致</td><td data-i18n-o2>問題已轉上游同事</td></tr>
+          <tr><td><b>10 月 28 日</b><br><span style="color:#8a8f98;font-size:11px;">週三</span></td><td data-i18n-d3c>新四家</td><td data-i18n-d3>啟動 40 封差異化開發信，按客戶郵箱依次發送</td><td data-i18n-o3>每封間隔約 3 分鐘</td></tr>
+          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Immunora</td><td data-i18n-d4>BorderBuddy POA 簽署，Annual Bond Application 經 JotForm 提交</td><td data-i18n-o4>公司章程已作為支持文件發送</td></tr>
+          <tr><td><b>10 月 27 日</b><br><span style="color:#8a8f98;font-size:11px;">週二</span></td><td>Immunora</td><td data-i18n-d5>BorderBuddy 開出發票 INV-5533，金額 795.60 USD</td><td data-i18n-o5>已轉公司付款，待確認到賬</td></tr>
+          <tr><td><b>10 月 26 日</b><br><span style="color:#8a8f98;font-size:11px;">週一</span></td><td>Immunora</td><td data-i18n-d6>從 2400 家資源池挑約 30 家首輪群發</td><td data-i18n-o6>首輪諮詢信發出</td></tr>
+          <tr><td><b>10 月 26 日</b><br><span style="color:#8a8f98;font-size:11px;">週一</span></td><td data-i18n-d7c>全部郵箱</td><td data-i18n-d7>SOGo 白屏確認死路，改用 IMAP4_SSL 993 收信、SMTP 465 發信</td><td data-i18n-o7>郵件通道穩定</td></tr>
         </tbody>
       </table>
     </div>
@@ -212,55 +204,55 @@
   <div id="clients" class="page">
     <div class="card">
       <div class="toolbar">
-        <input type="text" id="clientSearch" placeholder="搜索客戶名、法人、地址、EIN..." onkeyup="filterClients()">
+        <input type="text" id="clientSearch" data-i18n-search-clients placeholder="搜索客戶名、法人、地址、EIN..." onkeyup="filterClients()">
       </div>
       <div class="client-grid" id="clientGrid">
         <div class="client-card" data-name="immunora kashay poway borderbuddy">
-          <h3>Immunora Bio LLC <span class="pill run">審批中</span></h3>
-          <div class="row"><span class="k">法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
-          <div class="row"><span class="k">郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
-          <div class="row"><span class="k">電話</span><span class="v">209 776 5124</span></div>
-          <div class="row"><span class="k">地址</span><span class="v">12759 Poway Rd Ste 202 Poway CA 92064</span></div>
-          <div class="row"><span class="k">產品</span><span class="v">home textile bedding sets，China，HTS 6302.31</span></div>
-          <div class="row"><span class="k">對接</span><span class="v">BorderBuddy Katrina 604-245-7353</span></div>
-          <div class="row"><span class="k">金額</span><span class="v">INV-5533 795.60 USD 待確認</span></div>
+          <h3>Immunora Bio LLC <span class="pill run" data-i18n-st-review2>審批中</span></h3>
+          <div class="row"><span class="k" data-i18n-c-founder>法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
+          <div class="row"><span class="k" data-i18n-c-email>郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
+          <div class="row"><span class="k" data-i18n-c-phone>電話</span><span class="v">209 776 5124</span></div>
+          <div class="row"><span class="k" data-i18n-c-addr>地址</span><span class="v">12759 Poway Rd Ste 202 Poway CA 92064</span></div>
+          <div class="row"><span class="k" data-i18n-c-product>產品</span><span class="v">home textile bedding sets，China，HTS 6302.31</span></div>
+          <div class="row"><span class="k" data-i18n-c-broker>對接</span><span class="v">BorderBuddy Katrina 604-245-7353</span></div>
+          <div class="row"><span class="k" data-i18n-c-amt>金額</span><span class="v">INV-5533 795.60 USD 待確認</span></div>
         </div>
         <div class="client-card" data-name="oliveware horacio carlsbad 42-5322248">
-          <h3>Oliveware LLC <span class="pill ready">可啟動</span></h3>
-          <div class="row"><span class="k">法人</span><span class="v">Horacio L Sanchez</span></div>
-          <div class="row"><span class="k">郵箱</span><span class="v">horaciolsanchez@olivewareinc.com</span></div>
-          <div class="row"><span class="k">電話</span><span class="v">209 776 4799</span></div>
-          <div class="row"><span class="k">地址</span><span class="v">2725 Jefferson St Ste 6 Carlsbad CA 92008</span></div>
+          <h3>Oliveware LLC <span class="pill ready" data-i18n-st-ready4>可啟動</span></h3>
+          <div class="row"><span class="k" data-i18n-c-founder2>法人</span><span class="v">Horacio L Sanchez</span></div>
+          <div class="row"><span class="k" data-i18n-c-email2>郵箱</span><span class="v">horaciolsanchez@olivewareinc.com</span></div>
+          <div class="row"><span class="k" data-i18n-c-phone2>電話</span><span class="v">209 776 4799</span></div>
+          <div class="row"><span class="k" data-i18n-c-addr2>地址</span><span class="v">2725 Jefferson St Ste 6 Carlsbad CA 92008</span></div>
           <div class="row"><span class="k">EIN</span><span class="v">42-5322248</span></div>
-          <div class="row"><span class="k">CA 實體號</span><span class="v">B20260423624</span></div>
-          <div class="row"><span class="k">SSN 尾號</span><span class="v">8981，DOB 1990-04-03</span></div>
+          <div class="row"><span class="k" data-i18n-c-ca>CA 實體號</span><span class="v">B20260423624</span></div>
+          <div class="row"><span class="k" data-i18n-c-ssn>SSN 尾號</span><span class="v">8981，DOB 1990-04-03</span></div>
         </div>
         <div class="client-card" data-name="pebblehome christopher los angeles 42-5322611">
-          <h3>Pebblehome LLC <span class="pill block">待補件</span></h3>
-          <div class="row"><span class="k">法人</span><span class="v">Christopher Robin Hodge</span></div>
-          <div class="row"><span class="k">郵箱</span><span class="v">christopherhodge@pebblehomeinc.com</span></div>
-          <div class="row"><span class="k">電話</span><span class="v">209 776 5910</span></div>
-          <div class="row"><span class="k">地址</span><span class="v">11111 W Olympic Blvd Ste 201 LA CA 90064</span></div>
+          <h3>Pebblehome LLC <span class="pill block" data-i18n-st-block2>待補件</span></h3>
+          <div class="row"><span class="k" data-i18n-c-founder3>法人</span><span class="v">Christopher Robin Hodge</span></div>
+          <div class="row"><span class="k" data-i18n-c-email3>郵箱</span><span class="v">christopherhodge@pebblehomeinc.com</span></div>
+          <div class="row"><span class="k" data-i18n-c-phone3>電話</span><span class="v">209 776 5910</span></div>
+          <div class="row"><span class="k" data-i18n-c-addr3>地址</span><span class="v">11111 W Olympic Blvd Ste 201 LA CA 90064</span></div>
           <div class="row"><span class="k">EIN</span><span class="v">42-5322611</span></div>
-          <div class="row"><span class="k">待辦</span><span class="v">佛州駕照過期，EIN 拼 ROBIM 待核</span></div>
+          <div class="row"><span class="k" data-i18n-c-todo>待辦</span><span class="v" data-i18n-c-todo-v>佛州駕照過期，EIN 拼 ROBIM 待核</span></div>
         </div>
         <div class="client-card" data-name="sageware jaliar west hollywood 42-5322451">
-          <h3>Sageware LLC <span class="pill ready">可啟動</span></h3>
-          <div class="row"><span class="k">法人</span><span class="v">Jaliar Antrez Thomas</span></div>
-          <div class="row"><span class="k">郵箱</span><span class="v">jaliarthomas@sagewareinc.com</span></div>
-          <div class="row"><span class="k">電話</span><span class="v">209 776 5047</span></div>
-          <div class="row"><span class="k">地址</span><span class="v">349 N La Cienega Blvd West Hollywood CA 90048</span></div>
+          <h3>Sageware LLC <span class="pill ready" data-i18n-st-ready5>可啟動</span></h3>
+          <div class="row"><span class="k" data-i18n-c-founder4>法人</span><span class="v">Jaliar Antrez Thomas</span></div>
+          <div class="row"><span class="k" data-i18n-c-email4>郵箱</span><span class="v">jaliarthomas@sagewareinc.com</span></div>
+          <div class="row"><span class="k" data-i18n-c-phone4>電話</span><span class="v">209 776 5047</span></div>
+          <div class="row"><span class="k" data-i18n-c-addr4>地址</span><span class="v">349 N La Cienega Blvd West Hollywood CA 90048</span></div>
           <div class="row"><span class="k">EIN</span><span class="v">42-5322451</span></div>
-          <div class="row"><span class="k">CA 實體號</span><span class="v">B20260423648</span></div>
+          <div class="row"><span class="k" data-i18n-c-ca2>CA 實體號</span><span class="v">B20260423648</span></div>
         </div>
         <div class="client-card" data-name="nervaqon christian stockton 43-2215794">
-          <h3>Nervaqon LLC <span class="pill ready">可啟動</span></h3>
-          <div class="row"><span class="k">法人</span><span class="v">Christian Jacob Gonzales Punzalan</span></div>
-          <div class="row"><span class="k">郵箱</span><span class="v">christianjgpunzalan@nervaqon.live</span></div>
-          <div class="row"><span class="k">電話</span><span class="v">475 274 2069</span></div>
-          <div class="row"><span class="k">地址</span><span class="v">2626 West Ln Ste A Stockton CA 95205</span></div>
+          <h3>Nervaqon LLC <span class="pill ready" data-i18n-st-ready6>可啟動</span></h3>
+          <div class="row"><span class="k" data-i18n-c-founder5>法人</span><span class="v">Christian Jacob Gonzales Punzalan</span></div>
+          <div class="row"><span class="k" data-i18n-c-email5>郵箱</span><span class="v">christianjgpunzalan@nervaqon.live</span></div>
+          <div class="row"><span class="k" data-i18n-c-phone5>電話</span><span class="v">475 274 2069</span></div>
+          <div class="row"><span class="k" data-i18n-c-addr5>地址</span><span class="v">2626 West Ln Ste A Stockton CA 95205</span></div>
           <div class="row"><span class="k">EIN</span><span class="v">43-2215794</span></div>
-          <div class="row"><span class="k">待辦</span><span class="v">人像照換穿著上衣版本</span></div>
+          <div class="row"><span class="k" data-i18n-c-todo2>待辦</span><span class="v" data-i18n-c-todo2-v>人像照換穿著上衣版本</span></div>
         </div>
       </div>
     </div>
@@ -268,25 +260,25 @@
 
   <div id="mail" class="page">
     <div class="card">
-      <h2>郵件往來明細</h2>
+      <h2 data-i18n-mail-title>郵件往來明細</h2>
       <div class="toolbar">
-        <input type="text" id="mailSearch" placeholder="搜索收件人、公司、主題..." onkeyup="filterMail()">
+        <input type="text" id="mailSearch" data-i18n-search-mail placeholder="搜索收件人、公司、主題..." onkeyup="filterMail()">
       </div>
       <table id="mailTable">
-        <thead><tr><th>日期</th><th>發件客戶</th><th>收件人</th><th>主題</th><th>狀態</th><th>備註</th></tr></thead>
+        <thead><tr><th data-i18n-col-date2>日期</th><th data-i18n-col-sender>發件客戶</th><th data-i18n-col-recv>收件人</th><th data-i18n-col-subject>主題</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note2>備註</th></tr></thead>
         <tbody>
-          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td>海關擔保業務諮詢</td><td><span class="pill ready">等待回覆</span></td><td>首輪群發</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td>海關擔保業務諮詢</td><td><span class="pill run">已成交在途</span></td><td>Katrina 對接順利，已開發票</td></tr>
-          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td>bond 申請後續跟進</td><td><span class="pill ready">已發送</span></td><td>合作過的 Katrina</td></tr>
-          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td>差異化開發信</td></tr>
-          <tr><td colspan="6" style="color:#8a8f98;">其餘開發信後台發送中，完成後自動補入此表</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td data-i18n-sub1>海關擔保業務諮詢</td><td><span class="pill ready" data-i18n-wait>等待回覆</span></td><td data-i18n-n1>首輪群發</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td data-i18n-sub2>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-replied>已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td data-i18n-sub3>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td data-i18n-sub4>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td data-i18n-sub5>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td data-i18n-sub6>海關擔保業務諮詢</td><td><span class="pill block" data-i18n-closed>已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td data-i18n-sub7>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td data-i18n-sub8>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td data-i18n-sub9>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-deal>已成交在途</span></td><td>Katrina 對接順利，已開發票</td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td data-i18n-sub10>bond 申請後續跟進</td><td><span class="pill ready" data-i18n-sent>已發送</span></td><td data-i18n-n10>合作過的 Katrina</td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td data-i18n-sub11>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td data-i18n-n11>差異化開發信</td></tr>
+          <tr><td colspan="6" style="color:#8a8f98;" data-i18n-more>其餘開發信後台發送中，完成後自動補入此表</td></tr>
         </tbody>
       </table>
     </div>
@@ -294,16 +286,16 @@
 
   <div id="webmail" class="page">
     <div class="card">
-      <h2>Webmail 一鍵登錄</h2>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:14px;">所有客戶郵箱密碼統一 123456，伺服器 mail.pony-it.com，IMAP 993 / SMTP 465。點擊下方按鈕新窗口打開登錄頁。</div>
+      <h2 data-i18n-webmail-title>Webmail 一鍵登錄</h2>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:14px;" data-i18n-webmail-desc>所有客戶郵箱密碼統一 123456，伺服器 mail.pony-it.com，IMAP 993 / SMTP 465。點擊下方按鈕新窗口打開登錄頁。</div>
       <table>
-        <thead><tr><th>客戶</th><th>登錄郵箱</th><th>密碼</th><th>操作</th></tr></thead>
+        <thead><tr><th data-i18n-col-client2>客戶</th><th data-i18n-col-email>登錄郵箱</th><th data-i18n-col-pwd>密碼</th><th data-i18n-col-action>操作</th></tr></thead>
         <tbody>
-          <tr><td>Immunora Bio LLC</td><td>kashayisisramonaodom@immunora-bio.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
-          <tr><td>Oliveware LLC</td><td>horaciolsanchez@olivewareinc.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
-          <tr><td>Pebblehome LLC</td><td>christopherhodge@pebblehomeinc.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
-          <tr><td>Sageware LLC</td><td>jaliarthomas@sagewareinc.com</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
-          <tr><td>Nervaqon LLC</td><td>christianjgpunzalan@nervaqon.live</td><td>123456</td><td><a href="https://mail.pony-it.com/SOGo/" target="_blank" style="color:#4338ca;">打開 Webmail</a></td></tr>
+          <tr><td>Immunora Bio LLC</td><td>kashayisisramonaodom@immunora-bio.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open>打開 Webmail</a></td></tr>
+          <tr><td>Oliveware LLC</td><td>horaciolsanchez@olivewareinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open2>打開 Webmail</a></td></tr>
+          <tr><td>Pebblehome LLC</td><td>christopherhodge@pebblehomeinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open3>打開 Webmail</a></td></tr>
+          <tr><td>Sageware LLC</td><td>jaliarthomas@sagewareinc.com</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open4>打開 Webmail</a></td></tr>
+          <tr><td>Nervaqon LLC</td><td>christianjgpunzalan@nervaqon.live</td><td>123456</td><td><a class="webmail-link" href="https://mail.pony-it.com/SOGo/" target="_blank" data-i18n-open5>打開 Webmail</a></td></tr>
         </tbody>
       </table>
     </div>
@@ -330,7 +322,6 @@ function filterMail() {
     r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
   });
 }
-
 var code = '';
 function press(d) {
   if (code.length >= 4) return;
@@ -338,36 +329,105 @@ function press(d) {
   for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length);
   if (code.length === 4) {
     if (code === '0521') { document.getElementById('gate').style.display='none'; }
-    else { document.getElementById('gateErr').innerText = '密碼錯誤，請重試'; setTimeout(function(){code='';for(var i=1;i<=4;i++)document.getElementById('d'+i).classList.remove('on');document.getElementById('gateErr').innerText='';},800); }
+    else { document.getElementById('gateErr').innerText = '密碼錯誤 / Wrong PIN'; setTimeout(function(){code='';for(var i=1;i<=4;i++)document.getElementById('d'+i).classList.remove('on');document.getElementById('gateErr').innerText='';},800); }
   }
 }
 function backspace() { code = code.slice(0,-1); for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length); }
 function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.remove('on'); }
 
 var i18n = {
-  zh: { title:'凱文的代辦業務看板', tz:'中國時區 UTC+8，每日 05:00 清算',
+  zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新',
+    title:'凱文的代辦業務看板', tz:'中國時區 UTC+8，每日 05:00 清算',
     'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄',
+    newmail:'新郵件提醒', newmailBody:'目前待你人工覈對的新郵件：暫無。定時任務每小時查一次五個郵箱，有新真人回信會寫在這裡。',
     kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 付款階段',
-    kpi3l:'獲得海關擔保文件', kpi3s:'尚無', kpi4l:'月度目標達成', kpi4s:'目標每月下 bond 30 家' },
-  en: { title:'Kevin\'s Bond Deal Dashboard', tz:'China UTC+8, daily 05:00 cutoff',
+    kpi3l:'獲得海關擔保文件', kpi3s:'尚無', kpi4l:'月度目標達成', kpi4s:'目標每月下 bond 30 家',
+    funnel:'開發信漏斗', f1:'已發開發信 70', f2:'收到回覆 7', f3:'對接開單 1', f4:'獲得海關擔保文件 0',
+    ring:'在處理客戶狀態', ringtotal:'總客戶', l1:'審批中 1 家', l2:'可啟動 3 家', l3:'待補件 1 家',
+    clientsTitle:'在處理客戶', colClient:'客戶', colFounder:'法人', colStatus:'狀態', colNote:'備註',
+    stReview:'審批中', stReady:'可啟動', stBlock:'待補件',
+    noteOliveware:'材料齊全，開發信已發', notePebblehome:'駕照過期，EIN 拼寫待核', noteSageware:'材料齊全，開發信已發', noteNervaqon:'人像照待更換',
+    dailyTitle:'每日工作記錄', colDate:'日期', colClients:'涉及客戶', colWork:'工作內容', colOutput:'產出',
+    d1:'歸檔四家全套材料，飛書主表更新 5 行', o1:'4 個客戶檔案夾建立',
+    d2:'核驗發現佛州駕照 10/20 過期，EIN 名字 ROBIM 拼寫不一致', o2:'問題已轉上游同事',
+    d3c:'新四家', d3:'啟動 40 封差異化開發信，按客戶郵箱依次發送', o3:'每封間隔約 3 分鐘',
+    d4:'BorderBuddy POA 簽署，Annual Bond Application 經 JotForm 提交', o4:'公司章程已作為支持文件發送',
+    d5:'BorderBuddy 開出發票 INV-5533，金額 795.60 USD', o5:'已轉公司付款，待確認到賬',
+    d6:'從 2400 家資源池挑約 30 家首輪群發', o6:'首輪諮詢信發出',
+    d7c:'全部郵箱', d7:'SOGo 白屏確認死路，改用 IMAP4_SSL 993 收信、SMTP 465 發信', o7:'郵件通道穩定',
+    searchClients:'搜索客戶名、法人、地址、EIN...',
+    cFounder:'法人', cEmail:'郵箱', cPhone:'電話', cAddr:'地址', cProduct:'產品', cBroker:'對接', cAmt:'金額',
+    cCa:'CA 實體號', cSsn:'SSN 尾號', cTodo:'待辦', cTodoV:'佛州駕照過期，EIN 拼 ROBIM 待核',
+    cTodo2V:'人像照換穿著上衣版本',
+    mailTitle:'郵件往來明細', searchMail:'搜索收件人、公司、主題...',
+    colSender:'發件客戶', colRecv:'收件人', colSubject:'主題', colNote2:'備註',
+    sub1:'海關擔保業務諮詢', wait:'等待回覆', n1:'首輪群發', replied:'已回覆',
+    sub10:'bond 申請後續跟進', sent:'已發送', n10:'合作過的 Katrina', sub11:'請問誰負責海關連續擔保', n11:'差異化開發信',
+    closed:'已關閉', deal:'已成交在途', more:'其餘開發信後台發送中，完成後自動補入此表',
+    webmailTitle:'Webmail 一鍵登錄', webmailDesc:'所有客戶郵箱密碼統一 123456，伺服器 mail.pony-it.com，IMAP 993 / SMTP 465。點擊下方按鈕新窗口打開登錄頁。',
+    colClient2:'客戶', colEmail:'登錄郵箱', colPwd:'密碼', colAction:'操作', open:'打開 Webmail'
+  },
+  en: { gateTitle:'Enter 4-digit PIN', gateSub:'輸入 4 位數字密碼', update:'New version available, click to refresh',
+    title:"Kevin's Bond Deal Dashboard", tz:'China UTC+8, daily 05:00 cutoff',
     'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail',
+    newmail:'New Email Alert', newmailBody:'No new emails to review. The hourly checker scans all 5 mailboxes; new human replies will appear here.',
     kpi1l:'Active Clients', kpi1s:'This month', kpi2l:'Invoiced', kpi2s:'Immunora in payment',
-    kpi3l:'Bond Secured', kpi3s:'None yet', kpi4l:'Monthly Target', kpi4s:'Target 30 bonds / month' }
+    kpi3l:'Bond Secured', kpi3s:'None yet', kpi4l:'Monthly Target', kpi4s:'Target 30 bonds / month',
+    funnel:'Outreach Funnel', f1:'Outreach sent 70', f2:'Replies received 7', f3:'Invoiced 1', f4:'Bond secured 0',
+    ring:'Client Pipeline', ringtotal:'Total', l1:'Under review 1', l2:'Ready 3', l3:'Docs needed 1',
+    clientsTitle:'Active Clients', colClient:'Client', colFounder:'Founder', colStatus:'Status', colNote:'Notes',
+    stReview:'Under review', stReady:'Ready', stBlock:'Docs needed',
+    noteOliveware:'Docs ready, outreach sent', notePebblehome:'License expired, EIN name mismatch', noteSageware:'Docs ready, outreach sent', noteNervaqon:'Headshot to replace',
+    dailyTitle:'Daily Work Log', colDate:'Date', colClients:'Client(s)', colWork:'Work done', colOutput:'Output',
+    d1:'Archived docs for 4 new clients, 5 rows added to Feishu master', o1:'4 client folders created',
+    d2:'Found FL driver license expired 10/20, EIN name ROBIM mismatch', o2:'Escalated to upstream',
+    d3c:'4 new clients', d3:'Launched 40 differentiated outreach emails, sent per mailbox', o4:'~3 min interval',
+    d4:'BorderBuddy POA signed, Annual Bond Application submitted via JotForm', o4:'Articles sent as support docs',
+    d5:'BorderBuddy issued invoice INV-5533 for 795.60 USD', o5:'Sent to finance, pending confirmation',
+    d6:'Picked 30 brokers from 2400 pool for first round', o6:'First round sent',
+    d7c:'All mailboxes', d7:'SOGo confirmed dead, switched to IMAP4_SSL 993 / SMTP 465', o7:'Mail channel stable',
+    searchClients:'Search client, founder, address, EIN...',
+    cFounder:'Founder', cEmail:'Email', cPhone:'Phone', cAddr:'Address', cProduct:'Product', cBroker:'Broker', cAmt:'Amount',
+    cCa:'CA entity no.', cSsn:'SSN last4', cTodo:'To-do', cTodoV:'FL license expired, EIN ROBIM to verify',
+    cTodo2V:'Replace headshot with shirt-on version',
+    mailTitle:'Email Thread Log', searchMail:'Search recipient, company, subject...',
+    colSender:'From client', colRecv:'Recipient', colSubject:'Subject', colNote2:'Notes',
+    sub1:'Customs bond inquiry', wait:'Pending reply', n1:'First round blast', replied:'Replied',
+    sub10:'Follow-up on bond application', sent:'Sent', n10:'Existing contact Katrina', sub11:'Who handles continuous customs bonds?', n11:'Differentiated outreach',
+    closed:'Closed', deal:'In progress', more:'Remaining outreach sending in background, will appear here',
+    webmailTitle:'Webmail Quick Login', webmailDesc:'All client mailboxes share password 123456, server mail.pony-it.com, IMAP 993 / SMTP 465. Click to open login page.',
+    colClient2:'Client', colEmail:'Login email', colPwd:'Password', colAction:'Action', open:'Open Webmail'
+  }
 };
 function setLang(l) {
   var d = i18n[l];
-  document.querySelector('h1').innerText = d.title;
+  document.querySelector('h1 span').innerText = d.title;
   document.querySelector('.updated').innerText = d.tz;
+  document.getElementById('gateErr').innerText = '';
+  document.querySelector('.gate-box h3').innerText = d.gateTitle;
+  document.querySelector('.gate-box p.sub').innerText = d.gateSub;
   Object.keys(d).forEach(function(k){
-    if (k==='title'||k==='tz') return;
+    if (k==='title'||k==='tz'||k==='gateTitle'||k==='gateSub'||k==='update') return;
     var el = document.querySelector('[data-i18n-'+k+']');
     if (el) el.innerText = d[k];
   });
-  document.getElementById('btnEn').style.background = l==='en' ? '#374151' : '#fff';
-  document.getElementById('btnEn').style.color = l==='en' ? '#fff' : '#4b5563';
-  document.getElementById('btnZh').style.background = l==='zh' ? '#374151' : '#fff';
-  document.getElementById('btnZh').style.color = l==='zh' ? '#fff' : '#4b5563';
+  document.getElementById('btnEn').classList.toggle('on', l==='en');
+  document.getElementById('btnZh').classList.toggle('on', l==='zh');
 }
+
+var lastHash = null;
+function checkUpdate() {
+  fetch(location.pathname + '?t=' + Date.now()).then(r=>r.text()).then(function(html){
+    var m = html.match(/<body[^>]*>([\s\S]*?)<\/body>/);
+    if (!m) return;
+    var h = m[1].replace(/<script>[\s\S]*<\/script>/g,'').length;
+    if (lastHash === null) { lastHash = h; return; }
+    if (h !== lastHash) {
+      document.getElementById('updateBar').style.display = 'block';
+    }
+  }).catch(function(){});
+}
+setInterval(checkUpdate, 45000);
 </script>
 </body>
 </html>
