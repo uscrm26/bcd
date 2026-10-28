@@ -325,6 +325,13 @@
           <tr><td colspan="6" style="color:#8a8f98;" data-i18n-more>其餘開發信後台發送中，完成後自動補入此表</td></tr>
         </tbody>
       </table>
+      <h3 style="font-size:13px;margin:18px 0 8px;color:#1f2937;" data-i18n-live-title>郵箱同步記錄</h3>
+      <div style="max-height:400px;overflow-y:auto;">
+        <table style="width:100%;">
+          <thead><tr><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">客戶</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">收件匣</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">時間</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">發件人</th><th style="text-align:left;padding:6px;font-size:11px;color:#6b7280;">主旨</th></tr></thead>
+          <tbody id="liveMailBody"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -454,6 +461,14 @@ function filterBroker() {
   if (!q) { renderBroker(brokers.slice(0,50)); return; }
   renderBroker(brokers.filter(function(b){ return (b.n+b.a+b.m).toLowerCase().indexOf(q)>=0; }).slice(0,100));
 }
+
+fetch('emails.json').then(r=>r.json()).then(function(list){
+  document.getElementById('liveMailBody').innerHTML = list.map(function(e){
+    var box = e.box==='Sent' ? '已寄件' : '收件匣';
+    var d = (e.date||'').replace(/ GMT.*/,'');
+    return '<tr style="border-top:1px solid #f0f1f3;"><td style="padding:6px;font-size:12px;font-weight:500;">'+esc(e.client)+'</td><td style="padding:6px;font-size:11px;color:#6b7280;">'+box+'</td><td style="padding:6px;font-size:11px;color:#6b7280;white-space:nowrap;">'+d+'</td><td style="padding:6px;font-size:11px;color:#374151;max-width:200px;overflow:hidden;text-overflow:ellipsis;">'+esc(e.from)+'</td><td style="padding:6px;font-size:12px;">'+esc(e.subject)+'</td></tr>';
+  }).join('');
+});
 
 var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
