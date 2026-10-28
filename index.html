@@ -1051,6 +1051,40 @@ var i18n = {
     p4Title:'4. Status Colors', p4Body:'Green under review: submitted to broker, awaiting reply; Blue ready: docs complete, outreach to start; Red docs needed: missing materials. Closed clients are no longer followed up.'
   }
 };
+
+// PIN 解鎖邏輯
+let gatePin = '';
+const CORRECT_PIN = '1234';
+function press(n) {
+  if (gatePin.length >= 4) return;
+  gatePin += n;
+  updateDots();
+  if (gatePin.length === 4) checkPin();
+}
+function backspace() {
+  gatePin = gatePin.slice(0, -1);
+  updateDots();
+}
+function clearGate() {
+  gatePin = '';
+  updateDots();
+  document.getElementById('gateErr').innerText = '';
+}
+function updateDots() {
+  for (let i=1; i<=4; i++) {
+    document.getElementById('d'+i).className = gatePin.length >= i ? 'filled' : '';
+  }
+}
+function checkPin() {
+  if (gatePin === CORRECT_PIN) {
+    document.querySelector('.gate').style.display = 'none';
+    document.querySelector('.wrap').style.display = 'block';
+  } else {
+    document.getElementById('gateErr').innerText = '密碼錯誤，請重試';
+    setTimeout(clearGate, 800);
+  }
+}
+
 function setLang(l) {
   // 第一次初始化時備份原始繁體文本，用元素本身做key，不會錯位
   if (!window._origTexts) {
