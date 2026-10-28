@@ -530,6 +530,14 @@
       <h2 data-i18n-mail-title>郵件往來明細</h2>
       <div class="toolbar">
         <input type="text" id="mailSearch" data-i18n-search-mail placeholder="搜索收件人、公司、主題..." onkeyup="filterMail()">
+        <select id="mailClientFilter" onchange="filterMail()" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;">
+          <option value="">全部客戶</option>
+          <option value="Immunora">Immunora</option>
+          <option value="Oliveware">Oliveware</option>
+          <option value="Pebblehome">Pebblehome</option>
+          <option value="Sageware">Sageware</option>
+          <option value="Nervaqon">Nervaqon</option>
+        </select>
       </div>
       <table id="mailTable">
         <thead><tr><th data-i18n-col-date2>日期</th><th data-i18n-col-sender>發件客戶</th><th data-i18n-col-recv>收件人</th><th data-i18n-col-subject>主題</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note2>備註</th><th>原文</th></tr></thead>
@@ -748,8 +756,11 @@ function filterClients() {
 }
 function filterMail() {
   var q = document.getElementById('mailSearch').value.toLowerCase();
+  var client = document.getElementById('mailClientFilter').value;
   document.querySelectorAll('#mailTable tbody tr').forEach(function(r){
-    r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+    var matchQ = r.innerText.toLowerCase().indexOf(q)>=0;
+    var matchClient = !client || r.cells[1].innerText.indexOf(client)>=0;
+    r.style.display = (matchQ && matchClient) ? '' : 'none';
   });
 }
 function filterWebmail() {
