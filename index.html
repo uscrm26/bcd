@@ -20,7 +20,6 @@
   .keypad button { padding: 14px; font-size: 18px; border: 1px solid #e5e7eb; background: #f9fafb; border-radius: 10px; cursor: pointer; }
   .keypad button:active { background: #e5e7eb; }
   .gate-err { color: #b91c1c; font-size: 12px; margin-top: 10px; height: 16px; }
-</style>
   .wrap { max-width: 1280px; margin: 0 auto; }
   header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; }
   header h1 { font-size: 22px; font-weight: 600; }
@@ -103,16 +102,20 @@
 </div>
 <div class="wrap">
   <header>
-    <h1>凱文的代辦業務看板</h1>
-    <div class="updated">中國時區 UTC+8，每日 05:00 清算</div>
+    <h1 data-i18n-title>凱文的代辦業務看板</h1>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <button onclick="setLang('en')" id="btnEn" style="border:1px solid #d1d5db;background:#fff;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px;">EN</button>
+      <button onclick="setLang('zh')" id="btnZh" style="border:1px solid #d1d5db;background:#374151;color:#fff;border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px;">繁中</button>
+      <div class="updated" data-i18n-tz>中國時區 UTC+8，每日 05:00 清算</div>
+    </div>
   </header>
 
   <nav>
-    <button class="active" onclick="show('now',this)">在處理看板</button>
-    <button onclick="show('daily',this)">每日工作</button>
-    <button onclick="show('clients',this)">客戶檔案</button>
-    <button onclick="show('mail',this)">郵件明細</button>
-    <button onclick="show('webmail',this)">郵箱登錄</button>
+    <button class="active" onclick="show('now',this)" data-i18n-nav-now>在處理看板</button>
+    <button onclick="show('daily',this)" data-i18n-nav-daily>每日工作</button>
+    <button onclick="show('clients',this)" data-i18n-nav-clients>客戶檔案</button>
+    <button onclick="show('mail',this)" data-i18n-nav-mail>郵件明細</button>
+    <button onclick="show('webmail',this)" data-i18n-nav-webmail>郵箱登錄</button>
   </nav>
 
   <div id="now" class="page active">
@@ -125,24 +128,24 @@
 
     <div class="kpi-row">
       <div class="card">
-        <div class="label">在處理客戶</div>
+        <div class="label" data-i18n-kpi1l>在處理客戶</div>
         <div class="value">5</div>
-        <div class="sub">本月立項</div>
+        <div class="sub" data-i18n-kpi1s>本月立項</div>
       </div>
       <div class="card">
-        <div class="label">對接開單中</div>
+        <div class="label" data-i18n-kpi2l>對接開單中</div>
         <div class="value">1</div>
-        <div class="sub warn">Immunora 付款階段</div>
+        <div class="sub warn" data-i18n-kpi2s>Immunora 付款階段</div>
       </div>
       <div class="card">
-        <div class="label">獲得海關擔保文件</div>
+        <div class="label" data-i18n-kpi3l>獲得海關擔保文件</div>
         <div class="value">0</div>
-        <div class="sub warn">尚無</div>
+        <div class="sub warn" data-i18n-kpi3s>尚無</div>
       </div>
       <div class="card">
-        <div class="label">月度目標達成</div>
+        <div class="label" data-i18n-kpi4l>月度目標達成</div>
         <div class="value">0%</div>
-        <div class="sub warn">目標每月下 bond 30 家</div>
+        <div class="sub warn" data-i18n-kpi4s>目標每月下 bond 30 家</div>
       </div>
     </div>
 
@@ -340,6 +343,31 @@ function press(d) {
 }
 function backspace() { code = code.slice(0,-1); for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.toggle('on', i<=code.length); }
 function clearGate() { code=''; for (var i=1;i<=4;i++) document.getElementById('d'+i).classList.remove('on'); }
+
+var i18n = {
+  zh: { title:'凱文的代辦業務看板', tz:'中國時區 UTC+8，每日 05:00 清算',
+    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄',
+    kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 付款階段',
+    kpi3l:'獲得海關擔保文件', kpi3s:'尚無', kpi4l:'月度目標達成', kpi4s:'目標每月下 bond 30 家' },
+  en: { title:'Kevin\'s Bond Deal Dashboard', tz:'China UTC+8, daily 05:00 cutoff',
+    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail',
+    kpi1l:'Active Clients', kpi1s:'This month', kpi2l:'Invoiced', kpi2s:'Immunora in payment',
+    kpi3l:'Bond Secured', kpi3s:'None yet', kpi4l:'Monthly Target', kpi4s:'Target 30 bonds / month' }
+};
+function setLang(l) {
+  var d = i18n[l];
+  document.querySelector('h1').innerText = d.title;
+  document.querySelector('.updated').innerText = d.tz;
+  Object.keys(d).forEach(function(k){
+    if (k==='title'||k==='tz') return;
+    var el = document.querySelector('[data-i18n-'+k+']');
+    if (el) el.innerText = d[k];
+  });
+  document.getElementById('btnEn').style.background = l==='en' ? '#374151' : '#fff';
+  document.getElementById('btnEn').style.color = l==='en' ? '#fff' : '#4b5563';
+  document.getElementById('btnZh').style.background = l==='zh' ? '#374151' : '#fff';
+  document.getElementById('btnZh').style.color = l==='zh' ? '#fff' : '#4b5563';
+}
 </script>
 </body>
 </html>
