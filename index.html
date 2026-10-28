@@ -201,6 +201,7 @@
   <div class="clock-row" id="clockRow"></div>
   <nav>
     <button class="active" onclick="show('now',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span data-i18n-nav-now>在處理看板</span></button>
+    <button onclick="show('todo',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span data-i18n-nav-todo>待處理業務</span></button>
     <button onclick="show('daily',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span data-i18n-nav-daily>每日工作</span></button>
     <button onclick="show('clients',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span data-i18n-nav-clients>客戶檔案</span></button>
     <button onclick="show('mail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span data-i18n-nav-mail>郵件明細</span></button>
@@ -365,6 +366,61 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div id="todo" class="page">
+    <div class="card">
+      <h2>待處理業務</h2>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:16px;">按時間排序，像手機通知一樣逐個處理。點開卡片可看郵件原文和AI建議，處理完可寫備註。</p>
+      
+      <div style="border:1px solid #fecaca;border-left:4px solid #ef4444;border-radius:8px;padding:16px;margin-bottom:12px;background:#fef2f2;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div>
+            <b style="font-size:15px;color:#1f2937;">Nervaqon LLC</b>
+            <span style="margin-left:8px;background:#fee2e2;color:#b91c1c;padding:2px 8px;border-radius:999px;font-size:11px;">新回覆待處理</span>
+          </div>
+          <span style="font-size:11px;color:#6b7280;">10/28 23:10</span>
+        </div>
+        <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 10px 0;">收到2封回覆郵件，客戶諮詢海關擔保業務細節，需要回覆並報價。</p>
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:6px;padding:10px;margin-bottom:10px;">
+          <div style="font-size:12px;font-weight:600;color:#1f2937;margin-bottom:6px;">AI建議：</div>
+          <div style="font-size:12px;color:#374151;line-height:1.7;">客戶主動來郵詢價，屬高意向線索。建議立即回覆，附上需要的材料清單和大致報價範圍，並約15分鐘電話溝通。</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showMailOrig('Nervaqon')" style="padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;">查看郵件原文</button>
+          <button onclick="alert('請回到豆包對話窗告訴我你要怎麼處理')" style="padding:6px 12px;border:none;border-radius:6px;font-size:12px;cursor:pointer;background:#4338ca;color:#fff;">交給AI處理</button>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #e5e7eb;">
+          <input type="text" placeholder="寫下你的處理備註..." style="width:100%;padding:8px 10px;border:1px solid #e5e7eb;border-radius:6px;font-size:12px;box-sizing:border-box;">
+        </div>
+      </div>
+
+      <div style="border:1px solid #fed7aa;border-left:4px solid #f97316;border-radius:8px;padding:16px;margin-bottom:12px;background:#fff7ed;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div>
+            <b style="font-size:15px;color:#1f2937;">Immunora Bio LLC</b>
+            <span style="margin-left:8px;background:#ffedd5;color:#c2410c;padding:2px 8px;border-radius:999px;font-size:11px;">等待付款確認</span>
+          </div>
+          <span style="font-size:11px;color:#6b7280;">10/28 10:30</span>
+        </div>
+        <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 10px 0;">BorderBuddy發票INV-5533 795.60 USD已轉公司財務，等待到賬確認。</p>
+        <div style="display:flex;gap:8px;">
+          <button onclick="showMailOrig('Immunora')" style="padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;">查看郵件原文</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid #e5e7eb;border-radius:8px;padding:16px;margin-bottom:12px;background:#f9fafb;opacity:0.7;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div>
+            <b style="font-size:15px;color:#1f2937;">Pebblehome LLC</b>
+            <span style="margin-left:8px;background:#f3f4f6;color:#6b7280;padding:2px 8px;border-radius:999px;font-size:11px;">等待客戶補件</span>
+          </div>
+          <span style="font-size:11px;color:#6b7280;">10/28 19:15</span>
+        </div>
+        <p style="font-size:13px;color:#374151;line-height:1.7;margin:0;">佛州駕照10/20過期，EIN名字ROBIM與ROBIN拼寫不一致，已轉上游同事，等待客戶補新材料。</p>
+      </div>
+
     </div>
   </div>
 
@@ -542,17 +598,17 @@
       <table id="mailTable">
         <thead><tr><th data-i18n-col-date2>日期</th><th data-i18n-col-sender>發件客戶</th><th data-i18n-col-recv>收件人</th><th data-i18n-col-subject>主題</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note2>備註</th><th>原文</th></tr></thead>
         <tbody>
-          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td data-i18n-sub1>海關擔保業務諮詢</td><td><span class="pill ready" data-i18n-wait>等待回覆</span></td><td data-i18n-n1>首輪群發</td><td><button class="orig-btn" onclick="showMailOrig('janie@gamboainternational.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td data-i18n-sub2>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-replied>已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td><td><button class="orig-btn" onclick="showMailOrig('gabrielle@known.dev')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td data-i18n-sub3>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td><td><button class="orig-btn" onclick="showMailOrig('dylan@gowithknown.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td data-i18n-sub4>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td><td><button class="orig-btn" onclick="showMailOrig('support@shipmercury.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td data-i18n-sub5>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td><td><button class="orig-btn" onclick="showMailOrig('imports@prioritycb.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td data-i18n-sub6>海關擔保業務諮詢</td><td><span class="pill block" data-i18n-closed>已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td><td><button class="orig-btn" onclick="showMailOrig('web@shapiro.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td data-i18n-sub7>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td><td><button class="orig-btn" onclick="showMailOrig('info@importivity.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td data-i18n-sub8>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td><td><button class="orig-btn" onclick="showMailOrig('info@suretyplace.com')">原文</button></td></tr>
-          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td data-i18n-sub9>海關擔保業務諮詢</td><td><span class="pill run" style="background:#d1fae5;color:#059669;">已合作</span></td><td>Katrina 對接順利，已開發票</td><td><button class="orig-btn" onclick="showMailOrig('service@borderbuddy.com')">原文</button></td></tr>
-          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td data-i18n-sub10>bond 申請後續跟進</td><td><span class="pill ready" data-i18n-sent>已發送</span></td><td data-i18n-n10>合作過的 Katrina</td><td><button class="orig-btn" onclick="showMailOrig('service@borderbuddy.com')">原文</button></td></tr>
-          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td data-i18n-sub11>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td data-i18n-n11>差異化開發信</td><td><button class="orig-btn" onclick="showMailOrig('dylan@gowithknown.com')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>janie@gamboainternational.com</td><td data-i18n-sub1>海關擔保業務諮詢</td><td><span class="pill ready" data-i18n-wait>等待回覆</span></td><td data-i18n-n1>首輪群發</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>gabrielle@known.dev</td><td data-i18n-sub2>海關擔保業務諮詢</td><td><span class="pill run" data-i18n-replied>已回覆</span></td><td>Gabrielle 休產假轉 Dylan</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>dylan@gowithknown.com</td><td data-i18n-sub3>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Dylan 要 HTS 原產國貨量，已回報價</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>support@shipmercury.com</td><td data-i18n-sub4>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Lukas 轉介 Melissa，回暫不約電話</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>imports@prioritycb.com</td><td data-i18n-sub5>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Jairo 要產品原產國，已回報價</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>web@shapiro.com</td><td data-i18n-sub6>海關擔保業務諮詢</td><td><span class="pill block" data-i18n-closed>已關閉</span></td><td>Sam 婉拒小量貨主，推薦 CJ International</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@importivity.com</td><td data-i18n-sub7>海關擔保業務諮詢</td><td><span class="pill block">已關閉</span></td><td>Tanner 不做 bond，推薦 netbonds.net</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>info@suretyplace.com</td><td data-i18n-sub8>海關擔保業務諮詢</td><td><span class="pill run">已回覆</span></td><td>Cristina 要全套材料，回暫走 broker 流程</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-26</td><td>Immunora</td><td>service@borderbuddy.com</td><td data-i18n-sub9>海關擔保業務諮詢</td><td><span class="pill run" style="background:#d1fae5;color:#059669;">已合作</span></td><td>Katrina 對接順利，已開發票</td><td><button class="orig-btn" onclick="showMailOrig('Immunora')">原文</button></td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>service@borderbuddy.com</td><td data-i18n-sub10>bond 申請後續跟進</td><td><span class="pill ready" data-i18n-sent>已發送</span></td><td data-i18n-n10>合作過的 Katrina</td><td><button class="orig-btn" onclick="showMailOrig('Oliveware')">原文</button></td></tr>
+          <tr><td>10-28</td><td>Oliveware</td><td>dylan@gowithknown.com</td><td data-i18n-sub11>請問誰負責海關連續擔保</td><td><span class="pill ready">已發送</span></td><td data-i18n-n11>差異化開發信</td><td><button class="orig-btn" onclick="showMailOrig('Oliveware')">原文</button></td></tr>
         </tbody>
       </table>
     </div>
@@ -699,13 +755,14 @@ function openDoc(src){
   if(lower.indexOf('.pdf')>=0){ openModalPdf(src); }
   else { openModalImg(src); }
 }
-function showMailOrig(recipient){
+function showMailOrig(clientName){
   var matches = liveMail.filter(function(e){ 
-    return e.from && e.from.toLowerCase().indexOf(recipient.toLowerCase())>=0; 
+    return e.client && e.client.toLowerCase().indexOf(clientName.toLowerCase())>=0;
   });
   if(matches.length === 0){
     document.getElementById('modalContent').innerHTML = '<div style="padding:20px;color:#6b7280;">暫無匹配的郵件原文</div>';
   } else {
+    matches.sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
     var html = '<div style="max-width:700px;">';
     matches.forEach(function(e,i){
       var box = e.box==='Sent' ? '<span style="color:#4338ca;font-size:12px;">已寄件</span>' : '<span style="color:#059669;font-size:12px;">收件匣</span>';
