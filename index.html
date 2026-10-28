@@ -99,9 +99,9 @@
       <span data-i18n-title>凱文的代辦業務看板</span>
     </h1>
     <div class="right">
+      <div id="clocks" style="display:flex;gap:14px;font-size:11px;color:#6b7280;line-height:1.5;text-align:right;"></div>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
       <button class="lang-btn on" id="btnZh" onclick="setLang('zh')">繁中</button>
-      <div class="updated" data-i18n-tz>中國時區 UTC+8，每日 05:00 清算</div>
     </div>
   </header>
 
@@ -416,6 +416,24 @@ function setLang(l) {
 }
 
 var lastHash = null;
+function tickClocks() {
+  var now = new Date();
+  function fmt(tz) {
+    return now.toLocaleTimeString('zh-Hans',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  }
+  function date(tz) {
+    return now.toLocaleDateString('zh-Hans',{timeZone:tz,month:'2-digit',day:'2-digit',weekday:'short'});
+  }
+  document.getElementById('clocks').innerHTML =
+    '<div><b style="color:#1f2937;">中國</b> '+fmt('Asia/Shanghai')+'<br>'+date('Asia/Shanghai')+'</div>'+
+    '<div><b style="color:#1f2937;">美西 PT</b> '+fmt('America/Los_Angeles')+'<br>'+date('America/Los_Angeles')+'</div>'+
+    '<div><b style="color:#1f2937;">美山 MT</b> '+fmt('America/Denver')+'<br>'+date('America/Denver')+'</div>'+
+    '<div><b style="color:#1f2937;">美中 CT</b> '+fmt('America/Chicago')+'<br>'+date('America/Chicago')+'</div>'+
+    '<div><b style="color:#1f2937;">美東 ET</b> '+fmt('America/New_York')+'<br>'+date('America/New_York')+'</div>';
+}
+tickClocks();
+setInterval(tickClocks, 1000);
+
 function checkUpdate() {
   fetch(location.pathname + '?t=' + Date.now()).then(r=>r.text()).then(function(html){
     var m = html.match(/<body[^>]*>([\s\S]*?)<\/body>/);
