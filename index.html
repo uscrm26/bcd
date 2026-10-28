@@ -61,9 +61,10 @@
   .pill.ready { background: #eef2ff; color: #4338ca; }
   .pill.block { background: #fee2e2; color: #b91c1c; }
   .funnel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .funnel-row { display: flex; align-items: center; margin: 8px 0; font-size: 12px; gap: 10px; }
-  .funnel-row .bar { height: 20px; border-radius: 4px; flex-shrink: 0; }
-  .funnel-row .label { color: #374151; white-space: nowrap; }
+  .funnel-row { display: flex; align-items: center; margin: 6px 0; font-size: 13px; gap: 12px; padding: 8px 12px; background: #f9fafb; border-radius: 8px; }
+  .funnel-row .bar { height: 24px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: #fff; font-size: 11px; font-weight: 600; }
+  .funnel-row .label { color: #374151; white-space: nowrap; flex: 1; }
+  .funnel-row .num { color: #1f2937; font-weight: 700; font-size: 16px; min-width: 30px; text-align: right; }
   .ring-wrap { display: flex; align-items: center; justify-content: center; gap: 20px; padding: 10px 0; }
   .ring { width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(#4338ca 0 60%, #0f766e 60% 80%, #b91c1c 80% 100%); display: flex; align-items: center; justify-content: center; }
   .ring .inner { width: 104px; height: 104px; border-radius: 50%; background: #fff; display:flex; align-items:center; justify-content:center; flex-direction: column; }
@@ -248,10 +249,10 @@
     <div class="funnel-grid">
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span data-i18n-funnel>開發信漏斗</span></h2>
-        <div class="funnel-row"><div class="bar" style="width:100px;background:#9ca3af;"></div><span class="label" data-i18n-f1>已發開發信 70</span></div>
-        <div class="funnel-row"><div class="bar" style="width:50px;background:#6b7280;"></div><span class="label" data-i18n-f2>收到回覆 7</span></div>
-        <div class="funnel-row"><div class="bar" style="width:20px;background:#4b5563;"></div><span class="label" data-i18n-f3>對接開單 1</span></div>
-        <div class="funnel-row"><div class="bar" style="width:8px;background:#374151;"></div><span class="label" data-i18n-f4>獲得海關擔保文件 0</span></div>
+        <div class="funnel-row"><div class="bar" style="width:220px;background:linear-gradient(90deg,#9ca3af,#6b7280);">100%</div><span class="label" data-i18n-f1>已發開發信</span><span class="num">70</span></div>
+        <div class="funnel-row"><div class="bar" style="width:110px;background:linear-gradient(90deg,#6b7280,#4b5563);">10%</div><span class="label" data-i18n-f2>收到回覆</span><span class="num">7</span></div>
+        <div class="funnel-row"><div class="bar" style="width:30px;background:linear-gradient(90deg,#4b5563,#374151);">1%</div><span class="label" data-i18n-f3>對接開單</span><span class="num">1</span></div>
+        <div class="funnel-row"><div class="bar" style="width:8px;background:#1f2937;"></div><span class="label" data-i18n-f4>獲得海關擔保文件</span><span class="num">0</span></div>
       </div>
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span data-i18n-ring>在處理客戶狀態</span></h2>
@@ -267,14 +268,99 @@
     </div>
     <div class="card">
       <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span data-i18n-clients-title>在處理客戶</span></h2>
+      <div class="toolbar">
+        <input type="text" id="clientTableSearch" placeholder="搜索客戶、法人、狀態..." onkeyup="filterClientTable()">
+        <select id="clientTimeFilter" onchange="filterClientTable()" style="padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;">
+          <option value="">全部時間</option>
+          <option value="48h">最近48小時</option>
+          <option value="month">本月內</option>
+        </select>
+      </div>
       <table>
-        <thead><tr><th data-i18n-col-client>客戶</th><th data-i18n-col-founder>法人</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note>備註</th></tr></thead>
-        <tbody>
-          <tr><td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run" data-i18n-st-review>審批中</span></td><td>BorderBuddy，INV-5533 已轉公司付款待確認</td></tr>
-          <tr><td>Oliveware LLC</td><td>Horacio Sanchez</td><td><span class="pill ready" data-i18n-st-ready>可啟動</span></td><td data-i18n-note-oliveware>材料齊全，開發信已發</td></tr>
-          <tr><td>Pebblehome LLC</td><td>Christopher Hodge</td><td><span class="pill block" data-i18n-st-block>待補件</span></td><td data-i18n-note-pebblehome>駕照過期，EIN 拼寫待核</td></tr>
-          <tr><td>Sageware LLC</td><td>Jaliar Thomas</td><td><span class="pill ready" data-i18n-st-ready2>可啟動</span></td><td data-i18n-note-sageware>材料齊全，開發信已發</td></tr>
-          <tr><td>Nervaqon LLC</td><td>Christian Punzalan</td><td><span class="pill ready" data-i18n-st-ready3>可啟動</span></td><td data-i18n-note-nervaqon>人像照待更換</td></tr>
+        <thead><tr><th data-i18n-col-client>客戶</th><th data-i18n-col-founder>法人</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note>備註</th><th>詳情</th></tr></thead>
+        <tbody id="clientTableBody">
+          <tr class="client-row" data-client="Immunora" data-founder="Kashay Odom" data-status="審批中">
+            <td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run" data-i18n-st-review>審批中</span></td><td>BorderBuddy，INV-5533 已轉公司付款待確認</td>
+            <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
+          </tr>
+          <tr class="detail-row" style="display:none;background:#f9fafb;">
+            <td colspan="5" style="padding:16px;">
+              <div style="font-size:13px;line-height:1.8;">
+                <b>處理時間線（北京時間）：</b><br>
+                10/26 21:30 - 從2400家資源池篩選30家首輪群發<br>
+                10/27 09:15 - BorderBuddy Katrina 回覆對接順利<br>
+                10/27 14:20 - 提交 Annual Bond Application 至 JotForm<br>
+                10/27 16:45 - BorderBuddy 開出發票 INV-5533，金額 795.60 USD<br>
+                10/28 10:30 - 已轉公司財務付款，等待到賬確認<br><br>
+                <b>已完成事項：</b> POA簽署、章程發送、申請表提交、發票開出<br>
+                <b>待辦事項：</b> 等待付款到賬，borderbuddy正式出bond
+              </div>
+            </td>
+          </tr>
+          <tr class="client-row" data-client="Oliveware" data-founder="Horacio Sanchez" data-status="可啟動">
+            <td>Oliveware LLC</td><td>Horacio Sanchez</td><td><span class="pill ready" data-i18n-st-ready>可啟動</span></td><td data-i18n-note-oliveware>材料齊全，開發信已發</td>
+            <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
+          </tr>
+          <tr class="detail-row" style="display:none;background:#f9fafb;">
+            <td colspan="5" style="padding:16px;">
+              <div style="font-size:13px;line-height:1.8;">
+                <b>處理時間線（北京時間）：</b><br>
+                10/28 19:40 - 首輪10封差異化開發信發送<br>
+                10/28 19:43 - 收到自動回覆<br>
+                10/28 19:46 - 第二輪跟進發送<br><br>
+                <b>已完成事項：</b> 全套材料歸檔、首輪開發信發送<br>
+                <b>待辦事項：</b> 等待broker回覆，後續跟進
+              </div>
+            </td>
+          </tr>
+          <tr class="client-row" data-client="Pebblehome" data-founder="Christopher Hodge" data-status="待補件">
+            <td>Pebblehome LLC</td><td>Christopher Hodge</td><td><span class="pill block" data-i18n-st-block>待補件</span></td><td data-i18n-note-pebblehome>駕照過期，EIN 拼寫待核</td>
+            <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
+          </tr>
+          <tr class="detail-row" style="display:none;background:#f9fafb;">
+            <td colspan="5" style="padding:16px;">
+              <div style="font-size:13px;line-height:1.8;">
+                <b>處理時間線（北京時間）：</b><br>
+                10/28 18:30 - 材料歸檔完成<br>
+                10/28 19:00 - 核驗發現佛州駕照10/20過期<br>
+                10/28 19:15 - EIN名字ROBIM vs ROBIN拼寫不一致<br>
+                10/28 19:30 - 已轉上游同事處理<br>
+                10/28 19:46 - 發出1封開發信（暫停）<br><br>
+                <b>已完成事項：</b> 材料歸檔、問題反饋上游<br>
+                <b>待辦事項：</b> 等待客戶補充新駕照、EIN拼寫確認
+              </div>
+            </td>
+          </tr>
+          <tr class="client-row" data-client="Sageware" data-founder="Jaliar Thomas" data-status="可啟動">
+            <td>Sageware LLC</td><td>Jaliar Thomas</td><td><span class="pill ready" data-i18n-st-ready2>可啟動</span></td><td data-i18n-note-sageware>材料齊全，開發信已發</td>
+            <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
+          </tr>
+          <tr class="detail-row" style="display:none;background:#f9fafb;">
+            <td colspan="5" style="padding:16px;">
+              <div style="font-size:13px;line-height:1.8;">
+                <b>處理時間線（北京時間）：</b><br>
+                10/28 18:49 - 材料歸檔完成，狀態標記為可啟動<br><br>
+                <b>已完成事項：</b> 全套材料歸檔<br>
+                <b>待辦事項：</b> 等待排隊發送開發信
+              </div>
+            </td>
+          </tr>
+          <tr class="client-row" data-client="Nervaqon" data-founder="Christian Punzalan" data-status="可啟動">
+            <td>Nervaqon LLC</td><td>Christian Punzalan</td><td><span class="pill ready" data-i18n-st-ready3>可啟動</span></td><td data-i18n-note-nervaqon>照片已更新穿著上衣版本</td>
+            <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
+          </tr>
+          <tr class="detail-row" style="display:none;background:#f9fafb;">
+            <td colspan="5" style="padding:16px;">
+              <div style="font-size:13px;line-height:1.8;">
+                <b>處理時間線（北京時間）：</b><br>
+                10/28 18:50 - 材料歸檔完成<br>
+                10/28 23:00 - 法人照片補充上衣，已更新上線<br>
+                10/28 23:10 - 收到2封回覆郵件<br><br>
+                <b>已完成事項：</b> 全套材料歸檔、法人照片優化<br>
+                <b>待辦事項：</b> 等待排隊發送開發信
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -650,6 +736,26 @@ function filterWebmail() {
   var q = document.getElementById('webmailSearch').value.toLowerCase();
   document.querySelectorAll('.webmail-row').forEach(function(r){
     r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+  });
+}
+function toggleDetail(btn){
+  var row = btn.closest('tr');
+  var detail = row.nextElementSibling;
+  if(detail.classList.contains('detail-row')){
+    detail.style.display = detail.style.display === 'none' ? 'table-row' : 'none';
+    btn.innerText = detail.style.display === 'none' ? '展開' : '收起';
+  }
+}
+function filterClientTable(){
+  var q = document.getElementById('clientTableSearch').value.toLowerCase();
+  var timeFilter = document.getElementById('clientTimeFilter').value;
+  document.querySelectorAll('.client-row').forEach(function(row){
+    var match = row.dataset.client.toLowerCase().indexOf(q)>=0 || 
+                row.dataset.founder.toLowerCase().indexOf(q)>=0 ||
+                row.dataset.status.toLowerCase().indexOf(q)>=0;
+    row.style.display = match ? '' : 'none';
+    var detail = row.nextElementSibling;
+    if(!match && detail.classList.contains('detail-row')) detail.style.display='none';
   });
 }
 function scrollToClientMail(clientName) {
