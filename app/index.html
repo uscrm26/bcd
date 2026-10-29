@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bond Client Desk</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://smtpjs.com/v3/smtp.js"></script>
 <style>
 :root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--green:#12a05a;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
 *{box-sizing:border-box}
@@ -132,6 +133,17 @@ table.tbl th{color:var(--mut);font-weight:600;font-size:12px;background:#fafbfd}
         </div>
       </section>
 
+      <section class="panel" data-view="board">
+        <div class="card">
+          <div class="h2">團隊留言板</div>
+          <div class="toolbar">
+            <input id="boardInput" style="flex:1" placeholder="寫給同事，即時發佈">
+            <button class="primary" style="padding:9px 18px;font-size:13.5px" onclick="postBoard()">發佈</button>
+          </div>
+          <div id="boardList"></div>
+        </div>
+      </section>
+
       <section class="panel" data-view="admin">
         <div class="card">
           <div class="subtabs" id="adminTabs">
@@ -202,6 +214,8 @@ const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
 const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
 const sb=window.supabase?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
 const STATUS=["跟進中","待補件","可啟動","審批中","已成交","已關閉"];
+const MAILBOX_PW="123456";
+const SMTP={host:"mail.pony-it.com",port:587,secure:true};
 let session=null, allMail=[], ownership=[], accounts=[], deals=[], adminTabNow='own';
 const DASH_TABS=[['now','在處理看板'],['todo','待處理業務'],['daily','每日工作'],['clients','客戶檔案'],['mail','郵件明細'],['webmail','郵箱登錄'],['policy','公司資料'],['company','公司檔案'],['broker','報關經紀資源池'],['notes','我的備註'],['archive','檔案庫']];
 
@@ -211,6 +225,7 @@ function buildNav(){
   DASH_TABS.forEach(t=>{html+=`<button data-dash="${t[0]}" onclick="goDash('${t[0]}')"><span class="lbl">${t[1]}</span></button>`;});
   html+='<div class="nav-sec">BCD</div>';
   html+=`<button data-v="bcdmail" onclick="show('bcdmail')"><span class="lbl">公司信箱</span></button>`;
+  html+=`<button data-v="board" onclick="show('board');loadBoard()"><span class="lbl">團隊留言</span></button>`;
   if(admin)html+=`<button data-v="admin" onclick="show('admin');loadAdmin()"><span class="lbl">超管後台</span></button>`;
   document.getElementById('nav').innerHTML=html;
 }
@@ -276,10 +291,18 @@ async function sendMail(){
   const subj=document.getElementById('subjInput').value.trim(),body=document.getElementById('bodyInput').value;
   const fname=(document.getElementById('fileInput').files[0]||{}).name||'';
   if(!to){toast('請填收件人');return;}
-  try{await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname});
-    await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'送出郵件',target_client:from,detail:`to ${to} / ${subj}`});}catch(e){}
+  let row=null;
+  try{const ins=await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname}).select();row=ins.data&&ins.data[0];}catch(e){}
+  // 即時寄出，走瀏覽器 SMTP 中繼；失敗則退回每小時佇列
+  let instant=false;
+  try{
+    await Email.send({Host:SMTP.host,Username:from,Password:MAILBOX_PW,To:to,From:from,Subject:subj,Body:body+(fname?`\n\n[附件：${fname}]`:''),Secure:SMTP.secure,Port:SMTP.port});
+    instant=true;
+  }catch(e){instant=false;}
+  if(instant&&row){await sb.from('mail_messages').update({status:'sent',sent_at:new Date().toISOString()}).eq('id',row.id);}
+  await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'送出郵件',target_client:from,detail:`to ${to} / ${subj} ${instant?'即時':'佇列'}`}).then(()=>{}).catch(()=>{});
   closeCompose();document.getElementById('toInput').value='';document.getElementById('subjInput').value='';document.getElementById('bodyInput').value='';
-  toast('已送出指令，信件將由所選公司寄出');loadMail();
+  toast(instant?'已即時送出':'已存入佇列，稍後寄出');loadMail();
 }
 
 /* ===== 後台 ===== */
@@ -369,6 +392,23 @@ async function saveAccount(){
   await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'新增帳號',target_client:id,detail:nm});
   document.getElementById('acctMask').classList.remove('on');toast('帳號已建立');loadAdmin();
 }
+async function loadBoard(){
+  let rows=[];
+  try{const {data}=await sb.from('company_archive').select('*').like('client_key','msg-%').order('updated_at',{ascending:false}).limit(50);rows=data||[];}catch(e){}
+  const el=document.getElementById('boardList');if(!el)return;
+  el.innerHTML=rows.length?rows.map(r=>{const p=r.profile_json||{};return `
+    <div class="mail-row"><div class="top"><span><b>${r.company_name||p.name||''}</b><span class="owner-tag">${r.legal_person||''}</span></span><span>${new Date(r.updated_at).toLocaleString('zh-Hant')}</span></div>
+    <div class="sub" style="font-weight:400">${(p.text||'').replace(/</g,'&lt;')}</div></div>`;}).join(''):'<div class="empty">尚無留言，寫第一則</div>';
+}
+async function postBoard(){
+  const t=document.getElementById('boardInput').value.trim();if(!t){toast('先寫內容');return;}
+  const key='msg-'+Date.now();
+  await sb.from('company_archive').upsert({client_key:key,company_name:session.display_name,legal_person:session.id,profile_json:{name:session.display_name,text:t,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
+  document.getElementById('boardInput').value='';loadBoard();toast('已發佈');
+}
+// 即時同步：定時重抓雲端歸屬、成交、留言、信件
+setInterval(()=>{if(!session)return;loadOwnership();loadDeals();if(document.querySelector('.panel[data-view=board]').classList.contains('on'))loadBoard();},6000);
+setInterval(()=>{if(!session)return;loadMail();},45000);
 function setLang(){}
 (function(){try{const s=JSON.parse(localStorage.getItem('cmp_session')||'null');if(s){session=s;enter();}}catch(e){}})();
 </script>
