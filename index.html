@@ -309,7 +309,7 @@ function clearGate() {
     <div class="funnel-grid">
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span data-i18n-funnel>開發信漏斗</span></h2>
-        <div class="funnel-row"><span class="label" data-i18n-f1>已發開發信</span><div class="bar-wrap"><div class="bar" style="width:100%;background:linear-gradient(90deg,#9ca3af,#6b7280);">100%</div></div><span class="num">230</span></div>
+        <div class="funnel-row"><span class="label" data-i18n-f1>已發開發信</span><div class="bar-wrap"><div class="bar" style="width:100%;background:linear-gradient(90deg,#9ca3af,#6b7280);">100%</div></div><span class="num">245</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f2>收到回覆</span><div class="bar-wrap"><div class="bar" style="width:6.4%;background:linear-gradient(90deg,#6b7280,#4b5563);">6%</div></div><span class="num">8</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f3>對接開單</span><div class="bar-wrap"><div class="bar" style="width:1.5%;background:linear-gradient(90deg,#4b5563,#374151);">1%</div></div><span class="num">1</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f4>獲得海關擔保文件</span><div class="bar-wrap"><div class="bar" style="width:0%;background:#1f2937;"></div></div><span class="num">0</span></div>
@@ -842,6 +842,7 @@ function clearGate() {
       <table>
         <thead><tr><th style="width:110px;" data-i18n-col-date>日期</th><th style="width:180px;" data-i18n-col-clients>涉及客戶</th><th data-i18n-col-work>工作內容</th><th style="width:200px;" data-i18n-col-output>產出</th></tr></thead>
         <tbody>
+          <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 03:57</span></td><td>Oliveware 補發 15 封</td><td>Bluebird Emily 只做自己清關客戶、不做獨立 bond，Oliveware 另選 15 家新 broker，從 horaciolsanchez@olivewareinc.com 逐封發送，每封隔 30 秒，單收件人，美式英文，全部 sent 零失敗</td><td>15/15 成功，漏斗累計至 245，明細 send_log_oliveware_extra.json</td></tr>
           <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 03:20</span></td><td>7 箱巡查</td><td>每小時定時巡查 12 個信箱，Home Depot、Honeywell、Kontoor 三箱認證失敗，新信 8 封。Kervalonix 收 RPS Joe Allen 正面回覆，可承做，需申請表、公司財報與個人財務，審核 2-3 個工作天；JELD-WEN Trinity Carmen 婉拒獨立 bond，只給自己清關客戶做；Lennar Bluebird Emily 同樣婉拒；其餘為休假、退休、產假轉介與自動確認信。佇列 1 封 Immunora 測試信已即時寄出</td><td>8 封已讀存檔；Kervalonix 為有效進展，待備財報後回覆；2 封婉拒記錄在案</td></tr>
           <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 03:17</span></td><td>7 箱輪發：Huntington / JELD-WEN / Kervalonix / L3Harris / Laureate / Leidos / Lennar</td><td>7 個可登入信箱各發 15 封差異化破冰信至 105 家互不重複的 broker，輪號切箱、每封間隔 30 秒、單收件人無 Cc/Bcc，美式英文正文，全部 sent 零失敗；Home Depot、Honeywell、Kontoor 三箱認證失敗未發</td><td>105/105 成功，漏斗累計至 230，明細見 send_log_batch2.json</td></tr>
           <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 01:13</span></td><td>Pebblehome</td><td>收到 E.C. Ferrer CHB（Irene Mahipos）回覆《RE: Bond for Long Beach Entries》，broker 追問貨物品類（commodity）與出貨前能否先報 ISF，待我們回覆商品資訊與 ISF 時程後再談連續 bond 內設</td><td>1封新信入 emails.json，回覆計 8，需擬回覆提供 commodity 與 ISF 安排</td></tr>
@@ -1657,11 +1658,19 @@ function renderBroker(){
   var slice=res.slice((brokerPage-1)*per, brokerPage*per);
   document.getElementById('brokerBody').innerHTML = slice.map(function(b){
     var s=brokerStatus(b.n);
-    return '<tr style="border-top:1px solid #f0f1f3;"><td style="padding:6px;font-size:12px;font-weight:500;">'+esc(b.n)+'</td><td style="padding:6px;font-size:11px;color:#6b7280;max-width:220px;">'+esc(b.a)+'</td><td style="padding:6px;font-size:11px;">'+esc(b.c)+'</td><td style="padding:6px;font-size:11px;">'+esc(b.m)+'</td><td style="padding:6px;">'+statusLabel(s)+'</td></tr>';
+    var tagHtml = b.tag ? '<span style="display:inline-block;margin-left:6px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;color:#1f2937;background:#e5e7eb;">'+esc(b.tag)+'</span>' : '';
+    var hasDetail = b.reason || b.until;
+    var detailBtn = hasDetail ? '<button onclick="var r=document.getElementById(\'bd-\'+this.dataset.i);r.style.display=r.style.display===\'none\'?\'table-row\':\'none\';" data-i="'+b._id+'" style="margin-left:6px;padding:2px 8px;border:1px solid #d1d5db;border-radius:6px;font-size:11px;background:#fff;cursor:pointer;">展開備註</button>' : '';
+    var main='<tr style="border-top:1px solid #f0f1f3;"><td style="padding:6px;font-size:12px;font-weight:500;">'+esc(b.n)+tagHtml+detailBtn+'</td><td style="padding:6px;font-size:11px;color:#6b7280;max-width:220px;">'+esc(b.a)+'</td><td style="padding:6px;font-size:11px;">'+esc(b.c)+'</td><td style="padding:6px;font-size:11px;">'+esc(b.m)+'</td><td style="padding:6px;">'+statusLabel(s)+'</td></tr>';
+    var detail = hasDetail ? '<tr id="bd-'+b._id+'" style="display:none;background:#fafbfd;"><td colspan="5" style="padding:10px 14px;font-size:12px;color:#374151;line-height:1.8;">'
+      +(b.reason?'<b>更新原因：</b>'+esc(b.reason)+'<br>':'')
+      +(b.until?'<b>不追信至：</b>'+esc(b.until):'')
+      +'</td></tr>' : '';
+    return main+detail;
   }).join('');
   document.getElementById('brokerPager').innerHTML='<span>共 '+res.length+' 家，第 '+brokerPage+' / '+total+' 頁</span><span><button onclick="if(brokerPage>1){brokerPage--;renderBroker();}" style="margin-right:6px;padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">上一頁</button><button onclick="if(brokerPage<total){brokerPage++;renderBroker();}" style="padding:4px 10px;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;">下一頁</button></span>';
 }
-fetch('brokers.json').then(r=>r.json()).then(function(data){ brokers=data; renderBroker(); });
+fetch('brokers.json').then(r=>r.json()).then(function(data){ brokers=data.map(function(b,i){b._id=i;return b;}); renderBroker(); });
 
 var liveMail=[];
 fetch('emails.json').then(r=>r.json()).then(function(list){ liveMail=list; renderLive(); });
