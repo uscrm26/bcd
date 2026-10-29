@@ -1,0 +1,11 @@
+[
+  {
+    "id": "note-0001",
+    "scope": "global",
+    "target": "全部",
+    "text": "備註本：老闆在看板或對話中留下的想法、安排、下次要做的事，統一記在這裡。定時任務每小時先讀本檔，未吸收的會併入看板並標記已讀。source=assistant 表示已由助手存檔，source=user 表示待助手確認吸收。",
+    "created": "2026-10-29 19:55",
+    "source": "assistant",
+    "synced": true
+  }
+]

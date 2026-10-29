@@ -254,6 +254,7 @@ function clearGate() {
     <button onclick="show('policy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n-nav-policy>公司資料</span></button>
     <button onclick="show('company',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span data-i18n-nav-company>公司檔案</span></button>
     <button onclick="show('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>報關經紀資源池</span></button>
+    <button onclick="show('notes',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>我的備註</span></button>
     <button onclick="show('archive',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span data-i18n-nav-archive>檔案庫</span></button>
   </nav>
   <div id="newmail" class="card newmail">
@@ -270,6 +271,7 @@ function clearGate() {
     <button onclick="drawerGo('webmail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-webmail>郵箱登錄</span></button>
     <button onclick="drawerGo('policy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n-nav-policy>公司資料</span></button>
     <button onclick="drawerGo('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>報關經紀資源池</span></button>
+    <button onclick="drawerGo('notes',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span>我的備註</span></button>
     <button onclick="drawerGo('archive',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span data-i18n-nav-archive>檔案庫</span></button>
   </div>
 
@@ -888,6 +890,37 @@ function clearGate() {
     </div>
   </div>
 
+  <div id="notes" class="page">
+    <div class="card">
+      <h2>我的備註</h2>
+      <p style="font-size:12px;color:#6b7280;line-height:1.7;margin-bottom:14px;">在這裡隨手寫下你的想法、安排、下次要跟進的事。助手每小時會先讀取雲端備註本並吸收進看板。紅點代表這條還在你這部設備上、待交給助手；灰色代表助手已存檔讀過。</p>
+      <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin-bottom:16px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+          <select id="noteTarget" onchange="toggleNoteBroker()" style="padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;">
+            <option value="全部">全部 / 整體安排</option>
+            <option value="Immunora">Immunora Bio LLC</option>
+            <option value="Oliveware">Oliveware LLC</option>
+            <option value="Pebblehome">Pebblehome LLC</option>
+            <option value="Sageware">Sageware LLC</option>
+            <option value="Nervaqon">Nervaqon LLC</option>
+            <option value="broker">指定報關行（下面填名字）</option>
+          </select>
+          <input type="text" id="noteBrokerName" placeholder="報關行名字（選此項才填）" style="display:none;flex:1;min-width:160px;padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;">
+          <select id="noteType" style="padding:8px 10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;background:#fff;">
+            <option value="私人備忘">私人備忘（自己看）</option>
+            <option value="對外進展">對外進展（要告訴助手跟進）</option>
+          </select>
+        </div>
+        <textarea id="noteText" rows="3" placeholder="寫下想法或安排，例如：Nervaqon 優先回 Surety One，記得提醒我補財報..." style="width:100%;padding:10px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;box-sizing:border-box;resize:vertical;background:#fff;"></textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <button onclick="saveLocalNote()" style="padding:8px 16px;border:none;border-radius:8px;font-size:13px;cursor:pointer;background:#4338ca;color:#fff;">保存這條備註</button>
+          <button onclick="copyPendingNotes()" style="padding:8px 16px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;cursor:pointer;background:#fff;">複製待交助手的備註</button>
+        </div>
+      </div>
+      <div id="notesList"></div>
+    </div>
+  </div>
+
   <div id="archive" class="page">
     <div class="card">
       <h2 data-i18n-arch-title>業務檔案庫</h2>
@@ -1124,6 +1157,53 @@ function renderLive(){
       +'<div class="mail-body" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap;">'+esc(e.body||'(無正文)')+'</div>'
       +'</div>';
   }).join('') || '<div style="color:#9ca3af;font-size:12px;padding:20px;text-align:center;">無匹配記錄</div>';
+}
+
+// ===== 我的備註（雲端 notes.json + 本機待同步）=====
+var cloudNotes=[];
+fetch('notes.json').then(r=>r.json()).then(d=>{cloudNotes=d||[];renderNotes();}).catch(function(){cloudNotes=[];renderNotes();});
+function localNotes(){try{return JSON.parse(localStorage.getItem('dash_notes_local')||'[]');}catch(e){return[];}}
+function saveLocalNotes(a){localStorage.setItem('dash_notes_local',JSON.stringify(a));}
+function toggleNoteBroker(){var v=document.getElementById('noteTarget').value;document.getElementById('noteBrokerName').style.display=v==='broker'?'block':'none';}
+function nowStr(){var d=new Date();function p(n){return('0'+n).slice(-2);}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());}
+function saveLocalNote(){
+  var t=document.getElementById('noteTarget').value;
+  if(t==='broker'){t='broker:'+document.getElementById('noteBrokerName').value.trim();}
+  var type=document.getElementById('noteType').value;
+  var text=document.getElementById('noteText').value.trim();
+  if(!text){alert('先寫內容');return;}
+  var arr=localNotes();
+  arr.unshift({id:'u'+Date.now(),scope:'user',target:t,type:type,text:text,created:nowStr(),pending:true});
+  saveLocalNotes(arr);
+  document.getElementById('noteText').value='';
+  renderNotes();
+}
+function removeLocalNote(id){saveLocalNotes(localNotes().filter(function(x){return x.id!==id;}));renderNotes();}
+function renderNotes(){
+  var host=document.getElementById('notesList');if(!host)return;
+  var rows=[];
+  cloudNotes.forEach(function(n){rows.push({n:n,pending:false});});
+  localNotes().forEach(function(n){rows.push({n:n,pending:true});});
+  rows.sort(function(a,b){return(b.n.created||'').localeCompare(a.n.created||'');});
+  if(!rows.length){host.innerHTML='<div style="color:#9ca3af;font-size:12px;padding:20px;text-align:center;">還沒有備註</div>';return;}
+  host.innerHTML=rows.map(function(r){
+    var n=r.n;
+    var dot=r.pending?'<span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:#ef4444;margin-right:6px;"></span>':'<span style="display:inline-block;width:8px;height:8px;border-radius:999px;background:#9ca3af;margin-right:6px;"></span>';
+    var color=r.pending?'#1f2937':'#6b7280';
+    var bg=r.pending?'#fff':'#f3f4f6';
+    var typeTag=n.type==='對外進展'?'background:#eef2ff;color:#4338ca;':'background:#f3f4f6;color:#6b7280;';
+    var del=r.pending?'<button onclick="removeLocalNote(\''+n.id+'\')" style="margin-left:8px;padding:3px 10px;border:1px solid #d1d5db;border-radius:6px;font-size:11px;cursor:pointer;background:#fff;color:#b91c1c;">刪除</button>':'';
+    return '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;background:'+bg+';">'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:6px;flex-wrap:wrap;"><span>'+dot+'<span style="background:'+typeTag+'padding:2px 8px;border-radius:999px;margin-right:8px;">'+esc(n.type||'備註')+'</span><b style="color:#374151;">'+esc(n.target||'')+'</b></span><span>'+esc(n.created||'')+del+'</span></div>'
+      +'<div style="font-size:13px;color:'+color+';line-height:1.7;white-space:pre-wrap;">'+esc(n.text)+'</div></div>';
+  }).join('');
+}
+function copyPendingNotes(){
+  var arr=localNotes();
+  if(!arr.length){alert('沒有待交助手的備註');return;}
+  var txt=arr.map(function(n){return '【'+(n.target||'')+' / '+(n.type||'')+' / '+(n.created||'')+'】\n'+n.text;}).join('\n\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){alert('已複製，貼到對話窗給助手即可，助手會存進雲端備註本。');},function(){prompt('手動複製：',txt);});}
+  else{prompt('手動複製：',txt);}
 }
 
 var i18n = {
