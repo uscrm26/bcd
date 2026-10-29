@@ -1,0 +1,16 @@
+{
+  "server": {
+    "host": "mail.pony-it.com",
+    "imap_port": 993,
+    "smtp_port": 587,
+    "auth": "IMAP/SMTP 统一密码由执行环境掌握，不写入本文件"
+  },
+  "mailboxes": [
+    { "client": "Immunora", "email": "kashayisisramonaodom@immunora-bio.com", "owner": "Kashay Odom" },
+    { "client": "Oliveware", "email": "horaciolsanchez@olivewareinc.com", "owner": "Horacio L Sanchez" },
+    { "client": "Pebblehome", "email": "christopherhodge@pebblehomeinc.com", "owner": "Christopher Hodge" },
+    { "client": "Sageware", "email": "jaliarthomas@sagewareinc.com", "owner": "Jaliar Thomas" },
+    { "client": "Nervaqon", "email": "christianjgpunzalan@nervaqon.live", "owner": "Christian Jacob Gonzales Punzalan" }
+  ],
+  "note": "新增客户邮箱时，只需在 mailboxes 数组追加一条 client/email/owner，定时任务会自动纳入检查，无需改动任务设定。"
+}
