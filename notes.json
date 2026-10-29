@@ -15,7 +15,7 @@
     "text": "多帳號跟進系統（23:00發信完成後開發，不碰發信鏈路）。帳號：kevinyama＝Kevin W＝超管，密碼0521；ryanfan＝Ryan F＝普通跟進，密碼5467。登入層先選/輸入名字再輸密碼，名字本機記住可切換。核心是利益歸屬：客戶與成功單記在 kevinyama 或 ryanfan 名下，各自統計，非抽象分成。成功由超管手動標記；可逐單記錄該單金額1000/200/1500或自定；先不設月目標。下線只見自己被分配客戶，可看broker池與下載檔案，看不到他人客戶與收入。即時同步決策：接Supabase免費雲庫（免註冊匿名庫全走不通，JSONBin/npoint/jsonblob均需key或連不通），前端anon key直連即時寫，需老闆點3步提供Project URL與anon key，助手建表接線。",
     "created": "2026-10-29 20:40",
     "source": "user",
-    "synced": false
+    "synced": true
   },
   {
     "id": "note-0003",
@@ -24,6 +24,6 @@
     "text": "待老闆提供：Supabase專案Project URL與anon public key；拿到後建帳號表、客戶歸屬表、成功記錄表，前端直連即時寫，定時任務用anon key同步。",
     "created": "2026-10-29 20:48",
     "source": "user",
-    "synced": false
+    "synced": true
   }
 ]
