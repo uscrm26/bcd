@@ -1,0 +1,159 @@
+{
+  "daily": [
+    {
+      "date": "10 月 30 日週五 03:20",
+      "clients": "7 箱巡查",
+      "work": "每小時定時巡查 12 個信箱，Home Depot、Honeywell、Kontoor 三箱認證失敗，新信 8 封。Kervalonix 收 RPS Joe Allen 正面回覆，可承做，需申請表、公司財報與個人財務，審核 2-3 個工作天；JELD-WEN Trinity Carmen 婉拒獨立 bond，只給自己清關客戶做；Lennar Bluebird Emily 同樣婉拒；其餘為休假、退休、產假轉介與自動確認信。佇列 1 封 Immunora 測試信已即時寄出",
+      "output": "8 封已讀存檔；Kervalonix 為有效進展，待備財報後回覆；2 封婉拒記錄在案"
+    },
+    {
+      "date": "10 月 30 日週五 03:17",
+      "clients": "7 箱輪發：Huntington / JELD-WEN / Kervalonix / L3Harris / Laureate / Leidos / Lennar",
+      "work": "7 個可登入信箱各發 15 封差異化破冰信至 105 家互不重複的 broker，輪號切箱、每封間隔 30 秒、單收件人無 Cc/Bcc，美式英文正文，全部 sent 零失敗；Home Depot、Honeywell、Kontoor 三箱認證失敗未發",
+      "output": "105/105 成功，漏斗累計至 230，明細見 send_log_batch2.json"
+    },
+    {
+      "date": "10 月 30 日週五 01:13",
+      "clients": "Pebblehome",
+      "work": "收到 E.C. Ferrer CHB（Irene Mahipos）回覆《RE: Bond for Long Beach Entries》，broker 追問貨物品類（commodity）與出貨前能否先報 ISF，待我們回覆商品資訊與 ISF 時程後再談連續 bond 內設",
+      "output": "1封新信入 emails.json，回覆計 8，需擬回覆提供 commodity 與 ISF 安排"
+    },
+    {
+      "date": "10 月 30 日週五 00:24",
+      "clients": "全部5箱巡查",
+      "work": "每小時定時巡查：連線 Immunora、Oliveware、Pebblehome、Sageware、Nervaqon 五個郵箱，新信4封。Immunora 收到 Importivity Tanner 客氣收尾，Pebblehome 收到 Assured CHB 兩封系統確認信與 Julianachb 休假回覆，均為自動或客套信，無實質報價入賬或婉拒",
+      "output": "4封已入 emails.json 並標已讀，無需立即跟進"
+    },
+    {
+      "date": "10 月 29 日週四 23:50",
+      "clients": "Nervaqon",
+      "work": "從 christianjgpunzalan@nervaqon.live 單發 15 封差異化開發信至 15 家報關行，每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc，全部 sent 零失敗",
+      "output": "15/15 成功，漏斗累計至 125"
+    },
+    {
+      "date": "10 月 29 日週四 23:05",
+      "clients": "Pebblehome",
+      "work": "從 christopherhodge@pebblehomeinc.com 單發 15 封差異化開發信至 15 家報關行，每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc，全部 sent 零失敗",
+      "output": "15/15 成功"
+    },
+    {
+      "date": "10 月 29 日週四 21:27",
+      "clients": "全部5箱巡查",
+      "work": "每小時定時巡查：連線 Immunora、Oliveware、Pebblehome、Sageware、Nervaqon 五個郵箱，今日新信0封，全量標題比對無遺漏，兩條開發備忘已讀取存檔",
+      "output": "無新信，無需跟進"
+    },
+    {
+      "date": "10 月 29 日週四 20:30",
+      "clients": "全部5箱巡查",
+      "work": "每小時定時巡查：連線 Immunora、Oliveware、Pebblehome、Sageware、Nervaqon 五個郵箱，今日新信0封，全量標題比對無遺漏，notes.json 無待吸收備註",
+      "output": "無新信，無需跟進"
+    },
+    {
+      "date": "10 月 29 日週四",
+      "clients": "Immunora",
+      "work": "公司稱已付款並提供Stripe收據1953-1682（795.60 USD，VISA-1573，10/29 02:24:38 UTC，對應INV-5542，與原INV-5533號碼有差異）；19:33已去信BorderBuddy核實發票號差異與入賬，bond尚未出具",
+      "output": "核實郵件已發 service@borderbuddy.com，等待回覆確認入賬後催促出bond"
+    },
+    {
+      "date": "10 月 29 日週四",
+      "clients": "Oliveware",
+      "work": "回覆IIA/DRI/Aurora/BorderBuddy四家broker，提交簽好的Bluebird POA進口表格",
+      "output": "4封回覆+1封附件郵件發送完成"
+    },
+    {
+      "date": "10 月 29 日週四",
+      "clients": "Sageware",
+      "work": "首輪15封差異化開發信逐封發送完成",
+      "output": "每封間隔1分鐘，全部成功送達"
+    },
+    {
+      "date": "10 月 29 日週四",
+      "clients": "Nervaqon",
+      "work": "填寫完整CBP申請表回覆SPG Anova",
+      "output": "等待對方報價"
+    }
+  ],
+  "policy": [
+    {
+      "title": "一、客戶對接與處理流程",
+      "body": "所有客戶不論是否已進入對接階段，一律統一跟進。未對接階段先完成材料歸檔與狀態確認，確認是否需要補件。需要補件的客戶標記為待補件，後續跟進直到材料齊全。材料齊全的客戶標記為可啟動，啟動開發信流程。"
+    },
+    {
+      "title": "二、郵件發送與養號策略",
+      "body": "以養號為目的，每天每個郵箱首輪發送 10 封差異化開發信。次日對未回覆的賬戶追發，同樣 10 封為一輪。郵件內容參考已成功案例的開場方式，但每封文案各不相同，避免機械感。已回覆的賬戶立即停止群發，轉入一對一跟進。"
+    },
+    {
+      "title": "三、月度目標",
+      "body": "每月成功獲得海關擔保文件不少於 30 家。在處理客戶不少於 5 家在途。"
+    },
+    {
+      "title": "四、狀態顏色標註",
+      "body": "客戶狀態四級：紅色待補件、藍色可啟動、黃色支付確認中、綠色已完成。報關經紀資源池五級：灰色未聯繫、藍色已發信、綠色已回覆、深綠色已合作、紅色已關閉。已合作代表有成功對接記錄，不等同於客戶 bond 成交。"
+    },
+    {
+      "title": "五、等待回覆判定規則",
+      "body": "從不同客戶郵箱向同一報關經紀發送開發信，累計達 3 個工作日仍未收到回覆，即判定為不回覆。計算工作日時自動排除美國聯邦假期及週末。判定不回覆後標記為已關閉，不再繼續跟進。每次發信前均按此規則篩選名單，避免浪費精力在無回覆意願的對像上。"
+    }
+  ],
+  "companyDocs": [
+    {
+      "name": "英文助理工作前須知",
+      "path": "docs/company/英文助理 工作前须知.xlsx",
+      "desc": "說明英文助理的工作職責、申請bond所需材料清單、輔助材料要求，以及上級主管分工。"
+    },
+    {
+      "name": "冷啟動外呼話術手冊",
+      "path": "docs/company/冷启动外呼-发件内容话术手册.docx",
+      "desc": "開發信話術範本，包含不同場景的開場、跟進、結尾模板，用於差異化群發。"
+    },
+    {
+      "name": "財務範本（Havoryn）",
+      "path": "docs/company/範本%20Havoryn_Personal_Financial_DRAFT_ESTIMATED_v2.pdf",
+      "desc": "客戶財務狀況評估範本，用於申請bond時的財務資料參考。"
+    },
+    {
+      "name": "報關行與擔保公司名單",
+      "path": "docs/company/Customs%20broker%26%20Bond%20broker.xlsx",
+      "desc": "完整的報關行與擔保公司聯絡名單，包含公司名、地址、電話、郵箱。"
+    }
+  ],
+  "todos": [
+    {
+      "client": "Nervaqon LLC",
+      "level": "high",
+      "tag": "2家broker已回覆待回覆",
+      "time": "10/28 23:10",
+      "body": "兩家擔保公司都已發來報價要求，需要整理材料回覆。Surety One 要申請表、個人財務報表、公司財報、CBP往來、反傾銷說明；SPG Anova Marine 已發申請表，填完回覆。",
+      "ai": "兩家都是高意向線索，優先處理。第一步先回覆兩家確認收到，告訴客戶材料準備中，約3個工作日內提供。第二步把 Nervaqon 的 EIN、章程、財務材料整理齊全，填對方申請表發回去。"
+    },
+    {
+      "client": "Immunora Bio LLC",
+      "level": "mid",
+      "tag": "已付款待出bond",
+      "time": "10/29 跟進",
+      "body": "公司稱已付款並提供 Stripe 收據1953-1682，795.60 USD，VISA-1573，10/29 02:24:38 UTC，對應發票 INV-5542，原 INV-5533 號碼有差異需核實。郵箱尚未收到收據，bond 擔保文件尚未出具，待向 BorderBuddy 確認入賬並催促出保。"
+    },
+    {
+      "client": "Kervalonix LLC",
+      "level": "mid",
+      "tag": "RPS正面回覆待備料",
+      "time": "10/30 03:20",
+      "body": "RPS Joe Allen 回覆可承做，需申請表、公司資產負債表與損益表、個人財務，2-3 個工作天審核，待備齊後回覆。"
+    },
+    {
+      "client": "Pebblehome LLC",
+      "level": "low",
+      "tag": "等待客戶補件",
+      "time": "10/28 19:15",
+      "body": "佛州駕照10/20過期，EIN 名字 ROBIM 與 ROBIN 拼寫不一致，已轉上游同事，等待客戶補新材料；ECF 問 commodity 與 ISF 安排。"
+    }
+  ],
+  "archive": [
+    {
+      "name": "外發郵件往來總帳",
+      "path": "docs/外發郵件往來總帳.pdf",
+      "desc": "累計外發開發信與往來明細，含客戶分組與逐人記錄。",
+      "date": "2026/10/29"
+    }
+  ]
+}

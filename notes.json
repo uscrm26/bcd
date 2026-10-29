@@ -25,5 +25,14 @@
     "created": "2026-10-29 20:48",
     "source": "user",
     "synced": true
+  },
+  {
+    "id": "note-0004",
+    "scope": "global",
+    "target": "2026-10-30 來信轉介記錄",
+    "text": "本輪 8 封：Kervalonix RPS Joe Allen 正面回覆可承做（待備申請表、公司財報、個人財務，2-3工作天審核）。轉介：L3Harris Miami Valley Sandy Duncan 退休，改聯絡 Denise Shirk dshirk@miamivalleyworldwide.com；Laureate Leavitt Alan Anderson 退休，憑證事宜改 Teresa Deoliveira teresa-deoliveira@leavitt.com，一般來信打 801-566-7272；Lennar/Immunora gowithknown Gabrielle 產假，一般找 Dylan dylan@gowithknown.com（已對 Immunora 正面回覆），會計找 accounting@gowithknown.com。Huntington Lexington Mark 休假至 11/2，急件打 410-625-0800，無指定轉介人。Propeller Bonds 自動確認，24 小時內回。Bluebird 區分：Oliveware 的 Emily Fiscus 先前願意隨進口封裝，Lennar 這封只做自己清關客戶、不做獨立 bond，不屬同一家結論。",
+    "created": "2026-10-30 03:35",
+    "source": "assistant",
+    "synced": true
   }
 ]

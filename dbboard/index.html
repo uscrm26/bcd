@@ -2,13 +2,13 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Bond Client Desk 資料庫版</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--green:#12a05a;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
+:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--green:#12a05a;--red:#b91c1c;--amber:#d97706;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;padding-bottom:72px}
 #gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b1730}
 .gate-card{background:#fff;border-radius:20px;padding:36px 34px;width:min(400px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.35)}
 .gate-card h2{margin:0 0 6px;font-size:20px}.gate-sub{color:var(--mut);margin:0 0 20px;font-size:13px}
@@ -17,17 +17,18 @@ body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI
 .primary{padding:12px 26px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;font-weight:600;cursor:pointer}
 .err{color:#ef4444;font-size:12.5px;min-height:18px;margin:4px 0}
 #app{display:none}
-.topbar{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:5}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 16px;gap:12px;position:sticky;top:0;z-index:10}
 .brand h1{font-size:15px;margin:0}.brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:400}
 .spacer{flex:1}.avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
 .user-chip{display:flex;align-items:center;gap:10px}.tag{font-size:11px;color:var(--mut)}
 .ghost{padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--ink)}
-.wrap{max-width:1180px;margin:0 auto;padding:18px}
-.toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
-.toolbar input,.toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;background:#fff}
-.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.stat{flex:1;min-width:120px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
-.stat b{font-size:22px;display:block}.stat span{font-size:12px;color:var(--mut)}
+.wrap{max-width:1180px;margin:0 auto;padding:16px}
+.page{display:none}.page.on{display:block}
+.toolbar{display:flex;gap:10px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;background:#fff;flex:1;min-width:140px}
+.stat-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{flex:1;min-width:96px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:var(--shadow)}
+.stat b{font-size:20px;display:block}.stat span{font-size:11.5px;color:var(--mut)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
 .client-card{background:#fff;border-radius:12px;padding:18px;border:1px solid var(--line);border-top:3px solid #d1d5db;box-shadow:var(--shadow)}
 .client-card.st-review{border-top-color:#059669}.client-card.st-paid{border-top-color:#d97706}
@@ -35,7 +36,7 @@ body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI
 .client-card .top{display:flex;gap:16px;align-items:flex-start}
 .client-card .photo{width:120px;height:160px;border-radius:10px;object-fit:cover;border:1px solid var(--line);flex-shrink:0;background:#f3f4f6;cursor:pointer}
 .client-card .info{flex:1;min-width:0}
-.client-card h3{font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.client-card h3{font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .client-card .row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed #f0f1f3}
 .client-card .row .k{color:var(--mut);flex-shrink:0;padding-right:10px}
 .client-card .row .v{color:var(--ink);text-align:right;word-break:break-all}
@@ -44,15 +45,38 @@ body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI
 .doc-chip{font-size:11px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fafbfd;color:#374151;cursor:pointer;text-decoration:none}
 .doc-chip:hover{background:#eef4ff;color:var(--brand);border-color:var(--brand)}
 .pill{font-size:11px;padding:3px 10px;border-radius:999px;background:#eef4ff;color:var(--brand);white-space:nowrap}
-.pill.ready{background:#e6f4ee;color:#059669}.pill.block{background:#fdecec;color:#b91c1c}.pill.doing{background:#eef4ff;color:#2f6bff}.pill.paid{background:#fef3e2;color:#d97706}
+.pill.ready{background:#e6f4ee;color:#059669}.pill.block{background:#fdecec;color:#b91c1c}.pill.doing{background:#eef4ff;color:#2f6bff}.pill.paid{background:#fef3e2;color:#d97706}.pill.review{background:#e6f4ee;color:#059669}
 .owner-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#f0f2f5;color:var(--mut)}
+.todo{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff;border-left:4px solid var(--line)}
+.todo.high{border-left-color:var(--red);background:#fef2f2}.todo.mid{border-left-color:var(--amber);background:#fffaf0}.todo.low{border-left-color:#9ca3af;opacity:.85}
+.todo b{font-size:15px}.todo .time{font-size:11px;color:var(--mut)}
+.todo p{font-size:13px;line-height:1.7;color:#374151}
+.ai{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:10px;font-size:12px;color:#374151;line-height:1.7;margin-top:8px}
+.mail-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.mail-item.unread{border-left:4px solid var(--red)}.mail-item.read{opacity:.72}
+.mail-head{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--mut);margin-bottom:6px}
+.mail-subj{font-weight:600;font-size:13.5px}.mail-body{font-size:12.5px;color:#374151;line-height:1.7;margin-top:6px;white-space:pre-wrap;max-height:120px;overflow:auto}
+.log-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.log-date{font-size:12px;font-weight:700;color:var(--brand)}.log-clients{font-size:12px;color:var(--mut);margin:4px 0}.log-work{font-size:13px;line-height:1.7}.log-out{font-size:12px;color:#059669;margin-top:6px}
+.table-card{background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.row-line{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px}
+.row-line b{display:block;font-size:13.5px}.row-line .m{color:var(--brand);font-size:12px;word-break:break-all}
+.row-line .a{color:var(--mut);font-size:12px}
+.file-card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.file-card b{font-size:14.5px}.file-card p{font-size:12.5px;color:var(--mut);line-height:1.7}
+.file-card a{font-size:12.5px;color:var(--brand);text-decoration:none;margin-right:12px}
+.bottomnav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:20;overflow-x:auto}
+.bottomnav button{flex:1;min-width:64px;border:none;background:none;padding:9px 4px;font-size:11px;color:var(--mut);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bottomnav button.on{color:var(--brand);font-weight:700}
+.bottomnav svg{width:20px;height:20px}
 .empty{color:var(--mut);text-align:center;padding:40px}
 .mask{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:50}
 .mask.on{display:flex}
-.modal{background:#fff;border-radius:18px;width:min(680px,92vw);max-height:88vh;overflow:auto;padding:26px}
+.modal{background:#fff;border-radius:18px;width:min(680px,94vw);max-height:88vh;overflow:auto;padding:20px}
 .modal img{max-width:100%;border-radius:10px}
-.toast{position:fixed;top:70px;right:20px;background:#12a05a;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;display:none}
-@media(max-width:760px){.client-card .top{flex-direction:column}.client-card .photo{width:100%;height:180px}}
+.pill-filter{font-size:11.5px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--mut)}
+.pill-filter.on{background:#eef4ff;color:var(--brand);border-color:var(--brand)}
+@media(max-width:760px){.client-card .top{flex-direction:column}.client-card .photo{width:100%;height:180px}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -73,37 +97,77 @@ body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI
     <div class="spacer"></div>
     <div class="user-chip"><div class="avatar" id="meAvatar">K</div>
       <div><div id="meName" style="font-size:13px;font-weight:600"></div><div class="tag" id="meRole"></div></div>
-      <button class="ghost" onclick="logout()">切換登出</button>
+      <button class="ghost" onclick="logout()">登出</button>
     </div>
   </div>
   <div class="wrap">
-    <div class="toolbar">
-      <input id="searchBox" style="max-width:260px" placeholder="搜索公司 / 法人 / 信箱" oninput="render()">
-      <select id="statusFilter" onchange="render()">
-        <option value="">全部狀態</option>
-        <option>跟進中</option><option>可啟動</option><option>待補件</option><option>審批中</option><option>已成交</option><option>已關閉</option>
-      </select>
-      <div style="flex:1"></div>
-      <button class="ghost" onclick="load()">重新整理</button>
-    </div>
-    <div class="stat-row" id="statRow"></div>
-    <div class="grid" id="grid"></div>
+    <section class="page on" id="page-clients">
+      <div class="toolbar">
+        <input id="searchBox" placeholder="搜索公司 / 法人 / 信箱" oninput="renderClients()">
+        <select id="statusFilter" onchange="renderClients()">
+          <option value="">全部狀態</option><option>跟進中</option><option>可啟動</option><option>待補件</option><option>審批中</option><option>已成交</option><option>已關閉</option>
+        </select>
+        <button class="ghost" onclick="loadAll()">重新整理</button>
+      </div>
+      <div class="stat-row" id="statRow"></div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section class="page" id="page-todo"><h2 style="font-size:18px">待處理業務</h2><div id="todoList"></div></section>
+
+    <section class="page" id="page-mail">
+      <div class="toolbar"><input id="mailSearch" placeholder="搜索寄件人 / 主題 / 內文" oninput="renderMail()"></div>
+      <label style="font-size:12.5px;color:var(--mut)"><input type="checkbox" id="onlyUnread" onchange="renderMail()"> 只看未讀</label>
+      <div id="mailList"></div>
+    </section>
+
+    <section class="page" id="page-daily"><h2 style="font-size:18px">每日工作記錄</h2><div id="dailyList"></div></section>
+
+    <section class="page" id="page-broker">
+      <div class="toolbar"><input id="brokerSearch" placeholder="搜索公司名、地址、電話、郵箱" oninput="renderBroker()"></div>
+      <div class="stat-row" id="brokerCount"></div>
+      <div class="table-card" id="brokerList"></div>
+    </section>
+
+    <section class="page" id="page-files">
+      <h2 style="font-size:18px">檔案庫與公司範本</h2>
+      <div class="toolbar"><input id="fileSearch" placeholder="搜索檔名" oninput="renderFiles()"></div>
+      <div id="fileList"></div>
+    </section>
+
+    <section class="page" id="page-webmail">
+      <h2 style="font-size:18px">信箱登錄</h2>
+      <div class="toolbar"><input id="wmSearch" placeholder="搜索客戶 / 郵箱" oninput="renderWebmail()"></div>
+      <div class="table-card" id="wmList"></div>
+    </section>
+
+    <section class="page" id="page-policy"><h2 style="font-size:18px">公司資料與業務規則</h2><div id="policyList"></div></section>
   </div>
+
+  <nav class="bottomnav" id="nav">
+    <button class="on" data-p="clients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>客戶</button>
+    <button data-p="todo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>待辦</button>
+    <button data-p="mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>郵件</button>
+    <button data-p="daily"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>每日</button>
+    <button data-p="broker"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>經紀</button>
+    <button data-p="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg>檔案</button>
+    <button data-p="webmail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>信箱</button>
+    <button data-p="policy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 14 14 8 20 8"/></svg>規則</button>
+  </nav>
 </div>
 
 <div class="mask" id="imgMask" onclick="this.classList.remove('on')"><div class="modal" id="imgBox"></div></div>
-<div class="toast" id="toast"></div>
 
 <script>
 const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
 const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
 const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-let session=null,archive=[],ownership=[],accounts=[];
+let session=null,archive=[],ownership=[],accounts=[],extra={},emails=[],brokers=[],mailboxes=[];
 const STATUS_CLASS={"審批中":"review","可啟動":"ready","待補件":"block","跟進中":"doing","已成交":"paid","已關閉":"block"};
+const CLIENT_MAP={"Immunora":"immunora","Oliveware":"oliveware","Pebblehome":"pebblehome","Sageware":"sageware","Nervaqon":"nervaqon","Huntington":"huntingtoningalls","JELD-WEN":"jeldwen","Kervalonix":"kervalonix","L3Harris":"l3harris","Laureate":"laureate","Leidos":"leidos","Lennar":"lennar","Home Depot":"homedepot","Honeywell":"honeywell","Kontoor":"kontoor"};
 
 function subtree(rootId){const set=new Set([rootId]);let grew=true;while(grew){grew=false;accounts.forEach(a=>{if(a.parent_id&&set.has(a.parent_id)&&!set.has(a.id)){set.add(a.id);grew=true;}});}return set;}
 function canSee(ownerId){if(!ownerId)return session.role==='admin';if(session.role==='admin')return true;return subtree(session.id).has(ownerId);}
-
 async function tryLogin(){
   const id=document.getElementById('acctInput').value.trim().toLowerCase();
   const pin=document.getElementById('pinInput').value.trim();
@@ -117,60 +181,108 @@ function enter(){
   document.getElementById('meName').textContent=session.display_name;
   document.getElementById('meRole').textContent=session.role==='admin'?'超級管理員':session.role==='manager'?'主管':'跟進人員';
   document.getElementById('meAvatar').textContent=(session.display_name||'K').slice(0,1);
-  load();
+  loadAll();
 }
-async function load(){
-  const [a,o,acc]=await Promise.all([
+async function getJSON(url){const r=await fetch(url);return r.ok?r.json():null;}
+async function loadAll(){
+  const [a,o,acc,ex,em,br,mb]=await Promise.all([
     sb.from('company_archive').select('*').not('client_key','like','msg-%'),
     sb.from('client_ownership').select('*'),
-    sb.from('accounts').select('*')
+    sb.from('accounts').select('*'),
+    getJSON('data.json'),getJSON('../emails.json'),getJSON('../brokers.json'),getJSON('../mailboxes.json')
   ]);
   archive=(a.data||[]).filter(r=>r.client_key&&!r.client_key.startsWith('msg-'));
-  ownership=o.data||[];accounts=acc.data||[];
-  render();
+  ownership=o.data||[];accounts=acc.data||[];extra=ex||{};emails=em||[];brokers=br||[];mailboxes=(mb&&mb.mailboxes)||[];
+  renderClients();renderTodo();renderMail();renderDaily();renderBroker();renderFiles();renderWebmail();renderPolicy();
 }
-function ownerOf(key){const o=ownership.find(x=>x.client_key===key);return o||null;}
-function esc(s){return (s||'').replace(/</g,'&lt;');}
-function render(){
+function ownerOf(key){return ownership.find(x=>x.client_key===key)||null;}
+function esc(s){return (s==null?'':String(s)).replace(/</g,'&lt;');}
+function switchPage(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
+  document.getElementById('page-'+p).classList.add('on');
+  document.querySelectorAll('.bottomnav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));
+  window.scrollTo(0,0);
+}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button[data-p]');if(b)switchPage(b.dataset.p);});
+
+function visibleClients(){
+  return archive.filter(r=>canSee((ownerOf(r.client_key)||{}).owner));
+}
+function renderClients(){
   const q=(document.getElementById('searchBox').value||'').toLowerCase();
   const sf=document.getElementById('statusFilter').value;
-  let rows=archive.filter(r=>canSee((ownerOf(r.client_key)||{}).owner));
+  let rows=visibleClients();
   if(sf)rows=rows.filter(r=>((ownerOf(r.client_key)||{}).status||r.profile_json.status)===sf);
   if(q)rows=rows.filter(r=>{const p=r.profile_json||{};return (r.company_name+r.legal_person+(p.legal_person||'')+(p.email||'')).toLowerCase().includes(q);});
-  // stats
   const cnt={};rows.forEach(r=>{const st=(ownerOf(r.client_key)||{}).status||r.profile_json.status||'未分類';cnt[st]=(cnt[st]||0)+1;});
   document.getElementById('statRow').innerHTML=Object.entries(cnt).map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
   const grid=document.getElementById('grid');
   if(!rows.length){grid.innerHTML='<div class="empty">尚無你可查看的客戶</div>';return;}
   grid.innerHTML=rows.map(r=>{
-    const p=r.profile_json||{};
-    const own=ownerOf(r.client_key);
-    const status=own?own.status:p.status||'跟進中';
-    const cls=STATUS_CLASS[status]||'doing';
+    const p=r.profile_json||{};const own=ownerOf(r.client_key);
+    const status=own?own.status:p.status||'跟進中';const cls=STATUS_CLASS[status]||'doing';
     const docs=p.docs||[];
     const photo=docs.find(d=>/照片|人像/.test(d.name))||docs.find(d=>/正面/.test(d.name));
     const photoSrc=photo?('../'+photo.path):'';
-    const rowsHtml=[
-      ['法人',p.legal_person],['信箱',p.email],['電話',p.phone],['地址',p.address],
-      ['EIN',p.ein],['CA 實體號',p.ca_no],['駕照',p.dl]
-    ].filter(x=>x[1]).map(x=>`<div class="row"><span class="k">${x[0]}</span><span class="v">${esc(x[1])}</span></div>`).join('');
+    const rowsHtml=[['法人',p.legal_person],['信箱',p.email],['電話',p.phone],['地址',p.address],['EIN',p.ein],['CA 實體號',p.ca_no],['駕照',p.dl]].filter(x=>x[1]).map(x=>`<div class="row"><span class="k">${x[0]}</span><span class="v">${esc(x[1])}</span></div>`).join('');
     const chips=docs.map(d=>`<a class="doc-chip" href="../${d.path}" target="_blank">${esc(d.name)}</a>`).join('');
-    return `<div class="client-card st-${cls}">
-      <div class="top">
-        ${photoSrc?`<img class="photo" src="${photoSrc}" onclick="openImg('${photoSrc}')">`:''}
-        <div class="info">
-          <h3><span>${esc(r.company_name)}</span><span class="pill ${cls}">${status}</span></h3>
-          ${rowsHtml}
-          ${own?`<div style="margin-top:8px"><span class="owner-tag">負責人：${(accounts.find(a=>a.id===own.owner)||{}).display_name||own.owner}</span></div>`:''}
-          ${(own?.note||p.note)?`<div class="progress-note">${esc(own?.note||p.note)}</div>`:''}
-          <div class="docs-row">${chips}</div>
-        </div>
-      </div></div>`;
+    return `<div class="client-card st-${cls}"><div class="top">${photoSrc?`<img class="photo" src="${photoSrc}" onclick="openImg('${photoSrc}')">`:''}<div class="info">
+      <h3><span>${esc(r.company_name)}</span><span class="pill ${cls}">${status}</span></h3>${rowsHtml}
+      ${own?`<div style="margin-top:8px"><span class="owner-tag">負責人：${(accounts.find(a=>a.id===own.owner)||{}).display_name||own.owner}</span></div>`:''}
+      ${(own?.note||p.note)?`<div class="progress-note">${esc(own?.note||p.note)}</div>`:''}
+      <div class="docs-row">${chips}</div></div></div></div>`;
   }).join('');
 }
+function renderTodo(){
+  const list=(extra.todos||[]).filter(t=>!t.client||canSee(CLIENT_MAP[t.client.split(' ')[0]]));
+  document.getElementById('todoList').innerHTML=list.map(t=>`<div class="todo ${t.level}">
+    <div style="display:flex;justify-content:space-between;gap:10px"><b>${esc(t.client)}</b><span class="time">${esc(t.time)}</span></div>
+    <span class="pill ${t.level==='high'?'block':t.level==='mid'?'paid':'ready'}" style="display:inline-block;margin:6px 0">${esc(t.tag)}</span>
+    <p>${esc(t.body)}</p>${t.ai?`<div class="ai"><b>建議：</b>${esc(t.ai)}</div>`:''}</div>`).join('')||'<div class="empty">無待辦</div>';
+}
+function canSeeMail(c){const key=CLIENT_MAP[c];if(!key)return session.role==='admin';return canSee((ownerOf(key)||{}).owner);}
+function renderMail(){
+  const q=(document.getElementById('mailSearch').value||'').toLowerCase();
+  const onlyU=document.getElementById('onlyUnread').checked;
+  let rows=emails.filter(x=>canSeeMail(x.client));
+  if(onlyU)rows=rows.filter(x=>!x.read);
+  if(q)rows=rows.filter(x=>(x.from+' '+x.subject+' '+(x.body||'')).toLowerCase().includes(q));
+  rows=rows.slice().reverse().slice(0,80);
+  document.getElementById('mailList').innerHTML=rows.map(x=>`<div class="mail-item ${x.read?'read':'unread'}">
+    <div class="mail-head"><span>${esc(x.client)} · ${esc(x.from)}</span><span>${esc(x.date)}</span></div>
+    <div class="mail-subj">${esc(x.subject)}</div>
+    ${x.body?`<div class="mail-body">${esc(x.body)}</div>`:''}</div>`).join('')||'<div class="empty">無郵件</div>';
+}
+function renderDaily(){
+  document.getElementById('dailyList').innerHTML=(extra.daily||[]).map(x=>`<div class="log-item">
+    <div class="log-date">${esc(x.date)}</div><div class="log-clients">${esc(x.clients)}</div>
+    <div class="log-work">${esc(x.work)}</div><div class="log-out">${esc(x.output)}</div></div>`).join('');
+}
+function renderBroker(){
+  const q=(document.getElementById('brokerSearch').value||'').toLowerCase();
+  let rows=brokers.filter(x=>(x.n+' '+(x.a||'')+' '+(x.c||'')+' '+(x.m||'')).toLowerCase().includes(q)).slice(0,120);
+  document.getElementById('brokerCount').innerHTML=`<div class="stat"><b>${brokers.length}</b><span>名單總數</span></div><div class="stat"><b>${rows.length}</b><span>本次顯示</span></div>`;
+  document.getElementById('brokerList').innerHTML=rows.map(x=>`<div class="row-line"><b>${esc(x.n)}</b><span class="m">${esc(x.m)}</span>${x.c?` · ${esc(x.c)}`:''}<div class="a">${esc(x.a||'')}${x.l?'<br>'+esc(x.l):''}</div></div>`).join('')||'<div class="empty">無結果</div>';
+}
+function renderFiles(){
+  const q=(document.getElementById('fileSearch').value||'').toLowerCase();
+  const docs=[...(extra.companyDocs||[]).map(x=>({...x,kind:'公司範本'})),...(extra.archive||[]).map(x=>({...x,kind:'業務存檔'}))];
+  const rows=docs.filter(x=>(x.name+x.desc).toLowerCase().includes(q));
+  document.getElementById('fileList').innerHTML=rows.map(x=>`<div class="file-card"><b>${esc(x.name)}</b><span class="owner-tag" style="margin-left:8px">${x.kind}</span>
+    <p>${esc(x.desc)}</p><a href="../${encodeURI(x.path)}" target="_blank">預覽 / 打開</a><a href="../${encodeURI(x.path)}" download>下載</a></div>`).join('');
+}
+function renderWebmail(){
+  const q=(document.getElementById('wmSearch').value||'').toLowerCase();
+  const rows=mailboxes.filter(x=>(x.client+' '+x.email).toLowerCase().includes(q));
+  document.getElementById('wmList').innerHTML=rows.map(x=>`<div class="row-line"><b>${esc(x.client)}</b>
+    <span class="m">${esc(x.email)}</span><div class="a">負責人 ${esc(x.owner||'')}</div>
+    <a href="https://mail.pony-it.com/SOGo/?username=${encodeURIComponent(x.email)}" target="_blank" style="color:var(--brand);font-size:12.5px">打開 Webmail</a></div>`).join('')||'<div class="empty">無信箱</div>';
+}
+function renderPolicy(){
+  document.getElementById('policyList').innerHTML=(extra.policy||[]).map(x=>`<div class="file-card"><b>${esc(x.title)}</b><p>${esc(x.body)}</p></div>`).join('');
+}
 function openImg(src){document.getElementById('imgBox').innerHTML=`<img src="${src}">`;document.getElementById('imgMask').classList.add('on');}
-function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2600);}
-setInterval(()=>{if(session)load();},60000);
+setInterval(()=>{if(session)loadAll();},120000);
 (function(){try{const s=JSON.parse(localStorage.getItem('db_session')||'null');if(s){session=s;enter();}}catch(e){}})();
 </script>
 </body>
