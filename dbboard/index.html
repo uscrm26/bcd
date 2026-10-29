@@ -162,7 +162,11 @@ body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI
 const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
 const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
 let sb=null;
-try{sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);}catch(e){document.addEventListener('DOMContentLoaded',()=>{document.getElementById('gateErr').textContent='資料庫 SDK 載入失敗：'+e.message;});}
+async function rest(table,params){
+  const r=await fetch(`${SUPA_URL}/rest/v1/${table}?${params}`,{headers:{apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY}});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  return r.json();
+}
 window.onerror=function(m){const el=document.getElementById('gateErr');if(el&&!session)el.textContent='前端錯誤：'+m;return false;};
 let session=null,archive=[],ownership=[],accounts=[],extra={},emails=[],brokers=[],mailboxes=[];
 const STATUS_CLASS={"審批中":"review","可啟動":"ready","待補件":"block","跟進中":"doing","已成交":"paid","已關閉":"block"};
@@ -172,14 +176,13 @@ function subtree(rootId){const set=new Set([rootId]);let grew=true;while(grew){g
 function canSee(ownerId){if(!ownerId)return session.role==='admin';if(session.role==='admin')return true;return subtree(session.id).has(ownerId);}
 async function tryLogin(){
   try{
-    if(!sb){document.getElementById('gateErr').textContent='資料庫未就緒，請稍後重新整理';return;}
     const id=document.getElementById('acctInput').value.trim().toLowerCase();
     const pin=document.getElementById('pinInput').value.trim();
-    const {data,error}=await sb.from('accounts').select('*').eq('id',id).eq('pin',pin).eq('active',true).maybeSingle();
-    if(error){document.getElementById('gateErr').textContent='連線錯誤：'+error.message;return;}
+    const rows=await rest('accounts',`select=*&id=eq.${encodeURIComponent(id)}&pin=eq.${encodeURIComponent(pin)}&active=eq.true`);
+    const data=rows[0];
     if(!data){document.getElementById('gateErr').textContent='帳號或密碼錯誤';return;}
     session=data;localStorage.setItem('db_session',JSON.stringify(data));enter();
-  }catch(e){document.getElementById('gateErr').textContent='發生錯誤：'+e.message;}
+  }catch(e){document.getElementById('gateErr').textContent='連線錯誤：'+e.message;}
 }
 function logout(){session=null;localStorage.removeItem('db_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
 function enter(){
@@ -192,9 +195,9 @@ function enter(){
 async function getJSON(url){const r=await fetch(url);return r.ok?r.json():null;}
 async function loadAll(){
   const [a,o,acc,ex,em,br,mb]=await Promise.all([
-    sb.from('company_archive').select('*').not('client_key','like','msg-%'),
-    sb.from('client_ownership').select('*'),
-    sb.from('accounts').select('*'),
+    rest('company_archive',"select=*&client_key=not.like.msg-*"),
+    rest('client_ownership',"select=*"),
+    rest('accounts',"select=*"),
     Promise.resolve((async()=>{try{const r=await fetch('data.json',{cache:'no-store'});if(r.ok)return await r.json();}catch(e){}return {
   "daily": [
     {
