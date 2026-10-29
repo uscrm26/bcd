@@ -281,7 +281,7 @@ function clearGate() {
       <div class="card">
         <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span data-i18n-kpi2l>對接開單中</span></div>
         <div class="value">1</div>
-        <div class="sub warn" data-i18n-kpi2s>Immunora 疑似未付款待核</div>
+        <div class="sub warn" data-i18n-kpi2s>Immunora 已付款待出bond</div>
       </div>
       <div class="card">
         <div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span data-i18n-kpi3l>獲得海關擔保文件</span></div>
@@ -328,7 +328,7 @@ function clearGate() {
         <thead><tr><th data-i18n-col-client>客戶</th><th data-i18n-col-founder>法人</th><th data-i18n-col-status>狀態</th><th data-i18n-col-note>備註</th><th data-i18n-detail>詳情</th></tr></thead>
         <tbody id="clientTableBody">
           <tr class="client-row" data-client="Immunora" data-founder="Kashay Odom" data-status="審批中">
-            <td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run" data-i18n-st-review>審批中</span></td><td>BorderBuddy，INV-5533 仍為待付款，郵箱未見收據，疑似未到賬</td>
+            <td>Immunora Bio LLC</td><td>Kashay Odom</td><td><span class="pill run" data-i18n-st-review>審批中</span></td><td>公司稱已付款並提供Stripe收據1953-1682，bond尚未出具，待跟進入賬與出保</td>
             <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
           </tr>
           <tr class="detail-row" style="display:none;background:#f9fafb;">
@@ -340,9 +340,10 @@ function clearGate() {
                 10/27 14:20 - 提交 Annual Bond Application 至 JotForm<br>
                 10/27 16:45 - BorderBuddy 開出發票 INV-5533，金額 795.60 USD<br>
                 10/28 10:30 - 已轉公司財務付款，等待到賬確認<br>
-                10/29 檢查 - 登錄Immunora郵箱核對INV-5533，發票狀態仍為PaymentDue（795.60 USD），郵箱未收到付款收據，疑似尚未到賬<br><br>
-                <b>已完成事項：</b> POA簽署、章程發送、申請表提交、發票開出<br>
-                <b>待辦事項：</b> 跟進財務確認INV-5533是否實際付款，索要付款收據，到賬後borderbuddy正式出bond<br><br>
+                10/29 檢查 - 登錄Immunora郵箱核對INV-5533，發票狀態仍為PaymentDue，郵箱未見付款收據<br>
+                10/29 公司回覆稱已付款，提供Stripe收據編號1953-1682，已付795.60 USD，VISA-1573，付款時間10/29 02:24:38 UTC，收據對應發票INV-5542（與原INV-5533號碼不同，需向BorderBuddy核實）；Immunora郵箱內尚未收到該收據郵件<br><br>
+                <b>已完成事項：</b> POA簽署、章程發送、申請表提交、發票開出、公司稱已付款並提供Stripe收據<br>
+                <b>待辦事項：</b> 向BorderBuddy核實付款入賬（注意發票號5533/5542差異），確認後催促正式出具海關bond擔保文件<br><br>
                 <b style="font-size:14px;">📧 開發信發送記錄（31家）</b>
                 <div style="background:#f3f4f6;border-radius:8px;padding:12px;margin:8px 0;font-size:12px;line-height:1.8;">
                   <b>Immunora Bio LLC 聯絡信息：</b><br>
@@ -546,11 +547,11 @@ function clearGate() {
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
           <div>
             <b style="font-size:15px;color:#1f2937;">Immunora Bio LLC</b>
-            <span style="margin-left:8px;background:#fef2f2;color:#b91c1c;padding:2px 8px;border-radius:999px;font-size:11px;">疑似未付款待核</span>
+            <span style="margin-left:8px;background:#fef3c7;color:#92400e;padding:2px 8px;border-radius:999px;font-size:11px;">已付款待出bond</span>
           </div>
-          <span style="font-size:11px;color:#6b7280;">10/29 檢查</span>
+          <span style="font-size:11px;color:#6b7280;">10/29 跟進</span>
         </div>
-        <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 10px 0;">BorderBuddy發票INV-5533 795.60 USD，10/29登錄郵箱核對，發票狀態仍為PaymentDue，郵箱未見付款收據，疑似尚未到賬，需跟進財務確認並索要收據。</p>
+        <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 10px 0;">公司稱已付款並提供Stripe收據1953-1682，795.60 USD，VISA-1573，10/29 02:24:38 UTC，對應發票INV-5542（原INV-5533號碼有差異需核實）。郵箱尚未收到收據，bond擔保文件尚未出具，待向BorderBuddy確認入賬並催促出保。</p>
         <div style="display:flex;gap:8px;">
           <button onclick="showMailOrig('Immunora')" style="padding:6px 12px;border:1px solid #d1d5db;border-radius:6px;font-size:12px;cursor:pointer;background:#fff;">查看郵件原文</button>
         </div>
@@ -580,7 +581,7 @@ function clearGate() {
       <table>
         <thead><tr><th style="width:110px;" data-i18n-col-date>日期</th><th style="width:180px;" data-i18n-col-clients>涉及客戶</th><th data-i18n-col-work>工作內容</th><th style="width:200px;" data-i18n-col-output>產出</th></tr></thead>
         <tbody>
-          <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四</span></td><td>Immunora</td><td>登錄郵箱核對發票INV-5533付款狀態，發票仍為PaymentDue，郵箱未見付款收據，疑似未到賬</td><td>待跟進財務確認付款並索要收據</td></tr>
+          <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四</span></td><td>Immunora</td><td>公司稱已付款並提供Stripe收據1953-1682（795.60 USD，VISA-1573，10/29 02:24:38 UTC，對應INV-5542），郵箱未見收據，bond尚未出具</td><td>待向BorderBuddy核實入賬並催促出bond</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四</span></td><td>Oliveware</td><td>回覆IIA/DRI/Aurora/BorderBuddy四家broker，提交簽好的Bluebird POA進口表格</td><td>4封回覆+1封附件郵件發送完成</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四</span></td><td>Sageware</td><td>首輪15封差異化開發信逐封發送完成</td><td>每封間隔1分鐘，全部成功送達</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四</span></td><td>Nervaqon</td><td>填寫完整CBP申請表回覆SPG Anova</td><td>等待對方報價</td></tr>
@@ -606,18 +607,18 @@ function clearGate() {
           <div class="top">
             <img class="avatar" src="docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpg" onclick="openModalImg(this.src)">
             <div class="info">
-              <h3>Immunora Bio LLC <span class="pill" style="background:#fef2f2;color:#b91c1c;" data-i18n-st-paid>疑似未付款</span></h3>
+              <h3>Immunora Bio LLC <span class="pill" style="background:#fef3c7;color:#92400e;" data-i18n-st-paid>已付款待出bond</span></h3>
               <div class="row"><span class="k" data-i18n-c-founder>法人</span><span class="v">Kashay Isis Ramona Odom</span></div>
               <div class="row"><span class="k" data-i18n-c-email>郵箱</span><span class="v">kashayisisramonaodom@immunora-bio.com</span></div>
               <div class="row"><span class="k" data-i18n-c-phone>電話</span><span class="v">209 776 5124</span></div>
               <div class="row"><span class="k" data-i18n-c-addr>地址</span><span class="v">12759 Poway Rd Ste 202 Poway CA 92064</span></div>
               <div class="row"><span class="k" data-i18n-c-product>產品</span><span class="v">home textile bedding sets，China，HTS 6302.31</span></div>
               <div class="row"><span class="k" data-i18n-c-broker>對接</span><span class="v">BorderBuddy Katrina 604-245-7353</span></div>
-              <div class="row"><span class="k" data-i18n-c-amt>金額</span><span class="v">INV-5533 795.60 USD 疑似未付款（PaymentDue，未見收據）</span></div>
+              <div class="row"><span class="k" data-i18n-c-amt>金額</span><span class="v">795.60 USD 已付（Stripe收據1953-1682，INV-5542），待出bond</span></div>
             </div>
           </div>
           <div class="progress-title" data-i18n-prog-title>跟進進度</div>
-          <div class="progress-note" data-i18n-prog-imm>BorderBuddy POA 已簽，Annual Bond Application 經 JotForm 提交，章程已發。10/29核對發票 INV-5533 共 795.60 USD，狀態仍為PaymentDue，郵箱未見付款收據，疑似未到賬，待跟進財務確認並索要收據。首輪 30 封開發信中，Known/Priority/Mercury/SuretyPlace 已回覆，Shapiro/Importivity 婉拒關閉。</div>
+          <div class="progress-note" data-i18n-prog-imm>BorderBuddy POA 已簽，Annual Bond Application 經 JotForm 提交，章程已發。公司稱已付款並提供Stripe收據1953-1682（795.60 USD，VISA-1573，10/29 02:24:38 UTC，對應INV-5542，與原INV-5533號碼有差異待核實），郵箱尚未收到收據，bond擔保文件尚未出具，待確認入賬並催促出保。首輪 30 封開發信中，Known/Priority/Mercury/SuretyPlace 已回覆，Shapiro/Importivity 婉拒關閉。</div>
           <div class="docs-row">
             <a class="doc-icon" onclick="openDoc('docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
             <a class="doc-icon" onclick="openDoc('docs/clients/Immunora-Bio/Immunora%20Bio%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A9%BE%E7%85%A7%E8%83%8C%E9%9D%A2.jpg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg><span class="lbl">駕照</span></a>
@@ -1102,7 +1103,7 @@ var i18n = {
     companyTitle:'公司檔案庫', companyDesc:'公司提供的參考文件、話術手冊、財務範本、報關行名單，點擊即可預覽或下載。',
     preview:'預覽', download:'下載',
     newmail:'新郵件提醒', newmailBody:'',
-    kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 疑似未付款待核',
+    kpi1l:'在處理客戶', kpi1s:'本月立項', kpi2l:'對接開單中', kpi2s:'Immunora 已付款待出bond',
     kpi3l:'獲得海關擔保文件', kpi3s:'尚無', kpi4l:'月度目標達成', kpi4s:'目標每月下 bond 30 家',
     funnel:'開發信漏斗', f1:'已發開發信 80', f2:'收到回覆 7', f3:'對接開單 1', f4:'獲得海關擔保文件 0',
     ring:'在處理客戶狀態', ringtotal:'總客戶', l1:'支付確認中 1 家', l2:'可啟動 3 家', l3:'待補件 1 家',
@@ -1147,7 +1148,7 @@ var i18n = {
     companyTitle:'Company Document Library', companyDesc:'Internal reference docs, scripts, financial templates, broker lists. Preview or download below.',
     preview:'Preview', download:'Download',
     newmail:'New Email Alert', newmailBody:'',
-    kpi1l:'Active Clients', kpi1s:'This month', kpi2l:'Invoiced', kpi2s:'Immunora payment unverified',
+    kpi1l:'Active Clients', kpi1s:'This month', kpi2l:'Invoiced', kpi2s:'Immunora paid, awaiting bond',
     kpi3l:'Bond Secured', kpi3s:'None yet', kpi4l:'Monthly Target', kpi4s:'Target 30 bonds / month',
     funnel:'Outreach Funnel', f1:'Outreach sent 70', f2:'Replies received 7', f3:'Invoiced 1', f4:'Bond secured 0',
     ring:'Client Pipeline', ringtotal:'Total', l1:'Under review 1', l2:'Ready 3', l3:'Docs needed 1',
