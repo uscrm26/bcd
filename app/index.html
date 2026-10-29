@@ -188,6 +188,7 @@ table.tbl th{color:var(--mut);font-weight:600;font-size:12px;background:#fafbfd}
     <div class="row"><label>登入名</label><input id="newId" placeholder="小寫英文，例如 ryan2"></div>
     <div class="row"><label>正式名</label><input id="newName" placeholder="例如 Ryan F"></div>
     <div class="row"><label>密碼</label><input id="newPin" maxlength="4" placeholder="4 位數"></div>
+    <div class="row"><label>角色</label><select id="newRole"><option value="rep">跟進 rep</option><option value="manager">主管 manager</option></select></div>
     <div class="row" style="justify-content:flex-end;margin-top:16px">
       <button class="ghost" onclick="acctMask(false)">取消</button>
       <button class="primary" onclick="saveAccount()">建立帳號</button>
@@ -257,7 +258,7 @@ function refreshMail(){const last=localStorage.getItem('bcd_last_refresh')||0;co
 function drawMailList(){
   const q=(document.getElementById('searchBox').value||'').toLowerCase();
   let list=allMail.slice().reverse();
-  if(session.role!=='admin'){list=list.filter(m=>{const o=ownerOfClient(m.client);return o===session.id;});}
+  if(session.role!=='admin'){list=list.filter(m=>{const o=ownerOfClient(m.client);return o&&canSee(o);});}
   if(q)list=list.filter(m=>(m.client+m.from+m.subject).toLowerCase().includes(q));
   const on=id=>(accounts.find(a=>a.id===id)||{}).display_name||id;
   document.getElementById('mailList').innerHTML=list.length?list.map(m=>{const own=ownerOfClient(m.client);return `
@@ -285,6 +286,9 @@ async function sendMail(){
 function adminTab(t){adminTabNow=t;document.querySelectorAll('#adminTabs button').forEach(b=>b.classList.toggle('on',b.dataset.atab===t));renderAdmin();}
 async function loadAdmin(){await Promise.all([loadOwnership(),loadAccounts(),loadDeals()]);renderAdmin();}
 function onName(id){return (accounts.find(a=>a.id===id)||{}).display_name||id;}
+function subtree(rootId){const set=new Set([rootId]);let grew=true;while(grew){grew=false;accounts.forEach(a=>{if(a.parent_id&&set.has(a.parent_id)&&!set.has(a.id)){set.add(a.id);grew=true;}});}return set;}
+function visibleOwners(){if(session.role==='admin')return null;return subtree(session.id);}
+function canSee(ownerId){const v=visibleOwners();return v===null||v.has(ownerId);}
 function renderAdmin(){
   const el=document.getElementById('adminBody');
   if(adminTabNow==='own'){
@@ -298,7 +302,7 @@ function renderAdmin(){
     el.innerHTML=`<div class="toolbar"><div class="h2" style="margin:0">客戶歸屬指派</div><div style="flex:1"></div><button class="primary" style="padding:8px 16px;font-size:13px" onclick="dealMask(true)">＋ 標成交成功</button></div>
     <table class="tbl"><thead><tr><th>客戶</th><th>目前負責人</th><th>改派給</th><th>狀態</th><th>備註</th></tr></thead><tbody>${rows||'<tr><td colspan=5 class="empty">尚無客戶</td></tr>'}</tbody></table>`;
   }else if(adminTabNow==='deal'){
-    const mine=deals.filter(d=>session.role==='admin'||d.owner===session.id);
+    const mine=deals.filter(d=>canSee(d.owner));
     const total=mine.reduce((s,d)=>s+Number(d.amount||0),0);
     const byOwner={};mine.forEach(d=>{byOwner[d.owner]=(byOwner[d.owner]||0)+Number(d.amount||0);});
     const stats=Object.entries(byOwner).map(([k,v])=>`<div class="stat"><b>$${v.toLocaleString()}</b><span>${onName(k)} 名下成交</span></div>`).join('');
@@ -307,7 +311,7 @@ function renderAdmin(){
     <table class="tbl"><thead><tr><th>客戶</th><th>負責人</th><th>金額</th><th>成交日</th><th>備註</th><th>標記人</th></tr></thead><tbody>${rows||'<tr><td colspan=6 class="empty">尚無成交單</td></tr>'}</tbody></table>`;
   }else if(adminTabNow==='acct'){
     const rows=accounts.map(a=>`<tr><td><b>${a.display_name}</b><div style="color:#8a8f98;font-size:11px">${a.id}</div></td>
-      <td><span class="pill ${a.role==='admin'?'':'gray'}">${a.role==='admin'?'超管':'跟進'}</span></td>
+      <td><span class="pill ${a.role==='admin'?'':'gray'}">${a.role==='admin'?'超管':a.role==='manager'?'主管':'跟進'}</span></td>
       <td>${onName(a.parent_id)||'—'}</td>
       <td>${a.active?'<span class="pill">啟用</span>':'<span class="pill gray">停用</span>'}</td>
       <td><button class="ghost" onclick="toggleActive('${a.id}',${!a.active})">${a.active?'停用':'啟用'}</button>
@@ -361,7 +365,7 @@ function acctMask(on){document.getElementById('acctMask').classList.toggle('on',
 async function saveAccount(){
   const id=document.getElementById('newId').value.trim().toLowerCase();const nm=document.getElementById('newName').value.trim();const pin=document.getElementById('newPin').value.trim();
   if(!id||!nm||!/^\d{4}$/.test(pin)){toast('登入名、名稱與 4 位密碼必填');return;}
-  await sb.from('accounts').insert({id,display_name:nm,pin,role:'rep',parent_id:session.id,active:true});
+  await sb.from('accounts').insert({id,display_name:nm,pin,role:document.getElementById('newRole').value,parent_id:session.id,active:true});
   await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'新增帳號',target_client:id,detail:nm});
   document.getElementById('acctMask').classList.remove('on');toast('帳號已建立');loadAdmin();
 }
