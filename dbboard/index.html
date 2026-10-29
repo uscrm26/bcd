@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bond Client Desk 資料庫版</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--green:#12a05a;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b1730}
+.gate-card{background:#fff;border-radius:20px;padding:36px 34px;width:min(400px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.gate-card h2{margin:0 0 6px;font-size:20px}.gate-sub{color:var(--mut);margin:0 0 20px;font-size:13px}
+.field{margin-bottom:14px}.field label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.field input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none}
+.primary{padding:12px 26px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.err{color:#ef4444;font-size:12.5px;min-height:18px;margin:4px 0}
+#app{display:none}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:5}
+.brand h1{font-size:15px;margin:0}.brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:400}
+.spacer{flex:1}.avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.user-chip{display:flex;align-items:center;gap:10px}.tag{font-size:11px;color:var(--mut)}
+.ghost{padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--ink)}
+.wrap{max-width:1180px;margin:0 auto;padding:18px}
+.toolbar{display:flex;gap:10px;margin-bottom:16px;align-items:center;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;background:#fff}
+.stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.stat{flex:1;min-width:120px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow)}
+.stat b{font-size:22px;display:block}.stat span{font-size:12px;color:var(--mut)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.client-card{background:#fff;border-radius:12px;padding:18px;border:1px solid var(--line);border-top:3px solid #d1d5db;box-shadow:var(--shadow)}
+.client-card.st-review{border-top-color:#059669}.client-card.st-paid{border-top-color:#d97706}
+.client-card.st-ready{border-top-color:#4338ca}.client-card.st-block{border-top-color:#b91c1c}.client-card.st-doing{border-top-color:var(--brand)}
+.client-card .top{display:flex;gap:16px;align-items:flex-start}
+.client-card .photo{width:120px;height:160px;border-radius:10px;object-fit:cover;border:1px solid var(--line);flex-shrink:0;background:#f3f4f6;cursor:pointer}
+.client-card .info{flex:1;min-width:0}
+.client-card h3{font-size:15px;margin:0 0 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.client-card .row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed #f0f1f3}
+.client-card .row .k{color:var(--mut);flex-shrink:0;padding-right:10px}
+.client-card .row .v{color:var(--ink);text-align:right;word-break:break-all}
+.progress-note{background:#fffbeb;border-left:3px solid #d97706;padding:8px 10px;font-size:11px;color:var(--mut);margin-top:10px;border-radius:0 6px 6px 0;line-height:1.6}
+.docs-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.doc-chip{font-size:11px;padding:5px 10px;border:1px solid var(--line);border-radius:999px;background:#fafbfd;color:#374151;cursor:pointer;text-decoration:none}
+.doc-chip:hover{background:#eef4ff;color:var(--brand);border-color:var(--brand)}
+.pill{font-size:11px;padding:3px 10px;border-radius:999px;background:#eef4ff;color:var(--brand);white-space:nowrap}
+.pill.ready{background:#e6f4ee;color:#059669}.pill.block{background:#fdecec;color:#b91c1c}.pill.doing{background:#eef4ff;color:#2f6bff}.pill.paid{background:#fef3e2;color:#d97706}
+.owner-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#f0f2f5;color:var(--mut)}
+.empty{color:var(--mut);text-align:center;padding:40px}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:50}
+.mask.on{display:flex}
+.modal{background:#fff;border-radius:18px;width:min(680px,92vw);max-height:88vh;overflow:auto;padding:26px}
+.modal img{max-width:100%;border-radius:10px}
+.toast{position:fixed;top:70px;right:20px;background:#12a05a;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;display:none}
+@media(max-width:760px){.client-card .top{flex-direction:column}.client-card .photo{width:100%;height:180px}}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="gate-card">
+    <h2>Bond Client Desk</h2>
+    <p class="gate-sub">資料庫渲染版，登入後只顯示你獲派的客戶</p>
+    <div class="field"><label>帳號</label><input id="acctInput" autocomplete="username"></div>
+    <div class="field"><label>密碼</label><input id="pinInput" type="password" autocomplete="current-password"></div>
+    <div class="err" id="gateErr"></div>
+    <button class="primary" onclick="tryLogin()">登入</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div class="brand"><h1>Bond Client Desk<small>資料庫渲染版 · 即時同步</small></h1></div>
+    <div class="spacer"></div>
+    <div class="user-chip"><div class="avatar" id="meAvatar">K</div>
+      <div><div id="meName" style="font-size:13px;font-weight:600"></div><div class="tag" id="meRole"></div></div>
+      <button class="ghost" onclick="logout()">切換登出</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="toolbar">
+      <input id="searchBox" style="max-width:260px" placeholder="搜索公司 / 法人 / 信箱" oninput="render()">
+      <select id="statusFilter" onchange="render()">
+        <option value="">全部狀態</option>
+        <option>跟進中</option><option>可啟動</option><option>待補件</option><option>審批中</option><option>已成交</option><option>已關閉</option>
+      </select>
+      <div style="flex:1"></div>
+      <button class="ghost" onclick="load()">重新整理</button>
+    </div>
+    <div class="stat-row" id="statRow"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<div class="mask" id="imgMask" onclick="this.classList.remove('on')"><div class="modal" id="imgBox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
+const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+let session=null,archive=[],ownership=[],accounts=[];
+const STATUS_CLASS={"審批中":"review","可啟動":"ready","待補件":"block","跟進中":"doing","已成交":"paid","已關閉":"block"};
+
+function subtree(rootId){const set=new Set([rootId]);let grew=true;while(grew){grew=false;accounts.forEach(a=>{if(a.parent_id&&set.has(a.parent_id)&&!set.has(a.id)){set.add(a.id);grew=true;}});}return set;}
+function canSee(ownerId){if(!ownerId)return session.role==='admin';if(session.role==='admin')return true;return subtree(session.id).has(ownerId);}
+
+async function tryLogin(){
+  const id=document.getElementById('acctInput').value.trim().toLowerCase();
+  const pin=document.getElementById('pinInput').value.trim();
+  const {data}=await sb.from('accounts').select('*').eq('id',id).eq('pin',pin).eq('active',true).maybeSingle();
+  if(!data){document.getElementById('gateErr').textContent='帳號或密碼錯誤';return;}
+  session=data;localStorage.setItem('db_session',JSON.stringify(data));enter();
+}
+function logout(){session=null;localStorage.removeItem('db_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
+function enter(){
+  document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';
+  document.getElementById('meName').textContent=session.display_name;
+  document.getElementById('meRole').textContent=session.role==='admin'?'超級管理員':session.role==='manager'?'主管':'跟進人員';
+  document.getElementById('meAvatar').textContent=(session.display_name||'K').slice(0,1);
+  load();
+}
+async function load(){
+  const [a,o,acc]=await Promise.all([
+    sb.from('company_archive').select('*').not('client_key','like','msg-%'),
+    sb.from('client_ownership').select('*'),
+    sb.from('accounts').select('*')
+  ]);
+  archive=(a.data||[]).filter(r=>r.client_key&&!r.client_key.startsWith('msg-'));
+  ownership=o.data||[];accounts=acc.data||[];
+  render();
+}
+function ownerOf(key){const o=ownership.find(x=>x.client_key===key);return o||null;}
+function esc(s){return (s||'').replace(/</g,'&lt;');}
+function render(){
+  const q=(document.getElementById('searchBox').value||'').toLowerCase();
+  const sf=document.getElementById('statusFilter').value;
+  let rows=archive.filter(r=>canSee((ownerOf(r.client_key)||{}).owner));
+  if(sf)rows=rows.filter(r=>((ownerOf(r.client_key)||{}).status||r.profile_json.status)===sf);
+  if(q)rows=rows.filter(r=>{const p=r.profile_json||{};return (r.company_name+r.legal_person+(p.legal_person||'')+(p.email||'')).toLowerCase().includes(q);});
+  // stats
+  const cnt={};rows.forEach(r=>{const st=(ownerOf(r.client_key)||{}).status||r.profile_json.status||'未分類';cnt[st]=(cnt[st]||0)+1;});
+  document.getElementById('statRow').innerHTML=Object.entries(cnt).map(([k,v])=>`<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
+  const grid=document.getElementById('grid');
+  if(!rows.length){grid.innerHTML='<div class="empty">尚無你可查看的客戶</div>';return;}
+  grid.innerHTML=rows.map(r=>{
+    const p=r.profile_json||{};
+    const own=ownerOf(r.client_key);
+    const status=own?own.status:p.status||'跟進中';
+    const cls=STATUS_CLASS[status]||'doing';
+    const docs=p.docs||[];
+    const photo=docs.find(d=>/照片|人像/.test(d.name))||docs.find(d=>/正面/.test(d.name));
+    const photoSrc=photo?('../'+photo.path):'';
+    const rowsHtml=[
+      ['法人',p.legal_person],['信箱',p.email],['電話',p.phone],['地址',p.address],
+      ['EIN',p.ein],['CA 實體號',p.ca_no],['駕照',p.dl]
+    ].filter(x=>x[1]).map(x=>`<div class="row"><span class="k">${x[0]}</span><span class="v">${esc(x[1])}</span></div>`).join('');
+    const chips=docs.map(d=>`<a class="doc-chip" href="../${d.path}" target="_blank">${esc(d.name)}</a>`).join('');
+    return `<div class="client-card st-${cls}">
+      <div class="top">
+        ${photoSrc?`<img class="photo" src="${photoSrc}" onclick="openImg('${photoSrc}')">`:''}
+        <div class="info">
+          <h3><span>${esc(r.company_name)}</span><span class="pill ${cls}">${status}</span></h3>
+          ${rowsHtml}
+          ${own?`<div style="margin-top:8px"><span class="owner-tag">負責人：${(accounts.find(a=>a.id===own.owner)||{}).display_name||own.owner}</span></div>`:''}
+          ${(own?.note||p.note)?`<div class="progress-note">${esc(own?.note||p.note)}</div>`:''}
+          <div class="docs-row">${chips}</div>
+        </div>
+      </div></div>`;
+  }).join('');
+}
+function openImg(src){document.getElementById('imgBox').innerHTML=`<img src="${src}">`;document.getElementById('imgMask').classList.add('on');}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',2600);}
+setInterval(()=>{if(session)load();},60000);
+(function(){try{const s=JSON.parse(localStorage.getItem('db_session')||'null');if(s){session=s;enter();}}catch(e){}})();
+</script>
+</body>
+</html>
