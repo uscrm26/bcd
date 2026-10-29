@@ -6,11 +6,10 @@
 <title>Bond Client Desk</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--ok:#12b76a;--warn:#f59e0b;--bad:#ef4444;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
+:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
 button{font-family:inherit}
-/* ===== gate ===== */
 #gate{min-height:100vh;display:flex;flex-direction:column;background:#0b1730}
 .gate-top{height:60px;display:flex;align-items:center;gap:10px;padding:0 28px;color:#fff}
 .gate-top img{width:30px;height:30px;border-radius:8px}
@@ -22,13 +21,7 @@ button{font-family:inherit}
 .gate-glow{width:280px;height:280px;border-radius:32px;background:radial-gradient(circle at 30% 20%,#3b82f6,#1e40af 60%,#0b1730);box-shadow:0 30px 80px rgba(59,130,246,.4);margin-bottom:26px;position:relative;overflow:hidden}
 .gate-glow::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.15) 50%,transparent 60%)}
 .gate-card{background:#fff;border-radius:20px;padding:36px 34px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.35);justify-self:end}
-@media(max-width:880px){
-  .gate-body{grid-template-columns:1fr;padding:24px}.gate-hero{display:none}.gate-card{justify-self:center}
-}
-.gate-logo{width:62px;height:62px;border-radius:16px;box-shadow:0 6px 18px rgba(47,107,255,.35)}
-.gate-brand{display:flex;align-items:center;gap:14px}
-.gate-brand h1{font-size:22px;margin:0}
-.gate-sub{color:var(--mut);margin:6px 0 22px;font-size:13px}
+.gate-sub{color:var(--mut);margin:6px 0 20px;font-size:13px}
 .lang-pick{display:flex;gap:8px;margin-bottom:20px}
 .lang-pick button{padding:6px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--mut)}
 .lang-pick button.on{border-color:var(--brand);color:var(--brand);background:#eef4ff}
@@ -36,17 +29,14 @@ button{font-family:inherit}
 .field label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:6px}
 .field input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none}
 .field input:focus{border-color:var(--brand)}
-.primary{width:100%;padding:12px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;font-weight:600;cursor:pointer}
-.primary:hover{opacity:.95}
-.primary:disabled{opacity:.6}
-.err{color:var(--bad);font-size:12.5px;min-height:18px;margin:4px 0}
-/* ===== app shell ===== */
+.primary{padding:12px 26px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.err{color:#ef4444;font-size:12.5px;min-height:18px;margin:4px 0}
+@media(max-width:880px){.gate-body{grid-template-columns:1fr;padding:24px}.gate-hero{display:none}.gate-card{justify-self:center}}
 #app{display:none}
 .topbar{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:5}
 .brand{display:flex;align-items:center;gap:10px}
 .brand img{width:30px;height:30px;border-radius:8px}
-.brand h1{font-size:15px;margin:0}
-.brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:400}
+.brand h1{font-size:15px;margin:0}.brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:400}
 .spacer{flex:1}
 .user-chip{display:flex;align-items:center;gap:10px}
 .avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
@@ -56,48 +46,22 @@ button{font-family:inherit}
 .side{width:200px;background:#fff;border-right:1px solid var(--line);padding:14px 10px}
 .nav button{display:flex;width:100%;align-items:center;gap:10px;padding:11px 14px;border:none;background:none;border-radius:10px;cursor:pointer;font-size:13.5px;color:var(--mut);margin-bottom:2px;text-align:left}
 .nav button.on{background:#eef4ff;color:var(--brand);font-weight:600}
-.main{flex:1;padding:20px;overflow:auto}
-.panel{display:none}.panel.on{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
-.h2{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
-/* KPI cards */
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
-.kpi .n{font-size:28px;font-weight:700;margin:6px 0}
-.kpi .l{font-size:12.5px;color:var(--mut)}
-.funnel-row{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:13px}
-.funnel-row .lb{width:120px;color:var(--mut)}
-.bar{flex:1;height:10px;background:#eef1f6;border-radius:6px;overflow:hidden}
-.bar>i{display:block;height:100%;background:linear-gradient(90deg,#9fb6ff,#2f6bff)}
-.num{width:34px;text-align:right;font-weight:600}
-/* table */
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--mut);font-weight:500;font-size:12.5px}
-.pill{padding:3px 10px;border-radius:999px;font-size:11.5px}
-.pill.run{background:#e8f7ef;color:#12a05a}
-.pill.ready{background:#eef4ff;color:#2f6bff}
-.pill.block{background:#fdeaea;color:#d64545}
-/* mailbox QQ style */
-.mail-wrap{display:grid;grid-template-columns:230px 1fr;gap:16px}
-.mail-left{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--shadow)}
-.mail-left h4{margin:6px 8px 10px;font-size:13px;color:var(--mut)}
-.mbox-item{padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;margin-bottom:2px}
-.mbox-item.on{background:#eef4ff;color:var(--brand);font-weight:600}
-.mbox-item:hover{background:#f2f5fb}
-.compose-btn{width:100%;padding:10px;border:none;border-radius:10px;background:var(--brand);color:#fff;cursor:pointer;font-weight:600;margin-bottom:10px}
+.main{flex:1;padding:16px;overflow:hidden}
+.panel{display:none;height:calc(100vh - 88px)}.panel.on{display:block}
+#frameDash{width:100%;height:100%;border:1px solid var(--line);border-radius:14px;background:#fff}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.h2{font-size:15px;font-weight:700;margin-bottom:14px}
+.mail-wrap{display:grid;grid-template-columns:1fr;gap:0}
 .mail-list .mail-row{padding:12px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer;background:#fff}
 .mail-list .mail-row:hover{border-color:var(--brand)}
 .mail-row .top{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
 .mail-row .sub{font-weight:600;margin:4px 0}
 .mail-row .body{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.7;white-space:pre-wrap;background:#fafbfd;border-radius:8px;padding:10px}
-.composer{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fafbfd;display:none}
-.composer textarea{width:100%;height:120px;border:1px solid var(--line);border-radius:9px;padding:10px;font-family:inherit;font-size:13px}
-.composer .row{display:flex;gap:8px;margin-top:8px;align-items:center}
-.composer select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px}
-.chip-owner{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef4ff;color:var(--brand);margin-left:6px}
+.toolbar{display:flex;gap:10px;margin-bottom:12px;align-items:center}
+.toolbar input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;flex:1;max-width:320px}
 .empty{color:var(--mut);font-size:13px;text-align:center;padding:30px}
-@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.mail-wrap{grid-template-columns:1fr}.side{width:64px}.nav button span.lbl{display:none}}
+.owner-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef4ff;color:var(--brand);margin-left:6px}
+@media(max-width:900px){.side{width:64px}.nav button span.lbl{display:none}}
 </style>
 </head>
 <body>
@@ -105,23 +69,20 @@ th{color:var(--mut);font-weight:500;font-size:12.5px}
 <div id="gate">
   <div class="gate-top"><img src="icon.png" alt="BCD"><b>Bond Client Desk</b><small>客戶管理平台</small></div>
   <div class="gate-body">
-    <div class="gate-hero">
-      <div class="gate-glow"></div>
-      <h2>Bond Client Desk</h2>
-      <p>多帳號即時同步的海關擔保客戶管理平台。歸屬清楚、往來信箱歸檔、開發信漏斗即時更新。</p>
-    </div>
+    <div class="gate-hero"><div class="gate-glow"></div><h2>Bond Client Desk</h2>
+      <p>多帳號即時同步的海關擔保客戶管理平台。歸屬清楚、往來信箱歸檔、開發信漏斗即時更新。</p></div>
     <div class="gate-card">
-    <div class="gate-sub">登入以查看你負責的客戶</div>
-    <div class="lang-pick">
-      <button onclick="setLang('en')">English</button>
-      <button onclick="setLang('zh-Hant')" class="on">繁體中文</button>
-      <button onclick="setLang('zh-Hans')">简体中文</button>
+      <div class="gate-sub">登入以查看你負責的客戶</div>
+      <div class="lang-pick">
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('zh-Hant')" class="on">繁體中文</button>
+        <button onclick="setLang('zh-Hans')">简体中文</button>
+      </div>
+      <div class="field"><label>帳號</label><input id="acctInput" placeholder="請輸入帳號" autocomplete="username"></div>
+      <div class="field"><label>密碼</label><input id="pinInput" type="password" placeholder="請輸入 4 位數密碼" autocomplete="current-password"></div>
+      <div class="err" id="gateErr"></div>
+      <button class="primary" onclick="tryLogin()">登入</button>
     </div>
-    <div class="field"><label>帳號</label><input id="acctInput" placeholder="請輸入帳號" autocomplete="username"></div>
-    <div class="field"><label>密碼</label><input id="pinInput" type="password" placeholder="請輸入 4 位數密碼" autocomplete="current-password"></div>
-    <div class="err" id="gateErr"></div>
-    <button class="primary" onclick="tryLogin()">登入</button>
-  </div>
   </div>
 </div>
 
@@ -136,70 +97,22 @@ th{color:var(--mut);font-weight:500;font-size:12.5px}
     </div>
   </div>
   <div class="layout">
-    <aside class="side">
-      <div class="nav" id="nav"></div>
-    </aside>
+    <aside class="side"><div class="nav" id="nav"></div></aside>
     <main class="main">
-      <!-- 看板 -->
       <section class="panel on" data-view="dash">
-        <div class="kpis">
-          <div class="kpi"><div class="l">在處理客戶</div><div class="n" id="kClients">5</div><div class="l">本月立項</div></div>
-          <div class="kpi"><div class="l">對接開單中</div><div class="n" style="color:var(--warn)">1</div><div class="l">Immunora 已付款待出 bond</div></div>
-          <div class="kpi"><div class="l">獲得海關擔保文件</div><div class="n">0</div><div class="l">尚無</div></div>
-          <div class="kpi"><div class="l">開發信回覆率</div><div class="n" style="color:var(--brand)">10%</div><div class="l">7 / 125</div></div>
-        </div>
-        <div class="card">
-          <div class="h2">開發信漏斗</div>
-          <div class="funnel-row"><span class="lb">已發開發信</span><div class="bar"><i style="width:100%"></i></div><span class="num">125</span></div>
-          <div class="funnel-row"><span class="lb">收到回覆</span><div class="bar"><i style="width:10%"></i></div><span class="num">7</span></div>
-          <div class="funnel-row"><span class="lb">對接開單</span><div class="bar"><i style="width:2%"></i></div><span class="num">1</span></div>
-          <div class="funnel-row"><span class="lb">獲得擔保文件</span><div class="bar"><i style="width:1%"></i></div><span class="num">0</span></div>
-        </div>
-        <div class="card">
-          <div class="h2">我的客戶</div>
-          <table><thead><tr><th>客戶</th><th>法人</th><th>狀態</th><th>備註</th></tr></thead><tbody id="clientRows"></tbody></table>
-        </div>
+        <iframe id="frameDash" src="../index.html"></iframe>
       </section>
-
-      <!-- 信箱 QQ 風 -->
       <section class="panel" data-view="mail">
         <div class="card">
-          <div class="h2">公司信箱 <span style="font-size:11px;color:var(--mut);font-weight:400">選左上角公司身分寄信，收件人可搜索客戶或 broker</span></div>
-          <div class="mail-wrap">
-            <div class="mail-left">
-              <button class="compose-btn" onclick="openCompose()">＋ 寫信 / 回覆</button>
-              <h4>寄件身分</h4>
-              <div id="mboxList"></div>
-              <h4 style="margin-top:14px">過濾客戶</h4>
-              <div id="clientFilter"></div>
-            </div>
-            <div class="mail-list" id="mailList"></div>
+          <div class="toolbar">
+            <div class="h2" style="margin:0">公司信箱</div>
+            <input id="searchBox" placeholder="搜索客戶或 broker" oninput="drawMailList()">
+            <div style="flex:1"></div>
+            <button class="ghost" onclick="refreshMail()">一鍵更新</button>
           </div>
-          <div class="composer" id="composer">
-            <div class="row">
-              <label style="font-size:12px;color:var(--mut)">從</label>
-              <select id="fromSel"></select>
-              <label style="font-size:12px;color:var(--mut);margin-left:10px">寄給</label>
-              <input id="toInput" placeholder="輸入收件人 email" style="flex:1;padding:8px;border:1px solid var(--line);border-radius:8px">
-            </div>
-            <div class="row"><input id="subjInput" placeholder="主旨" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px"></div>
-            <textarea id="bodyInput" placeholder="內文"></textarea>
-            <div class="row">
-              <button class="ghost" onclick="aiTranslate()">AI 一鍵翻譯</button>
-              <div style="flex:1"></div>
-              <button class="ghost" onclick="closeCompose()">取消</button>
-              <button class="primary" style="width:auto;padding:9px 20px" onclick="sendMail()">送出</button>
-            </div>
-          </div>
+          <div class="mail-list" id="mailList"></div>
         </div>
       </section>
-
-      <!-- 客戶檔案 -->
-      <section class="panel" data-view="clients">
-        <div class="card"><div class="h2">客戶檔案與歸屬</div><div id="clientGrid"></div></div>
-      </section>
-
-      <!-- 後台 -->
       <section class="panel" data-view="admin">
         <div class="card"><div class="h2">超管後台</div><div id="adminBox"></div></div>
       </section>
@@ -211,103 +124,48 @@ th{color:var(--mut);font-weight:500;font-size:12.5px}
 const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
 const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
 const sb=window.supabase?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
-
-const MAILBOXES=[
- {client:"Immunora",email:"kashayisisramonaodom@immunora-bio.com",owner:"Kashay Odom"},
- {client:"Oliveware",email:"horaciolsanchez@olivewareinc.com",owner:"Horacio L Sanchez"},
- {client:"Pebblehome",email:"christopherhodge@pebblehomeinc.com",owner:"Christopher Hodge"},
- {client:"Sageware",email:"jaliarthomas@sagewareinc.com",owner:"Jaliar Thomas"},
- {client:"Nervaqon",email:"christianjgpunzalan@nervaqon.live",owner:"Christian J G Punzalan"}
-];
-const CLIENTS=[
- {key:"immunora",name:"Immunora Bio LLC",legal:"Kashay Odom",status:"審批中",owner:"kevinyama",note:"已付款 795.60 USD 待出 bond"},
- {key:"oliveware",name:"Oliveware LLC",legal:"Horacio L Sanchez",status:"可啟動",owner:"kevinyama",note:"材料齊全，開發信已發"},
- {key:"pebblehome",name:"Pebblehome LLC",legal:"Christopher Hodge",status:"待補件",owner:"kevinyama",note:"駕照過期，EIN 拼寫待核"},
- {key:"sageware",name:"Sageware LLC",legal:"Jaliar Thomas",status:"可啟動",owner:"kevinyama",note:"材料齊全，開發信已發"},
- {key:"nervaqon",name:"Nervaqon LLC",legal:"Christian Punzalan",status:"審批中",owner:"kevinyama",note:"SPG 申請已回，待報價"}
-];
-
-let lang='zh-Hant', session=null, allMail=[], activeMbox=null, activeClient=null;
-
-const NAV=[['dash','看板','Dashboard'],['mail','信箱','Mailbox'],['clients','客戶檔案','Clients'],['admin','後台','Admin']];
+const OWNER={kevinyama:"Kevin W",ryanfan:"Ryan F"};
+let session=null, allMail=[];
+const NAV=[['dash','看板','Dashboard'],['mail','信箱','Mailbox'],['admin','後台','Admin']];
 function buildNav(){
-  const admin=session && session.role==='admin';
-  document.getElementById('nav').innerHTML=NAV.filter(n=>n[3]!=='Admin'||admin).map(n=>`<button data-v="${n[0]}" onclick="show('${n[0]}')"><span class="lbl">${n[1]}</span></button>`).join('');
+  const admin=session.role==='admin';
+  document.getElementById('nav').innerHTML=NAV.filter(n=>n[2]!=='Admin'||admin).map(n=>`<button data-v="${n[0]}" onclick="show('${n[0]}')"><span class="lbl">${n[1]}</span></button>`).join('');
 }
-function show(v){currentView=v;document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view===v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
-
+function show(v){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view===v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
 async function tryLogin(){
   const id=document.getElementById('acctInput').value.trim().toLowerCase();
   const pin=document.getElementById('pinInput').value.trim();
   if(!id||!pin){document.getElementById('gateErr').textContent='請輸入帳號與密碼';return;}
   let acc=null;
-  try{const {data}=await sb.from('accounts').select('*').eq('id',id).eq('pin',pin).eq('active',true).maybeSingle();acc=data;}catch(e){acc=null;}
+  try{const {data}=await sb.from('accounts').select('*').eq('id',id).eq('pin',pin).eq('active',true).maybeSingle();acc=data;}catch(e){}
   if(!acc){document.getElementById('gateErr').textContent='帳號或密碼錯誤';return;}
   session=acc;localStorage.setItem('cmp_session',JSON.stringify(acc));
   sb.from('login_logs').insert({account_id:acc.id,display_name:acc.display_name,role:acc.role}).then(()=>{});
-  sb.from('device_logs').insert({account_id:acc.id,display_name:acc.display_name,device:navigator.userAgent,lang:lang}).then(()=>{});
   enter();
 }
-function logout(){session=null;document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
+function logout(){session=null;localStorage.removeItem('cmp_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
 function enter(){
-  document.getElementById('gate').style.display='none';
-  document.getElementById('app').style.display='block';
+  document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';
   document.getElementById('meName').textContent=session.display_name;
   document.getElementById('meRole').textContent=session.role==='admin'?'超級管理員':'跟進人員';
   document.getElementById('meAvatar').textContent=(session.display_name||'K').slice(0,1);
-  buildNav();show('dash');renderClients();renderMailbox();
+  buildNav();show('dash');loadMail();
+  if(session.role==='admin')document.getElementById('adminBox').innerHTML='<div style="color:#6b7688;font-size:13px">超管後台：新增下線帳號、指派客戶歸屬、查看操作審計與登入裝置記錄。</div>';
 }
-function canSeeAll(){return session && session.role==='admin';}
-function visibleClients(){return canSeeAll()?CLIENTS:CLIENTS.filter(c=>c.owner===session.id);}
-
-function renderClients(){
-  const list=visibleClients();
-  document.getElementById('clientRows').innerHTML=list.map(c=>`<tr><td>${c.name}</td><td>${c.legal}</td><td><span class="pill ${c.status==='待補件'?'block':c.status==='可啟動'?'ready':'run'}">${c.status}</span></td><td>${c.note}</td></tr>`).join('');
-  document.getElementById('kClients').textContent=list.length;
-  document.getElementById('clientGrid').innerHTML=list.map(c=>{
-    const mine=c.owner===session.id;
-    return `<div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px"><b>${c.name}</b><span class="chip-owner">${mine?'我':'歸屬:'+c.owner}</span><div style="color:var(--mut);font-size:12.5px;margin-top:4px">法人 ${c.legal} · ${c.status}<br>${c.note}</div></div>`;
-  }).join('');
-  if(canSeeAll()){
-    document.getElementById('adminBox').innerHTML='<div style="color:var(--mut);font-size:13px">後台可在此新增下線帳號、指派客戶歸屬、查看操作審計與登入裝置記錄。帳號 kevinyama 為超管，ryanfan 為下線。</div>';
-  }
-}
-
-async function renderMailbox(){
-  // 寄件身分
-  const fromSel=document.getElementById('fromSel');
-  fromSel.innerHTML=MAILBOXES.map(m=>`<option value="${m.email}">${m.client} &lt;${m.email}&gt;</option>`).join('');
-  document.getElementById('mboxList').innerHTML=MAILBOXES.map(m=>`<div class="mbox-item" onclick="pickMbox('${m.client}',this)">${m.client}</div>`).join('');
-  document.getElementById('clientFilter').innerHTML='<div class="mbox-item on" onclick="pickClient(null,this)">全部客戶</div>'+visibleClients().map(c=>`<div class="mbox-item" onclick="pickClient('${c.client||c.key}',this)">${c.name}</div>`).join('');
-  // 讀 emails.json
-  try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}
-  drawMailList();
-}
-function pickMbox(c,el){activeMbox=c;document.querySelectorAll('#mboxList .mbox-item').forEach(x=>x.classList.remove('on'));el.classList.add('on');}
-function pickClient(c,el){activeClient=c;document.querySelectorAll('#clientFilter .mbox-item').forEach(x=>x.classList.remove('on'));el.classList.add('on');drawMailList();}
+async function loadMail(){try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}drawMailList();}
+function refreshMail(){const last=localStorage.getItem('bcd_last_refresh')||0;const now=Date.now();if(now-last<300000){alert('更新太頻繁，請 5 分鐘後再試');return;}localStorage.setItem('bcd_last_refresh',now);loadMail();alert('已送出更新指令，列表即時重整');}
 function drawMailList(){
-  let list=allMail.slice();
-  if(activeClient) list=list.filter(m=>(m.client||'').toLowerCase()===activeClient);
-  list.reverse();
-  document.getElementById('mailList').innerHTML=list.length?list.map((m,i)=>`
+  const q=(document.getElementById('searchBox').value||'').toLowerCase();
+  let list=allMail.slice().reverse();
+  if(q)list=list.filter(m=>(m.client+m.from+m.subject).toLowerCase().includes(q));
+  document.getElementById('mailList').innerHTML=list.length?list.map(m=>`
     <div class="mail-row" onclick="var b=this.querySelector('.body');b.style.display=b.style.display==='none'?'block':'none'">
       <div class="top"><span>${m.client||''} · ${m.from||''}</span><span>${m.date||''}</span></div>
-      <div class="sub">${m.subject||''}</div>
+      <div class="sub">${m.subject||''}<span class="owner-tag">${OWNER[m.owner]||'Kevin W'}</span></div>
       <div class="body">${(m.body||'').replace(/</g,'&lt;').slice(0,1500)}</div>
     </div>`).join(''):'<div class="empty">尚無信件</div>';
 }
-function openCompose(){document.getElementById('composer').style.display='block';}
-function closeCompose(){document.getElementById('composer').style.display='none';}
-function sendMail(){
-  const from=document.getElementById('fromSel').value, to=document.getElementById('toInput').value.trim();
-  if(!to){alert('請填收件人');return;}
-  alert('已記錄代發任務：'+from+' → '+to+'。受控通道接入後實際送出並打勾。');
-  closeCompose();
-}
-function aiTranslate(){alert('AI 翻譯接入後可一鍵譯成所選語言並存檔。');}
-function setLang(l){lang=l;}
-
-// enter from stored session
+function setLang(){}
 (function(){try{const s=JSON.parse(localStorage.getItem('cmp_session')||'null');if(s){session=s;enter();}}catch(e){}})();
 </script>
 </body>
