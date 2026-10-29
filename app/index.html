@@ -18,8 +18,7 @@ button{font-family:inherit}
 .gate-hero{color:#fff}
 .gate-hero h2{font-size:34px;line-height:1.3;margin:0 0 14px;font-weight:700}
 .gate-hero p{opacity:.7;font-size:14px;line-height:1.8;max-width:420px}
-.gate-glow{width:280px;height:280px;border-radius:32px;background:radial-gradient(circle at 30% 20%,#3b82f6,#1e40af 60%,#0b1730);box-shadow:0 30px 80px rgba(59,130,246,.4);margin-bottom:26px;position:relative;overflow:hidden}
-.gate-glow::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 40%,rgba(255,255,255,.15) 50%,transparent 60%)}
+.gate-glow{width:280px;height:280px;border-radius:32px;background:radial-gradient(circle at 30% 20%,#3b82f6,#1e40af 60%,#0b1730);box-shadow:0 30px 80px rgba(59,130,246,.4);margin-bottom:26px}
 .gate-card{background:#fff;border-radius:20px;padding:36px 34px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.35);justify-self:end}
 .gate-sub{color:var(--mut);margin:6px 0 20px;font-size:13px}
 .lang-pick{display:flex;gap:8px;margin-bottom:20px}
@@ -28,7 +27,6 @@ button{font-family:inherit}
 .field{margin-bottom:14px}
 .field label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:6px}
 .field input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none}
-.field input:focus{border-color:var(--brand)}
 .primary{padding:12px 26px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;font-weight:600;cursor:pointer}
 .err{color:#ef4444;font-size:12.5px;min-height:18px;margin:4px 0}
 @media(max-width:880px){.gate-body{grid-template-columns:1fr;padding:24px}.gate-hero{display:none}.gate-card{justify-self:center}}
@@ -43,22 +41,21 @@ button{font-family:inherit}
 .tag{font-size:11px;color:var(--mut)}
 .ghost{padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--ink)}
 .layout{display:flex;min-height:calc(100vh - 56px)}
-.side{width:200px;background:#fff;border-right:1px solid var(--line);padding:14px 10px}
-.nav button{display:flex;width:100%;align-items:center;gap:10px;padding:11px 14px;border:none;background:none;border-radius:10px;cursor:pointer;font-size:13.5px;color:var(--mut);margin-bottom:2px;text-align:left}
+.side{width:210px;background:#fff;border-right:1px solid var(--line);padding:12px 10px;overflow:auto}
+.nav-sec{font-size:11px;color:#9aa4b5;padding:10px 12px 4px;letter-spacing:.5px}
+.nav button{display:flex;width:100%;align-items:center;gap:10px;padding:10px 14px;border:none;background:none;border-radius:10px;cursor:pointer;font-size:13.5px;color:var(--mut);margin-bottom:2px;text-align:left}
 .nav button.on{background:#eef4ff;color:var(--brand);font-weight:600}
-.main{flex:1;padding:16px;overflow:hidden}
-.panel{display:none;height:calc(100vh - 88px)}.panel.on{display:block}
-#frameDash{width:100%;height:100%;border:1px solid var(--line);border-radius:14px;background:#fff}
-.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.main{flex:1;padding:0;overflow:hidden;background:#fff}
+.panel{display:none;height:calc(100vh - 56px)}.panel.on{display:block}
+#frameDash{width:100%;height:100%;border:none}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px;box-shadow:var(--shadow)}
 .h2{font-size:15px;font-weight:700;margin-bottom:14px}
-.mail-wrap{display:grid;grid-template-columns:1fr;gap:0}
+.toolbar{display:flex;gap:10px;margin-bottom:12px;align-items:center}
+.toolbar input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;flex:1;max-width:320px}
 .mail-list .mail-row{padding:12px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer;background:#fff}
-.mail-list .mail-row:hover{border-color:var(--brand)}
 .mail-row .top{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
 .mail-row .sub{font-weight:600;margin:4px 0}
 .mail-row .body{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.7;white-space:pre-wrap;background:#fafbfd;border-radius:8px;padding:10px}
-.toolbar{display:flex;gap:10px;margin-bottom:12px;align-items:center}
-.toolbar input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;flex:1;max-width:320px}
 .empty{color:var(--mut);font-size:13px;text-align:center;padding:30px}
 .owner-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef4ff;color:var(--brand);margin-left:6px}
 .mask{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:50}
@@ -71,7 +68,7 @@ button{font-family:inherit}
 .modal input,.modal select{flex:1}
 .modal textarea{width:100%;height:220px;resize:vertical;line-height:1.6}
 .toast{position:fixed;top:70px;right:20px;background:#12a05a;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;display:none;box-shadow:0 10px 30px rgba(0,0,0,.2)}
-@media(max-width:900px){.side{width:64px}.nav button span.lbl{display:none}}
+@media(max-width:900px){.side{width:64px}.nav button span.lbl,.nav-sec{display:none}}
 </style>
 </head>
 <body>
@@ -109,10 +106,8 @@ button{font-family:inherit}
   <div class="layout">
     <aside class="side"><div class="nav" id="nav"></div></aside>
     <main class="main">
-      <section class="panel on" data-view="dash">
-        <iframe id="frameDash" src="../index.html"></iframe>
-      </section>
-      <section class="panel" data-view="mail">
+      <section class="panel on" data-view="dash"><iframe id="frameDash" src="../index.html"></iframe></section>
+      <section class="panel" data-view="bcdmail">
         <div class="card">
           <div class="toolbar">
             <div class="h2" style="margin:0">公司信箱</div>
@@ -144,9 +139,7 @@ button{font-family:inherit}
     <div class="row"><label>寄給</label><input id="toInput" list="contactList" placeholder="搜索客戶或 broker email"><datalist id="contactList"></datalist></div>
     <div class="row"><label>主旨</label><input id="subjInput" placeholder="主旨"></div>
     <textarea id="bodyInput" placeholder="內文"></textarea>
-    <div class="row" style="margin-top:12px">
-      <label>附件</label><input type="file" id="fileInput" style="flex:1;font-size:13px">
-    </div>
+    <div class="row" style="margin-top:12px"><label>附件</label><input type="file" id="fileInput" style="flex:1;font-size:13px"></div>
     <div class="row" style="justify-content:flex-end;margin-top:16px">
       <button class="ghost" onclick="closeCompose()">取消</button>
       <button class="primary" onclick="sendMail()">送出</button>
@@ -161,12 +154,28 @@ const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
 const sb=window.supabase?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
 const OWNER={kevinyama:"Kevin W",ryanfan:"Ryan F"};
 let session=null, allMail=[];
-const NAV=[['dash','看板','Dashboard'],['mail','信箱','Mailbox'],['admin','後台','Admin']];
+// 原看板分頁
+const DASH_TABS=[['now','在處理看板'],['todo','待處理業務'],['daily','每日工作'],['clients','客戶檔案'],['mail','郵件明細'],['webmail','郵箱登錄'],['policy','公司資料'],['company','公司檔案'],['broker','報關經紀資源池'],['notes','我的備註'],['archive','檔案庫']];
 function buildNav(){
   const admin=session.role==='admin';
-  document.getElementById('nav').innerHTML=NAV.filter(n=>n[2]!=='Admin'||admin).map(n=>`<button data-v="${n[0]}" onclick="show('${n[0]}')"><span class="lbl">${n[1]}</span></button>`).join('');
+  let html='<div class="nav-sec">業務看板</div>';
+  DASH_TABS.forEach(t=>{html+=`<button data-dash="${t[0]}" onclick="goDash('${t[0]}')"><span class="lbl">${t[1]}</span></button>`;});
+  html+='<div class="nav-sec">BCD</div>';
+  html+=`<button data-v="bcdmail" onclick="show('bcdmail')"><span class="lbl">公司信箱</span></button>`;
+  if(admin)html+=`<button data-v="admin" onclick="show('admin')"><span class="lbl">超管後台</span></button>`;
+  document.getElementById('nav').innerHTML=html;
 }
-function show(v){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view===v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+function show(v){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view===v));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+}
+function goDash(tab){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view==='dash'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('on'));
+  const f=document.getElementById('frameDash');
+  const fire=()=>{try{f.contentWindow.show(tab,null);}catch(e){}};
+  if(f.contentWindow&&f.contentWindow.show){fire();}else{f.onload=fire;}
+}
 async function tryLogin(){
   const id=document.getElementById('acctInput').value.trim().toLowerCase();
   const pin=document.getElementById('pinInput').value.trim();
@@ -184,31 +193,12 @@ function enter(){
   document.getElementById('meName').textContent=session.display_name;
   document.getElementById('meRole').textContent=session.role==='admin'?'超級管理員':'跟進人員';
   document.getElementById('meAvatar').textContent=(session.display_name||'K').slice(0,1);
-  buildNav();show('dash');loadMail();
+  buildNav();goDash('now');loadMail();
   if(session.role==='admin')document.getElementById('adminBox').innerHTML='<div style="color:#6b7688;font-size:13px">超管後台：新增下線帳號、指派客戶歸屬、查看操作審計與登入裝置記錄。</div>';
 }
 async function loadMail(){try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}drawMailList();fillContacts();}
-function fillContacts(){
-  const seen={};allMail.forEach(m=>{if(m.from){seen[m.from]=1;}});
-  document.getElementById('contactList').innerHTML=Object.keys(seen).map(e=>`<option value="${e}">`).join('');
-}
-function openCompose(){document.getElementById('composeMask').classList.add('on');}
-function closeCompose(){document.getElementById('composeMask').classList.remove('on');}
-function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2600);}
-async function sendMail(){
-  const from=document.getElementById('fromSel').value,to=document.getElementById('toInput').value.trim();
-  const subj=document.getElementById('subjInput').value.trim(),body=document.getElementById('bodyInput').value;
-  const fname=(document.getElementById('fileInput').files[0]||{}).name||'';
-  if(!to){toast('請填收件人');return;}
-  try{
-    await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname});
-  }catch(e){}
-  closeCompose();
-  document.getElementById('toInput').value='';document.getElementById('subjInput').value='';document.getElementById('bodyInput').value='';
-  toast('已送出指令，信件將由所選公司寄出');
-  loadMail();
-}
-function refreshMail(){const last=localStorage.getItem('bcd_last_refresh')||0;const now=Date.now();if(now-last<300000){alert('更新太頻繁，請 5 分鐘後再試');return;}localStorage.setItem('bcd_last_refresh',now);loadMail();alert('已送出更新指令，列表即時重整');}
+function fillContacts(){const seen={};allMail.forEach(m=>{if(m.from)seen[m.from]=1;});document.getElementById('contactList').innerHTML=Object.keys(seen).map(e=>`<option value="${e}">`).join('');}
+function refreshMail(){const last=localStorage.getItem('bcd_last_refresh')||0;const now=Date.now();if(now-last<300000){toast('更新太頻繁，請 5 分鐘後再試');return;}localStorage.setItem('bcd_last_refresh',now);loadMail();toast('已送出更新指令');}
 function drawMailList(){
   const q=(document.getElementById('searchBox').value||'').toLowerCase();
   let list=allMail.slice().reverse();
@@ -219,6 +209,18 @@ function drawMailList(){
       <div class="sub">${m.subject||''}<span class="owner-tag">${OWNER[m.owner]||'Kevin W'}</span></div>
       <div class="body">${(m.body||'').replace(/</g,'&lt;').slice(0,1500)}</div>
     </div>`).join(''):'<div class="empty">尚無信件</div>';
+}
+function openCompose(){document.getElementById('composeMask').classList.add('on');}
+function closeCompose(){document.getElementById('composeMask').classList.remove('on');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2600);}
+async function sendMail(){
+  const from=document.getElementById('fromSel').value,to=document.getElementById('toInput').value.trim();
+  const subj=document.getElementById('subjInput').value.trim(),body=document.getElementById('bodyInput').value;
+  const fname=(document.getElementById('fileInput').files[0]||{}).name||'';
+  if(!to){toast('請填收件人');return;}
+  try{await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname});}catch(e){}
+  closeCompose();document.getElementById('toInput').value='';document.getElementById('subjInput').value='';document.getElementById('bodyInput').value='';
+  toast('已送出指令，信件將由所選公司寄出');loadMail();
 }
 function setLang(){}
 (function(){try{const s=JSON.parse(localStorage.getItem('cmp_session')||'null');if(s){session=s;enter();}}catch(e){}})();
