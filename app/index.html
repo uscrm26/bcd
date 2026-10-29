@@ -6,7 +6,7 @@
 <title>Bond Client Desk</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
+:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--green:#12a05a;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
 button{font-family:inherit}
@@ -45,28 +45,39 @@ button{font-family:inherit}
 .nav-sec{font-size:11px;color:#9aa4b5;padding:10px 12px 4px;letter-spacing:.5px}
 .nav button{display:flex;width:100%;align-items:center;gap:10px;padding:10px 14px;border:none;background:none;border-radius:10px;cursor:pointer;font-size:13.5px;color:var(--mut);margin-bottom:2px;text-align:left}
 .nav button.on{background:#eef4ff;color:var(--brand);font-weight:600}
-.main{flex:1;padding:0;overflow:hidden;background:#fff}
-.panel{display:none;height:calc(100vh - 56px)}.panel.on{display:block}
-#frameDash{width:100%;height:100%;border:none}
+.main{flex:1;overflow:auto;background:var(--bg)}
+.panel{display:none}.panel.on{display:block}
+#frameDash{width:100%;height:calc(100vh - 56px);border:none;background:#fff}
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px;margin:16px;box-shadow:var(--shadow)}
 .h2{font-size:15px;font-weight:700;margin-bottom:14px}
-.toolbar{display:flex;gap:10px;margin-bottom:12px;align-items:center}
-.toolbar input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;flex:1;max-width:320px}
+.toolbar{display:flex;gap:10px;margin-bottom:12px;align-items:center;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px}
 .mail-list .mail-row{padding:12px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer;background:#fff}
-.mail-row .top{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.mail-row .top{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);gap:10px}
 .mail-row .sub{font-weight:600;margin:4px 0}
 .mail-row .body{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.7;white-space:pre-wrap;background:#fafbfd;border-radius:8px;padding:10px}
 .empty{color:var(--mut);font-size:13px;text-align:center;padding:30px}
 .owner-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef4ff;color:var(--brand);margin-left:6px}
+table.tbl{width:100%;border-collapse:collapse;font-size:13px}
+table.tbl th,table.tbl td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+table.tbl th{color:var(--mut);font-weight:600;font-size:12px;background:#fafbfd}
+.pill{font-size:11px;padding:3px 10px;border-radius:999px;background:#eef4ff;color:var(--brand)}
+.pill.gray{background:#f0f2f5;color:var(--mut)}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap}
+.stat{flex:1;min-width:150px;background:#fafbfd;border:1px solid var(--line);border-radius:12px;padding:16px}
+.stat b{font-size:24px;display:block}.stat span{font-size:12px;color:var(--mut)}
+.subtabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.subtabs button{padding:7px 14px;border:1px solid var(--line);background:#fff;border-radius:9px;cursor:pointer;font-size:13px;color:var(--mut)}
+.subtabs button.on{border-color:var(--brand);color:var(--brand);background:#eef4ff}
 .mask{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:50}
 .mask.on{display:flex}
 .modal{background:#fff;border-radius:18px;width:min(680px,92vw);max-height:88vh;overflow:auto;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
 .modal h3{margin:0 0 18px;font-size:18px}
 .modal .row{display:flex;gap:10px;align-items:center;margin-bottom:12px}
-.modal label{font-size:12.5px;color:var(--mut);width:56px;flex-shrink:0}
+.modal label{font-size:12.5px;color:var(--mut);width:64px;flex-shrink:0}
 .modal input,.modal select,.modal textarea{padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit}
 .modal input,.modal select{flex:1}
-.modal textarea{width:100%;height:220px;resize:vertical;line-height:1.6}
+.modal textarea{width:100%;height:180px;resize:vertical;line-height:1.6}
 .toast{position:fixed;top:70px;right:20px;background:#12a05a;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;display:none;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 @media(max-width:900px){.side{width:64px}.nav button span.lbl,.nav-sec{display:none}}
 </style>
@@ -107,11 +118,12 @@ button{font-family:inherit}
     <aside class="side"><div class="nav" id="nav"></div></aside>
     <main class="main">
       <section class="panel on" data-view="dash"><iframe id="frameDash" src="../index.html"></iframe></section>
+
       <section class="panel" data-view="bcdmail">
         <div class="card">
           <div class="toolbar">
             <div class="h2" style="margin:0">公司信箱</div>
-            <input id="searchBox" placeholder="搜索客戶或 broker" oninput="drawMailList()">
+            <input id="searchBox" style="max-width:280px" placeholder="搜索客戶或 broker" oninput="drawMailList()">
             <div style="flex:1"></div>
             <button class="ghost" onclick="refreshMail()">一鍵更新</button>
             <button class="primary" style="padding:9px 18px;font-size:13.5px" onclick="openCompose()">＋ 寫信</button>
@@ -119,8 +131,18 @@ button{font-family:inherit}
           <div class="mail-list" id="mailList"></div>
         </div>
       </section>
+
       <section class="panel" data-view="admin">
-        <div class="card"><div class="h2">超管後台</div><div id="adminBox"></div></div>
+        <div class="card">
+          <div class="subtabs" id="adminTabs">
+            <button class="on" data-atab="own" onclick="adminTab('own')">客戶歸屬</button>
+            <button data-atab="deal" onclick="adminTab('deal')">成交與金額</button>
+            <button data-atab="acct" onclick="adminTab('acct')">帳號管理</button>
+            <button data-atab="broker" onclick="adminTab('broker')">broker 池</button>
+            <button data-atab="log" onclick="adminTab('log')">登入與審計</button>
+          </div>
+          <div id="adminBody"></div>
+        </div>
       </section>
     </main>
   </div>
@@ -146,23 +168,49 @@ button{font-family:inherit}
     </div>
   </div>
 </div>
+
+<div class="mask" id="dealMask">
+  <div class="modal">
+    <h3>標成交成功</h3>
+    <div class="row"><label>客戶</label><select id="dealClient"></select></div>
+    <div class="row"><label>金額</label><input id="dealAmt" type="number" placeholder="例如 1000"></div>
+    <div class="row"><label>備註</label><input id="dealNote" placeholder="成交備註"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:16px">
+      <button class="ghost" onclick="dealMask(false)">取消</button>
+      <button class="primary" onclick="saveDeal()">確認標成功</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="acctMask">
+  <div class="modal">
+    <h3>新增下線帳號</h3>
+    <div class="row"><label>登入名</label><input id="newId" placeholder="小寫英文，例如 ryan2"></div>
+    <div class="row"><label>正式名</label><input id="newName" placeholder="例如 Ryan F"></div>
+    <div class="row"><label>密碼</label><input id="newPin" maxlength="4" placeholder="4 位數"></div>
+    <div class="row" style="justify-content:flex-end;margin-top:16px">
+      <button class="ghost" onclick="acctMask(false)">取消</button>
+      <button class="primary" onclick="saveAccount()">建立帳號</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
 const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
 const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
 const sb=window.supabase?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
-const OWNER={kevinyama:"Kevin W",ryanfan:"Ryan F"};
-let session=null, allMail=[];
-// 原看板分頁
+const STATUS=["跟進中","待補件","可啟動","審批中","已成交","已關閉"];
+let session=null, allMail=[], ownership=[], accounts=[], deals=[], adminTabNow='own';
 const DASH_TABS=[['now','在處理看板'],['todo','待處理業務'],['daily','每日工作'],['clients','客戶檔案'],['mail','郵件明細'],['webmail','郵箱登錄'],['policy','公司資料'],['company','公司檔案'],['broker','報關經紀資源池'],['notes','我的備註'],['archive','檔案庫']];
+
 function buildNav(){
   const admin=session.role==='admin';
   let html='<div class="nav-sec">業務看板</div>';
   DASH_TABS.forEach(t=>{html+=`<button data-dash="${t[0]}" onclick="goDash('${t[0]}')"><span class="lbl">${t[1]}</span></button>`;});
   html+='<div class="nav-sec">BCD</div>';
   html+=`<button data-v="bcdmail" onclick="show('bcdmail')"><span class="lbl">公司信箱</span></button>`;
-  if(admin)html+=`<button data-v="admin" onclick="show('admin')"><span class="lbl">超管後台</span></button>`;
+  if(admin)html+=`<button data-v="admin" onclick="show('admin');loadAdmin()"><span class="lbl">超管後台</span></button>`;
   document.getElementById('nav').innerHTML=html;
 }
 function show(v){
@@ -185,30 +233,39 @@ async function tryLogin(){
   if(!acc){document.getElementById('gateErr').textContent='帳號或密碼錯誤';return;}
   session=acc;localStorage.setItem('cmp_session',JSON.stringify(acc));
   sb.from('login_logs').insert({account_id:acc.id,display_name:acc.display_name,role:acc.role}).then(()=>{});
+  sb.from('audit_logs').insert({account_id:acc.id,display_name:acc.display_name,action:'登入',detail:'登入系統'}).then(()=>{});
   enter();
 }
 function logout(){session=null;localStorage.removeItem('cmp_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
-function enter(){
+async function enter(){
   document.getElementById('gate').style.display='none';document.getElementById('app').style.display='block';
   document.getElementById('meName').textContent=session.display_name;
   document.getElementById('meRole').textContent=session.role==='admin'?'超級管理員':'跟進人員';
   document.getElementById('meAvatar').textContent=(session.display_name||'K').slice(0,1);
-  buildNav();goDash('now');loadMail();
-  if(session.role==='admin')document.getElementById('adminBox').innerHTML='<div style="color:#6b7688;font-size:13px">超管後台：新增下線帳號、指派客戶歸屬、查看操作審計與登入裝置記錄。</div>';
+  buildNav();goDash('now');
+  await Promise.all([loadOwnership(),loadAccounts(),loadDeals(),loadMail()]);
 }
+
+async function loadOwnership(){try{const {data}=await sb.from('client_ownership').select('*').order('client_key');ownership=data||[];}catch(e){ownership=[];}}
+async function loadAccounts(){try{const {data}=await sb.from('accounts').select('*').order('id');accounts=data||[];}catch(e){accounts=[];}}
+async function loadDeals(){try{const {data}=await sb.from('deals').select('*').order('closed_at',{ascending:false});deals=data||[];}catch(e){deals=[];}}
+
 async function loadMail(){try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}drawMailList();fillContacts();}
 function fillContacts(){const seen={};allMail.forEach(m=>{if(m.from)seen[m.from]=1;});document.getElementById('contactList').innerHTML=Object.keys(seen).map(e=>`<option value="${e}">`).join('');}
+function ownerOfClient(c){const o=ownership.find(x=>(x.client_name||'').toLowerCase().includes((c||'').toLowerCase())||x.client_key===(c||'').toLowerCase());return o?o.owner:null;}
 function refreshMail(){const last=localStorage.getItem('bcd_last_refresh')||0;const now=Date.now();if(now-last<300000){toast('更新太頻繁，請 5 分鐘後再試');return;}localStorage.setItem('bcd_last_refresh',now);loadMail();toast('已送出更新指令');}
 function drawMailList(){
   const q=(document.getElementById('searchBox').value||'').toLowerCase();
   let list=allMail.slice().reverse();
+  if(session.role!=='admin'){list=list.filter(m=>{const o=ownerOfClient(m.client);return o===session.id;});}
   if(q)list=list.filter(m=>(m.client+m.from+m.subject).toLowerCase().includes(q));
-  document.getElementById('mailList').innerHTML=list.length?list.map(m=>`
+  const on=id=>(accounts.find(a=>a.id===id)||{}).display_name||id;
+  document.getElementById('mailList').innerHTML=list.length?list.map(m=>{const own=ownerOfClient(m.client);return `
     <div class="mail-row" onclick="var b=this.querySelector('.body');b.style.display=b.style.display==='none'?'block':'none'">
       <div class="top"><span>${m.client||''} · ${m.from||''}</span><span>${m.date||''}</span></div>
-      <div class="sub">${m.subject||''}<span class="owner-tag">${OWNER[m.owner]||'Kevin W'}</span></div>
+      <div class="sub">${m.subject||''}${own?`<span class="owner-tag">${own===session.id?'我':on(own)}</span>`:''}</div>
       <div class="body">${(m.body||'').replace(/</g,'&lt;').slice(0,1500)}</div>
-    </div>`).join(''):'<div class="empty">尚無信件</div>';
+    </div>`;}).join(''):'<div class="empty">尚無信件</div>';
 }
 function openCompose(){document.getElementById('composeMask').classList.add('on');}
 function closeCompose(){document.getElementById('composeMask').classList.remove('on');}
@@ -218,9 +275,95 @@ async function sendMail(){
   const subj=document.getElementById('subjInput').value.trim(),body=document.getElementById('bodyInput').value;
   const fname=(document.getElementById('fileInput').files[0]||{}).name||'';
   if(!to){toast('請填收件人');return;}
-  try{await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname});}catch(e){}
+  try{await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname});
+    await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'送出郵件',target_client:from,detail:`to ${to} / ${subj}`});}catch(e){}
   closeCompose();document.getElementById('toInput').value='';document.getElementById('subjInput').value='';document.getElementById('bodyInput').value='';
   toast('已送出指令，信件將由所選公司寄出');loadMail();
+}
+
+/* ===== 後台 ===== */
+function adminTab(t){adminTabNow=t;document.querySelectorAll('#adminTabs button').forEach(b=>b.classList.toggle('on',b.dataset.atab===t));renderAdmin();}
+async function loadAdmin(){await Promise.all([loadOwnership(),loadAccounts(),loadDeals()]);renderAdmin();}
+function onName(id){return (accounts.find(a=>a.id===id)||{}).display_name||id;}
+function renderAdmin(){
+  const el=document.getElementById('adminBody');
+  if(adminTabNow==='own'){
+    const rows=ownership.map(o=>`<tr>
+      <td><b>${o.client_name}</b><div style="color:#8a8f98;font-size:11px">${o.client_key}</div></td>
+      <td><span class="owner-tag">${onName(o.owner)}</span></td>
+      <td><select onchange="reassign('${o.client_key}',this.value)">${accounts.map(a=>`<option value="${a.id}" ${a.id===o.owner?'selected':''}>${a.display_name}（${a.role}）</option>`).join('')}</select></td>
+      <td><select onchange="setStatus('${o.client_key}',this.value)">${STATUS.map(s=>`<option ${s===o.status?'selected':''}>${s}</option>`).join('')}</select></td>
+      <td style="max-width:220px">${o.note||''}</td>
+    </tr>`).join('');
+    el.innerHTML=`<div class="toolbar"><div class="h2" style="margin:0">客戶歸屬指派</div><div style="flex:1"></div><button class="primary" style="padding:8px 16px;font-size:13px" onclick="dealMask(true)">＋ 標成交成功</button></div>
+    <table class="tbl"><thead><tr><th>客戶</th><th>目前負責人</th><th>改派給</th><th>狀態</th><th>備註</th></tr></thead><tbody>${rows||'<tr><td colspan=5 class="empty">尚無客戶</td></tr>'}</tbody></table>`;
+  }else if(adminTabNow==='deal'){
+    const mine=deals.filter(d=>session.role==='admin'||d.owner===session.id);
+    const total=mine.reduce((s,d)=>s+Number(d.amount||0),0);
+    const byOwner={};mine.forEach(d=>{byOwner[d.owner]=(byOwner[d.owner]||0)+Number(d.amount||0);});
+    const stats=Object.entries(byOwner).map(([k,v])=>`<div class="stat"><b>$${v.toLocaleString()}</b><span>${onName(k)} 名下成交</span></div>`).join('');
+    const rows=mine.map(d=>`<tr><td>${d.client_name}</td><td><span class="owner-tag">${onName(d.owner)}</span></td><td><b>$${Number(d.amount||0).toLocaleString()}</b></td><td>${d.closed_at?new Date(d.closed_at).toLocaleDateString('zh-Hant'):''}</td><td>${d.note||''}</td><td>${onName(d.marked_by)}</td></tr>`).join('');
+    el.innerHTML=`<div class="stat-row" style="margin-bottom:14px"><div class="stat"><b>$${total.toLocaleString()}</b><span>成交金額合計</span></div>${stats}</div>
+    <table class="tbl"><thead><tr><th>客戶</th><th>負責人</th><th>金額</th><th>成交日</th><th>備註</th><th>標記人</th></tr></thead><tbody>${rows||'<tr><td colspan=6 class="empty">尚無成交單</td></tr>'}</tbody></table>`;
+  }else if(adminTabNow==='acct'){
+    const rows=accounts.map(a=>`<tr><td><b>${a.display_name}</b><div style="color:#8a8f98;font-size:11px">${a.id}</div></td>
+      <td><span class="pill ${a.role==='admin'?'':'gray'}">${a.role==='admin'?'超管':'跟進'}</span></td>
+      <td>${onName(a.parent_id)||'—'}</td>
+      <td>${a.active?'<span class="pill">啟用</span>':'<span class="pill gray">停用</span>'}</td>
+      <td><button class="ghost" onclick="toggleActive('${a.id}',${!a.active})">${a.active?'停用':'啟用'}</button>
+      <button class="ghost" onclick="resetPin('${a.id}')">改密碼</button></td></tr>`).join('');
+    el.innerHTML=`<div class="toolbar"><div class="h2" style="margin:0">帳號管理</div><div style="flex:1"></div><button class="primary" style="padding:8px 16px;font-size:13px" onclick="acctMask(true)">＋ 新增下線</button></div>
+    <table class="tbl"><thead><tr><th>帳號</th><th>角色</th><th>上級</th><th>狀態</th><th>操作</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }else if(adminTabNow==='broker'){
+    el.innerHTML=`<div class="toolbar"><div class="h2" style="margin:0">broker 資源池</div><input id="bkSearch" placeholder="搜索公司 / email / 電話" oninput="drawBrokers()"></div><div id="bkList" class="empty">載入中…</div>`;
+    drawBrokers();
+  }else if(adminTabNow==='log'){
+    el.innerHTML=`<div class="h2">登入記錄與操作審計</div><div id="logBox" class="empty">載入中…</div>`;
+    loadLogs();
+  }
+}
+async function loadLogs(){
+  const el=document.getElementById('logBox');
+  let ll=[],al=[];
+  try{ll=(await sb.from('login_logs').select('*').order('logged_in_at',{ascending:false}).limit(50)).data||[];}catch(e){}
+  try{al=(await sb.from('audit_logs').select('*').order('created_at',{ascending:false}).limit(80)).data||[];}catch(e){}
+  const lr=ll.map(x=>`<tr><td>${new Date(x.logged_in_at).toLocaleString('zh-Hant')}</td><td>${x.display_name}</td><td>${x.role}</td><td>登入</td></tr>`).join('');
+  const ar=al.map(x=>`<tr><td>${new Date(x.created_at).toLocaleString('zh-Hant')}</td><td>${x.display_name}</td><td>${x.action}</td><td>${x.target_client||''}</td><td>${x.detail||''}</td></tr>`).join('');
+  el.innerHTML=`<table class="tbl"><thead><tr><th>時間</th><th>人</th><th>動作</th><th>目標</th><th>內容</th></tr></thead><tbody>${lr}${ar||'<tr><td colspan=5 class="empty">尚無記錄</td></tr>'}</tbody></table>`;
+}
+let brokerCache=null;
+async function drawBrokers(){
+  const box=document.getElementById('bkList');if(!box)return;
+  if(!brokerCache){try{brokerCache=await (await fetch('../brokers.json?ts='+Date.now())).json();}catch(e){brokerCache=[];}}
+  const q=(document.getElementById('bkSearch').value||'').toLowerCase();
+  let list=brokerCache;if(q)list=list.filter(b=>(b.n+b.m+b.c).toLowerCase().includes(q));
+  list=list.slice(0,60);
+  box.className='';
+  box.innerHTML=list.map(b=>`<div class="mail-row"><div class="sub">${b.n}</div><div style="font-size:12px;color:#6b7688">${b.c||''} · ${b.m||''}</div>${b.a?`<div style="font-size:12px;color:#9aa4b5;margin-top:4px">${b.a.replace(/\n/g,' ')}</div>`:''}</div>`).join('')||'<div class="empty">無符合結果</div>';
+}
+async function reassign(ck,owner){await sb.from('client_ownership').update({owner:owner,updated_at:new Date().toISOString()}).eq('client_key',ck);
+  await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'改派歸屬',target_client:ck,detail:`改派給 ${owner}`});
+  toast('已改派');loadAdmin();}
+async function setStatus(ck,st){await sb.from('client_ownership').update({status:st,updated_at:new Date().toISOString()}).eq('client_key',ck);toast('狀態已更新');}
+async function toggleActive(id,on){await sb.from('accounts').update({active:on}).eq('id',id);await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:on?'啟用帳號':'停用帳號',target_client:id,detail:''});toast(on?'已啟用':'已停用');loadAdmin();}
+async function resetPin(id){const p=prompt('輸入新 4 位密碼');if(!p)return;await sb.from('accounts').update({pin:p}).eq('id',id);toast('密碼已更新');}
+function dealMask(on){if(on){document.getElementById('dealClient').innerHTML=ownership.map(o=>`<option value="${o.client_key}|${o.client_name}">${o.client_name}</option>`).join('');}document.getElementById('dealMask').classList.toggle('on',on);}
+async function saveDeal(){
+  const [ck,cn]=document.getElementById('dealClient').value.split('|');
+  const amt=parseFloat(document.getElementById('dealAmt').value)||0;const note=document.getElementById('dealNote').value;
+  const o=ownership.find(x=>x.client_key===ck);
+  await sb.from('deals').insert({client_key:ck,client_name:cn,owner:o.owner,amount:amt,note:note,marked_by:session.id});
+  await sb.from('client_ownership').update({status:'已成交',updated_at:new Date().toISOString()}).eq('client_key',ck);
+  await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'標成交',target_client:cn,detail:`$${amt}`});
+  document.getElementById('dealMask').classList.remove('on');toast('已標成交');loadAdmin();
+}
+function acctMask(on){document.getElementById('acctMask').classList.toggle('on',on);}
+async function saveAccount(){
+  const id=document.getElementById('newId').value.trim().toLowerCase();const nm=document.getElementById('newName').value.trim();const pin=document.getElementById('newPin').value.trim();
+  if(!id||!nm||!/^\d{4}$/.test(pin)){toast('登入名、名稱與 4 位密碼必填');return;}
+  await sb.from('accounts').insert({id,display_name:nm,pin,role:'rep',parent_id:session.id,active:true});
+  await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'新增帳號',target_client:id,detail:nm});
+  document.getElementById('acctMask').classList.remove('on');toast('帳號已建立');loadAdmin();
 }
 function setLang(){}
 (function(){try{const s=JSON.parse(localStorage.getItem('cmp_session')||'null');if(s){session=s;enter();}}catch(e){}})();
