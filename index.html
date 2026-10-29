@@ -254,6 +254,7 @@ function clearGate() {
     <button onclick="show('policy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n-nav-policy>公司資料</span></button>
     <button onclick="show('company',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span data-i18n-nav-company>公司檔案</span></button>
     <button onclick="show('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>報關經紀資源池</span></button>
+    <button onclick="show('archive',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span data-i18n-nav-archive>檔案庫</span></button>
   </nav>
   <div id="newmail" class="card newmail">
     <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span data-i18n-newmail>新郵件提醒</span></h2>
@@ -269,6 +270,7 @@ function clearGate() {
     <button onclick="drawerGo('webmail',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-webmail>郵箱登錄</span></button>
     <button onclick="drawerGo('policy',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span data-i18n-nav-policy>公司資料</span></button>
     <button onclick="drawerGo('broker',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span data-i18n-nav-broker>報關經紀資源池</span></button>
+    <button onclick="drawerGo('archive',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg><span data-i18n-nav-archive>檔案庫</span></button>
   </div>
 
   <div id="now" class="page active">
@@ -301,6 +303,9 @@ function clearGate() {
         <div class="funnel-row"><span class="label" data-i18n-f2>收到回覆</span><div class="bar-wrap"><div class="bar" style="width:10%;background:linear-gradient(90deg,#6b7280,#4b5563);">10%</div></div><span class="num">7</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f3>對接開單</span><div class="bar-wrap"><div class="bar" style="width:1.5%;background:linear-gradient(90deg,#4b5563,#374151);">1%</div></div><span class="num">1</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f4>獲得海關擔保文件</span><div class="bar-wrap"><div class="bar" style="width:0%;background:#1f2937;"></div></div><span class="num">0</span></div>
+        <div style="margin-top:12px;padding:10px 12px;background:#f3f4f6;border-radius:8px;font-size:12px;color:#4b5563;display:flex;justify-content:space-between;align-items:center;gap:10px;">
+          <span data-i18n-outbound>累計外發（含往來回覆）</span><b style="color:#1f2937;">102 封 · 68 位收件人</b>
+        </div>
       </div>
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span data-i18n-ring>在處理客戶狀態</span></h2>
@@ -882,6 +887,27 @@ function clearGate() {
     </div>
   </div>
 
+  <div id="archive" class="page">
+    <div class="card">
+      <h2 data-i18n-arch-title>業務檔案庫</h2>
+      <div style="font-size:12px;color:#6b7280;margin-bottom:12px;" data-i18n-arch-desc>所有統計與正式文件集中存放，輸入關鍵字搜索，點擊卡片即在看板內彈窗預覽。</div>
+      <div class="toolbar">
+        <input type="text" id="archiveSearch" data-i18n-arch-ph placeholder="搜索檔案名稱、關鍵字..." onkeyup="filterArchive()">
+      </div>
+      <div id="archiveGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px;">
+        <div class="arch-card" data-name="外發郵件明細統計 發信 開發信 回覆 102 68" onclick="openDoc('docs/外發郵件明細統計.pdf')" style="cursor:pointer;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 14px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:28px;margin-bottom:10px;">📄</div>
+          <div style="font-weight:600;font-size:15px;color:#1f2937;margin-bottom:6px;" data-i18n-arch-doc1>外發郵件明細統計</div>
+          <div style="font-size:12px;color:#6b7280;line-height:1.7;margin-bottom:10px;" data-i18n-arch-doc1-desc>累計外發102封（按人頭），獨立收件人68個，含五個客戶分組與逐人明細。</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <span style="font-size:11px;background:#eef2ff;color:#4338ca;padding:3px 10px;border-radius:999px;">PDF</span>
+            <span style="font-size:11px;background:#f3f4f6;color:#6b7280;padding:3px 10px;border-radius:999px;">2026/10/29</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div id="modal" onclick="if(event.target===this)closeModal()">
@@ -976,6 +1002,12 @@ function filterWebmail() {
   var q = document.getElementById('webmailSearch').value.toLowerCase();
   document.querySelectorAll('.webmail-row').forEach(function(r){
     r.style.display = r.innerText.toLowerCase().indexOf(q)>=0 ? '' : 'none';
+  });
+}
+function filterArchive() {
+  var q = document.getElementById('archiveSearch').value.toLowerCase();
+  document.querySelectorAll('#archiveGrid .arch-card').forEach(function(c){
+    c.style.display = (c.dataset.name.toLowerCase().indexOf(q)>=0 || c.innerText.toLowerCase().indexOf(q)>=0) ? '' : 'none';
   });
 }
 function translateMail(btn){
@@ -1096,7 +1128,8 @@ function renderLive(){
 var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
     title:'凱文的代辦業務看板',
-    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄','nav-broker':'報關經紀資源池','nav-policy':'公司資料','nav-company':'公司檔案',
+    'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄','nav-broker':'報關經紀資源池','nav-policy':'公司資料','nav-company':'公司檔案','nav-archive':'檔案庫',
+    archTitle:'業務檔案庫', archDesc:'所有統計與正式文件集中存放，輸入關鍵字搜索，點擊卡片即在看板內彈窗預覽。', archPh:'搜索檔案名稱、關鍵字...', archDoc1:'外發郵件明細統計', archDoc1Desc:'累計外發102封（按人頭），獨立收件人68個，含五個客戶分組與逐人明細。', outbound:'累計外發（含往來回覆）',
     searchClientTable:'搜索客戶、法人、狀態...', timeFilterAll:'全部時間', timeFilter48h:'最近48小時', timeFilterMonth:'本月內',
     detail:'詳情', expand:'展開', collapse:'收起',
     timeline:'處理時間線（北京時間）', doneItems:'已完成事項', todoItems:'待辦事項',
@@ -1141,7 +1174,8 @@ var i18n = {
   },
   en: { gateTitle:'Enter 4-digit PIN', gateSub:'輸入 4 位數字密碼', update:'New version available, click to refresh', ai:'Ask AI',
     title:"Kevin's Bond Deal Dashboard",
-    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail','nav-policy':'Company Info','nav-company':'Documents','nav-broker':'Broker Pool',
+    'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail','nav-policy':'Company Info','nav-company':'Documents','nav-broker':'Broker Pool','nav-archive':'Archive',
+    archTitle:'Business Archive', archDesc:'All statistics and formal documents in one place. Search keywords, click a card to preview inside the dashboard.', archPh:'Search document name, keywords...', archDoc1:'Outbound Email Ledger', archDoc1Desc:'102 outbound emails (by recipient), 68 unique recipients, with per-client breakdown and full recipient list.', outbound:'Total outbound (incl. replies)',
     searchClientTable:'Search client, founder, status...', timeFilterAll:'All time', timeFilter48h:'Last 48h', timeFilterMonth:'This month',
     detail:'Details', expand:'Expand', collapse:'Collapse',
     timeline:'Processing Timeline (Beijing time)', doneItems:'Completed', todoItems:'To-do',
