@@ -406,9 +406,15 @@ async function postBoard(){
   await sb.from('company_archive').upsert({client_key:key,company_name:session.display_name,legal_person:session.id,profile_json:{name:session.display_name,text:t,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
   document.getElementById('boardInput').value='';loadBoard();toast('已發佈');
 }
-// 即時同步：定時重抓雲端歸屬、成交、留言、信件
-setInterval(()=>{if(!session)return;loadOwnership();loadDeals();if(document.querySelector('.panel[data-view=board]').classList.contains('on'))loadBoard();},6000);
-setInterval(()=>{if(!session)return;loadMail();},45000);
+// 省額度：分頁不可見時暫停；歸屬成交留言 30 秒一次，信件 60 秒一次
+function tick(){
+  if(document.hidden||!session)return;
+  loadOwnership();loadDeals();
+  if(document.querySelector('.panel[data-view=board]').classList.contains('on'))loadBoard();
+  if(document.querySelector('.panel[data-view=bcdmail]').classList.contains('on'))loadMail();
+}
+setInterval(tick,30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick();});
 function setLang(){}
 (function(){try{const s=JSON.parse(localStorage.getItem('cmp_session')||'null');if(s){session=s;enter();}}catch(e){}})();
 </script>
