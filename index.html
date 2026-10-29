@@ -529,6 +529,31 @@ function clearGate() {
               </div>
             </td>
           </tr>
+          <tr class="client-row" data-client="Home Depot" data-founder="Amjad Bahmad" data-status="可啟動">
+            <td>Home Depot LLC</td><td>Amjad Bahmad</td><td><span class="pill ready">可啟動</span></td><td style="color:#1f2937;">全套材料齊，地址 USPS 查驗通過，信箱待確認</td>
+            <td><button class="orig-btn" onclick="toggleDetail(this)">展開</button></td>
+          </tr>
+          <tr class="detail-row" style="display:none;background:#f9fafb;">
+            <td colspan="5" style="padding:16px;">
+              <div style="font-size:13px;line-height:1.8;">
+                <b>處理時間線（北京時間）：</b><br>
+                10/03 - 加州州務卿批准設立，Entity No. B20260437957<br>
+                10/03 - 稅局發 EIN 43-2207630，name control HOME<br>
+                10/30 - 全套材料歸檔，地址 USPS 驗證為商業地址，街景為 Fair Oaks 商場店面<br>
+                10/30 - 信箱 amjadbahmad@home-depot.live 暫時認證失敗，待上游補建<br><br>
+                <b>已完成事項：</b> EIN、公司章程、申請通知、法人照片、德州駕照正反面、地址查驗與街景全部歸檔<br>
+                <b>待辦事項：</b> 確認信箱可登入後排開發信；法人德州駕照 2030/03/03 到期，有效<br><br>
+                <b style="font-size:14px;">📧 Home Depot LLC 聯絡信息：</b>
+                <div style="background:#f3f4f6;border-radius:8px;padding:12px;margin:8px 0;font-size:12px;line-height:1.8;">
+                  📧 公司郵箱：amjadbahmad@home-depot.live<br>
+                  🔑 郵箱密碼：123456<br>
+                  📍 公司地址：4410 San Juan Ave, Fair Oaks, CA 95628-6745<br>
+                  📞 聯繫電話：626 271 4975<br>
+                  EIN：43-2207630　CA 實體號：B20260437957
+                </div>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
@@ -754,6 +779,31 @@ function clearGate() {
             <a class="doc-icon" style="background:#eff6ff;border-color:#3b82f6;" onclick="scrollToClientMail('Nervaqon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span class="lbl" style="color:#3b82f6;">信件往來</span></a>
           </div>
         </div>
+        <div class="client-card st-ready" data-name="home depot amjad fair oaks 43-2207630">
+          <div class="top">
+            <img class="avatar" src="docs/clients/Home%20Depot/Home%20Depot%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E7%85%A7%E7%89%87.jpeg" onclick="openModalImg(this.src)">
+            <div class="info">
+              <h3>Home Depot LLC <span class="pill ready">可啟動</span></h3>
+              <div class="row"><span class="k">法人</span><span class="v">Amjad Bahmad</span></div>
+              <div class="row"><span class="k">郵箱</span><span class="v">amjadbahmad@home-depot.live</span></div>
+              <div class="row"><span class="k">電話</span><span class="v">626 271 4975</span></div>
+              <div class="row"><span class="k">地址</span><span class="v">4410 San Juan Ave Fair Oaks CA 95628-6745</span></div>
+              <div class="row"><span class="k">EIN</span><span class="v">43-2207630</span></div>
+              <div class="row"><span class="k">CA 實體號</span><span class="v">B20260437957</span></div>
+              <div class="row"><span class="k">待辦</span><span class="v">信箱暫時認證失敗，待上游補建；地址 USPS 已驗證</span></div>
+            </div>
+          </div>
+          <div class="progress-title">跟進進度</div>
+          <div class="progress-note">10/03 加州州務卿批准設立，稅局同日發 EIN。材料齊全，法人德州駕照 2030/03 到期有效。辦公地址在商場店面，USPS 查驗通過。等信箱可登入即排開發信。</div>
+          <div class="docs-row">
+            <a class="doc-icon" onclick="openDoc('docs/clients/Home%20Depot/Home%20Depot%20LLC%E2%80%94%E2%80%94EIN.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">EIN 通知</span></a>
+            <a class="doc-icon" onclick="openDoc('docs/clients/Home%20Depot/Home%20Depot%20LLC%E2%80%94%E2%80%94%E6%B3%95%E4%BA%BA%E9%A9%BE%E7%85%A7%E6%AD%A3%E9%9D%A2.jpeg')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/></svg><span class="lbl">駕照正面</span></a>
+            <a class="doc-icon" onclick="openDoc('docs/clients/Home%20Depot/Home%20Depot%20LLC%E2%80%94%E2%80%94%E5%85%AC%E5%8F%B8%E7%AB%A0%E7%A8%8B.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span class="lbl">公司章程</span></a>
+            <a class="doc-icon" onclick="openDoc('docs/clients/Home%20Depot/Home%20Depot%20LLC%E2%80%94%E2%80%94%E7%94%B3%E8%AF%B7%E9%80%9A%E7%9F%A5Business%20Entity%20Filing%20Approval_B20260437957.pdf')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="lbl">申請通知</span></a>
+            <a class="doc-icon" onclick="openDoc('docs/clients/Home%20Depot/Home%20Depot%20LLC%E2%80%94%E2%80%94%E5%9C%B0%E5%9D%80%E6%9F%A5%E9%AA%8C.png')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><span class="lbl">地址查驗</span></a>
+            <a class="doc-icon" style="background:#eff6ff;border-color:#3b82f6;" onclick="scrollToClientMail('Home Depot')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span class="lbl" style="color:#3b82f6;">信件往來</span></a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -770,6 +820,7 @@ function clearGate() {
           <option value="Pebblehome">Pebblehome</option>
           <option value="Sageware">Sageware</option>
           <option value="Nervaqon">Nervaqon</option>
+          <option value="Home Depot">Home Depot</option>
         </select>
       </div>
       <table id="mailTable">
