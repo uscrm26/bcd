@@ -105,7 +105,7 @@ Hi Clearit Customs team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your Unit 2 office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -270,7 +270,7 @@ Hi Dunavant Logistics Group, LLC team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 959 Ridgeway LoopMemphis office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -424,7 +424,7 @@ Hi Atlanta Customs Brokers & International Freight Forwarders, Inc. team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 4777 Aviation Parkway Ste E Atlanta office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -588,7 +588,7 @@ Hi Express Cross Border Logistics team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 4403 W Military Hwy • Suite 100 office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -737,7 +737,7 @@ Hi Bonding & Insurance Specialists Agency, Inc. team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 13841 SW Hwy office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -899,7 +899,7 @@ Hi Murray Surety Bond Agency, Inc. team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 322 Main St office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -1054,7 +1054,7 @@ Hi O.T.S. Astracon, LLC team,
 I'm comparing a handful of brokers for a continuous customs bond and your 3115 Beam Rd
 Charlotte office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -1218,7 +1218,7 @@ Hi 1st Atlantic Surety Company team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 1033 Wade Avenue office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -1371,7 +1371,7 @@ Hi United Export Company Inc. team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 2235 NW 79th Avenue  Doral office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -1535,7 +1535,7 @@ Hi NORTH AMERICAN ECOMERCE SOLUTIONS LLC. team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 95A Inip Drive Inwood office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -1687,7 +1687,7 @@ Hi Merchants Bonding Company team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 6700 Westown Pkwy office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -1853,7 +1853,7 @@ Hi All Ways International Shipping & CHB In team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 6610 Tributary Street office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -2006,7 +2006,7 @@ Hi Bluebird Customs team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your 2117 Venus Court office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
@@ -2176,7 +2176,7 @@ Hi iContainers team,
 
 I'm comparing a handful of brokers for a continuous customs bond and your Coral Gables office came up. Before I ask for numbers:
 - do you offer bonds for brand-new LLCs
-- is importer registration something you sort out
+- is importer registration something you handle
 - what ID and business paperwork you need from us
 
 No need for a long reply, just the basics.
