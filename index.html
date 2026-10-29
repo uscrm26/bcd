@@ -309,7 +309,7 @@ function clearGate() {
     <div class="funnel-grid">
       <div class="card">
         <h2><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg><span data-i18n-funnel>開發信漏斗</span></h2>
-        <div class="funnel-row"><span class="label" data-i18n-f1>已發開發信</span><div class="bar-wrap"><div class="bar" style="width:100%;background:linear-gradient(90deg,#9ca3af,#6b7280);">100%</div></div><span class="num">125</span></div>
+        <div class="funnel-row"><span class="label" data-i18n-f1>已發開發信</span><div class="bar-wrap"><div class="bar" style="width:100%;background:linear-gradient(90deg,#9ca3af,#6b7280);">100%</div></div><span class="num">230</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f2>收到回覆</span><div class="bar-wrap"><div class="bar" style="width:6.4%;background:linear-gradient(90deg,#6b7280,#4b5563);">6%</div></div><span class="num">8</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f3>對接開單</span><div class="bar-wrap"><div class="bar" style="width:1.5%;background:linear-gradient(90deg,#4b5563,#374151);">1%</div></div><span class="num">1</span></div>
         <div class="funnel-row"><span class="label" data-i18n-f4>獲得海關擔保文件</span><div class="bar-wrap"><div class="bar" style="width:0%;background:#1f2937;"></div></div><span class="num">0</span></div>
@@ -842,6 +842,7 @@ function clearGate() {
       <table>
         <thead><tr><th style="width:110px;" data-i18n-col-date>日期</th><th style="width:180px;" data-i18n-col-clients>涉及客戶</th><th data-i18n-col-work>工作內容</th><th style="width:200px;" data-i18n-col-output>產出</th></tr></thead>
         <tbody>
+          <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 03:17</span></td><td>7 箱輪發：Huntington / JELD-WEN / Kervalonix / L3Harris / Laureate / Leidos / Lennar</td><td>7 個可登入信箱各發 15 封差異化破冰信至 105 家互不重複的 broker，輪號切箱、每封間隔 30 秒、單收件人無 Cc/Bcc，美式英文正文，全部 sent 零失敗；Home Depot、Honeywell、Kontoor 三箱認證失敗未發</td><td>105/105 成功，漏斗累計至 230，明細見 send_log_batch2.json</td></tr>
           <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 01:13</span></td><td>Pebblehome</td><td>收到 E.C. Ferrer CHB（Irene Mahipos）回覆《RE: Bond for Long Beach Entries》，broker 追問貨物品類（commodity）與出貨前能否先報 ISF，待我們回覆商品資訊與 ISF 時程後再談連續 bond 內設</td><td>1封新信入 emails.json，回覆計 8，需擬回覆提供 commodity 與 ISF 安排</td></tr>
           <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 00:24</span></td><td>全部5箱巡查</td><td>每小時定時巡查：連線 Immunora、Oliveware、Pebblehome、Sageware、Nervaqon 五個郵箱，新信4封。Immunora 收到 Importivity Tanner 客氣收尾，Pebblehome 收到 Assured CHB 兩封系統確認信與 Julianachb 休假回覆，均為自動或客套信，無實質報價入賬或婉拒</td><td>4封已入 emails.json 並標已讀，無需立即跟進</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四 23:50</span></td><td>Nervaqon</td><td>從 christianjgpunzalan@nervaqon.live 單發 15 封差異化開發信至 15 家報關行，每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc，全部 sent 零失敗</td><td>15/15 成功，漏斗累計至 125</td></tr>
