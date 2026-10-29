@@ -895,9 +895,9 @@ function clearGate() {
         <input type="text" id="archiveSearch" data-i18n-arch-ph placeholder="搜索檔案名稱、關鍵字..." onkeyup="filterArchive()">
       </div>
       <div id="archiveGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:14px;">
-        <div class="arch-card" data-name="外發郵件明細統計 發信 開發信 回覆 102 68" onclick="openDoc('docs/外發郵件明細統計.pdf')" style="cursor:pointer;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 14px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow='none'">
+        <div class="arch-card" data-name="外發郵件往來總帳 發信 開發信 回覆 102 68" onclick="openDoc('docs/外發郵件往來總帳.pdf')" style="cursor:pointer;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:18px;transition:box-shadow .15s;" onmouseover="this.style.boxShadow='0 4px 14px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow='none'">
           <div style="font-size:28px;margin-bottom:10px;">📄</div>
-          <div style="font-weight:600;font-size:15px;color:#1f2937;margin-bottom:6px;" data-i18n-arch-doc1>外發郵件明細統計</div>
+          <div style="font-weight:600;font-size:15px;color:#1f2937;margin-bottom:6px;" data-i18n-arch-doc1>外發郵件往來總帳</div>
           <div style="font-size:12px;color:#6b7280;line-height:1.7;margin-bottom:10px;" data-i18n-arch-doc1-desc>累計外發102封（按人頭），獨立收件人68個，含五個客戶分組與逐人明細。</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <span style="font-size:11px;background:#eef2ff;color:#4338ca;padding:3px 10px;border-radius:999px;">PDF</span>
@@ -1129,7 +1129,7 @@ var i18n = {
   zh: { gateTitle:'輸入 4 位數字密碼', gateSub:'Enter the 4-digit PIN to access', update:'有新版本，點擊刷新', ai:'找 AI 處理',
     title:'凱文的代辦業務看板',
     'nav-now':'在處理看板','nav-daily':'每日工作','nav-clients':'客戶檔案','nav-mail':'郵件明細','nav-webmail':'郵箱登錄','nav-broker':'報關經紀資源池','nav-policy':'公司資料','nav-company':'公司檔案','nav-archive':'檔案庫',
-    archTitle:'業務檔案庫', archDesc:'所有統計與正式文件集中存放，輸入關鍵字搜索，點擊卡片即在看板內彈窗預覽。', archPh:'搜索檔案名稱、關鍵字...', archDoc1:'外發郵件明細統計', archDoc1Desc:'累計外發102封（按人頭），獨立收件人68個，含五個客戶分組與逐人明細。', outbound:'累計外發（含往來回覆）',
+    archTitle:'業務檔案庫', archDesc:'所有統計與正式文件集中存放，輸入關鍵字搜索，點擊卡片即在看板內彈窗預覽。', archPh:'搜索檔案名稱、關鍵字...', archDoc1:'外發郵件往來總帳', archDoc1Desc:'累計外發102封（按人頭），獨立收件人68個，含五個客戶分組與逐人明細。', outbound:'累計外發（含往來回覆）',
     searchClientTable:'搜索客戶、法人、狀態...', timeFilterAll:'全部時間', timeFilter48h:'最近48小時', timeFilterMonth:'本月內',
     detail:'詳情', expand:'展開', collapse:'收起',
     timeline:'處理時間線（北京時間）', doneItems:'已完成事項', todoItems:'待辦事項',
@@ -1175,7 +1175,7 @@ var i18n = {
   en: { gateTitle:'Enter 4-digit PIN', gateSub:'輸入 4 位數字密碼', update:'New version available, click to refresh', ai:'Ask AI',
     title:"Kevin's Bond Deal Dashboard",
     'nav-now':'Active Deals','nav-daily':'Daily Log','nav-clients':'Clients','nav-mail':'Emails','nav-webmail':'Webmail','nav-policy':'Company Info','nav-company':'Documents','nav-broker':'Broker Pool','nav-archive':'Archive',
-    archTitle:'Business Archive', archDesc:'All statistics and formal documents in one place. Search keywords, click a card to preview inside the dashboard.', archPh:'Search document name, keywords...', archDoc1:'Outbound Email Ledger', archDoc1Desc:'102 outbound emails (by recipient), 68 unique recipients, with per-client breakdown and full recipient list.', outbound:'Total outbound (incl. replies)',
+    archTitle:'Business Archive', archDesc:'All statistics and formal documents in one place. Search keywords, click a card to preview inside the dashboard.', archPh:'Search document name, keywords...', archDoc1:'Outbound Email Journal', archDoc1Desc:'102 outbound emails (by recipient), 68 unique recipients, with per-client breakdown and full recipient list.', outbound:'Total outbound (incl. replies)',
     searchClientTable:'Search client, founder, status...', timeFilterAll:'All time', timeFilter48h:'Last 48h', timeFilterMonth:'This month',
     detail:'Details', expand:'Expand', collapse:'Collapse',
     timeline:'Processing Timeline (Beijing time)', doneItems:'Completed', todoItems:'To-do',
