@@ -1,364 +1,295 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>客戶管理平台</title>
-<style>
-  :root{
-    --bg:#0e1116; --card:rgba(22,27,36,.72); --ink:#e8edf4; --sub:#8b94a3; --line:rgba(255,255,255,.09);
-    --brand:#5b7cfa; --brand2:#34d0c8; --brand-soft:rgba(91,124,250,.14);
-    --ok:#34d399; --warn:#fbbf24; --bad:#f87171;
-    --radius:18px; --shadow:0 1px 2px rgba(0,0,0,.5),0 18px 50px rgba(0,0,0,.35);
-    --glow:0 0 0 1px rgba(91,124,250,.35),0 12px 40px rgba(91,124,250,.18);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;background:
-    radial-gradient(1200px 600px at 80% -10%,rgba(91,124,250,.18),transparent 60%),
-    radial-gradient(900px 500px at 0% 110%,rgba(52,208,200,.12),transparent 55%),
-    var(--bg);color:var(--ink);min-height:100vh}
-  /* ---------- 登入頁 ---------- */
-  #gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;z-index:99;background:radial-gradient(900px 500px at 30% 0%,rgba(91,124,250,.22),transparent 55%),#0b0e13}
-  .gate-card{background:linear-gradient(180deg,rgba(30,36,47,.9),rgba(16,20,28,.9));border:1px solid var(--line);border-radius:24px;padding:34px;width:100%;max-width:400px;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
-  .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-  .brand .mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:var(--glow)}
-  .gate-logo{width:64px;height:64px;border-radius:18px;box-shadow:var(--glow)}
-  .gate-brand{display:flex;align-items:center;gap:14px;justify-content:center}
-  .recent-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
-  .chip{padding:7px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;cursor:pointer;background:rgba(255,255,255,.04);color:var(--ink)}
-  .chip:hover{border-color:var(--brand);color:#fff}
-  .who-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0 14px;font-size:14px}
-  .link{background:none;border:none;color:var(--brand);cursor:pointer;font-size:13px;text-decoration:underline}
-  .dots{display:flex;gap:12px;justify-content:center;margin:14px 0 18px}
-  .dots span{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--brand);background:transparent}
-  .dots span.on{background:var(--brand)}
-  .brand h1{font-size:19px;letter-spacing:.2px}
-  .gate-sub{color:var(--sub);font-size:12.5px;margin-bottom:22px}
-  .lang-pick{display:flex;gap:8px;margin-bottom:20px}
-  .lang-pick button{flex:1;padding:9px 6px;border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:11px;font-size:12.5px;cursor:pointer;color:var(--sub)}
-  .lang-pick button.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;border-color:transparent}
-  .field{margin-bottom:15px}
-  .field label{font-size:12px;color:var(--sub);display:block;margin-bottom:7px}
-  .field input{width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:12px;font-size:14px;background:rgba(255,255,255,.05);color:var(--ink);outline:none}
-  .field input:focus{border-color:var(--brand);box-shadow:var(--glow)}
-  .field input::placeholder{color:#5a6472}
-  .pinpad{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:16px 0}
-  .pinpad button{padding:14px;border:1px solid var(--line);background:rgba(255,255,255,.04);border-radius:13px;font-size:19px;cursor:pointer;color:var(--ink)}
-  .pinpad button:active{background:var(--brand-soft);border-color:var(--brand)}
-  .gate-err{color:var(--bad);font-size:12.5px;min-height:18px;text-align:center;margin-bottom:8px}
-  .primary{width:100%;padding:14px;border:0;border-radius:13px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;cursor:pointer;box-shadow:var(--glow)}
-  /* ---------- 主框架 ---------- */
-  #app{display:none;min-height:100vh}
-  .topbar{position:sticky;top:0;background:rgba(10,13,18,.7);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:12px 20px;display:flex;align-items:center;gap:14px;z-index:20}
-  .topbar .brand h1{font-size:16px}
-  .topbar .spacer{flex:1}
-  .user-chip{display:flex;align-items:center;gap:10px}
-  .avatar{width:36px;height:36px;border-radius:50%;background:var(--brand-soft);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;overflow:hidden;border:1px solid var(--line)}
-  .avatar img{width:100%;height:100%;object-fit:cover}
-  .layout{display:flex;max-width:1200px;margin:0 auto;gap:18px;padding:20px}
-  .side{width:200px;flex-shrink:0}
-  .nav{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:8px;box-shadow:var(--shadow);backdrop-filter:blur(10px)}
-  .nav button{display:flex;align-items:center;gap:10px;width:100%;padding:12px 14px;border:0;background:transparent;border-radius:12px;font-size:14px;color:var(--sub);cursor:pointer;text-align:left}
-  .nav button.on{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
-  .main{flex:1;min-width:0}
-  .panel{display:none}
-  .panel.on{display:block}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px;backdrop-filter:blur(10px)}
-  .h2{font-size:16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
-  /* 客戶卡片 */
-  .cust{display:flex;gap:14px;padding:16px;border:1px solid var(--line);border-radius:14px;margin-bottom:12px;align-items:center;background:rgba(255,255,255,.02)}
-  .cust .avatar{width:56px;height:72px;border-radius:12px;flex-shrink:0;font-size:20px}
-  .cust .info{flex:1;min-width:0}
-  .cust .name{font-size:15px;font-weight:600}
-  .cust .meta{color:var(--sub);font-size:12.5px;margin-top:3px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11.5px;margin-left:6px}
-  .mine{background:rgba(52,211,153,.15);color:var(--ok);border:1px solid rgba(52,211,153,.3)}
-  .other{background:var(--brand-soft);color:#c7d4ff;border:1px solid rgba(91,124,250,.3)}
-  .sendstate{font-size:12.5px;display:flex;align-items:center;gap:6px}
-  .tick{color:var(--ok);font-weight:700}
-  .nosend{color:var(--sub)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  table{width:100%;border-collapse:collapse;font-size:13.5px}
-  th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left}
-  th{color:var(--sub);font-weight:600}
-  /* 信箱 */
-  .mailbox{display:flex;flex-direction:column;height:560px}
-  .thread{flex:1;overflow:auto;padding:8px 0}
-  .msg{max-width:78%;padding:11px 13px;border-radius:13px;margin-bottom:10px;font-size:13.5px;line-height:1.55}
-  .msg.in{background:#f2f4f6;align-self:flex-start}
-  .msg.out{background:var(--brand);color:#fff;align-self:flex-end;margin-left:auto}
-  .composer{border-top:1px solid var(--line);padding-top:12px}
-  .composer textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:11px;padding:11px;resize:vertical;font-family:inherit}
-  .row{display:flex;gap:9px;margin-top:9px;align-items:center}
-  .ghost{padding:9px 14px;border:1px solid var(--line);background:#fff;border-radius:10px;font-size:13px;cursor:pointer}
-  .ai{background:#eef2ff;color:#4338ca}
-  .tag{font-size:11px;color:var(--sub)}
-  @media(max-width:820px){.layout{flex-direction:column}.side{width:100%}.nav{display:flex;overflow:auto}}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bond Client Desk</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--line:#e6e9ef;--ink:#1a2233;--mut:#6b7688;--brand:#2f6bff;--brand2:#5b8cff;--ok:#12b76a;--warn:#f59e0b;--bad:#ef4444;--shadow:0 1px 3px rgba(20,30,60,.06),0 8px 24px rgba(20,30,60,.06)}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"PingFang TC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+button{font-family:inherit}
+/* ===== gate ===== */
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0d1b3e,#12295c);padding:20px}
+.gate-card{background:#fff;border-radius:20px;padding:38px 34px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.gate-logo{width:62px;height:62px;border-radius:16px;box-shadow:0 6px 18px rgba(47,107,255,.35)}
+.gate-brand{display:flex;align-items:center;gap:14px}
+.gate-brand h1{font-size:22px;margin:0}
+.gate-sub{color:var(--mut);margin:6px 0 22px;font-size:13px}
+.lang-pick{display:flex;gap:8px;margin-bottom:20px}
+.lang-pick button{padding:6px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--mut)}
+.lang-pick button.on{border-color:var(--brand);color:var(--brand);background:#eef4ff}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.field input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none}
+.field input:focus{border-color:var(--brand)}
+.primary{width:100%;padding:12px;border:none;border-radius:11px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;font-weight:600;cursor:pointer}
+.primary:hover{opacity:.95}
+.primary:disabled{opacity:.6}
+.err{color:var(--bad);font-size:12.5px;min-height:18px;margin:4px 0}
+/* ===== app shell ===== */
+#app{display:none}
+.topbar{height:56px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 20px;gap:14px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:10px}
+.brand img{width:30px;height:30px;border-radius:8px}
+.brand h1{font-size:15px;margin:0}
+.brand small{display:block;font-size:10.5px;color:var(--mut);font-weight:400}
+.spacer{flex:1}
+.user-chip{display:flex;align-items:center;gap:10px}
+.avatar{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.tag{font-size:11px;color:var(--mut)}
+.ghost{padding:7px 12px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;font-size:12.5px;color:var(--ink)}
+.layout{display:flex;min-height:calc(100vh - 56px)}
+.side{width:200px;background:#fff;border-right:1px solid var(--line);padding:14px 10px}
+.nav button{display:flex;width:100%;align-items:center;gap:10px;padding:11px 14px;border:none;background:none;border-radius:10px;cursor:pointer;font-size:13.5px;color:var(--mut);margin-bottom:2px;text-align:left}
+.nav button.on{background:#eef4ff;color:var(--brand);font-weight:600}
+.main{flex:1;padding:20px;overflow:auto}
+.panel{display:none}.panel.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.h2{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+/* KPI cards */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.kpi .n{font-size:28px;font-weight:700;margin:6px 0}
+.kpi .l{font-size:12.5px;color:var(--mut)}
+.funnel-row{display:flex;align-items:center;gap:10px;margin:10px 0;font-size:13px}
+.funnel-row .lb{width:120px;color:var(--mut)}
+.bar{flex:1;height:10px;background:#eef1f6;border-radius:6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,#9fb6ff,#2f6bff)}
+.num{width:34px;text-align:right;font-weight:600}
+/* table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mut);font-weight:500;font-size:12.5px}
+.pill{padding:3px 10px;border-radius:999px;font-size:11.5px}
+.pill.run{background:#e8f7ef;color:#12a05a}
+.pill.ready{background:#eef4ff;color:#2f6bff}
+.pill.block{background:#fdeaea;color:#d64545}
+/* mailbox QQ style */
+.mail-wrap{display:grid;grid-template-columns:230px 1fr;gap:16px}
+.mail-left{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;box-shadow:var(--shadow)}
+.mail-left h4{margin:6px 8px 10px;font-size:13px;color:var(--mut)}
+.mbox-item{padding:9px 10px;border-radius:9px;cursor:pointer;font-size:13px;margin-bottom:2px}
+.mbox-item.on{background:#eef4ff;color:var(--brand);font-weight:600}
+.mbox-item:hover{background:#f2f5fb}
+.compose-btn{width:100%;padding:10px;border:none;border-radius:10px;background:var(--brand);color:#fff;cursor:pointer;font-weight:600;margin-bottom:10px}
+.mail-list .mail-row{padding:12px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;cursor:pointer;background:#fff}
+.mail-list .mail-row:hover{border-color:var(--brand)}
+.mail-row .top{display:flex;justify-content:space-between;font-size:12px;color:var(--mut)}
+.mail-row .sub{font-weight:600;margin:4px 0}
+.mail-row .body{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:13px;line-height:1.7;white-space:pre-wrap;background:#fafbfd;border-radius:8px;padding:10px}
+.composer{margin-top:14px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fafbfd;display:none}
+.composer textarea{width:100%;height:120px;border:1px solid var(--line);border-radius:9px;padding:10px;font-family:inherit;font-size:13px}
+.composer .row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.composer select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+.chip-owner{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef4ff;color:var(--brand);margin-left:6px}
+.empty{color:var(--mut);font-size:13px;text-align:center;padding:30px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.mail-wrap{grid-template-columns:1fr}.side{width:64px}.nav button span.lbl{display:none}}
+</style>
 </head>
 <body>
 
-<!-- ===== 登入頁 ===== -->
 <div id="gate">
   <div class="gate-card">
-    <div class="brand gate-brand"><img src="icon.png" alt="BCD" class="gate-logo"><h1 data-i18n="appName">客戶管理平台</h1></div>
-    <div class="gate-sub" data-i18n="slogan">登入以查看你負責的客戶</div>
+    <div class="gate-brand"><img src="icon.png" alt="BCD"><div><h1>Bond Client Desk</h1><div style="font-size:11px;color:var(--mut);margin-top:2px;">客戶管理平台</div></div></div>
+    <div class="gate-sub">Sign in to your client workspace</div>
     <div class="lang-pick">
       <button onclick="setLang('en')">English</button>
       <button onclick="setLang('zh-Hant')" class="on">繁體中文</button>
       <button onclick="setLang('zh-Hans')">简体中文</button>
     </div>
-
-    <!-- Step A: 選/輸帳號 -->
-    <div id="stepAccount">
-      <div class="field"><label data-i18n="account">帳號</label>
-        <input id="acctInput" autocomplete="username" data-i18n-ph="acctPh" placeholder="輸入你的帳號">
-      </div>
-      <div id="recentAccts" class="recent-row"></div>
-      <div class="gate-err" id="gateErrA"></div>
-      <button class="primary" onclick="goPinStep()" data-i18n="next">下一步</button>
-    </div>
-
-    <!-- Step B: 輸密碼 -->
-    <div id="stepPin" style="display:none">
-      <div class="who-row"><span id="whoLabel"></span><button class="link" onclick="backToAccount()" data-i18n="changeAcct">切換帳號</button></div>
-      <div class="dots" id="pinDots"></div>
-      <div class="pinpad" id="pinpad"></div>
-      <div class="gate-err" id="gateErr"></div>
-    </div>
+    <div class="field"><label>帳號 Account</label><input id="acctInput" placeholder="kevinyama / ryanfan" autocomplete="username"></div>
+    <div class="field"><label>密碼 PIN</label><input id="pinInput" type="password" placeholder="4 位數字" autocomplete="current-password"></div>
+    <div class="err" id="gateErr"></div>
+    <button class="primary" onclick="tryLogin()">登入 Sign in</button>
   </div>
 </div>
 
-<!-- ===== 主框架 ===== -->
 <div id="app">
   <div class="topbar">
-    <div class="brand"><img src="icon.png" alt="BCD" style="width:30px;height:30px;border-radius:8px;"><h1 data-i18n="appName">客戶管理平台</h1></div>
+    <div class="brand"><img src="icon.png" alt="BCD"><div><h1>Bond Client Desk<small>客戶管理平台</small></h1></div></div>
     <div class="spacer"></div>
-    <div class="lang-pick" style="margin:0">
-      <button onclick="setLang('en')">English</button>
-      <button onclick="setLang('zh-Hant')" class="on">繁體中文</button>
-      <button onclick="setLang('zh-Hans')">简体中文</button>
-    </div>
     <div class="user-chip">
       <div class="avatar" id="meAvatar">K</div>
-      <div><div id="meName" style="font-size:13.5px;font-weight:600"></div><div class="tag" id="meRole"></div></div>
-      <button class="ghost" onclick="logout()" data-i18n="switch">切換</button>
+      <div><div id="meName" style="font-size:13px;font-weight:600"></div><div class="tag" id="meRole"></div></div>
+      <button class="ghost" onclick="logout()">切換登出</button>
     </div>
   </div>
   <div class="layout">
-    <aside class="side"><div class="nav" id="nav"></div></aside>
+    <aside class="side">
+      <div class="nav" id="nav"></div>
+    </aside>
     <main class="main">
-      <!-- 我的客戶 -->
-      <section class="panel on" data-view="clients">
+      <!-- 看板 -->
+      <section class="panel on" data-view="dash">
+        <div class="kpis">
+          <div class="kpi"><div class="l">在處理客戶</div><div class="n" id="kClients">5</div><div class="l">本月立項</div></div>
+          <div class="kpi"><div class="l">對接開單中</div><div class="n" style="color:var(--warn)">1</div><div class="l">Immunora 已付款待出 bond</div></div>
+          <div class="kpi"><div class="l">獲得海關擔保文件</div><div class="n">0</div><div class="l">尚無</div></div>
+          <div class="kpi"><div class="l">開發信回覆率</div><div class="n" style="color:var(--brand)">10%</div><div class="l">7 / 125</div></div>
+        </div>
         <div class="card">
-          <div class="h2"><span data-i18n="myClients">我的客戶</span><span class="tag" id="clientCount"></span></div>
-          <div id="clientList"></div>
+          <div class="h2">開發信漏斗</div>
+          <div class="funnel-row"><span class="lb">已發開發信</span><div class="bar"><i style="width:100%"></i></div><span class="num">125</span></div>
+          <div class="funnel-row"><span class="lb">收到回覆</span><div class="bar"><i style="width:10%"></i></div><span class="num">7</span></div>
+          <div class="funnel-row"><span class="lb">對接開單</span><div class="bar"><i style="width:2%"></i></div><span class="num">1</span></div>
+          <div class="funnel-row"><span class="lb">獲得擔保文件</span><div class="bar"><i style="width:1%"></i></div><span class="num">0</span></div>
+        </div>
+        <div class="card">
+          <div class="h2">我的客戶</div>
+          <table><thead><tr><th>客戶</th><th>法人</th><th>狀態</th><th>備註</th></tr></thead><tbody id="clientRows"></tbody></table>
         </div>
       </section>
-      <!-- 團隊 -->
-      <section class="panel" data-view="team">
-        <div class="card"><div class="h2" data-i18n="team">我的團隊</div><div id="teamList"></div></div>
-      </section>
-      <!-- 公司存檔信箱 -->
+
+      <!-- 信箱 QQ 風 -->
       <section class="panel" data-view="mail">
-        <div class="card mailbox">
-          <div class="h2"><span id="mailCompany">公司信箱</span><span class="tag" data-i18n="archived">離線存檔，不即時外抓</span></div>
-          <div class="thread" id="thread"></div>
-          <div class="composer">
-            <textarea id="draft" placeholder="寫信…"></textarea>
+        <div class="card">
+          <div class="h2">公司信箱 <span style="font-size:11px;color:var(--mut);font-weight:400">選左上角公司身分寄信，收件人可搜索客戶或 broker</span></div>
+          <div class="mail-wrap">
+            <div class="mail-left">
+              <button class="compose-btn" onclick="openCompose()">＋ 寫信 / 回覆</button>
+              <h4>寄件身分</h4>
+              <div id="mboxList"></div>
+              <h4 style="margin-top:14px">過濾客戶</h4>
+              <div id="clientFilter"></div>
+            </div>
+            <div class="mail-list" id="mailList"></div>
+          </div>
+          <div class="composer" id="composer">
             <div class="row">
-              <button class="ghost ai" onclick="aiTranslate()" data-i18n="aiTrans">AI 一鍵翻譯</button>
-              <button class="ghost" onclick="saveDraft()" data-i18n="saveDraft">存草稿</button>
-              <div class="spacer" style="flex:1"></div>
-              <button class="primary" style="width:auto;padding:9px 18px" onclick="sendMail()" data-i18n="send">送出</button>
+              <label style="font-size:12px;color:var(--mut)">從</label>
+              <select id="fromSel"></select>
+              <label style="font-size:12px;color:var(--mut);margin-left:10px">寄給</label>
+              <input id="toInput" placeholder="輸入收件人 email" style="flex:1;padding:8px;border:1px solid var(--line);border-radius:8px">
+            </div>
+            <div class="row"><input id="subjInput" placeholder="主旨" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:8px"></div>
+            <textarea id="bodyInput" placeholder="內文"></textarea>
+            <div class="row">
+              <button class="ghost" onclick="aiTranslate()">AI 一鍵翻譯</button>
+              <div style="flex:1"></div>
+              <button class="ghost" onclick="closeCompose()">取消</button>
+              <button class="primary" style="width:auto;padding:9px 20px" onclick="sendMail()">送出</button>
             </div>
           </div>
         </div>
       </section>
-      <!-- 後台，僅 admin -->
+
+      <!-- 客戶檔案 -->
+      <section class="panel" data-view="clients">
+        <div class="card"><div class="h2">客戶檔案與歸屬</div><div id="clientGrid"></div></div>
+      </section>
+
+      <!-- 後台 -->
       <section class="panel" data-view="admin">
-        <div class="card"><div class="h2" data-i18n="admin">超管後台</div>
-          <div class="grid2">
-            <div><b style="font-size:13.5px" data-i18n="accounts">帳號管理</b><div id="adminAccounts" style="margin-top:10px"></div></div>
-            <div><b style="font-size:13.5px" data-i18n="assign">客戶歸屬指派</b><div id="assignList" style="margin-top:10px"></div></div>
-          </div>
-        </div>
-        <div class="card"><div class="h2" data-i18n="audit">操作審計與登入記錄</div><table id="auditTable"></table></div>
+        <div class="card"><div class="h2">超管後台</div><div id="adminBox"></div></div>
       </section>
     </main>
   </div>
 </div>
 
 <script>
-/* ============================================================
- * 預備骨架：數據先以 mock 呈現，接入時換成 Supabase。
- * 接入點標記：// [SB] 此處改 Supabase 讀寫
- * ============================================================ */
-
-// [SB] Supabase 即時連線
 const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
 const SUPA_KEY="sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5";
-const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+const sb=window.supabase?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
 
-// 離線兜底種子（Supabase 連不上時用）
-const MOCK = {
-  accounts:[
-    {id:'kevinyama', name:'Kevin W', pin:'0521', role:'admin', parent:null, avatar:null},
-    {id:'ryanfan', name:'Ryan F', pin:'5467', role:'rep', parent:'kevinyama', avatar:null}
-  ],
-  clients:[
-    {key:'immunora', name:'Immunora Bio LLC', legal:'Kashay Odom', owner:'kevinyama', status:'審批中', sent:true},
-    {key:'oliveware', name:'Oliveware LLC', legal:'Horacio Sanchez', owner:'ryanfan', status:'可啟動', sent:false},
-    {key:'pebblehome', name:'Pebblehome LLC', legal:'Christopher Hodge', owner:'kevinyama', status:'待補件', sent:false},
-    {key:'sageware', name:'Sageware LLC', legal:'Jaliar Thomas', owner:'ryanfan', status:'可啟動', sent:true},
-    {key:'nervaqon', name:'Nervaqon LLC', legal:'Christian Punzalan', owner:'kevinyama', status:'可啟動', sent:false}
-  ],
-  thread:[
-    {dir:'in', text:'Hi, we need a continuous customs bond, please send pricing.'},
-    {dir:'out', text:'Hello, thanks for reaching out. Here is the required document list…'}
-  ]
-};
+const MAILBOXES=[
+ {client:"Immunora",email:"kashayisisramonaodom@immunora-bio.com",owner:"Kashay Odom"},
+ {client:"Oliveware",email:"horaciolsanchez@olivewareinc.com",owner:"Horacio L Sanchez"},
+ {client:"Pebblehome",email:"christopherhodge@pebblehomeinc.com",owner:"Christopher Hodge"},
+ {client:"Sageware",email:"jaliarthomas@sagewareinc.com",owner:"Jaliar Thomas"},
+ {client:"Nervaqon",email:"christianjgpunzalan@nervaqon.live",owner:"Christian J G Punzalan"}
+];
+const CLIENTS=[
+ {key:"immunora",name:"Immunora Bio LLC",legal:"Kashay Odom",status:"審批中",owner:"kevinyama",note:"已付款 795.60 USD 待出 bond"},
+ {key:"oliveware",name:"Oliveware LLC",legal:"Horacio L Sanchez",status:"可啟動",owner:"kevinyama",note:"材料齊全，開發信已發"},
+ {key:"pebblehome",name:"Pebblehome LLC",legal:"Christopher Hodge",status:"待補件",owner:"kevinyama",note:"駕照過期，EIN 拼寫待核"},
+ {key:"sageware",name:"Sageware LLC",legal:"Jaliar Thomas",status:"可啟動",owner:"kevinyama",note:"材料齊全，開發信已發"},
+ {key:"nervaqon",name:"Nervaqon LLC",legal:"Christian Punzalan",status:"審批中",owner:"kevinyama",note:"SPG 申請已回，待報價"}
+];
 
-const I18N = {
-  'zh-Hant':{appName:'客戶管理平台',slogan:'登入以查看你負責的客戶',account:'帳號',acctPh:'輸入你的帳號',login:'登入',switch:'切換',myClients:'我的客戶',team:'我的團隊',mail:'公司信箱',admin:'超管後台',archived:'離線存檔，不即時外抓',aiTrans:'AI 一鍵翻譯',saveDraft:'存草稿',send:'送出',accounts:'帳號管理',assign:'客戶歸屬指派',audit:'操作審計與登入記錄',mine:'我',other:'其他人',unit:' 家',sentDone:'✓ 已發',sentNot:'○ 未發送',emptyTeam:'尚無下屬',err:'帳號或密碼錯誤',aiTransNote:'接入 AI 後，此處將譯為所選語言並存入公司會話，不覆蓋原文。',saveNote:'草稿存入公司會話（接入 Supabase）',sendNote:'信件經受控通道代發，受理成功即打勾標已發，本人與 admin 看板同步。',adminMeta:'後台上傳頭像 · 改密 · 停用',assignNow:'目前',reassign:'改派',auditTime:'時間',auditWho:'操作人',auditAct:'動作',auditTarget:'對象',auditNote:'接入後這裡顯示點了什麼、看了什麼、裝置與IP'},
-  'zh-Hans':{appName:'客户管理平台',slogan:'登录以查看你负责的客户',account:'账号',acctPh:'输入你的账号',login:'登入',switch:'切换',myClients:'我的客户',team:'我的团队',mail:'公司信箱',admin:'超管后台',archived:'离线存档，不实时外抓',aiTrans:'AI 一键翻译',saveDraft:'存草稿',send:'送出',accounts:'账号管理',assign:'客户归属指派',audit:'操作审计与登入记录',mine:'我',other:'其他人',unit:' 家',sentDone:'✓ 已发',sentNot:'○ 未发送',emptyTeam:'暂无下属',err:'账号或密码错误',aiTransNote:'接入 AI 后，此处将译为所选语言并存至公司会话，不覆盖原文。',saveNote:'草稿存入公司会话（接入 Supabase）',sendNote:'信件经受控通道代发，受理成功即打勾标已发，本人与 admin 看板同步。',adminMeta:'后台上传头像 · 改密 · 停用',assignNow:'目前',reassign:'改派',auditTime:'时间',auditWho:'操作人',auditAct:'动作',auditTarget:'对象',auditNote:'接入后这里显示点了什么、看了什么、设备与IP'},
-  'en':{appName:'Client Management Platform',slogan:'Sign in to see your clients',account:'Account',acctPh:'Enter your account',login:'Sign in',switch:'Switch',myClients:'My Clients',team:'My Team',mail:'Company Mailbox',admin:'Admin Console',archived:'Archived locally, not fetched live',aiTrans:'AI Translate',saveDraft:'Save draft',send:'Send',accounts:'Accounts',assign:'Assign ownership',audit:'Audit & login logs',mine:'Me',other:'Other',unit:' clients',sentDone:'✓ Sent',sentNot:'○ Not sent',emptyTeam:'No subordinates',err:'Invalid account or password',aiTransNote:'After connecting AI, this will be translated to the selected language and saved to the company thread without overwriting the original.',saveNote:'Draft saved to company thread (after Supabase)',sendNote:'Mail goes through a controlled channel; once accepted it is marked sent and synced to your and admin dashboards.',adminMeta:'Upload avatar · change password · deactivate',assignNow:'Owner',reassign:'Reassign',auditTime:'Time',auditWho:'Actor',auditAct:'Action',auditTarget:'Target',auditNote:'After connecting, this shows what was clicked, viewed, device and IP'}
-};
-let lang=localStorage.getItem('cmp_lang')||'zh-Hant', session=null, currentView='clients';
-I18N['zh-Hant'].next='下一步';I18N['zh-Hant'].changeAcct='切換帳號';I18N['zh-Hans'].next='下一步';I18N['zh-Hans'].changeAcct='切换账号';I18N.en.next='Next';I18N.en.changeAcct='Switch account';
-const LANG_LABEL={en:'English','zh-Hant':'繁體中文','zh-Hans':'简体中文'};
+let lang='zh-Hant', session=null, allMail=[], activeMbox=null, activeClient=null;
 
-function t(k){return I18N[lang][k]!=null?I18N[lang][k]:k;}
-function setLang(l){lang=l;localStorage.setItem('cmp_lang',l);document.querySelectorAll('.lang-pick button').forEach(b=>b.classList.toggle('on',b.textContent===LANG_LABEL[l]));applyI18N();if(session){buildNav();show(currentView);renderClients();}}
-function applyI18N(){document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(I18N[lang][k]!=null)el.textContent=I18N[lang][k];});document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const k=el.dataset.i18nPh;if(I18N[lang][k]!=null)el.placeholder=I18N[lang][k];});}
-
-// 登入：兩步驟
-let pin='', pendingAcct=null;
-const pad=document.getElementById('pinpad');
-['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
-  const b=document.createElement('button');b.textContent=k;
-  b.onclick=()=>{ if(k==='⌫'){pin=pin.slice(0,-1);} else if(k){pin+=k;} document.getElementById('gateErr').textContent='';renderDots(); if(pin.length===4) tryLogin(); };
-  pad.appendChild(b);
-});
-function renderDots(){const d=document.getElementById('pinDots');d.innerHTML='';for(let i=0;i<4;i++){const s=document.createElement('span');if(i<pin.length)s.className='on';d.appendChild(s);}}
-function recentList(){
-  const el=document.getElementById('recentAccts');el.innerHTML='';
-  let rec=[];try{rec=JSON.parse(localStorage.getItem('cmp_recent')||'[]');}catch(e){}
-  rec.forEach(id=>{const c=document.createElement('button');c.className='chip';c.textContent=id;c.onclick=()=>{document.getElementById('acctInput').value=id;goPinStep();};el.appendChild(c);});
+const NAV=[['dash','看板','Dashboard'],['mail','信箱','Mailbox'],['clients','客戶檔案','Clients'],['admin','後台','Admin']];
+function buildNav(){
+  const admin=session && session.role==='admin';
+  document.getElementById('nav').innerHTML=NAV.filter(n=>n[3]!=='Admin'||admin).map(n=>`<button data-v="${n[0]}" onclick="show('${n[0]}')"><span class="lbl">${n[1]}</span></button>`).join('');
 }
-async function goPinStep(){
-  const id=document.getElementById('acctInput').value.trim().toLowerCase();
-  if(!id){document.getElementById('gateErrA').textContent=t('err');return;}
-  // 確認帳號存在
-  try{
-    const {data}=await sb.from('accounts').select('*').eq('id',id).eq('active',true).maybeSingle();
-    if(!data){document.getElementById('gateErrA').textContent=t('err');return;}
-    pendingAcct=data;
-  }catch(e){
-    pendingAcct=MOCK.accounts.find(a=>a.id===id)||null;
-    if(!pendingAcct){document.getElementById('gateErrA').textContent=t('err');return;}
-  }
-  document.getElementById('stepAccount').style.display='none';
-  document.getElementById('stepPin').style.display='block';
-  document.getElementById('whoLabel').textContent=pendingAcct.display_name||pendingAcct.name;
-  pin='';renderDots();
-}
-function backToAccount(){document.getElementById('stepPin').style.display='none';document.getElementById('stepAccount').style.display='block';document.getElementById('gateErr').textContent='';}
+function show(v){currentView=v;document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view===v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));}
+
 async function tryLogin(){
-  if(!pendingAcct) return;
-  let acc=pendingAcct;
-  try{
-    const {data}=await sb.from('accounts').select('*').eq('id',acc.id).eq('pin',pin).eq('active',true).maybeSingle();
-    if(data) acc=data;
-    else {document.getElementById('gateErr').textContent=t('err');pin='';renderDots();return;}
-  }catch(e){ if(acc.pin!==pin){document.getElementById('gateErr').textContent=t('err');pin='';renderDots();return;} }
-  // 成功
-  let rec=[];try{rec=JSON.parse(localStorage.getItem('cmp_recent')||'[]');}catch(e){}
-  rec=[acc.id,...rec.filter(x=>x!==acc.id)].slice(0,4);localStorage.setItem('cmp_recent',JSON.stringify(rec));
-  localStorage.setItem('cmp_session',JSON.stringify(acc)); session=acc;
+  const id=document.getElementById('acctInput').value.trim().toLowerCase();
+  const pin=document.getElementById('pinInput').value.trim();
+  if(!id||!pin){document.getElementById('gateErr').textContent='請輸入帳號與密碼';return;}
+  let acc=null;
+  try{const {data}=await sb.from('accounts').select('*').eq('id',id).eq('pin',pin).eq('active',true).maybeSingle();acc=data;}catch(e){acc=null;}
+  if(!acc){document.getElementById('gateErr').textContent='帳號或密碼錯誤';return;}
+  session=acc;localStorage.setItem('cmp_session',JSON.stringify(acc));
   sb.from('login_logs').insert({account_id:acc.id,display_name:acc.display_name,role:acc.role}).then(()=>{});
   sb.from('device_logs').insert({account_id:acc.id,display_name:acc.display_name,device:navigator.userAgent,lang:lang}).then(()=>{});
   enter();
 }
-function logout(){session=null;localStorage.removeItem('cmp_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';pin='';pendingAcct=null;document.getElementById('stepPin').style.display='none';document.getElementById('stepAccount').style.display='block';document.getElementById('gateErr').textContent='';recentList();}
-
+function logout(){session=null;document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';}
 function enter(){
   document.getElementById('gate').style.display='none';
   document.getElementById('app').style.display='block';
-  document.getElementById('meName').textContent=session.display_name||session.name;
-  document.getElementById('meRole').textContent=session.role==='admin'?'Admin':t('other');
-  buildNav(); show('clients'); renderClients();
+  document.getElementById('meName').textContent=session.display_name;
+  document.getElementById('meRole').textContent=session.role==='admin'?'超級管理員':'跟進人員';
+  document.getElementById('meAvatar').textContent=(session.display_name||'K').slice(0,1);
+  buildNav();show('dash');renderClients();renderMailbox();
 }
-// 保持登入：刷新自動回位
-function restore(){
-  const s=localStorage.getItem('cmp_session');
-  if(s){ try{ session=JSON.parse(s); enter(); }catch(e){ session=null; } }
-}
-function buildNav(){
-  const items=[['clients','myClients'],['team','team'],['mail','mail']];
-  if(session.role==='admin') items.push(['admin','admin']);
-  document.getElementById('nav').innerHTML=items.map(([v,k])=>`<button onclick="show('${v}')" class="${v===currentView?'on':''}">${t(k)}</button>`).join('');
-}
-function show(v){currentView=v;document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.view===v));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.textContent===t(['myClients','team','mail','admin'][['clients','team','mail','admin'].indexOf(v)])));}
+function canSeeAll(){return session && session.role==='admin';}
+function visibleClients(){return canSeeAll()?CLIENTS:CLIENTS.filter(c=>c.owner===session.id);}
 
-let DB={clients:MOCK.clients, accounts:MOCK.accounts};
-async function loadData(){
-  try{
-    const [c,a]=await Promise.all([
-      sb.from('client_ownership').select('*'),
-      sb.from('accounts').select('*')
-    ]);
-    if(c.data&&c.data.length) DB.clients=c.data.map(r=>({key:r.client_key,name:r.client_name,owner:r.owner,status:r.status,sent:r.status&&r.status.indexOf('已發')>=0}));
-    if(a.data&&a.data.length) DB.accounts=a.data;
-  }catch(e){}
-}
-function myClients(){ return session.role==='admin'?DB.clients:DB.clients.filter(c=>c.owner===session.id); }
-async function renderClients(){
-  await loadData();
-  const list=myClients();
-  document.getElementById('clientCount').textContent=list.length+t('unit');
-  document.getElementById('clientList').innerHTML=list.map(c=>{
+function renderClients(){
+  const list=visibleClients();
+  document.getElementById('clientRows').innerHTML=list.map(c=>`<tr><td>${c.name}</td><td>${c.legal}</td><td><span class="pill ${c.status==='待補件'?'block':c.status==='可啟動'?'ready':'run'}">${c.status}</span></td><td>${c.note}</td></tr>`).join('');
+  document.getElementById('kClients').textContent=list.length;
+  document.getElementById('clientGrid').innerHTML=list.map(c=>{
     const mine=c.owner===session.id;
-    const owner=DB.accounts.find(a=>a.id===c.owner);
-    return `<div class="cust">
-      <div class="avatar">${(c.name||'?').slice(0,1)}</div>
-      <div class="info">
-        <div class="name">${c.name}<span class="badge ${mine?'mine':'other'}">${mine?t('mine'):(owner?(owner.display_name||owner.name):'—')}</span></div>
-        <div class="meta">${c.status}</div>
-        <div class="sendstate">${c.sent?`<span class="tick">${t('sentDone')}</span>`:`<span class="nosend">${t('sentNot')}</span>`}</div>
-      </div>
-      <button class="ghost" onclick="openMail('${c.key}')">${t('mail')}</button>
-    </div>`;
+    return `<div style="border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:8px"><b>${c.name}</b><span class="chip-owner">${mine?'我':'歸屬:'+c.owner}</span><div style="color:var(--mut);font-size:12.5px;margin-top:4px">法人 ${c.legal} · ${c.status}<br>${c.note}</div></div>`;
   }).join('');
-  renderTeam(); renderAdmin();
+  if(canSeeAll()){
+    document.getElementById('adminBox').innerHTML='<div style="color:var(--mut);font-size:13px">後台可在此新增下線帳號、指派客戶歸屬、查看操作審計與登入裝置記錄。帳號 kevinyama 為超管，ryanfan 為下線。</div>';
+  }
 }
-function renderTeam(){
-  const subs=DB.accounts.filter(a=>a.parent_id===session.id||a.parent===session.id);
-  document.getElementById('teamList').innerHTML=(subs.length?subs:[]).map(a=>`<div class="cust"><div class="avatar">${a.name.slice(0,1)}</div><div class="info"><div class="name">${a.name}</div><div class="meta">${a.role}</div></div></div>`).join('')||`<div class="tag">${t('emptyTeam')}</div>`;
-}
-function openMail(key){
-  const c=DB.clients.find(x=>x.key===key);
-  document.getElementById('mailCompany').textContent=c.name;
-  document.getElementById('thread').innerHTML=MOCK.thread.map(m=>`<div class="msg ${m.dir}">${m.text}</div>`).join('');
-  show('mail');
-}
-function aiTranslate(){ const x=document.getElementById('draft').value; alert(t('aiTransNote')); }
-function saveDraft(){alert(t('saveNote'));}
-function sendMail(){alert(t('sendNote'));}
 
-function renderAdmin(){
-  if(session.role!=='admin')return;
-  document.getElementById('adminAccounts').innerHTML=DB.accounts.map(a=>`<div class="cust"><div class="avatar">${a.display_name.slice(0,1)}</div><div class="info"><div class="name">${a.display_name} <span class="tag">${a.role}</span></div><div class="meta">${t('adminMeta')}</div></div></div>`).join('');
-  document.getElementById('assignList').innerHTML=DB.clients.map(c=>`<div class="cust"><div class="info"><div class="name">${c.name}</div><div class="meta">${t('assignNow')}：${(DB.accounts.find(a=>a.id===c.owner)||{}).display_name||'—'}　<button class="ghost" style="padding:5px 10px">${t('reassign')}</button></div></div></div>`).join('');
-  document.getElementById('auditTable').innerHTML=`<tr><th>${t('auditTime')}</th><th>${t('auditWho')}</th><th>${t('auditAct')}</th><th>${t('auditTarget')}</th></tr><tr><td colspan="4" class="tag">${t('auditNote')}</td></tr>`;
+async function renderMailbox(){
+  // 寄件身分
+  const fromSel=document.getElementById('fromSel');
+  fromSel.innerHTML=MAILBOXES.map(m=>`<option value="${m.email}">${m.client} &lt;${m.email}&gt;</option>`).join('');
+  document.getElementById('mboxList').innerHTML=MAILBOXES.map(m=>`<div class="mbox-item" onclick="pickMbox('${m.client}',this)">${m.client}</div>`).join('');
+  document.getElementById('clientFilter').innerHTML='<div class="mbox-item on" onclick="pickClient(null,this)">全部客戶</div>'+visibleClients().map(c=>`<div class="mbox-item" onclick="pickClient('${c.client||c.key}',this)">${c.name}</div>`).join('');
+  // 讀 emails.json
+  try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}
+  drawMailList();
 }
-// 初始化：記住語言、預填帳號、恢復登入
-document.getElementById('acctInput').value=localStorage.getItem('cmp_last_acct')||'';
-document.querySelectorAll('.lang-pick button').forEach(b=>b.classList.toggle('on',b.textContent===LANG_LABEL[lang]));
-applyI18N();
-recentList();
-restore();
+function pickMbox(c,el){activeMbox=c;document.querySelectorAll('#mboxList .mbox-item').forEach(x=>x.classList.remove('on'));el.classList.add('on');}
+function pickClient(c,el){activeClient=c;document.querySelectorAll('#clientFilter .mbox-item').forEach(x=>x.classList.remove('on'));el.classList.add('on');drawMailList();}
+function drawMailList(){
+  let list=allMail.slice();
+  if(activeClient) list=list.filter(m=>(m.client||'').toLowerCase()===activeClient);
+  list.reverse();
+  document.getElementById('mailList').innerHTML=list.length?list.map((m,i)=>`
+    <div class="mail-row" onclick="var b=this.querySelector('.body');b.style.display=b.style.display==='none'?'block':'none'">
+      <div class="top"><span>${m.client||''} · ${m.from||''}</span><span>${m.date||''}</span></div>
+      <div class="sub">${m.subject||''}</div>
+      <div class="body">${(m.body||'').replace(/</g,'&lt;').slice(0,1500)}</div>
+    </div>`).join(''):'<div class="empty">尚無信件</div>';
+}
+function openCompose(){document.getElementById('composer').style.display='block';}
+function closeCompose(){document.getElementById('composer').style.display='none';}
+function sendMail(){
+  const from=document.getElementById('fromSel').value, to=document.getElementById('toInput').value.trim();
+  if(!to){alert('請填收件人');return;}
+  alert('已記錄代發任務：'+from+' → '+to+'。受控通道接入後實際送出並打勾。');
+  closeCompose();
+}
+function aiTranslate(){alert('AI 翻譯接入後可一鍵譯成所選語言並存檔。');}
+function setLang(l){lang=l;}
+
+// enter from stored session
+(function(){try{const s=JSON.parse(localStorage.getItem('cmp_session')||'null');if(s){session=s;enter();}}catch(e){}})();
 </script>
 </body>
 </html>
