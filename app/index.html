@@ -22,6 +22,16 @@
   .gate-card{background:linear-gradient(180deg,rgba(30,36,47,.9),rgba(16,20,28,.9));border:1px solid var(--line);border-radius:24px;padding:34px;width:100%;max-width:400px;box-shadow:var(--shadow);backdrop-filter:blur(14px)}
   .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
   .brand .mark{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:var(--glow)}
+  .gate-logo{width:64px;height:64px;border-radius:18px;box-shadow:var(--glow)}
+  .gate-brand{display:flex;align-items:center;gap:14px;justify-content:center}
+  .recent-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+  .chip{padding:7px 14px;border:1px solid var(--line);border-radius:999px;font-size:13px;cursor:pointer;background:rgba(255,255,255,.04);color:var(--ink)}
+  .chip:hover{border-color:var(--brand);color:#fff}
+  .who-row{display:flex;justify-content:space-between;align-items:center;margin:6px 0 14px;font-size:14px}
+  .link{background:none;border:none;color:var(--brand);cursor:pointer;font-size:13px;text-decoration:underline}
+  .dots{display:flex;gap:12px;justify-content:center;margin:14px 0 18px}
+  .dots span{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--brand);background:transparent}
+  .dots span.on{background:var(--brand)}
   .brand h1{font-size:19px;letter-spacing:.2px}
   .gate-sub{color:var(--sub);font-size:12.5px;margin-bottom:22px}
   .lang-pick{display:flex;gap:8px;margin-bottom:20px}
@@ -92,26 +102,38 @@
 <!-- ===== 登入頁 ===== -->
 <div id="gate">
   <div class="gate-card">
-    <div class="brand"><div class="mark">K</div><h1 data-i18n="appName">客戶管理平台</h1></div>
+    <div class="brand gate-brand"><img src="icon.png" alt="BCD" class="gate-logo"><h1 data-i18n="appName">客戶管理平台</h1></div>
     <div class="gate-sub" data-i18n="slogan">登入以查看你負責的客戶</div>
     <div class="lang-pick">
       <button onclick="setLang('en')">English</button>
       <button onclick="setLang('zh-Hant')" class="on">繁體中文</button>
       <button onclick="setLang('zh-Hans')">简体中文</button>
     </div>
-    <div class="field"><label data-i18n="account">帳號</label>
-      <input id="acctInput" autocomplete="username" data-i18n-ph="acctPh" placeholder="輸入你的帳號">
+
+    <!-- Step A: 選/輸帳號 -->
+    <div id="stepAccount">
+      <div class="field"><label data-i18n="account">帳號</label>
+        <input id="acctInput" autocomplete="username" data-i18n-ph="acctPh" placeholder="輸入你的帳號">
+      </div>
+      <div id="recentAccts" class="recent-row"></div>
+      <div class="gate-err" id="gateErrA"></div>
+      <button class="primary" onclick="goPinStep()" data-i18n="next">下一步</button>
     </div>
-    <div class="pinpad" id="pinpad"></div>
-    <div class="gate-err" id="gateErr"></div>
-    <button class="primary" onclick="tryLogin()" data-i18n="login">登入</button>
+
+    <!-- Step B: 輸密碼 -->
+    <div id="stepPin" style="display:none">
+      <div class="who-row"><span id="whoLabel"></span><button class="link" onclick="backToAccount()" data-i18n="changeAcct">切換帳號</button></div>
+      <div class="dots" id="pinDots"></div>
+      <div class="pinpad" id="pinpad"></div>
+      <div class="gate-err" id="gateErr"></div>
+    </div>
   </div>
 </div>
 
 <!-- ===== 主框架 ===== -->
 <div id="app">
   <div class="topbar">
-    <div class="brand"><div class="mark">K</div><h1 data-i18n="appName">客戶管理平台</h1></div>
+    <div class="brand"><img src="icon.png" alt="BCD" style="width:30px;height:30px;border-radius:8px;"><h1 data-i18n="appName">客戶管理平台</h1></div>
     <div class="spacer"></div>
     <div class="lang-pick" style="margin:0">
       <button onclick="setLang('en')">English</button>
@@ -204,37 +226,62 @@ const I18N = {
   'en':{appName:'Client Management Platform',slogan:'Sign in to see your clients',account:'Account',acctPh:'Enter your account',login:'Sign in',switch:'Switch',myClients:'My Clients',team:'My Team',mail:'Company Mailbox',admin:'Admin Console',archived:'Archived locally, not fetched live',aiTrans:'AI Translate',saveDraft:'Save draft',send:'Send',accounts:'Accounts',assign:'Assign ownership',audit:'Audit & login logs',mine:'Me',other:'Other',unit:' clients',sentDone:'✓ Sent',sentNot:'○ Not sent',emptyTeam:'No subordinates',err:'Invalid account or password',aiTransNote:'After connecting AI, this will be translated to the selected language and saved to the company thread without overwriting the original.',saveNote:'Draft saved to company thread (after Supabase)',sendNote:'Mail goes through a controlled channel; once accepted it is marked sent and synced to your and admin dashboards.',adminMeta:'Upload avatar · change password · deactivate',assignNow:'Owner',reassign:'Reassign',auditTime:'Time',auditWho:'Actor',auditAct:'Action',auditTarget:'Target',auditNote:'After connecting, this shows what was clicked, viewed, device and IP'}
 };
 let lang=localStorage.getItem('cmp_lang')||'zh-Hant', session=null, currentView='clients';
+I18N['zh-Hant'].next='下一步';I18N['zh-Hant'].changeAcct='切換帳號';I18N['zh-Hans'].next='下一步';I18N['zh-Hans'].changeAcct='切换账号';I18N.en.next='Next';I18N.en.changeAcct='Switch account';
 const LANG_LABEL={en:'English','zh-Hant':'繁體中文','zh-Hans':'简体中文'};
 
 function t(k){return I18N[lang][k]!=null?I18N[lang][k]:k;}
 function setLang(l){lang=l;localStorage.setItem('cmp_lang',l);document.querySelectorAll('.lang-pick button').forEach(b=>b.classList.toggle('on',b.textContent===LANG_LABEL[l]));applyI18N();if(session){buildNav();show(currentView);renderClients();}}
 function applyI18N(){document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;if(I18N[lang][k]!=null)el.textContent=I18N[lang][k];});document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const k=el.dataset.i18nPh;if(I18N[lang][k]!=null)el.placeholder=I18N[lang][k];});}
 
-// 登入
-let pin='';
+// 登入：兩步驟
+let pin='', pendingAcct=null;
 const pad=document.getElementById('pinpad');
 ['1','2','3','4','5','6','7','8','9','','0','⌫'].forEach(k=>{
   const b=document.createElement('button');b.textContent=k;
-  b.onclick=()=>{ if(k==='⌫'){pin=pin.slice(0,-1);} else if(k){pin+=k;} document.getElementById('gateErr').textContent=''; };
+  b.onclick=()=>{ if(k==='⌫'){pin=pin.slice(0,-1);} else if(k){pin+=k;} document.getElementById('gateErr').textContent='';renderDots(); if(pin.length===4) tryLogin(); };
   pad.appendChild(b);
 });
-async function tryLogin(){
-  const id=document.getElementById('acctInput').value.trim().toLowerCase();
-  let acc=null;
-  try{
-    const {data,error}=await sb.from('accounts').select('*').eq('id',id).eq('pin',pin).eq('active',true).maybeSingle();
-    if(error) throw error;
-    acc=data;
-  }catch(e){ acc=MOCK.accounts.find(a=>a.id===id&&a.pin===pin)||null; }
-  if(acc){
-    localStorage.setItem('cmp_last_acct',id); localStorage.setItem('cmp_session',JSON.stringify(acc)); session=acc;
-    // 寫登入與裝置記錄
-    sb.from('login_logs').insert({account_id:acc.id,display_name:acc.display_name,role:acc.role}).then(()=>{});
-    sb.from('device_logs').insert({account_id:acc.id,display_name:acc.display_name,device:navigator.userAgent,lang:lang}).then(()=>{});
-    enter();
-  } else { document.getElementById('gateErr').textContent=t('err'); pin=''; }
+function renderDots(){const d=document.getElementById('pinDots');d.innerHTML='';for(let i=0;i<4;i++){const s=document.createElement('span');if(i<pin.length)s.className='on';d.appendChild(s);}}
+function recentList(){
+  const el=document.getElementById('recentAccts');el.innerHTML='';
+  let rec=[];try{rec=JSON.parse(localStorage.getItem('cmp_recent')||'[]');}catch(e){}
+  rec.forEach(id=>{const c=document.createElement('button');c.className='chip';c.textContent=id;c.onclick=()=>{document.getElementById('acctInput').value=id;goPinStep();};el.appendChild(c);});
 }
-function logout(){session=null;localStorage.removeItem('cmp_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';pin='';document.getElementById('gateErr').textContent='';}
+async function goPinStep(){
+  const id=document.getElementById('acctInput').value.trim().toLowerCase();
+  if(!id){document.getElementById('gateErrA').textContent=t('err');return;}
+  // 確認帳號存在
+  try{
+    const {data}=await sb.from('accounts').select('*').eq('id',id).eq('active',true).maybeSingle();
+    if(!data){document.getElementById('gateErrA').textContent=t('err');return;}
+    pendingAcct=data;
+  }catch(e){
+    pendingAcct=MOCK.accounts.find(a=>a.id===id)||null;
+    if(!pendingAcct){document.getElementById('gateErrA').textContent=t('err');return;}
+  }
+  document.getElementById('stepAccount').style.display='none';
+  document.getElementById('stepPin').style.display='block';
+  document.getElementById('whoLabel').textContent=pendingAcct.display_name||pendingAcct.name;
+  pin='';renderDots();
+}
+function backToAccount(){document.getElementById('stepPin').style.display='none';document.getElementById('stepAccount').style.display='block';document.getElementById('gateErr').textContent='';}
+async function tryLogin(){
+  if(!pendingAcct) return;
+  let acc=pendingAcct;
+  try{
+    const {data}=await sb.from('accounts').select('*').eq('id',acc.id).eq('pin',pin).eq('active',true).maybeSingle();
+    if(data) acc=data;
+    else {document.getElementById('gateErr').textContent=t('err');pin='';renderDots();return;}
+  }catch(e){ if(acc.pin!==pin){document.getElementById('gateErr').textContent=t('err');pin='';renderDots();return;} }
+  // 成功
+  let rec=[];try{rec=JSON.parse(localStorage.getItem('cmp_recent')||'[]');}catch(e){}
+  rec=[acc.id,...rec.filter(x=>x!==acc.id)].slice(0,4);localStorage.setItem('cmp_recent',JSON.stringify(rec));
+  localStorage.setItem('cmp_session',JSON.stringify(acc)); session=acc;
+  sb.from('login_logs').insert({account_id:acc.id,display_name:acc.display_name,role:acc.role}).then(()=>{});
+  sb.from('device_logs').insert({account_id:acc.id,display_name:acc.display_name,device:navigator.userAgent,lang:lang}).then(()=>{});
+  enter();
+}
+function logout(){session=null;localStorage.removeItem('cmp_session');document.getElementById('gate').style.display='flex';document.getElementById('app').style.display='none';pin='';pendingAcct=null;document.getElementById('stepPin').style.display='none';document.getElementById('stepAccount').style.display='block';document.getElementById('gateErr').textContent='';recentList();}
 
 function enter(){
   document.getElementById('gate').style.display='none';
@@ -310,6 +357,7 @@ function renderAdmin(){
 document.getElementById('acctInput').value=localStorage.getItem('cmp_last_acct')||'';
 document.querySelectorAll('.lang-pick button').forEach(b=>b.classList.toggle('on',b.textContent===LANG_LABEL[lang]));
 applyI18N();
+recentList();
 restore();
 </script>
 </body>
