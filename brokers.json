@@ -4,28 +4,36 @@
     "a": "1300 E. Third St., Dayton, OH 45403",
     "c": "",
     "m": "dshirk@miamivalleyworldwide.com",
-    "l": "Sandy Duncan 退休轉介，2026-10-30 L3Harris 來信"
+    "l": "Sandy Duncan 退休轉介，2026-10-30 L3Harris 來信",
+    "tag": "新增",
+    "reason": "Sandy Duncan 退休轉介，2026-10-30 L3Harris 來信"
   },
   {
     "n": "Leavitt Insurance & Central Bond Services, Inc.（退休轉介：Teresa Deoliveira）",
     "a": "",
     "c": "801-566-7272",
     "m": "teresa-deoliveira@leavitt.com",
-    "l": "Alan Anderson 退休轉介，2026-10-30 Laureate 來信；憑證事宜找她"
+    "l": "Alan Anderson 退休轉介，2026-10-30 Laureate 來信；憑證事宜找她",
+    "tag": "新增",
+    "reason": "Alan Anderson 退休轉介，憑證事宜；一般來信打 801-566-7272"
   },
   {
     "n": "Known（Go With Known）｜Dylan",
     "a": "",
     "c": "",
     "m": "dylan@gowithknown.com",
-    "l": "Gabrielle 產假轉介，Dylan 已對 Immunora 正面回覆，2026-10-30"
+    "l": "Gabrielle 產假轉介，Dylan 已對 Immunora 正面回覆，2026-10-30",
+    "tag": "新增",
+    "reason": "Gabrielle 產假轉介；Dylan 已對 Immunora 正面回覆，要 HTS、原產地、反傾銷、12 個月量"
   },
   {
     "n": "Known（Go With Known）｜會計",
     "a": "",
     "c": "",
     "m": "accounting@gowithknown.com",
-    "l": "Gabrielle 產假轉介，僅會計/財務事宜"
+    "l": "Gabrielle 產假轉介，僅會計/財務事宜",
+    "tag": "新增",
+    "reason": "Gabrielle 產假轉介，僅會計財務事宜"
   },
   {
     "n": "J.M. RODGERS Co., Inc.",
@@ -977,7 +985,10 @@
     "a": "P.O. Box 6098\nLutherville, MD 21094-6098",
     "c": "(410) 625-0800",
     "m": "mholtschneider@lexingtonnational.com",
-    "l": "https://surety.org/wp-content/uploads/2024/12/2024-25-Bond-Verification-Directory.pdf"
+    "l": "https://surety.org/wp-content/uploads/2024/12/2024-25-Bond-Verification-Directory.pdf",
+    "tag": "休假",
+    "reason": "Mark Holtschneider 休假 2026-10-29 至 2026-11-02，期間不追信，11/3 後再跟進；急件 410-625-0800。",
+    "until": "2026-11-02"
   },
   {
     "n": "Liberty Mutual Group",
@@ -1572,7 +1583,10 @@
     "a": "",
     "c": "801-798-7343",
     "m": "robyn-jensen@leavitt.com",
-    "l": "https://www.sba.gov/loans/additional-funding-opportunities/surety-bonds/surety-bond-agency-directory/?cst=&query-203-m_states_served=AL"
+    "l": "https://www.sba.gov/loans/additional-funding-opportunities/surety-bonds/surety-bond-agency-directory/?cst=&query-203-m_states_served=AL",
+    "tag": "修改",
+    "reason": "此列為 Leavitt 舊聯絡人 Robyn Jensen。Alan Anderson 已退休，憑證事宜改 Teresa Deoliveira，一般來信 801-566-7272。",
+    "until": ""
   },
   {
     "n": "Murray Insurance Associates dba AssuredPartners/Murray",
@@ -2671,7 +2685,10 @@
     "a": "P.O. Box 602825\nCharlotte, NC 28260-2825",
     "c": "815.595.2088",
     "m": "support@propellerbonds.com",
-    "l": "https://tiacrrg.com/contact-us"
+    "l": "https://tiacrrg.com/contact-us",
+    "tag": "自動確認",
+    "reason": "2026-10-30 自動回覆承諾 24 小時內回，週末除外，到期未回再追。",
+    "until": "2026-11-02"
   },
   {
     "n": "Greenwich Mercantile",
@@ -14998,7 +15015,10 @@
     "a": "2117 Venus Court, Park City, UT 84060",
     "c": "+1 435-655-1817",
     "m": "emily@bluebirdchb.com",
-    "l": "https://www.bluebirdchb.com/"
+    "l": "https://www.bluebirdchb.com/",
+    "tag": "修改",
+    "reason": "Oliveware 線：Emily 已回覆，願配合進口封裝，要求簽 import packet，需客戶有實際進口才出 bond。Lennar 線：婉拒獨立 bond，只給自己清關客戶做。同一人兩種結論，按客戶分開看。",
+    "until": ""
   },
   {
     "n": "Intermountain CHB, Inc.",
@@ -15215,7 +15235,10 @@
     "a": "1300 E. Third St., Dayton, OH 45403",
     "c": "937-222-4065",
     "m": "sduncan@miamivalleyworldwide.com",
-    "l": "https://app.zipments.io/brokers/US/6980c54a244e0ecbd5e0a7e6"
+    "l": "https://app.zipments.io/brokers/US/6980c54a244e0ecbd5e0a7e6",
+    "tag": "修改",
+    "reason": "Sandy Duncan 已退休，2026-10-30 自動回信通知，改聯絡 Denise Shirk。",
+    "until": ""
   },
   {
     "n": "MIDWEST TRANSATLANTIC LINES, INC",

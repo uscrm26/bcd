@@ -426,7 +426,7 @@ function renderBroker(){
   const q=(document.getElementById('brokerSearch').value||'').toLowerCase();
   let rows=brokers.filter(x=>(x.n+' '+(x.a||'')+' '+(x.c||'')+' '+(x.m||'')).toLowerCase().includes(q)).slice(0,120);
   document.getElementById('brokerCount').innerHTML=`<div class="stat"><b>${brokers.length}</b><span>名單總數</span></div><div class="stat"><b>${rows.length}</b><span>本次顯示</span></div>`;
-  document.getElementById('brokerList').innerHTML=rows.map(x=>`<div class="row-line"><b>${esc(x.n)}</b><span class="m">${esc(x.m)}</span>${x.c?` · ${esc(x.c)}`:''}<div class="a">${esc(x.a||'')}${x.l?'<br>'+esc(x.l):''}</div></div>`).join('')||'<div class="empty">無結果</div>';
+  document.getElementById('brokerList').innerHTML=rows.map(x=>`<div class="row-line"><b>${esc(x.n)}</b>${x.tag?` <span class="pill ${x.tag==='新增'?'ready':x.tag==='修改'?'doing':x.tag==='休假'?'paid':'block'}" style="display:inline-block;margin-left:6px">${esc(x.tag)}</span>`:''}<span class="m">${esc(x.m)}</span>${x.c?` · ${esc(x.c)}`:''}<div class="a">${esc(x.a||'')}${x.reason?'<br><b>更新原因：</b>'+esc(x.reason):''}${x.until?'<br><b>不追信至：</b>'+esc(x.until):''}${x.l?'<br>'+esc(x.l):''}</div></div>`).join('')||'<div class="empty">無結果</div>';
 }
 function renderFiles(){
   const q=(document.getElementById('fileSearch').value||'').toLowerCase();
