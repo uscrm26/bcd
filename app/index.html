@@ -61,6 +61,16 @@ button{font-family:inherit}
 .toolbar input{padding:9px 12px;border:1px solid var(--line);border-radius:9px;font-size:13px;flex:1;max-width:320px}
 .empty{color:var(--mut);font-size:13px;text-align:center;padding:30px}
 .owner-tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef4ff;color:var(--brand);margin-left:6px}
+.mask{position:fixed;inset:0;background:rgba(15,23,42,.5);display:none;align-items:center;justify-content:center;z-index:50}
+.mask.on{display:flex}
+.modal{background:#fff;border-radius:18px;width:min(680px,92vw);max-height:88vh;overflow:auto;padding:26px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+.modal h3{margin:0 0 18px;font-size:18px}
+.modal .row{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.modal label{font-size:12.5px;color:var(--mut);width:56px;flex-shrink:0}
+.modal input,.modal select,.modal textarea{padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit}
+.modal input,.modal select{flex:1}
+.modal textarea{width:100%;height:220px;resize:vertical;line-height:1.6}
+.toast{position:fixed;top:70px;right:20px;background:#12a05a;color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;z-index:60;display:none;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 @media(max-width:900px){.side{width:64px}.nav button span.lbl{display:none}}
 </style>
 </head>
@@ -109,6 +119,7 @@ button{font-family:inherit}
             <input id="searchBox" placeholder="搜索客戶或 broker" oninput="drawMailList()">
             <div style="flex:1"></div>
             <button class="ghost" onclick="refreshMail()">一鍵更新</button>
+            <button class="primary" style="padding:9px 18px;font-size:13.5px" onclick="openCompose()">＋ 寫信</button>
           </div>
           <div class="mail-list" id="mailList"></div>
         </div>
@@ -119,6 +130,30 @@ button{font-family:inherit}
     </main>
   </div>
 </div>
+
+<div class="mask" id="composeMask">
+  <div class="modal">
+    <h3>寫信 / 回覆</h3>
+    <div class="row"><label>從</label><select id="fromSel">
+      <option value="kashayisisramonaodom@immunora-bio.com">Immunora &lt;kashayisisramonaodom@immunora-bio.com&gt;</option>
+      <option value="horaciolsanchez@olivewareinc.com">Oliveware &lt;horaciolsanchez@olivewareinc.com&gt;</option>
+      <option value="christopherhodge@pebblehomeinc.com">Pebblehome &lt;christopherhodge@pebblehomeinc.com&gt;</option>
+      <option value="jaliarthomas@sagewareinc.com">Sageware &lt;jaliarthomas@sagewareinc.com&gt;</option>
+      <option value="christianjgpunzalan@nervaqon.live">Nervaqon &lt;christianjgpunzalan@nervaqon.live&gt;</option>
+    </select></div>
+    <div class="row"><label>寄給</label><input id="toInput" list="contactList" placeholder="搜索客戶或 broker email"><datalist id="contactList"></datalist></div>
+    <div class="row"><label>主旨</label><input id="subjInput" placeholder="主旨"></div>
+    <textarea id="bodyInput" placeholder="內文"></textarea>
+    <div class="row" style="margin-top:12px">
+      <label>附件</label><input type="file" id="fileInput" style="flex:1;font-size:13px">
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:16px">
+      <button class="ghost" onclick="closeCompose()">取消</button>
+      <button class="primary" onclick="sendMail()">送出</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
 
 <script>
 const SUPA_URL="https://xlcyumbyqcwedqwpspzs.supabase.co";
@@ -152,7 +187,27 @@ function enter(){
   buildNav();show('dash');loadMail();
   if(session.role==='admin')document.getElementById('adminBox').innerHTML='<div style="color:#6b7688;font-size:13px">超管後台：新增下線帳號、指派客戶歸屬、查看操作審計與登入裝置記錄。</div>';
 }
-async function loadMail(){try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}drawMailList();}
+async function loadMail(){try{const r=await fetch('../emails.json?ts='+Date.now());allMail=await r.json();}catch(e){allMail=[];}drawMailList();fillContacts();}
+function fillContacts(){
+  const seen={};allMail.forEach(m=>{if(m.from){seen[m.from]=1;}});
+  document.getElementById('contactList').innerHTML=Object.keys(seen).map(e=>`<option value="${e}">`).join('');
+}
+function openCompose(){document.getElementById('composeMask').classList.add('on');}
+function closeCompose(){document.getElementById('composeMask').classList.remove('on');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2600);}
+async function sendMail(){
+  const from=document.getElementById('fromSel').value,to=document.getElementById('toInput').value.trim();
+  const subj=document.getElementById('subjInput').value.trim(),body=document.getElementById('bodyInput').value;
+  const fname=(document.getElementById('fileInput').files[0]||{}).name||'';
+  if(!to){toast('請填收件人');return;}
+  try{
+    await sb.from('mail_messages').insert({client_name:from.split('@')[1].split('.')[0],sender_account:session.id,from_identity:from,to_addr:to,subject:subj,body:body,status:'pending_send',note:fname});
+  }catch(e){}
+  closeCompose();
+  document.getElementById('toInput').value='';document.getElementById('subjInput').value='';document.getElementById('bodyInput').value='';
+  toast('已送出指令，信件將由所選公司寄出');
+  loadMail();
+}
 function refreshMail(){const last=localStorage.getItem('bcd_last_refresh')||0;const now=Date.now();if(now-last<300000){alert('更新太頻繁，請 5 分鐘後再試');return;}localStorage.setItem('bcd_last_refresh',now);loadMail();alert('已送出更新指令，列表即時重整');}
 function drawMailList(){
   const q=(document.getElementById('searchBox').value||'').toLowerCase();
