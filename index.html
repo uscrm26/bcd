@@ -357,7 +357,8 @@ function clearGate() {
                 10/28 10:30 - 已轉公司財務付款，等待到賬確認<br>
                 10/29 檢查 - 登錄Immunora郵箱核對INV-5533，發票狀態仍為PaymentDue，郵箱未見付款收據<br>
                 10/29 公司回覆稱已付款，提供Stripe收據編號1953-1682，已付795.60 USD，VISA-1573，付款時間10/29 02:24:38 UTC，收據對應發票INV-5542（與原INV-5533號碼不同，需向BorderBuddy核實）；Immunora郵箱內尚未收到該收據郵件<br>
-                10/29 19:33 - 已從Immunora郵箱去信 service@borderbuddy.com（Katrina），核實Xero發票INV-5533與Stripe收據INV-5542號碼差異、確認795.60 USD是否已入賬，並順帶詢問bond出具進度，等待回覆<br><br>
+                10/29 19:33 - 已從Immunora郵箱去信 service@borderbuddy.com（Katrina），核實Xero發票INV-5533與Stripe收據INV-5542號碼差異、確認795.60 USD是否已入賬，並順帶詢問bond出具進度，等待回覆<br>
+                10/30 00:24 - 收到 Importivity Tanner（info@importivity.com，主旨 Re: Setting Up A Bond For Our First Shipment）客氣收尾，祝好運並提及Netbonds ISF約8-13 USD，該線索此前已婉拒關閉，無需跟進<br><br>
                 <b>已完成事項：</b> POA簽署、章程發送、申請表提交、發票開出、公司稱已付款並提供Stripe收據、已去信BorderBuddy核實發票號與入賬<br>
                 <b>待辦事項：</b> 等待BorderBuddy回覆確認正確發票號與795.60入賬，確認後催促正式出具海關bond擔保文件<br><br>
                 <b style="font-size:14px;">📧 開發信發送記錄（31家）</b>
@@ -438,7 +439,8 @@ function clearGate() {
                 10/28 19:15 - EIN名字ROBIM vs ROBIN拼寫不一致<br>
                 10/28 19:30 - 已轉上游同事處理<br>
                 10/28 19:46 - 發出1封開發信（暫停）<br>
-                10/29 23:00 - 從 christopherhodge@pebblehomeinc.com 單發 15 封差異化開發信（每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc），主題含公司稱呼與 Title Case，對象為 15 家不同報關行<br><br>
+                10/29 23:00 - 從 christopherhodge@pebblehomeinc.com 單發 15 封差異化開發信（每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc），主題含公司稱呼與 Title Case，對象為 15 家不同報關行<br>
+                10/30 00:24 - 收到 3 封自動回覆：Assured CHB 兩封系統確認信、Julianachb James R 休假回覆並給出代理聯絡人（ISF找Yoonah、清關找Hansol/Caleb），均非實質報價，列入後續手動跟進<br><br>
                 <b>已完成事項：</b> 材料歸檔、問題反饋上游<br>
                 <b>待辦事項：</b> 等待客戶補充新駕照、EIN拼寫確認
               </div>
@@ -599,6 +601,7 @@ function clearGate() {
       <table>
         <thead><tr><th style="width:110px;" data-i18n-col-date>日期</th><th style="width:180px;" data-i18n-col-clients>涉及客戶</th><th data-i18n-col-work>工作內容</th><th style="width:200px;" data-i18n-col-output>產出</th></tr></thead>
         <tbody>
+          <tr><td><b>10 月 30 日</b><br><span style="color:#8a8f98;font-size:11px;">週五 00:24</span></td><td>全部5箱巡查</td><td>每小時定時巡查：連線 Immunora、Oliveware、Pebblehome、Sageware、Nervaqon 五個郵箱，新信4封。Immunora 收到 Importivity Tanner 客氣收尾，Pebblehome 收到 Assured CHB 兩封系統確認信與 Julianachb 休假回覆，均為自動或客套信，無實質報價入賬或婉拒</td><td>4封已入 emails.json 並標已讀，無需立即跟進</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四 23:50</span></td><td>Nervaqon</td><td>從 christianjgpunzalan@nervaqon.live 單發 15 封差異化開發信至 15 家報關行，每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc，全部 sent 零失敗</td><td>15/15 成功，漏斗累計至 125</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四 23:05</span></td><td>Pebblehome</td><td>從 christopherhodge@pebblehomeinc.com 單發 15 封差異化開發信至 15 家報關行，每封隨機間隔 40-90 秒，單收件人無 Cc/Bcc，全部 sent 零失敗</td><td>15/15 成功</td></tr>
           <tr><td><b>10 月 29 日</b><br><span style="color:#8a8f98;font-size:11px;">週四 21:27</span></td><td>全部5箱巡查</td><td>每小時定時巡查：連線 Immunora、Oliveware、Pebblehome、Sageware、Nervaqon 五個郵箱，今日新信0封，全量標題比對無遺漏，兩條開發備忘已讀取存檔</td><td>無新信，無需跟進</td></tr>
@@ -1163,9 +1166,12 @@ function renderLive(){
   var list=liveMail.filter(function(e){ return !q || (e.client+e.from+e.subject+(e.body||'')).toLowerCase().indexOf(q)>=0; });
   document.getElementById('liveList').innerHTML = list.map(function(e,i){
     var box = e.box==='Sent' ? '<span style="color:#4338ca;">已寄件</span>' : '<span style="color:#059669;">收件匣</span>';
+    var unread = e.unread===true;
+    var dot = unread ? '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;margin-right:6px;"></span>' : '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d1d5db;margin-right:6px;"></span>';
+    var dim = unread ? '' : 'opacity:0.62;';
     var d=(e.date||'').replace(/ GMT.*/,'');
-    return '<div style="border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;" onclick="var b=this.querySelector(\'.mail-body\');b.style.display=b.style.display==\'none\'?\'block\':\'none\'">'
-      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:4px;"><span>'+esc(e.client)+' · '+box+'</span><span>'+d+'</span></div>'
+    return '<div style="'+dim+'border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:8px;cursor:pointer;" onclick="var b=this.querySelector(\'.mail-body\');b.style.display=b.style.display==\'none\'?\'block\':\'none\'">'
+      +'<div style="display:flex;justify-content:space-between;font-size:11px;color:#6b7280;margin-bottom:4px;"><span>'+dot+esc(e.client)+' · '+box+'</span><span>'+d+'</span></div>'
       +'<div style="font-size:13px;font-weight:500;color:#1f2937;">'+esc(e.subject)+'</div>'
       +'<div style="font-size:11px;color:#6b7280;margin-top:2px;">'+esc(e.from)+'</div>'
       +'<div class="mail-body" style="display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #e5e7eb;font-size:12px;color:#374151;line-height:1.7;white-space:pre-wrap;">'+esc(e.body||'(無正文)')+'</div>'
