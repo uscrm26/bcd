@@ -279,7 +279,8 @@ function drawMailList(){
   document.getElementById('mailList').innerHTML=list.length?list.map(m=>{const own=ownerOfClient(m.client);return `
     <div class="mail-row" onclick="var b=this.querySelector('.body');b.style.display=b.style.display==='none'?'block':'none'">
       <div class="top"><span>${m.client||''} · ${m.from||''}</span><span>${m.date||''}</span></div>
-      <div class="sub">${m.subject||''}${own?`<span class="owner-tag">${own===session.id?'我':on(own)}</span>`:''}</div>
+      <div class="sub">${m.subject||''}${own?`<span class="owner-tag">${own===session.id?'我':on(own)}</span>`:''} <button class="ghost" style="padding:2px 9px;font-size:11px;margin-left:6px" onclick="event.stopPropagation();aiSum(this)">AI 摘要</button></div>
+      <div class="aisum" style="display:none;font-size:12.5px;line-height:1.7;background:#eef4ff;border-radius:8px;padding:9px 11px;margin-top:6px;color:#1f3a8a"></div>
       <div class="body">${(m.body||'').replace(/</g,'&lt;').slice(0,1500)}</div>
     </div>`;}).join(''):'<div class="empty">尚無信件</div>';
 }
@@ -391,6 +392,16 @@ async function saveAccount(){
   await sb.from('accounts').insert({id,display_name:nm,pin,role:document.getElementById('newRole').value,parent_id:session.id,active:true});
   await sb.from('audit_logs').insert({account_id:session.id,display_name:session.display_name,action:'新增帳號',target_client:id,detail:nm});
   document.getElementById('acctMask').classList.remove('on');toast('帳號已建立');loadAdmin();
+}
+async function aiSum(btn){
+  const row=btn.closest('.mail-row');const out=row.querySelector('.aisum');
+  const raw=row.querySelector('.body').innerText;
+  out.style.display='block';out.textContent='分析中…';
+  try{
+    const r=await fetch(SUPA_URL+'/functions/v1/ai-summary',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+SUPA_KEY},body:JSON.stringify({text:raw})});
+    const j=await r.json();
+    out.textContent=j.summary||j.error||JSON.stringify(j);
+  }catch(e){out.textContent='AI 服務尚未就緒：'+e.message;}
 }
 async function loadBoard(){
   let rows=[];
