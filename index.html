@@ -507,7 +507,7 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",
 let view="dashboard";
 const R={};
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
-function openModal(html){const m=document.getElementById("modal");m.innerHTML=html;m.classList.add("show");}
+function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
@@ -703,7 +703,23 @@ return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc
 <div class="field"><div class="k">綁定信箱</div><div class="v">${esc(c.mail)}</div></div>
 <div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
 <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">${canManage()?`<button class="btn primary" onclick="toast('已儲存客戶檔案')">儲存變更</button><button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:`<button class="btn" onclick="openNote('${no}')">提交回饋與備註</button>`}<button class="btn" onclick="toast('已產生完整歸檔包')">📦 匯出歸檔包</button></div>`;}
-function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return `<div class="empty">檔案資訊編輯表單，點擊上方 Tab 切換時間線、待辦、附件、財務、操作記錄</div>`;}
+function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return custInfoForm(no);}
+function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return"<div class='empty'>無此客戶</div>";
+ const canEdit=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor"||ownerName(no)===CURRENT_USER.nm;
+ return `<div class="form-grid">
+ <div class="fg"><label>公司名稱</label><input id="cf_name" value="${esc(c.name)}" ${canEdit?"":"disabled"}></div>
+ <div class="fg"><label>法人姓名</label><input id="cf_member" value="${esc(c.member)}" ${canEdit?"":"disabled"}></div>
+ <div class="fg"><label>EIN</label><input id="cf_ein" value="${esc(c.ein)}" ${canEdit?"":"disabled"}></div>
+ <div class="fg"><label>綁定信箱</label><input id="cf_mail" value="${esc(c.mail)}" ${canEdit?"":"disabled"}></div>
+ <div class="fg"><label>內部參考編號</label><input value="#${c.no}" ${CURRENT_USER.role==="super_admin"?"":"disabled"}></div>
+ <div class="fg"><label>駕照狀態</label><input id="cf_dl" value="${esc(c.dl)}" ${canEdit?"":"disabled"}></div>
+ </div>
+ ${canEdit?`<div class="mrow"><button class="btn primary" onclick="saveCustInfo('${no}')">儲存變更</button></div>`:`<div class="empty">僅負責人與主管可編輯此表</div>`}`;}
+function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
+ const old=c.name+" / "+c.member+" / "+c.ein;
+ c.name=document.getElementById("cf_name").value;c.member=document.getElementById("cf_member").value;
+ c.ein=document.getElementById("cf_ein").value;c.mail=document.getElementById("cf_mail").value;c.dl=document.getElementById("cf_dl").value;
+ addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member);render();toast("客戶資料已儲存並寫入審計");}
 function clientAuditList(no){const rs=clientAudit[no]||[];
 return `<table><thead><tr><th>時間</th><th>操作人</th><th>動作</th><th>舊值</th><th>新值</th><th>理由</th></tr></thead><tbody>
 ${rs.map(r=>`<tr><td>${r.t}</td><td>${esc(r.user)}</td><td>${esc(r.action)}</td><td>${esc(r.old)}</td><td>${esc(r.new)}</td><td>${esc(r.reason)}</td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無操作記錄</td></tr>"}
@@ -795,8 +811,30 @@ R.queue=()=>`<h1>郵件佇列</h1><div class="sub">Mail Queue ｜ 未讀需處�
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";
 let list=DATA.emails.filter(e=>(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
-const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td>${esc(e.sub)}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="markRead('${e.t}')">回覆</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
-function markRead(t){const e=DATA.emails.find(x=>x.t===t);if(e){e.unread=false;addAudit("處理郵件",e.sub);}render();toast("已標為處理");}
+const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td>${esc(e.sub)}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
+let REPLY_EMAIL=null;
+function openReply(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;REPLY_EMAIL=e;
+ const row=(k,v)=>`<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">${k}</div><div style="font-size:13px">${v}</div></div>`;
+ openModal(`<h3>回覆郵件</h3>
+ ${row("寄件信箱",esc(e.c))}
+ ${row("收件人",esc(e.from))}
+ ${row("主題","Re: "+esc(e.sub))}
+ <div style="margin:12px 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+ <span style="font-size:12px;color:var(--mut)">AI 草稿：</span>
+ <button class="btn small" onclick="genReplyDraft('short')">簡短回覆</button>
+ <button class="btn small" onclick="genReplyDraft('biz')">商務溝通</button>
+ <button class="btn small" onclick="genReplyDraft('ask')">追問補資料</button></div>
+ <textarea id="replyBody" style="width:100%;min-height:170px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px;line-height:1.6;box-sizing:border-box" placeholder="先選 AI 草稿，再依對方郵件手改"></textarea>
+ <div class="mrow"><button class="btn" onclick="dismissMail()">標記為無需處理</button><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="sendReply()">發送郵件</button></div>`);}
+function genReplyDraft(kind){const tpl={
+ short:`Hi,\n\nThanks for getting back to me. I'll take a look and circle back shortly.\n\nBest,\nKevin`,
+ biz:`Hi,\n\nThanks for your email. I went through what you sent and we can move on this. If there's anything else you need from our side, just let me know.\n\nBest,\nKevin`,
+ ask:`Hi,\n\nThanks for the update. Before I send this over, could you shoot me a couple more details so I can confirm on our end? Mainly the company EIN and owner info you mentioned.\n\nAppreciate it.\n\nBest,\nKevin`};
+ const box=document.getElementById("replyBody");if(box)box.value=tpl[kind];toast("AI 草稿已填入，請手改後再送");}
+function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementById("replyBody")||{}).value||"";
+ if(!body.trim()){toast("郵件內容不能為空");return;}
+ e.unread=false;addAudit("外發郵件","Re: "+e.sub);closeModal();render();toast("已排入發送隊列，等待 SMTP 送出");}
+function dismissMail(){if(!confirm("確定標記為無需處理？"))return;const e=REPLY_EMAIL;e.unread=false;addAudit("標記無需處理",e.sub);closeModal();render();toast("已標記為無需處理");}
 // ===== Broker 池 / 轉介 / 公式文檔 =====
 const BROKERS=[
 {n:"A1 Worldwide",a:"Angely Arias",c:"angely@a1wwl.com",m:"—",l:"跟進中",tag:"quote",reason:"要求填 POA 開戶"},
