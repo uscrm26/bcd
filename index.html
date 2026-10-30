@@ -159,7 +159,7 @@ tr:hover td{background:#1a2130}
 .badge{font-size:10px;color:var(--mut);border:1px solid var(--line);padding:2px 8px;border-radius:6px}
 .badge.warn{color:var(--err);border-color:#5a2b34}
 /* quick buttons */
-.quick{position:absolute;top:12px;right:12px;display:flex;gap:5px;opacity:0;transition:.15s}
+.quick{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
 .ccard:hover .quick{opacity:1}
 .quick button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer}
 .quick button:hover{color:var(--acc2);border-color:#2f4a6e}
@@ -273,6 +273,8 @@ tr:hover td{background:#1a2130}
     <a data-v="doc"><span class="ic">▤</span>文件中心</a>
     <a data-v="archive"><span class="ic">▦</span>歸檔包</a>
     <div class="grp">系統</div>
+    <a data-v="worklog"><span class="ic">✎</span>工作通知</a>
+    <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
     <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
   </nav>
@@ -286,7 +288,6 @@ tr:hover td{background:#1a2130}
 
 <div class="main">
   <div class="topbar">
-    <div class="time" id="clock">載入時間…</div>
     <button class="btn small" id="themeBtn" onclick="toggleTheme()">🌙 深色</button>
     <div class="lang">
       <button onclick="event.stopPropagation();document.getElementById('langMenu').classList.toggle('show')" id="langBtn">繁體中文 ▾</button>
@@ -419,7 +420,8 @@ const DATA={
     ]
   }
 };
-// ===== 系統設定 / 員工 / 歸屬 / 審計 / 佣金 =====
+// 系統自動 4 位不重複編號，放最左邊搜索用；原 no 保留為內部序號
+(function(){let seq=1000;DATA.customers.forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
 const USERS=[
 {id:"kevinyama",nm:"Kevin W",pwd:"0521",role:"super_admin",parent:null,active:true,lastLogin:"",avatar:"K",perms:{dashboard:true,customer:true,broker:true,ai:true,mail:true,doc:true,archive:true,github:true,system:true}},
@@ -567,8 +569,6 @@ function fmtH(h){if(!PREF.h24)return ((h+11)%12+1)+(h<12?" AM":" PM");return Str
 function applyTheme(){document.body.dataset.theme=PREF.theme;const tb=document.getElementById("themeBtn");if(tb)tb.textContent=PREF.theme==="light"?"☀️ 淺色":"🌙 深色";}
 function toggleTheme(){PREF.theme=PREF.theme==="light"?"dark":"light";savePref();applyTheme();}
 function clock(){const d=new Date();const f=x=>String(x).padStart(2,"0");
-const bj=new Date(d.getTime()+8*3600e3);
-document.getElementById("clock").textContent=`北京 ${bj.getUTCFullYear()}-${f(bj.getUTCMonth()+1)}-${f(bj.getUTCDate())} ${fmtH(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;
 const sc=document.getElementById("sideClock");
 if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600e3);return `<div class="z"><span class="zem">${ic}</span><b>${nm}</b><span>${t.getUTCMonth()+1}/${t.getUTCDate()} ${fmtH(t.getUTCHours())}:${f(t.getUTCMinutes())}</span></div>`;}).join("");}
 setInterval(clock,1000);clock();applyTheme();
@@ -598,8 +598,8 @@ function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
 const ADMIN_ONLY=["github","system","mailbox"];
 function permsOf(u){if(u.role==="super_admin")return Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));return u.perms||{};}
 function applyPerm(){const role=CURRENT_USER.role;const pm=permsOf(CURRENT_USER);
-document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;if(v==="mailbox"&&role!=="super_admin")ok=false;if(v==="github"&&role!=="super_admin")ok=false;if(v==="system"&&!(role==="super_admin"||role==="supervisor"))ok=false;a.style.display=ok?"":"none";});
-if(view==="mailbox"&&role!=="super_admin")goto("dashboard");if(view==="github"&&role!=="super_admin")goto("dashboard");if(view==="system"&&!(role==="super_admin"||role==="supervisor"))goto("dashboard");}
+document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;if(v==="mailbox"&&role!=="super_admin")ok=false;if(v==="github"&&role!=="super_admin")ok=false;if(v==="system"&&!(role==="super_admin"||role==="supervisor"))ok=false;if(v==="worklog_admin"&&role!=="super_admin")ok=false;a.style.display=ok?"":"none";});
+if(view==="mailbox"&&role!=="super_admin")goto("dashboard");if(view==="github"&&role!=="super_admin")goto("dashboard");if(view==="system"&&!(role==="super_admin"||role==="supervisor"))goto("dashboard");if(view==="worklog_admin"&&role!=="super_admin")goto("dashboard");}
 function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
 function canEditKey(no){return canManage();}
 function canViewCust(no){if(canManage())return true;return ownerMap[no]===CURRENT_USER.id;}
@@ -636,36 +636,40 @@ return `<div class="ringwrap">
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
-function cardGrid(){return `<div class="row r3">`+DATA.customers.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
-  <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
+function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canViewCust(c.no)).map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
   <img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')">
   <div class="cbody">
-  <div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
-  <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div>
+  <div class="top"><div><span class="no" title="內部序號，非客戶代號">#${c.no}<small class="noref">序號</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
+  <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}<br><b>負責人</b> ${esc(ownerName(c.no))}</div>
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span></div>
+  <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
   </div></div>`;}).join("")+`</div>`;}
 function openModalImg(src){openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
+function openCustList(statusId){const list=DATA.customers.filter(c=>canViewCust(c.no)&&(!statusId||c.status===statusId));const s=statusId?st(statusId).lb:"全部客戶";
+openModal(`<h3>${s}（${list.length}）</h3><table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>負責人</th><th>狀態</th><th></th></tr></thead><tbody>
+${list.map(c=>`<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td>${esc(ownerName(c.no))}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td><button class="btn small" onclick="closeModal();openCust('${c.no}')">打開</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無客戶</td></tr>"}
+</tbody></table><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 數據即時同步，含多時區換算</div>
   <div class="row r4">
-    ${[["quote","已收報價",countBy("quote"),"待回覆"],["supply","待補件",countBy("supply"),"需動作"],["done","已出單",countBy("done"),"完成"],["hold","擱置",countBy("hold"),"暫停"]].map(x=>`<div class="stat"><div class="lb">${x[1]}</div><div class="vl">${x[2]}</div><div class="tg">${x[3]}</div></div>`).join("")}
+    ${[["quote","已收報價",countBy("quote"),"待回覆"],["supply","待補件",countBy("supply"),"需動作"],["done","已出單",countBy("done"),"完成"],["hold","擱置",countBy("hold"),"暫停"]].map(x=>`<div class="stat" style="cursor:pointer" onclick="openCustList('${x[0]}')"><div class="lb">${x[1]}</div><div class="vl">${x[2]}</div><div class="tg">${x[3]}</div></div>`).join("")}
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
-  <div class="panel"><div class="sec-title">郵件同步狀態</div>${DATA.mailboxes.map(b=>{const cc=DATA.customers.find(x=>x.mail&&x.mail.includes(b.em.split("@")[0]));const on=cc?ownerName(cc.no):"—";return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${esc(on)}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}
-  <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>
-  <div class="sec-title">客戶檢視</div>
-  <div class="switch"><button class="${cardMode==="card"?"on":""}" onclick="cardMode='card';render()">📇 卡片檢視</button><button class="${cardMode==="table"?"on":""}" onclick="cardMode='table';render()">📋 表格檢視</button></div>
-  <div class="search"><input placeholder="搜尋客戶編號 / 公司名稱 / 法人" oninput="window._s=this.value;refreshCust()"><select onchange="window._st=this.value;refreshCust()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select></div>
-  <div id="custArea">${cardMode==="card"?cardGrid():cardTable()}</div>
-  <div class="sec-title">每日工作記錄</div><div class="panel">
-  <div class="search"><input id="manualLog" placeholder="手動新增今日工作筆記"><button class="btn primary" onclick="addLog()">新增記錄</button></div>
-  ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
-  </div>`;
+  <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:340px;overflow-y:auto">${DATA.mailboxes.map(b=>{const cc=DATA.customers.find(x=>x.mail&&x.mail.includes(b.em.split("@")[0]));const on=cc?ownerName(cc.no):"—";return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${esc(on)}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
+  <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
 const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
-function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:"手動",c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
+function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
+R.worklog=()=>`<h1>工作通知</h1><div class="sub">Notifications ｜ 與你相關的全部事項</div>
+<div class="panel">${NOTIFS.map(n=>`<div class="logrow" style="cursor:pointer" onclick="openNotif('${n.goto}')"><span class="t">${n.t}</span><span class="c"><span class="who" style="display:inline-block;background:var(--ind);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px;margin-right:6px">${esc(n.who)}</span>${n.unread?"<b style='color:var(--err)'>● </b>":""}${esc(n.txt)}</span></div>`).join("")||"<div class='empty'>尚無通知</div>"}</div>`;
+R.worklog_admin=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
+return `<h1>系統工作記錄</h1><div class="sub">System Log ｜ 定時巡查與人工記錄，僅超管可見</div>
+<div class="panel"><div class="search"><input id="manualLog" placeholder="手動新增今日工作筆記"><button class="btn primary" onclick="addLog()">新增記錄</button></div>
+${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
+</div>`;}
+
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");
 const autoNo=String(Math.max(...DATA.customers.map(c=>Number(c.no)||0),0)+1).padStart(4,"0");
 const isAdmin=CURRENT_USER.role==="super_admin";
@@ -689,15 +693,15 @@ R.customer=()=>{
 };
 let listMode="card";
 function custTableHTML(){
-  const list=custFiltered();
-  return `<table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>EIN</th><th>狀態</th><th>負責人</th><th>信箱</th><th>操作</th></tr></thead><tbody>
-  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
+  const list=custFiltered().filter(c=>canViewCust(c.no));
+  return `<table><thead><tr><th>系統編號</th><th>內部序號</th><th>公司</th><th>法人</th><th>EIN</th><th>狀態</th><th>負責人</th><th>操作</th></tr></thead><tbody>
+  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
   </tbody></table>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
 function custFiltered(){
   const q=(window._cs||"").toLowerCase(),stf=window._cst||"";
-  return DATA.customers.filter(c=>(!q||(c.no+c.name+c.member+c.ein).toLowerCase().includes(q))&&(!stf||c.status===stf));
+  return DATA.customers.filter(c=>canViewCust(c.no)&&(!q||(c.no+c.name+c.member+c.ein+c.sysId).toLowerCase().includes(q))&&(!stf||c.status===stf));
 }
 function custGridHTML(){
   const list=custFiltered();
@@ -867,10 +871,17 @@ R.queue=()=>`<h1>郵件佇列</h1><div class="sub">Mail Queue ｜ 未讀需處�
 <table><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody">
 </tbody></table>`;
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";
-let list=DATA.emails.filter(e=>(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
+let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
-const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td>${esc(e.sub)}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
+const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="openMailDetail('${e.t}')">${esc(e.sub)}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
+function canViewMail(e){const c=DATA.customers.find(x=>x.name&&x.name.startsWith(e.c));if(!c)return true;return canViewCust(c.no);}
+function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
 let REPLY_EMAIL=null;
+function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
+openModal(`<h3>${esc(e.sub)}</h3>
+<div style="font-size:12px;color:var(--mut);margin-bottom:10px">From: ${esc(e.from)} ｜ ${e.t}</div>
+<div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:40vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
+<div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
 function openReply(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;REPLY_EMAIL=e;
  const row=(k,v)=>`<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">${k}</div><div style="font-size:13px">${v}</div></div>`;
  openModal(`<h3>回覆郵件</h3>
