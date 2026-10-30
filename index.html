@@ -316,6 +316,7 @@ tr:hover td{background:#1a2130}
     <div class="grp">系統</div>
     <a data-v="worklog"><span class="ic">✎</span>工作通知</a>
     <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
+    <a data-v="commission"><span class="ic">$</span>佣金記錄</a>
     <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
   </nav>
@@ -329,7 +330,6 @@ tr:hover td{background:#1a2130}
 
 <div class="main">
   <div class="topbar">
-    <button class="btn small" id="themeBtn" onclick="toggleTheme()">🌙 深色</button>
     <div class="lang">
       <button onclick="event.stopPropagation();document.getElementById('langMenu').classList.toggle('show')" id="langBtn">繁體中文 ▾</button>
       <div class="menu" id="langMenu">
@@ -535,6 +535,8 @@ function addAudit(action,detail){auditLog.unshift({t:nowBJ(),user:CURRENT_USER.n
 function addClientAudit(no,action,oldv,newv,reason){clientAudit[no]=clientAudit[no]||[];clientAudit[no].unshift({t:nowBJ(),user:CURRENT_USER.nm,action,old:oldv,new:newv,reason:reason||""});addAudit(action,`客戶 ${no} ${oldv||""} → ${newv||""}`);}
 // 佣金：成功單記錄，超管手動標記
 const commissions=[];
+let deductions=JSON.parse(localStorage.getItem("bcd_deductions")||"[]");
+function saveDeductions(){localStorage.setItem("bcd_deductions",JSON.stringify(deductions));}
 function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").length;return n<30?1000:1500;}
 // ===== GitHub JSON 數據層：同倉讀取，不依賴 Supabase、不需要數據庫密碼 =====
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
@@ -772,7 +774,8 @@ function followUpAlerts(){
   DATA.customers.forEach(c=>{
     if(["hold","reject","done"].includes(c.status))return;
     const tl=(DATA.timeline||{})[c.no]||[];
-    const last=tl[0]?tl[0].tm:"";
+    let last=tl[0]?tl[0].tm:"";
+    if(!last){const cd=CUST_CREATED[c.no]||"10/31";last=cd+" 12:00";}
     const h=hoursSince(last);
     const isNewMail=(DATA.emails||[]).some(e=>e.unread&&e.c===c.name.split(" ")[0]);
     rows.push({c,h,newMail:isNewMail,last:tl[0]});
@@ -781,8 +784,8 @@ function followUpAlerts(){
   const top=rows.slice(0,10);
   return `<div style="font-size:11px;color:var(--mut);margin:6px 0 10px">最久未跟進前 10 名</div>`+top.map((r,i)=>{
     const ph=PHOTO[r.c.no]||"";
-    const lastTxt=r.last?((r.last.e==="email"?"📧 ":"")+esc(r.last.tt||"")):"尚無更新";
-    return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg2)">
+    const lastTxt=r.last?((r.last.e==="email"?"📧 ":"")+esc(r.last.tt||"")):"尚無更新（依新增時間起算）";
+    return `<div onclick="openCust('${r.c.no}')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg2)">
       <span style="font-size:11px;color:var(--dim);width:16px">${i+1}</span>
       <img src="${ph}" onerror="this.style.display='none'" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
       <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--tx)">${esc(r.c.name)}</div>
@@ -802,7 +805,7 @@ function statusPie(){
  const segs=rows.filter(r=>r[2]>0).map(r=>{
    const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
- <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="var(--tx)" font-size="20" font-weight="700">${total}</text><text x="70" y="84" text-anchor="middle" fill="var(--mut)" font-size="10">總客戶</text></svg>
+ <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
  <div style="flex:1;min-width:160px">${rows.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px"></span>${r[1]}</span><b>${r[2]}</b></div>`).join("")}</div>
  </div>${followUpAlerts()}`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
@@ -841,7 +844,62 @@ return `<h1>系統工作記錄</h1><div class="sub">定時巡查與人工記錄�
 <div class="panel"><div class="search"><input id="manualLog" placeholder="手動新增今日工作筆記"><button class="btn primary" onclick="addLog()">新增記錄</button></div>
 ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
 </div>`;}
-
+R.commission=()=>{
+  const me=CURRENT_USER.id;
+  const myCustomers=DATA.customers.filter(c=>ownerMap[c.no]===me&&!["hold","reject","done"].includes(c.status));
+  const myDeals=commissions.filter(x=>x.user===me);
+  const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
+  const curYM=(bj.getUTCMonth()+1)+"/"+bj.getUTCFullYear();
+  const prevM=bj.getUTCMonth()===0?12:bj.getUTCMonth();const prevY=bj.getUTCMonth()===0?bj.getUTCFullYear()-1:bj.getUTCFullYear();
+  const prevYM=prevM+"/"+prevY;
+  const parseYM=t=>{const m=String(t).match(/(\d+)\/(\d+)/);return m?((+m[2])+"/"+(+m[1])):"";};
+  const curDone=myDeals.filter(x=>parseYM(x.t)===curYM);
+  const prevDone=myDeals.filter(x=>parseYM(x.t)===prevYM);
+  const curCut=deductions.filter(x=>x.user===me&&parseYM(x.t)===curYM).reduce((a,b)=>a+Number(b.amount||0),0);
+  const prevCut=deductions.filter(x=>x.user===me&&parseYM(x.t)===prevYM).reduce((a,b)=>a+Number(b.amount||0),0);
+  let est=0;myCustomers.forEach((c,i)=>{est+=(i<30?1000:1500);});
+  const actualCur=curDone.reduce((a,b)=>a+Number(b.amount||0),0)-curCut;
+  const actualPrev=prevDone.reduce((a,b)=>a+Number(b.amount||0),0)-prevCut;
+  const isAdmin=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
+  return `<h1>佣金記錄</h1><div class="sub">預估與實收，按下線與扣款即時結算</div>
+  <div class="row r3" style="margin-bottom:12px">
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">$${est.toLocaleString()}</div><div style="font-size:10px;color:var(--dim)">前 30 戶 $1,000 ／ 超出 $1,500</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 $${curCut.toLocaleString()}）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">$${Math.max(0,actualCur).toLocaleString()}</div><div style="font-size:10px;color:var(--dim)">${curDone.length} 筆出單</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">上月實收（已扣 $${prevCut.toLocaleString()}）</div><div style="font-size:26px;font-weight:800;color:var(--mut);margin:6px 0">$${Math.max(0,actualPrev).toLocaleString()}</div><div style="font-size:10px;color:var(--dim)">${prevDone.length} 筆出單</div></div>
+  </div>
+  <div class="panel" style="margin-bottom:12px"><div class="sec-title">在跟客戶明細（預估）</div>
+  <table><thead><tr><th>#</th><th>公司</th><th>法人</th><th>狀態</th><th>預估佣金</th></tr></thead><tbody>
+  ${myCustomers.map((c,i)=>`<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td style="font-weight:700">$${i<30?1000:1500}</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無在跟客戶</td></tr>"}
+  </tbody></table></div>
+  <div class="panel" style="margin-bottom:12px"><div class="sec-title">已出單實收記錄</div>
+  <table><thead><tr><th>客戶</th><th>金額</th><th>方式</th><th>時間</th></tr></thead><tbody>
+  ${myDeals.map(d=>`<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">$${Number(d.amount).toLocaleString()}</td><td>${d.mode==="percent"?`比例 ${d.pct}%`:"定額"}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td></tr>`).join("")||"<tr><td colspan='4' class='empty'>尚無出單記錄</td></tr>"}
+  </tbody></table></div>
+  ${isAdmin?`<div class="panel"><div class="sec-title">扣款記錄（從實收扣，需填理由）</div>
+  <div style="margin-bottom:10px"><button class="btn primary" onclick="openDeduct()">＋ 新增扣款</button></div>
+  <table><thead><tr><th>對象</th><th>金額</th><th>理由</th><th>時間</th></tr></thead><tbody>
+  ${deductions.map(d=>`<tr><td>${esc(d.user_nm)}</td><td style="color:var(--err);font-weight:700">-$${Number(d.amount).toLocaleString()}</td><td>${esc(d.reason)}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td></tr>`).join("")||"<tr><td colspan='4' class='empty'>尚無扣款</td></tr>"}
+  </tbody></table></div>`:""}`;
+}
+function openDeduct(){
+  const opts=USERS.filter(u=>u.active).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("");
+  openModal(`<h3>新增扣款</h3><div class="form-grid">
+  <div class="fg"><label>扣款對象</label><select id="dd_user">${opts}</select></div>
+  <div class="fg"><label>金額 USD</label><input id="dd_amt" type="number" placeholder="例如 200"></div>
+  <div class="fg full"><label>扣款理由</label><input id="dd_reason" placeholder="例如 客戶退單／違規／賠付"></div>
+  </div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmDeduct()">確認扣款</button></div>`);
+}
+function confirmDeduct(){
+  const uid=document.getElementById("dd_user").value;
+  const amt=Number(document.getElementById("dd_amt").value)||0;
+  const reason=document.getElementById("dd_reason").value.trim();
+  if(!amt||amt<=0){toast("金額需大於 0");return;}
+  if(!reason){toast("請填扣款理由");return;}
+  const u=USERS.find(x=>x.id===uid);
+  deductions.push({user:uid,user_nm:u?u.nm:uid,amount:amt,reason,t:nowBJ()});
+  saveDeductions();addAudit("扣款",`${u?u.nm:uid} -$${amt} ${reason}`);
+  closeModal();render();toast("已記錄扣款");
+}
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");
 const autoNo=String(Math.max(...DATA.customers.map(c=>Number(c.no)||0),0)+1).padStart(4,"0");
 const isAdmin=CURRENT_USER.role==="super_admin";
