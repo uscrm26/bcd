@@ -684,7 +684,7 @@ document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role=
 if(view==="mailbox"&&role!=="super_admin")goto("dashboard");if(view==="github"&&role!=="super_admin")goto("dashboard");if(view==="system"&&!(role==="super_admin"||role==="supervisor"))goto("dashboard");if(view==="worklog_admin"&&role!=="super_admin")goto("dashboard");}
 function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
 function canEditKey(no){return canManage();}
-function canViewCust(no){if(canManage())return true;return ownerMap[no]===CURRENT_USER.id;}
+function canViewCust(no){if(CURRENT_USER.role==="super_admin")return true;return myTeamIds().has(ownerMap[no]);}
 applyPerm();
 const NOTIFS=[
 {who:"Ryan F",t:"10/30 10:59",txt:"A1 Worldwide 要求填 POA 開戶，需回覆",unread:true,goto:"customer"},
@@ -795,16 +795,24 @@ function custGridHTML(){
   <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=custGridHTML();}
-function custDetail(no){const c=DATA.customers.find(x=>x.no===no);const s=st(c.status);const ts=DATA.timeline[no]||[];
-return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
-<div class="field"><div class="k">法人 / Sole Member</div><div class="v">${esc(c.member)}</div></div>
-<div class="field"><div class="k">EIN</div><div class="v">${esc(c.ein)}</div></div>
-<div class="field"><div class="k">歸屬負責人</div><div class="v">${esc(ownerName(no))}</div></div>
-<div class="field"><div class="k">業務狀態</div><div class="v"><span class="tag ${s.cl}">${s.lb}</span> <button class="btn small" onclick="openStatusChange('${no}')">人工變更狀態</button></div></div>
-<div class="field"><div class="k">駕照狀態</div><div class="v ${c.dl==="過期"?"warn":""}">${c.dl==="過期"?"⚠️ 已過期，需更新":c.dl}</div></div>
-<div class="field"><div class="k">綁定信箱</div><div class="v">${esc(c.mail)}</div></div>
-<div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
-<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">${canManage()?`<button class="btn primary" onclick="toast('已儲存客戶檔案')">儲存變更</button><button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:`<button class="btn" onclick="openNote('${no}')">提交回饋與備註</button>`}<button class="btn" onclick="toast('已產生完整歸檔包')">📦 匯出歸檔包</button></div>`;}
+function myTeamIds(){const me=CURRENT_USER.id;const ids=new Set([me]);USERS.forEach(u=>{if(u.parent===me)ids.add(u.id);});return ids;}
+function custDetail(no){const c=DATA.customers.find(x=>x.no===no);const s=st(c.status);
+const ph=PHOTO[no]||"";const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
+return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap">
+  <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;flex:0 0 200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
+    ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">法人照片<br>未上傳</div>`}
+  </div>
+  <div style="flex:1;min-width:260px">
+  <div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
+  <div class="field"><div class="k">法人 / Sole Member</div><div class="v">${esc(c.member)}</div></div>
+  <div class="field"><div class="k">EIN</div><div class="v">${esc(c.ein)}</div></div>
+  <div class="field"><div class="k">歸屬負責人</div><div class="v">${esc(ownerName(no))}</div></div>
+  <div class="field"><div class="k">業務狀態</div><div class="v"><span class="tag ${s.cl}">${s.lb}</span> <button class="btn small" onclick="openStatusChange('${no}')">變更狀態</button></div></div>
+  <div class="field"><div class="k">駕照狀態</div><div class="v ${c.dl==="過期"?"warn":""}">${c.dl==="過期"?"⚠️ 已過期，需更新":c.dl}</div></div>
+  <div class="field"><div class="k">綁定信箱</div><div class="v">${esc(c.mail)}</div></div>
+  <div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
+  </div></div>
+<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="openNote('${no}')">跟進備註</button></div>`;}
 function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return custInfoForm(no);}
 function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return"<div class='empty'>無此客戶</div>";
  const canEdit=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor"||ownerName(no)===CURRENT_USER.nm;
@@ -832,7 +840,7 @@ function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=do
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:ownerMap[no]||null,status:st(nv).lb,note:reason||null});
   addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已更新並記錄");}
-function openAssign(no){if(!canManage()){toast("歸屬由主管分配");return;}const opts=USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm} ${u.role}</option>`).join("");
+function openAssign(no){if(!(CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor")){toast("歸屬由主管分配");return;}const opts=USERS.filter(u=>u.active&&myTeamIds().has(u.id)).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm}（${ROLE_LB[u.role]||u.role}）</option>`).join("");
 openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬負責人</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
 function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);const c=DATA.customers.find(x=>x.no===no);
   const key=NO2KEY[no];
@@ -908,7 +916,8 @@ async function loadStorageList(no){
     const r=await fetch(SB.url+"/storage/v1/object/list/"+BUCKET,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"},body:JSON.stringify({prefix:no+"/",limit:200,sortBy:{column:"name",order:"desc"}})});
     if(!r.ok){box.innerHTML="<div class='empty'>無法讀取雲端附件</div>";return;}
     const files=await r.json();
-    if(!files.length){box.innerHTML="<div class='empty'>尚無雲端附件，請點下方上傳</div>";return;}
+    const localList=(DATA.files||{})[no]||[];
+    if(!files.length){box.innerHTML=(localList.length?`<div class="row r2">${localList.map(fileThumb).join("")}</div>`:"")+(localList.length?"":"<div class='empty'>尚無雲端附件，點下方上傳</div>");return;}
     const imgs=files.filter(f=>/\.(jpe?g|png|webp|gif)$/i.test(f.name));
     const docs=files.filter(f=>!/\.(jpe?g|png|webp|gif)$/i.test(f.name));
     const thumb=f=>{const url=PUB+encodeURIComponent(no+"/"+f.name);const isImg=/\.(jpe?g|png|webp|gif)$/i.test(f.name);
