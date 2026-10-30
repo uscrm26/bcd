@@ -428,7 +428,7 @@ async function loadRepoData(){
     const bk=bkRes.ok?await bkRes.json():null;
     if(Array.isArray(bk)&&bk.length){
       BROKERS.length=0;
-      bk.forEach(x=>BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""}));
+      bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
     }
     DATA.files=DATA.files||{};
     if(fi&&typeof fi==="object")DATA.files=fi;
