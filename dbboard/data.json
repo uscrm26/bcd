@@ -190,5 +190,623 @@
       "date": "2026/10/29"
     }
   ],
-  "timeline": {}
+  "timeline": {
+    "2": [
+      {
+        "e": "email",
+        "tt": "BorderBuddy 付款已入帳確認",
+        "tm": "10/30 05:14",
+        "src": "📩 docs.usa@borderbuddy.com",
+        "tx": "Laura Rucker / Tanya 回覆發票號碼不符但款項已應用，Bond 申請流程推進中，待補差額說明。"
+      },
+      {
+        "e": "auto",
+        "tt": "Importivity 來信追蹤首票出貨",
+        "tm": "10/29 21:36",
+        "src": "📩 info@importivity.com",
+        "tx": "Re: Setting Up A Bond For Our First Shipment，需回覆時程。"
+      },
+      {
+        "e": "email",
+        "tt": "gowithknown Gabrielle 產假轉介",
+        "tm": "10/26 17:37",
+        "src": "📩 Gabrielle@gowithknown.com",
+        "tx": "自動回覆，一般事務改 Dylan dylan@gowithknown.com，會計 accounting@gowithknown.com。"
+      }
+    ],
+    "3": [
+      {
+        "e": "reject",
+        "tt": "Just Your Broker 婉拒",
+        "tm": "10/29 18:09",
+        "src": "📩 hello@justyourbroker.com",
+        "tx": "回覆不做新 LLC 獨立 bond，標已關閉。"
+      },
+      {
+        "e": "email",
+        "tt": "Bluebird Emily 願隨進口封裝",
+        "tm": "10/28 17:05",
+        "src": "📩 emily@bluebirdchb.com",
+        "tx": "願意隨 Oliveware 自己的進口封裝做，不做獨立零售 bond。"
+      },
+      {
+        "e": "email",
+        "tt": "Aurora Customs Allison 回覆",
+        "tm": "10/28 10:06",
+        "src": "📩 allison@auroracustomsbroker.com",
+        "tx": "Re: new CA importer, bond question，待跟進。"
+      }
+    ],
+    "5": [
+      {
+        "e": "email",
+        "tt": "E.C. Ferrer Irene 追問商品與 ISF",
+        "tm": "10/30 01:13",
+        "src": "📩 irene@ecferrer.com",
+        "tx": "Re: Bond for Long Beach Entries，需告知貨物品類與出貨前 ISF 時程，再談連續 bond 內設。"
+      },
+      {
+        "e": "auto",
+        "tt": "Assured CHB / Juliana James 自動回覆",
+        "tm": "10/29 15:43",
+        "src": "📩 inquiry@assured / r.james@julianachb.com",
+        "tx": "均為自動回覆，待真人接手。"
+      }
+    ],
+    "8": [
+      {
+        "e": "email",
+        "tt": "SPG Anova 回覆詢價",
+        "tm": "10/27 19:47",
+        "src": "📩 bonds@anovamarine.com",
+        "tx": "RE: Inquiry About Obtaining Customs Bond for Nervaqon，待補公司資料。"
+      },
+      {
+        "e": "email",
+        "tt": "SuretyOne 回覆",
+        "tm": "10/24 23:28",
+        "src": "📩 StaffUnderwriters@suretyone.com",
+        "tx": "Re: Inquiry，已進入保險公司流程。"
+      }
+    ],
+    "61": [
+      {
+        "e": "auto",
+        "tt": "Lexington Mark 休假至 11/2",
+        "tm": "10/29 18:25",
+        "src": "📩 mholtschneider@lexington",
+        "tx": "自動回覆休假中，急件打 410-625-0800，無指定轉介人。"
+      }
+    ],
+    "64": [
+      {
+        "e": "reject",
+        "tt": "Trinity Carmen 婉拒獨立 bond",
+        "tm": "10/29 15:14",
+        "src": "📩 carmen@trinitycb.com",
+        "tx": "Re: Who handles bond setup，只給自己清關客戶做，不做獨立 bond。"
+      }
+    ],
+    "66": [
+      {
+        "e": "email",
+        "tt": "RPS Joe Allen 要求補交財務文件",
+        "tm": "10/29 16:20",
+        "src": "📩 joe_allen@rpsins.com",
+        "tx": "要求公司資產負債表、損益表、個人財務表、Bond 申請表，2-3 工作天審核。"
+      },
+      {
+        "e": "note",
+        "tt": "個人財務表已填妥",
+        "tm": "10/30 12:43",
+        "src": "📝 手動",
+        "tx": "按已婚未聯合、美國中產數值填妥 Personal Financial，待回覆 RPS。"
+      },
+      {
+        "e": "doc",
+        "tt": "Bond 申請表草稿已生成",
+        "tm": "10/30 12:44",
+        "src": "AI 草稿",
+        "tx": "Customs App 填答版已生成，HTS 編碼與進口額為中產佔位，待依真實貨品調整。"
+      }
+    ],
+    "69": [
+      {
+        "e": "auto",
+        "tt": "Miami Valley Sandy Duncan 退休轉介",
+        "tm": "10/29 18:27",
+        "src": "📩 sduncan@miamivalleyworldwide.com",
+        "tx": "自動回覆退休，改聯絡 Denise Shirk dshirk@miamivalleyworldwide.com。"
+      }
+    ],
+    "71": [
+      {
+        "e": "auto",
+        "tt": "Leavitt Alan Anderson 退休轉介",
+        "tm": "10/29 18:36",
+        "src": "📩 alan-anderson@leavitt.com",
+        "tx": "自動回覆退休，憑證事宜改 Teresa Deoliveira teresa-deoliveira@leavitt.com，一般來電 801-566-7272。"
+      }
+    ],
+    "73": [
+      {
+        "e": "email",
+        "tt": "Crystal Boomhower 來問連續 bond",
+        "tm": "10/30 06:15",
+        "src": "📩 crystalboomhower@hotmail.com",
+        "tx": "主動來信 Continuous Bond，待回報價與所需材料。"
+      }
+    ],
+    "75": [
+      {
+        "e": "email",
+        "tt": "SuretyOne 問 lead time",
+        "tm": "10/29 16:35",
+        "src": "📩 StaffUnderwriters@suretyone.com",
+        "tx": "Re: Bond lead time before first entry，待回覆首票時程。"
+      },
+      {
+        "e": "reject",
+        "tt": "Bluebird Emily 不做獨立 bond",
+        "tm": "10/29 14:42",
+        "src": "📩 emily@bluebirdchb.com",
+        "tx": "只做自己清關客戶，不做獨立 retail bond。"
+      },
+      {
+        "e": "auto",
+        "tt": "Propeller Bonds 自動確認",
+        "tm": "10/29 18:42",
+        "src": "📩 support@propellerbonds.com",
+        "tx": "24 小時內人工回覆。"
+      }
+    ],
+    "89": [
+      {
+        "e": "email",
+        "tt": "A1 Worldwide Angely 回法律文件",
+        "tm": "10/22 19:17",
+        "src": "📩 angely@a1wwl.com",
+        "tx": "Re: Legal documents for application of US custom bond，待補 POA 與公司文件。"
+      }
+    ],
+    "93": [
+      {
+        "e": "doc",
+        "tt": "客戶全套材料歸檔",
+        "tm": "10/30 12:33",
+        "src": "系統自動",
+        "tx": "EIN 43-2215896、CA Entity B20260438027、公司地址 USPS 驗證通過。發現佛州駕照 H320-116-96-380-0 於 2026/10/20 到期，列為待補件。"
+      },
+      {
+        "e": "auto",
+        "tt": "與舊客戶 Pebblehome 同一實際受益人",
+        "tm": "10/30 11:50",
+        "src": "系統自動",
+        "tx": "法人 Christopher Robin Hodge，SSN / DOB / 住址三項與 Pebblehome 完全一致，判斷為同一主體，送保時需向保險公司主動說明關聯。"
+      },
+      {
+        "e": "note",
+        "tt": "上級指示暫停申請",
+        "tm": "10/31 01:00",
+        "src": "Kevin W",
+        "tx": "同一 SSN 開兩間 LLC，上級要求先暫停，等指示再處理。"
+      }
+    ]
+  },
+  "statuses": [
+    {
+      "id": "new",
+      "lb": "新線索",
+      "cl": "t-blue"
+    },
+    {
+      "id": "collect",
+      "lb": "資料收集中",
+      "cl": "t-blue"
+    },
+    {
+      "id": "form",
+      "lb": "待填申請表",
+      "cl": "t-amber"
+    },
+    {
+      "id": "submit",
+      "lb": "待提交Broker",
+      "cl": "t-amber"
+    },
+    {
+      "id": "supply",
+      "lb": "Broker要求補件",
+      "cl": "t-red"
+    },
+    {
+      "id": "quote",
+      "lb": "報價已收到",
+      "cl": "t-amber"
+    },
+    {
+      "id": "confirm",
+      "lb": "等待客戶確認",
+      "cl": "t-blue"
+    },
+    {
+      "id": "done",
+      "lb": "Bond已出單",
+      "cl": "t-green"
+    },
+    {
+      "id": "reject",
+      "lb": "申請被拒",
+      "cl": "t-gray"
+    },
+    {
+      "id": "hold",
+      "lb": "擱置暫停",
+      "cl": "t-gray"
+    }
+  ],
+  "customers": [
+    {
+      "no": "93",
+      "name": "Interface LLC",
+      "member": "Christopher Robin Hodge",
+      "ein": "43-2215896",
+      "status": "hold",
+      "dl": "過期",
+      "mail": "—",
+      "todo": 2
+    },
+    {
+      "no": "89",
+      "name": "Home Depot LLC",
+      "member": "Amjad Bahmad",
+      "ein": "43-2208990",
+      "status": "supply",
+      "dl": "正常",
+      "mail": "amjadbahmad@home-depot.live",
+      "todo": 1
+    },
+    {
+      "no": "90",
+      "name": "Honeywell LLC",
+      "member": "Allyson Fankuchen",
+      "ein": "43-2210034",
+      "status": "new",
+      "dl": "正常",
+      "mail": "allysonbrennafankuchen@honeywellinternational.live",
+      "todo": 0
+    },
+    {
+      "no": "98",
+      "name": "Kontoor LLC",
+      "member": "Amant Hir Adam",
+      "ein": "43-2202115",
+      "status": "new",
+      "dl": "正常",
+      "mail": "amantahiradam@kontoorbrands.live",
+      "todo": 0
+    },
+    {
+      "no": "2",
+      "name": "Immunora Bio LLC",
+      "member": "Kashay Odom",
+      "ein": "43-2180144",
+      "status": "confirm",
+      "dl": "正常",
+      "mail": "kashayisisramonaodom@immunora-bio.com",
+      "todo": 1
+    },
+    {
+      "no": "3",
+      "name": "Oliveware LLC",
+      "member": "Horacio Sanchez",
+      "ein": "43-2187231",
+      "status": "collect",
+      "dl": "正常",
+      "mail": "horaciolsanchez@olivewareinc.com",
+      "todo": 1
+    },
+    {
+      "no": "5",
+      "name": "Pebblehome LLC",
+      "member": "Christopher Hodge",
+      "ein": "43-2200451",
+      "status": "hold",
+      "dl": "正常",
+      "mail": "christopherhodge@pebblehomeinc.com",
+      "todo": 1
+    },
+    {
+      "no": "7",
+      "name": "Sageware LLC",
+      "member": "Jaliar Thomas",
+      "ein": "43-2188760",
+      "status": "new",
+      "dl": "正常",
+      "mail": "jaliarthomas@sagewareinc.com",
+      "todo": 0
+    },
+    {
+      "no": "8",
+      "name": "Nervaqon LLC",
+      "member": "Christian Punzalan",
+      "ein": "43-2191002",
+      "status": "collect",
+      "dl": "正常",
+      "mail": "christianjgpunzalan@nervaqon.live",
+      "todo": 0
+    },
+    {
+      "no": "61",
+      "name": "Huntington LLC",
+      "member": "Jessica Yates",
+      "ein": "43-2220178",
+      "status": "collect",
+      "dl": "正常",
+      "mail": "jessicakeyates@huntingtoningallsindustries.live",
+      "todo": 0
+    },
+    {
+      "no": "64",
+      "name": "JELD-WEN LLC",
+      "member": "Amer Jok",
+      "ein": "43-2207568",
+      "status": "reject",
+      "dl": "正常",
+      "mail": "amerdaujok@jeld-wenholding.live",
+      "todo": 0
+    },
+    {
+      "no": "66",
+      "name": "Kervalonix LLC",
+      "member": "Ahmed Mohamed Ali",
+      "ein": "43-2187474",
+      "status": "supply",
+      "dl": "正常",
+      "mail": "ahmedmohamedali@kervalonix.live",
+      "todo": 1
+    },
+    {
+      "no": "69",
+      "name": "L3Harris LLC",
+      "member": "Enrique Justo-Rendon",
+      "ein": "43-2216646",
+      "status": "collect",
+      "dl": "正常",
+      "mail": "enriqueajrendon@l3harristechnologies.live",
+      "todo": 0
+    },
+    {
+      "no": "71",
+      "name": "Laureate LLC",
+      "member": "Adisu Mulatu",
+      "ein": "43-2223471",
+      "status": "collect",
+      "dl": "正常",
+      "mail": "adisushimelismulatu@laureateeducation.live",
+      "todo": 0
+    },
+    {
+      "no": "73",
+      "name": "Leidos LLC",
+      "member": "Jennie Myers",
+      "ein": "43-2219490",
+      "status": "new",
+      "dl": "正常",
+      "mail": "jennieannmyers@leidosholdings.live",
+      "todo": 1
+    },
+    {
+      "no": "75",
+      "name": "Lennar LLC",
+      "member": "Corey Heaward",
+      "ein": "43-2216265",
+      "status": "collect",
+      "dl": "正常",
+      "mail": "coreymheaward@lennar.live",
+      "todo": 1
+    }
+  ],
+  "finance": {
+    "2": [
+      {
+        "type": "bond_premium",
+        "desc": "BorderBuddy Continuous Bond 保費",
+        "amount": 795.6,
+        "currency": "CNY",
+        "status": "paid",
+        "paid_at": "10/29"
+      }
+    ],
+    "66": [
+      {
+        "type": "quote",
+        "desc": "RPS / Golden Valley 報價（待出正式單）",
+        "amount": 1250,
+        "currency": "CNY",
+        "status": "pending"
+      }
+    ]
+  },
+  "mailboxes": [
+    {
+      "nm": "Immunora",
+      "em": "kashayisisramonaodom@immunora-bio.com",
+      "st": "ok",
+      "unread": 1
+    },
+    {
+      "nm": "Oliveware",
+      "em": "horaciolsanchez@olivewareinc.com",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Pebblehome",
+      "em": "christopherhodge@pebblehomeinc.com",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Sageware",
+      "em": "jaliarthomas@sagewareinc.com",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Nervaqon",
+      "em": "christianjgpunzalan@nervaqon.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Home Depot",
+      "em": "amjadbahmad@home-depot.live",
+      "st": "ok",
+      "unread": 1
+    },
+    {
+      "nm": "Honeywell",
+      "em": "allysonbrennafankuchen@honeywellinternational.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Huntington",
+      "em": "jessicakeyates@huntingtoningallsindustries.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "JELD-WEN",
+      "em": "amerdaujok@jeld-wenholding.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Kervalonix",
+      "em": "ahmedmohamedali@kervalonix.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Kontoor",
+      "em": "amantahiradam@kontoorbrands.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "L3Harris",
+      "em": "enriqueajrendon@l3harristechnologies.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Laureate",
+      "em": "adisushimelismulatu@laureateeducation.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Leidos",
+      "em": "jennieannmyers@leidosholdings.live",
+      "st": "ok",
+      "unread": 0
+    },
+    {
+      "nm": "Lennar",
+      "em": "coreymheaward@lennar.live",
+      "st": "ok",
+      "unread": 0
+    }
+  ],
+  "emails": [
+    {
+      "c": "Home Depot",
+      "from": "Angely Arias <angely@a1wwl.com>",
+      "sub": "Re: Legal documents for application of US custom bond",
+      "t": "10/30 10:59",
+      "unread": true,
+      "type": "quote"
+    },
+    {
+      "c": "Immunora",
+      "from": "Laura Rucker <docs.usa@borderbuddy.com>",
+      "sub": "Invoice Number Mismatch, Payment Applied Confirmation",
+      "t": "10/30 05:14",
+      "unread": true,
+      "type": "supply"
+    },
+    {
+      "c": "Lennar",
+      "from": "StaffUnderwriters@SuretyOne.com",
+      "sub": "Re: Bond lead time before first entry",
+      "t": "10/30 05:14",
+      "unread": true,
+      "type": "supply"
+    },
+    {
+      "c": "Leidos",
+      "from": "Crystal Boomhower-Villalobos <crystalboomhower@hotmail.com>",
+      "sub": "Continuous Bond",
+      "t": "10/30 06:15",
+      "unread": false,
+      "type": "quote"
+    },
+    {
+      "c": "Oliveware",
+      "from": "Jermeale Lewis-Johnson <hello@justyourbroker.com>",
+      "sub": "Re: continuous bond",
+      "t": "10/30 07:27",
+      "unread": false,
+      "type": "reject"
+    }
+  ],
+  "logs": [
+    {
+      "t": "10/30 14:13",
+      "c": "定時巡查 15 個信箱全部成功連線，新郵件 0 封，外發佇列 0 條。",
+      "o": "0 新信"
+    },
+    {
+      "t": "10/30 13:17",
+      "c": "定時巡查 15 個信箱全部成功連線，新郵件 0 封，外發佇列 0 條。",
+      "o": "0 新信"
+    },
+    {
+      "t": "10/30 12:40",
+      "c": "三箱 Home Depot / Honeywell / Kontoor 實測登入成功，看板狀態改為已可登入。",
+      "o": "15 箱全綠"
+    },
+    {
+      "t": "10/30 12:33",
+      "c": "Interface LLC 93 號客戶全套材料歸檔，佛州駕照 10/20 到期標為待補件。",
+      "o": "93 號入檔"
+    },
+    {
+      "t": "10/30 11:52",
+      "c": "定時巡查 15 箱全連線，新郵件 0 封。",
+      "o": "0 新信"
+    },
+    {
+      "t": "10/30 10:59",
+      "c": "15 箱全連線，新郵件 6 封，其中 5 封系統通知，真人回覆 1 封 A1 Worldwide 要求填 POA。",
+      "o": "1 真人回覆"
+    },
+    {
+      "t": "10/30 09:11",
+      "c": "定時巡查 15 箱，新郵件 0 封。",
+      "o": "0 新信"
+    },
+    {
+      "t": "10/30 08:11",
+      "c": "定時巡查 15 箱，新郵件 0 封。",
+      "o": "0 新信"
+    },
+    {
+      "t": "10/30 07:27",
+      "c": "Oliveware 收 Just Your Broker Inc. 婉拒，標 tag 已關閉。",
+      "o": "1 婉拒"
+    }
+  ]
 }
