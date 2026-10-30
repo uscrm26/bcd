@@ -422,8 +422,8 @@ const DATA={
     {no:"75",name:"Lennar LLC",member:"Corey Heaward",ein:"43-2216265",status:"collect",dl:"正常",mail:"coreymheaward@lennar.live",todo:1}
   ],
   finance:{
-    "2":[{type:"bond_premium",desc:"BorderBuddy Continuous Bond 保費",amount:795.60,currency:"USD",status:"paid",paid_at:"10/29"}],
-    "66":[{type:"quote",desc:"RPS / Golden Valley 報價（待出正式單）",amount:1250,currency:"USD",status:"pending"}]
+    "2":[{type:"bond_premium",desc:"BorderBuddy Continuous Bond 保費",amount:795.60,currency:"CNY",status:"paid",paid_at:"10/29"}],
+    "66":[{type:"quote",desc:"RPS / Golden Valley 報價（待出正式單）",amount:1250,currency:"CNY",status:"pending"}]
   }
   ,
   mailboxes:[
@@ -834,7 +834,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">數據即時同步，含�
   <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:340px;overflow-y:auto">${DATA.mailboxes.map(b=>{return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">Kevin W</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 ¥${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 R.worklog=()=>`<h1>工作通知</h1><div class="sub">與你相關的全部事項</div>
@@ -853,8 +853,8 @@ R.commission=()=>{
     const meIsSplit=d.split_to===me&&d.user!==me;
     const myShare=meIsSplit?(d.split_amt||0):(d.amount-(d.split_amt||0));
     const pct=d.amount>0?Math.round(myShare/d.amount*100):100;
-    const sub=d.split_to&&!meIsSplit?(()=>{const s=USERS.find(x=>x.id===d.split_to);return s?`<div style="font-size:11px;color:var(--mut);margin-top:3px">下線 ${s.nm} ${Math.round((d.split_amt||0)/d.amount*100)}%，($${Number(d.split_amt).toLocaleString()})</div>`:"";})():"";
-    return `<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">$${Number(myShare).toLocaleString()}</td><td>佣金 ${un||d.user} ${pct}%<div style="font-size:10px;color:var(--dim)">總額 $${Number(d.amount).toLocaleString()}</div>${sub}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td><td>${canManage()?`<button class="btn small" onclick="editDealAmt(${commissions.indexOf(d)})">更改</button>`:""}</td></tr>`;
+    const sub=d.split_to&&!meIsSplit?(()=>{const s=USERS.find(x=>x.id===d.split_to);return s?`<div style="font-size:11px;color:var(--mut);margin-top:3px">下線 ${s.nm} ${Math.round((d.split_amt||0)/d.amount*100)}%，(¥${Number(d.split_amt).toLocaleString()})</div>`:"";})():"";
+    return `<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">¥${Number(myShare).toLocaleString()}</td><td>佣金 ${un||d.user} ${pct}%<div style="font-size:10px;color:var(--dim)">總額 ¥${Number(d.amount).toLocaleString()}</div>${sub}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td><td>${canManage()?`<button class="btn small" onclick="editDealAmt(${commissions.indexOf(d)})">更改</button>`:""}</td></tr>`;
   }).join("");
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
   const curYM=(bj.getUTCMonth()+1)+"/"+bj.getUTCFullYear();
@@ -871,13 +871,13 @@ R.commission=()=>{
   const isAdmin=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
   return `<h1>佣金記錄</h1><div class="sub">預估與實收，按下線與扣款即時結算</div>
   <div class="row r3" style="margin-bottom:12px">
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）USD</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">$${est.toLocaleString()} <span style="font-size:12px;color:var(--mut)">USD</span></div><div style="font-size:10px;color:var(--dim)">前 30 戶 $1,000 ／ 超出 $1,500</div></div>
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 $${curCut.toLocaleString()} USD）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">$${Math.max(0,actualCur).toLocaleString()} <span style="font-size:12px;color:var(--mut)">USD</span></div><div style="font-size:10px;color:var(--dim)">${curDone.length} 筆出單</div></div>
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">上月實收（已扣 $${prevCut.toLocaleString()} USD）</div><div style="font-size:26px;font-weight:800;color:var(--mut);margin:6px 0">$${Math.max(0,actualPrev).toLocaleString()} <span style="font-size:12px;color:var(--mut)">USD</span></div><div style="font-size:10px;color:var(--dim)">${prevDone.length} 筆出單</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）CNY</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">¥${est.toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">前 30 戶 ¥1,000 ／ 超出 ¥1,500</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 ¥${curCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">¥${Math.max(0,actualCur).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${curDone.length} 筆出單</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">上月實收（已扣 ¥${prevCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--mut);margin:6px 0">¥${Math.max(0,actualPrev).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${prevDone.length} 筆出單</div></div>
   </div>
   <div class="panel" style="margin-bottom:12px"><div class="sec-title">在跟客戶明細（預估）</div>
   <table><thead><tr><th>#</th><th>公司</th><th>法人</th><th>狀態</th><th>預估佣金</th></tr></thead><tbody>
-  ${myCustomers.map((c,i)=>`<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td style="font-weight:700">$${i<30?1000:1500} USD</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無在跟客戶</td></tr>"}
+  ${myCustomers.map((c,i)=>`<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td style="font-weight:700">¥${i<30?1000:1500} CNY</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無在跟客戶</td></tr>"}
   </tbody></table></div>
   <div class="panel" style="margin-bottom:12px"><div class="sec-title">已出單實收記錄</div>
   <table><thead><tr><th>客戶</th><th>我拿到</th><th>佣金歸屬與分層</th><th>時間</th><th></th></tr></thead><tbody>
@@ -886,14 +886,14 @@ R.commission=()=>{
   ${isAdmin?`<div class="panel"><div class="sec-title">扣款記錄（從實收扣，需填理由）</div>
   <div style="margin-bottom:10px"><button class="btn primary" onclick="openDeduct()">＋ 新增扣款</button></div>
   <table><thead><tr><th>對象</th><th>金額</th><th>理由</th><th>時間</th></tr></thead><tbody>
-  ${deductions.map(d=>`<tr><td>${esc(d.user_nm)}</td><td style="color:var(--err);font-weight:700">-$${Number(d.amount).toLocaleString()}</td><td>${esc(d.reason)}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td></tr>`).join("")||"<tr><td colspan='4' class='empty'>尚無扣款</td></tr>"}
+  ${deductions.map(d=>`<tr><td>${esc(d.user_nm)}</td><td style="color:var(--err);font-weight:700">-¥${Number(d.amount).toLocaleString()}</td><td>${esc(d.reason)}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td></tr>`).join("")||"<tr><td colspan='4' class='empty'>尚無扣款</td></tr>"}
   </tbody></table></div>`:""}`;
 }
 function openDeduct(){
   const opts=USERS.filter(u=>u.active).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("");
   openModal(`<h3>新增扣款</h3><div class="form-grid">
   <div class="fg"><label>扣款對象</label><select id="dd_user">${opts}</select></div>
-  <div class="fg"><label>金額 USD</label><input id="dd_amt" type="number" placeholder="例如 200"></div>
+  <div class="fg"><label>金額 CNY</label><input id="dd_amt" type="number" placeholder="例如 200"></div>
   <div class="fg full"><label>扣款理由</label><input id="dd_reason" placeholder="例如 客戶退單／違規／賠付"></div>
   </div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmDeduct()">確認扣款</button></div>`);
 }
@@ -905,7 +905,7 @@ function confirmDeduct(){
   if(!reason){toast("請填扣款理由");return;}
   const u=USERS.find(x=>x.id===uid);
   deductions.push({user:uid,user_nm:u?u.nm:uid,amount:amt,reason,t:nowBJ()});
-  saveDeductions();addAudit("扣款",`${u?u.nm:uid} -$${amt} ${reason}`);
+  saveDeductions();addAudit("扣款",`${u?u.nm:uid} -¥${amt} ${reason}`);
   closeModal();render();toast("已記錄扣款");
 }
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");
@@ -1057,7 +1057,7 @@ openModal(`<h3>確認成功出單 ｜ 內部參考 ${no}</h3>
 <div class="fg"><label>本單基準佣金，前 30 單 1000、第 31 單起 1500，可逐單微調</label><input id="md_custom" type="number" value="${base}"></div>
 <div class="fg"><label>歸屬業務</label><select id="md_owner">${USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${u.id===ow?"selected":""}>${u.nm}</option>`).join("")}</select></div>
 <div class="fg"><label>分給下線（可選，不選即全歸自己）</label><select id="md_split_to"><option value="">不分給下線</option>${USERS.filter(u=>u.active&&u.id!==ow).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("")}</select></div>
-<div class="fg"><label>下線分到金額 USD</label><input id="md_split_amt" type="number" placeholder="例如 300"></div>
+<div class="fg"><label>下線分到金額 CNY</label><input id="md_split_amt" type="number" placeholder="例如 300"></div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
 function confirmMarkDone(no){const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;
 const amt=Number(document.getElementById("md_custom").value)||superAdminRate();
@@ -1067,16 +1067,16 @@ const splitAmt=splitTo?(Number(document.getElementById("md_split_amt").value)||0
 c.status="done";commissions.push({cust:no,user:ow,amount:amt,split_to:splitTo,split_amt:splitAmt,t:nowBJ(),by:CURRENT_USER.id});
 sbReq("deals","POST",{client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_USER.id,note:splitTo?`分給${splitTo} ${splitAmt}`:"全歸"});
 addClientAudit(no,"確認成功出單",old,"已出單",`佣金 ${amt}${splitTo?`，下線分 ${splitAmt}`:""}`);closeModal();render();toast("成功已確認，佣金已歸檔");}
-function editDealAmt(i){const v=prompt("修改本單佣金總額 USD",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
+function editDealAmt(i){const v=prompt("修改本單佣金總額 CNY",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
 function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
 return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">➕ 新增費用</button><button class="btn" onclick="addQuote('${no}')">➕ 新增報價</button></div>
 <table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th></tr></thead><tbody>
 ${rows.map(r=>`<tr><td>${r.type==="quote"?"<span class='tag t-amber'>報價</span>":"<span class='tag t-blue'>費用</span>"}</td><td>${esc(r.desc)}</td><td style="font-weight:700">${fmt(r.amount)} ${r.currency}</td><td>${r.status==="paid"?"<span class='tag t-green'>已收款</span>":r.status==="pending"?"<span class='tag t-amber'>待定</span>":"<span class='tag t-red'>未收款</span>"}</td><td style="font-size:11px;color:var(--dim)">${r.paid_at||r.due||""}</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無財務與報價記錄</td></tr>"}
 </tbody></table>`;
 const totUnpaid=rows.filter(r=>r.status!=="paid").reduce((a,b)=>a+b.amount,0);
-return totUnpaid?`<div style="margin-top:12px;font-size:13px;color:var(--warn)">待收合計 ${fmt(totUnpaid)} USD</div>`:``;}
-function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class="fg"><label>說明</label><input id="fd_desc"></div><div class="fg"><label>金額 USD</label><input id="fd_amt" type="number"></div><div class="fg"><label>狀態</label><select id="fd_st"><option value="unpaid">未收款</option><option value="paid">已收款</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="const d=document.getElementById('fd_desc').value,a=Number(document.getElementById('fd_amt').value);DATA.finance=DATA.finance||{};(DATA.finance[no]=DATA.finance[no]||[]).push({type:'bond_premium',desc:d,amount:a,currency:'USD',status:document.getElementById('fd_st').value});closeModal();render();toast('費用已新增')">儲存</button></div>`);}
-function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 USD</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
+return totUnpaid?`<div style="margin-top:12px;font-size:13px;color:var(--warn)">待收合計 ${fmt(totUnpaid)} CNY</div>`:``;}
+function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class="fg"><label>說明</label><input id="fd_desc"></div><div class="fg"><label>金額 CNY</label><input id="fd_amt" type="number"></div><div class="fg"><label>狀態</label><select id="fd_st"><option value="unpaid">未收款</option><option value="paid">已收款</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="const d=document.getElementById('fd_desc').value,a=Number(document.getElementById('fd_amt').value);DATA.finance=DATA.finance||{};(DATA.finance[no]=DATA.finance[no]||[]).push({type:'bond_premium',desc:d,amount:a,currency:'CNY',status:document.getElementById('fd_st').value});closeModal();render();toast('費用已新增')">儲存</button></div>`);}
+function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 CNY</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
 function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎"};
 return `<div class="tl">${ts.map(t=>`<div class="tli e-${t.e}"><span class="src">${icon[t.e]} ${esc(t.src)}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
@@ -1155,10 +1155,10 @@ async function uploadToStorage(no,f){
  toast("上傳中："+f.name);
  const path=no+"/"+Date.now()+"_"+encodeURIComponent(f.name);
  try{
-   const r=await fetch(SB.url+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":f.type||"application/octet-stream"},body:f});
+   const r=await fetch(SB.url+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":f.type||"application/octet-stream","x-upsert":"true"},body:f});
    if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),500);}
-   else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"：需在 Supabase 後台給 attachments bucket 開 anon 上傳權限");}
- }catch(e){toast("上傳失敗：網路或 CORS 被擋，需後台開 Storage 政策");}
+   else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"："+t.slice(0,120));}
+ }catch(e){toast("上傳失敗："+(e&&e.message||e));}
 }
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
@@ -1365,11 +1365,11 @@ function pfsGen(){
     </table>
     <table style="width:100%;border-collapse:collapse;margin-top:10px">
       <tr><th style="width:50%;border:1px solid #999;padding:6px;text-align:left">SOURCES OF INCOME FOR YEAR ENDED</th><th style="border:1px solid #999;padding:6px;text-align:left">OTHER LIABILITIES</th></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Salary, bonuses & commissions　<span style="float:right">$${salary.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Contingent liabilities (lawsuits, indemnification): None</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Dividends　<span style="float:right">$${div.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Endorser, co-maker or guarantor?　$0</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Real estate income　<span style="float:right">$${rei.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">On leases or contracts?　$0</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Other income　<span style="float:right">$${otherI.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Legal claims (judgments)?　$0</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL INCOME</b>　<span style="float:right">$${income.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Amount of contested income tax liens?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Salary, bonuses & commissions　<span style="float:right">¥${salary.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Contingent liabilities (lawsuits, indemnification): None</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Dividends　<span style="float:right">¥${div.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Endorser, co-maker or guarantor?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Real estate income　<span style="float:right">¥${rei.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">On leases or contracts?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Other income　<span style="float:right">¥${otherI.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Legal claims (judgments)?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL INCOME</b>　<span style="float:right">¥${income.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Amount of contested income tax liens?　$0</td></tr>
     </table>
     <p style="text-align:center;margin-top:14px;font-size:11px;color:#666">AI 依人設生成的合理數字，送出前請人工核對修改。</p>
   </div>`;
@@ -1383,7 +1383,7 @@ function pfsBlank(){
     <h2 style="text-align:center;letter-spacing:2px">PERSONAL FINANCIAL STATEMENT ｜ 個人財務表</h2>
     <p style="font-size:11px;color:#444">中文欄位對照，客戶可直接在英文欄位填寫。</p>
     <table style="width:100%;border-collapse:collapse;margin:10px 0">
-      <tr><th style="border:1px solid #999;padding:5px;text-align:left">項目 Item</th><th style="border:1px solid #999;padding:5px;text-align:left">中文說明</th><th style="border:1px solid #999;padding:5px;text-align:left">金額 Amount (USD)</th></tr>
+      <tr><th style="border:1px solid #999;padding:5px;text-align:left">項目 Item</th><th style="border:1px solid #999;padding:5px;text-align:left">中文說明</th><th style="border:1px solid #999;padding:5px;text-align:left">金額 Amount (CNY)</th></tr>
       ${blankRow("Cash 現金")}${blankRow("Stocks, bonds 股票債券")}${blankRow("Home 房產自住")}${blankRow("Real estate 其他不動產")}${blankRow("Personal property 個人動產")}${blankRow("IRA 退休帳戶")}${blankRow("Other Assets 其他資產")}
       <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL ASSETS 資產合計</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
       ${blankRow("Credit cards 信用卡")}${blankRow("Taxes 應繳稅")}${blankRow("Due on real estate 房貸")}${blankRow("Other liabilities 其他負債")}
@@ -1505,9 +1505,9 @@ ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">�
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
 <div class="field"><div class="k">超管固定基準</div><div class="v">前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設</div></div>
 <div class="field"><div class="k">分單規則</div><div class="v">上級手動定額寫死金額，或按比例分成，下線只認百分比，不見上級實收</div></div>
-<div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} USD</div></div>
+<div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} CNY</div></div>
 <table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>方式</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
-${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>$${Number(x.amount).toLocaleString()}</td><td>${x.mode==="percent"?"按比例":"定額"}</td><td>${x.pct!=null?x.pct+"%":"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='7' class='empty'>尚無成功單</td></tr>"}
+${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${Number(x.amount).toLocaleString()}</td><td>${x.mode==="percent"?"按比例":"定額"}</td><td>${x.pct!=null?x.pct+"%":"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='7' class='empty'>尚無成功單</td></tr>"}
 </tbody></table></div>`:""}
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
