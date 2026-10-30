@@ -694,7 +694,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"美國海關申報",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","GitHub Backup","Control Panel"],sub:"US Customs Bond Filing",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"美国海关申报",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","佣金記錄","GitHub 備份","系統管理"],sub:"美國海關申報",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","Commission","GitHub Backup","Control Panel"],sub:"US Customs Bond Filing",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","佣金记录","GitHub 备份","系统管理"],sub:"美国海关申报",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
