@@ -847,7 +847,15 @@ ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class
 R.commission=()=>{
   const me=CURRENT_USER.id;
   const myCustomers=DATA.customers.filter(c=>ownerMap[c.no]===me&&!["hold","reject","done"].includes(c.status));
-  const myDeals=commissions.filter(x=>x.user===me);
+  const myDeals=commissions.filter(x=>x.user===me||x.split_to===me);
+  const dealRows=myDeals.map((d,i)=>{
+    const u=USERS.find(x=>x.id===d.user);const un=u?u.nm:u;
+    const meIsSplit=d.split_to===me&&d.user!==me;
+    const myShare=meIsSplit?(d.split_amt||0):(d.amount-(d.split_amt||0));
+    const pct=d.amount>0?Math.round(myShare/d.amount*100):100;
+    const sub=d.split_to&&!meIsSplit?(()=>{const s=USERS.find(x=>x.id===d.split_to);return s?`<div style="font-size:11px;color:var(--mut);margin-top:3px">下線 ${s.nm} ${Math.round((d.split_amt||0)/d.amount*100)}%，($${Number(d.split_amt).toLocaleString()})</div>`:"";})():"";
+    return `<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">$${Number(myShare).toLocaleString()}</td><td>佣金 ${un||d.user} ${pct}%<div style="font-size:10px;color:var(--dim)">總額 $${Number(d.amount).toLocaleString()}</div>${sub}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td><td>${canManage()?`<button class="btn small" onclick="editDealAmt(${commissions.indexOf(d)})">改</button>`:""}</td></tr>`;
+  }).join("");
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
   const curYM=(bj.getUTCMonth()+1)+"/"+bj.getUTCFullYear();
   const prevM=bj.getUTCMonth()===0?12:bj.getUTCMonth();const prevY=bj.getUTCMonth()===0?bj.getUTCFullYear()-1:bj.getUTCFullYear();
@@ -872,8 +880,8 @@ R.commission=()=>{
   ${myCustomers.map((c,i)=>`<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td style="font-weight:700">$${i<30?1000:1500}</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無在跟客戶</td></tr>"}
   </tbody></table></div>
   <div class="panel" style="margin-bottom:12px"><div class="sec-title">已出單實收記錄</div>
-  <table><thead><tr><th>客戶</th><th>金額</th><th>方式</th><th>時間</th></tr></thead><tbody>
-  ${myDeals.map(d=>`<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">$${Number(d.amount).toLocaleString()}</td><td>${d.mode==="percent"?`比例 ${d.pct}%`:"定額"}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td></tr>`).join("")||"<tr><td colspan='4' class='empty'>尚無出單記錄</td></tr>"}
+  <table><thead><tr><th>客戶</th><th>我拿到</th><th>佣金歸屬與分層</th><th>時間</th><th></th></tr></thead><tbody>
+  ${dealRows||"<tr><td colspan='5' class='empty'>尚無出單記錄</td></tr>"}
   </tbody></table></div>
   ${isAdmin?`<div class="panel"><div class="sec-title">扣款記錄（從實收扣，需填理由）</div>
   <div style="margin-bottom:10px"><button class="btn primary" onclick="openDeduct()">＋ 新增扣款</button></div>
@@ -1046,19 +1054,20 @@ function confirmAssign(no){const uid=document.getElementById("as_user").value;co
 function openMarkDone(no){if(CURRENT_USER.role!=="super_admin"){toast("成功出單由超管確認");return;}
 const base=superAdminRate();const c=DATA.customers.find(x=>x.no===no);const ow=ownerMap[no]||"kevinyama";
 openModal(`<h3>確認成功出單 ｜ 內部參考 ${no}</h3>
-<div class="fg"><label>本單基準佣金，超管固定前 30 單 1000、第 31 單起 1500，可逐單微調</label><input id="md_custom" type="number" value="${base}"></div>
-<div class="fg"><label>分配方式</label><select id="md_mode" onchange="document.getElementById('md_pct').style.display=this.value==='percent'?'':'none'"><option value="amount">上級手動定額，寫死金額</option><option value="percent">按比例，下線只認百分比</option></select></div>
-<div class="fg" id="md_pct" style="display:none"><label>下線分成百分比，例如 30 代表 30%</label><input id="md_split" type="number" min="0" max="100" placeholder="30"></div>
+<div class="fg"><label>本單基準佣金，前 30 單 1000、第 31 單起 1500，可逐單微調</label><input id="md_custom" type="number" value="${base}"></div>
 <div class="fg"><label>歸屬業務</label><select id="md_owner">${USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${u.id===ow?"selected":""}>${u.nm}</option>`).join("")}</select></div>
+<div class="fg"><label>分給下線（可選，不選即全歸自己）</label><select id="md_split_to"><option value="">不分給下線</option>${USERS.filter(u=>u.active&&u.id!==ow).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("")}</select></div>
+<div class="fg"><label>下線分到金額 USD</label><input id="md_split_amt" type="number" placeholder="例如 300"></div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
 function confirmMarkDone(no){const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;
 const amt=Number(document.getElementById("md_custom").value)||superAdminRate();
-const mode=document.getElementById("md_mode").value;const ow=document.getElementById("md_owner").value;
-const pct=mode==="percent"?Number(document.getElementById("md_split").value)||0:null;
-c.status="done";commissions.push({cust:no,user:ow,amount:amt,mode,pct,t:nowBJ(),by:CURRENT_USER.id});
-sbReq("deals","POST",{client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_USER.id,note:mode==="percent"?`比例${pct}%`:"定額"});
-addClientAudit(no,"確認成功出單",old,"已出單",`佣金 ${amt}${pct!=null?`，下線分成 ${pct}%`:""}`);closeModal();render();toast("成功已確認，佣金已歸檔");}
-function editDealAmt(i){const v=prompt("修改本單佣金金額 USD",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
+const ow=document.getElementById("md_owner").value;
+const splitTo=document.getElementById("md_split_to").value||null;
+const splitAmt=splitTo?(Number(document.getElementById("md_split_amt").value)||0):0;
+c.status="done";commissions.push({cust:no,user:ow,amount:amt,split_to:splitTo,split_amt:splitAmt,t:nowBJ(),by:CURRENT_USER.id});
+sbReq("deals","POST",{client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_USER.id,note:splitTo?`分給${splitTo} ${splitAmt}`:"全歸"});
+addClientAudit(no,"確認成功出單",old,"已出單",`佣金 ${amt}${splitTo?`，下線分 ${splitAmt}`:""}`);closeModal();render();toast("成功已確認，佣金已歸檔");}
+function editDealAmt(i){const v=prompt("修改本單佣金總額 USD",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
 function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
 return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">➕ 新增費用</button><button class="btn" onclick="addQuote('${no}')">➕ 新增報價</button></div>
 <table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th></tr></thead><tbody>
