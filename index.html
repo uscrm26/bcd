@@ -377,9 +377,11 @@ const DATA={
 // ===== 系統設定 / 員工 / 歸屬 / 審計 / 佣金 =====
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
 const USERS=[
-{id:"kevinyama",nm:"Kevin W",role:"super_admin",parent:null,active:true},
-{id:"ryanfan",nm:"Ryan F",role:"operator",parent:"kevinyama",active:true}
+{id:"kevinyama",nm:"Kevin W",pwd:"0521",role:"super_admin",parent:null,active:true,lastLogin:"",avatar:"K",perms:{dashboard:true,customer:true,broker:true,ai:true,mail:true,doc:true,archive:true,github:true,system:true}},
+{id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
 ];
+const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
+const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"郵件佇列",doc:"文件中心",archive:"歸檔包",github:"備份",system:"系統管理"};
 let CURRENT_USER=USERS[0];
 const ownerMap={"93":"kevinyama","89":"ryanfan","90":"kevinyama","98":"kevinyama","2":"ryanfan","61":"kevinyama","64":"kevinyama","66":"kevinyama","73":"kevinyama","75":"ryanfan"};
 const clientAudit={};
@@ -498,11 +500,10 @@ const T2S={"總":"总","覽":"览","看":"看","板":"板","智":"智","檔":"�
 function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
 // ===== 角色權限：系統級入口僅超管 =====
 const ADMIN_ONLY=["github","system","mailbox"];
-function applyPerm(){const role=CURRENT_USER.role;
-document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;
-if(ADMIN_ONLY.includes(v)&&role!=="super_admin"){a.style.display="none";}else{a.style.display="";}
-});
-if(ADMIN_ONLY.includes(view)&&role!=="super_admin"){goto("dashboard");toast("此頁面僅超管可進入");}}
+function permsOf(u){if(u.role==="super_admin")return Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));return u.perms||{};}
+function applyPerm(){const role=CURRENT_USER.role;const pm=permsOf(CURRENT_USER);
+document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;if(v==="mailbox"&&role!=="super_admin")ok=false;if(v==="github"&&role!=="super_admin")ok=false;if(v==="system"&&!(role==="super_admin"||role==="supervisor"))ok=false;a.style.display=ok?"":"none";});
+if(view==="mailbox"&&role!=="super_admin")goto("dashboard");if(view==="github"&&role!=="super_admin")goto("dashboard");if(view==="system"&&!(role==="super_admin"||role==="supervisor"))goto("dashboard");}
 function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
 function canEditKey(no){return canManage();}
 function canViewCust(no){if(canManage())return true;return ownerMap[no]===CURRENT_USER.id;}
@@ -771,30 +772,63 @@ R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">備份管理 ｜ 僅�
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
 <div class="panel"><div class="sec-title">同步任務日誌</div>${[["10/30 13:17","全量 JSON 備份推送成功 commit 7f69fa6","成功"],["10/30 12:40","客戶狀態更新已推送 commit 8a021ab","成功"]].map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span><span class="o">${x[2]}</span></div>`).join("")}</div>`;
 R.system=()=>`<h1>系統管理</h1><div class="sub">System Admin ｜ 僅 super_admin</div>
-<div class="row r2"><div class="panel"><div class="sec-title">帳戶管理員</div><table><thead><tr><th>帳號</th><th>顯示名稱</th><th>角色</th><th>上級</th><th>狀態</th><th>操作</th></tr></thead><tbody>
-${USERS.map(u=>`<tr><td>${esc(u.id)}</td><td>${esc(u.nm)}</td><td><span class="tag t-blue">${u.role}</span></td><td>${u.parent||"—"}</td><td>${u.active?"<span class='tag t-green'>啟用</span>":"<span class='tag t-gray'>停用</span>"}</td><td><button class="btn small" onclick="switchUser('${u.id}')">切換登入</button></td></tr>`).join("")}
-</tbody></table><button class="btn primary" style="margin-top:10px" onclick="openAdmin()">新增帳戶</button></div>
-<div class="panel"><div class="sec-title">系統參數，可編輯</div>
+<div class="row r2"><div class="panel"><div class="sec-title">帳戶管理</div><table><thead><tr><th>頭像</th><th>真實姓名</th><th>登入帳號</th><th>角色</th><th>上級</th><th>名下客戶</th><th>最近登入</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+${(CURRENT_USER.role==="super_admin"?USERS:USERS.filter(u=>u.id===CURRENT_USER.id||u.parent===CURRENT_USER.id)).map(u=>{const kids=Object.keys(ownerMap).filter(no=>ownerMap[no]===u.id).length;const pn=u.parent?(USERS.find(x=>x.id===u.parent)||{}).nm:"—";return `<tr><td><div class="avatar" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg2)">${esc(u.avatar||u.nm.charAt(0))}</div></td><td>${esc(u.nm)}</td><td style="font-size:11px">${esc(u.id)}</td><td><span class="tag t-blue">${ROLE_LB[u.role]||u.role}</span></td><td>${esc(pn)}</td><td>${kids} 家</td><td style="font-size:11px">${u.lastLogin||"—"}</td><td>${u.active?"<span class='tag t-green'>啟用</span>":"<span class='tag t-gray'>停用</span>"}</td><td><button class="btn small" onclick="openUserDetail('${u.id}')">詳情</button><button class="btn small" onclick="openAdmin('${u.id}')">編輯</button><button class="btn small" onclick="toggleUserActive('${u.id}')">${u.active?"停用":"啟用"}</button></td></tr>`;}).join("")}
+</tbody></table><button class="btn primary" style="margin-top:10px" onclick="openAdmin()">${CURRENT_USER.role==="supervisor"?"新增下屬":"新增帳戶"}</button></div>
+${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">系統參數，可編輯</div>
 <div class="fg"><label>營業日切換時間，24 小時制</label><input id="set_cutoff" type="number" min="0" max="23" value="${SETTINGS.cutoff_hour}"></div>
 <div class="mrow"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
-<div class="field" style="margin-top:10px"><div class="k">目前切日</div><div class="v">凌晨 ${SETTINGS.cutoff_hour} 點，按日統計與郵件歸日全部依此</div></div></div>
-<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
+<div class="field" style="margin-top:10px"><div class="k">目前切日</div><div class="v">凌晨 ${SETTINGS.cutoff_hour} 點，按日統計與郵件歸日全部依此</div></div></div>`:""}
+${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
 <div class="field"><div class="k">超管固定基準</div><div class="v">前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設</div></div>
 <div class="field"><div class="k">分單規則</div><div class="v">上級手動定額寫死金額，或按比例分成，下線只認百分比，不見上級實收</div></div>
 <div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} USD</div></div>
 <table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>方式</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
 ${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>$${Number(x.amount).toLocaleString()}</td><td>${x.mode==="percent"?"按比例":"定額"}</td><td>${x.pct!=null?x.pct+"%":"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='7' class='empty'>尚無成功單</td></tr>"}
-</tbody></table></div>
-<div class="panel"><div class="sec-title">全員審計日誌</div>
+</tbody></table></div>`:""}
+${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"></div>
-<div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div></div>`;
+<div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div>`:""}</div>`;
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}}
-function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.nm.charAt(0);}
-function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;CURRENT_USER=u;addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
-function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:pointer" onclick="switchUser('${u.id}');closeModal()"><div class="sec-title">${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""}</div><div class="field"><div class="k">角色</div><div class="v">${u.role==="super_admin"?"超級管理員":"業務員"}</div></div></div>`).join("")}</div>`);}
+function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);}
+function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
+function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
 paintFoot();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
-function openAdmin(){openModal(`<h3>新增帳戶管理員</h3><div class="form-grid"><div class="fg"><label>帳號</label><input id="au_user"></div><div class="fg"><label>顯示名稱</label><input id="au_name"></div><div class="fg"><label>密碼</label><input id="au_pwd" type="password"></div><div class="fg"><label>角色</label><select id="au_role"><option value="operator">操作員 operator</option><option value="super_admin">超級管理員 super_admin</option></select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="window._admins=window._admins||[];window._admins.push({username:document.getElementById('au_user').value,display_name:document.getElementById('au_name').value,role:document.getElementById('au_role').value,active:true});closeModal();render();toast('帳戶已建立')">建立</button></div>`);}
+let _editUid=null;
+function openAdmin(editId){_editUid=editId||null;const u=_editUid?USERS.find(x=>x.id===_editUid):null;
+const canSuper=CURRENT_USER.role==="super_admin";
+const roleOpts=canSuper?[["super_admin","超級管理員"],["supervisor","主管"],["operator","業務員"]]:[["operator","業務員"]];
+const parentOpts=canSuper?[["","無上級（超管）"],...USERS.filter(x=>x.role!=="operator").map(x=>[x.id,x.nm+"（"+ROLE_LB[x.role]+"）"])]:[[CURRENT_USER.id,CURRENT_USER.nm+"（本人）"]];
+openModal(`<h3>${u?"編輯帳戶":"新增帳戶"}</h3><div class="form-grid">
+<div class="fg"><label>登入帳號</label><input id="au_user" value="${u?esc(u.id):""}" ${u?"disabled":""}></div>
+<div class="fg"><label>真實姓名 / 顯示名稱</label><input id="au_name" value="${u?esc(u.nm):""}"></div>
+<div class="fg"><label>密碼</label><input id="au_pwd" type="password" placeholder="${u?"留空不變":""}"></div>
+<div class="fg"><label>頭像字</label><input id="au_avatar" maxlength="2" value="${u?esc(u.avatar||""):""}" placeholder="如 K"></div>
+<div class="fg"><label>角色</label><select id="au_role">${roleOpts.map(r=>`<option value="${r[0]}" ${u&&u.role===r[0]?"selected":""}>${r[1]}</option>`).join("")}</select></div>
+<div class="fg"><label>上級</label><select id="au_parent">${parentOpts.map(p=>`<option value="${p[0]}" ${u&&u.parent===p[0]?"selected":""}>${p[1]}</option>`).join("")}</select></div>
+</div>
+<div class="sec-title" style="margin-top:12px">頁面權限</div>
+<div class="form-grid">${Object.entries(PERM_LABELS).map(([k,lb])=>{const cur=u?(u.perms&&u.perms[k]!==false):(k!=="github"&&k!=="system");return `<div class="fg" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="au_p_${k}" ${cur?"checked":""} ${(k==="github"||k==="system")&&!canSuper?"disabled":""}><label for="au_p_${k}">${lb}</label></div>`;}).join("")}</div>
+<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="saveUser()">${u?"儲存":"建立"}</button></div>`);}
+function saveUser(){const id=document.getElementById("au_user").value.trim();const nm=document.getElementById("au_name").value.trim();if(!id||!nm){toast("請填登入帳號與真實姓名");return;}
+const role=document.getElementById("au_role").value;const parent=document.getElementById("au_parent").value||null;const pwd=document.getElementById("au_pwd").value;const avatar=document.getElementById("au_avatar").value.trim()||nm.charAt(0);
+const perms={};Object.keys(PERM_LABELS).forEach(k=>{const el=document.getElementById("au_p_"+k);perms[k]=el?el.checked:false;});
+if(_editUid){const u=USERS.find(x=>x.id===_editUid);u.nm=nm;u.role=role;u.parent=parent;u.avatar=avatar;u.perms=perms;if(pwd)u.pwd=pwd;addAudit("編輯帳戶",nm);}
+else{if(USERS.some(x=>x.id===id)){toast("帳號已存在");return;}USERS.push({id,nm,pwd:pwd||"0000",role,parent,active:true,lastLogin:"",avatar,perms});addAudit("新增帳戶",nm);}
+closeModal();render();toast("帳戶已儲存");}
+function toggleUserActive(id){const u=USERS.find(x=>x.id===id);u.active=!u.active;addAudit(u.active?"啟用帳戶":"停用帳戶",u.nm);render();toast(u.active?"帳戶已啟用":"帳戶已停用");}
+function openUserDetail(id){const u=USERS.find(x=>x.id===id);const mine=Object.keys(ownerMap).filter(no=>ownerMap[no]===id).map(no=>DATA.customers.find(c=>c.no===no)).filter(Boolean);
+const mineAudit=auditLog.filter(a=>a.user===u.nm);
+openModal(`<h3>${esc(u.nm)} 帳戶詳情</h3>
+<div class="field"><div class="k">登入帳號</div><div class="v">${esc(u.id)}</div></div>
+<div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div>
+<div class="field"><div class="k">最近登入</div><div class="v">${u.lastLogin||"尚無記錄"}</div></div>
+<div class="sec-title">名下客戶（${mine.length}）</div>
+${mine.length?mine.map(c=>`<div class="logrow"><span class="c">#${c.no} ${esc(c.name)}</span><span class="o">${esc(st(c.status).lb)}</span></div>`).join(""):"<div class='empty'>尚無歸屬客戶</div>"}
+<div class="sec-title">本人操作記錄（${mineAudit.length}）</div>
+${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.action)} ${esc(a.detail)}</span></div>`).join(""):"<div class='empty'>尚無操作記錄</div>"}
+<div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
 loadRepoData();
