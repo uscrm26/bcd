@@ -146,8 +146,8 @@ tr:hover td{background:#1a2130}
 /* client card */
 .ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.15s;position:relative;display:flex;gap:14px;align-items:flex-start}
 .ccard:hover{border-color:#2f4a6e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.cphoto{width:76px;height:76px;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid var(--line);background:#1a2230;display:block}
-.ccard .cbody{flex:1;min-width:0}
+.cphoto{width:96px;height:110px;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid var(--line);background:#1a2230;display:block}
+.ccard .cbody{flex:1;min-width:0;padding-bottom:34px;position:relative}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ccard .no{font-size:11px;color:var(--dim)}
 .noref{font-weight:400;font-size:9px;color:var(--mut);margin-left:4px;opacity:.8}
@@ -159,7 +159,7 @@ tr:hover td{background:#1a2130}
 .badge{font-size:10px;color:var(--mut);border:1px solid var(--line);padding:2px 8px;border-radius:6px}
 .badge.warn{color:var(--err);border-color:#5a2b34}
 /* quick buttons */
-.quick{position:absolute;top:10px;right:10px;display:flex;gap:5px;flex-wrap:wrap;opacity:0;transition:.15s;z-index:2}
+.quick{position:absolute;bottom:8px;right:10px;display:flex;gap:5px;flex-wrap:wrap;opacity:0;transition:.15s;z-index:2}
 .ccard:hover .quick{opacity:1}
 .quick button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer}
 .quick button:hover{color:var(--acc2);border-color:#2f4a6e}
@@ -770,31 +770,40 @@ function hoursSince(tm){
 function followUpAlerts(){
   const rows=[];
   DATA.customers.forEach(c=>{
+    if(["hold","reject","done"].includes(c.status))return;
     const tl=(DATA.timeline||{})[c.no]||[];
     const last=tl[0]?tl[0].tm:"";
     const h=hoursSince(last);
     const isNewMail=(DATA.emails||[]).some(e=>e.unread&&e.c===c.name.split(" ")[0]);
-    const limit=isNewMail?12:20;
-    if(h>limit&&h<300)rows.push({c,h,limit,newMail:isNewMail});
+    rows.push({c,h,newMail:isNewMail,last:tl[0]});
   });
-  if(!rows.length)return `<div style="margin-top:10px;font-size:11px;color:var(--ok)">✓ 所有客戶均在跟進時效內（一般 20h / 新郵件 12h）</div>`;
-  return `<div style="margin-top:10px"><div style="font-size:11px;color:var(--err);margin-bottom:4px">需跟進（${rows.length} 家）</div>`+rows.map(r=>`<div style="font-size:11px;color:var(--mut);padding:2px 0">· ${esc(r.c.name)}：已 ${Math.round(r.h)} 小時${r.newMail?"，新郵件逾 12h":""}</div>`).join("")+`</div>`;
+  rows.sort((a,b)=>b.h-a.h);
+  const top=rows.slice(0,10);
+  return `<div style="font-size:11px;color:var(--mut);margin:6px 0 10px">最久未跟進前 10 名</div>`+top.map((r,i)=>{
+    const ph=PHOTO[r.c.no]||"";
+    const lastTxt=r.last?((r.last.e==="email"?"📧 ":"")+esc(r.last.tt||"")):"尚無更新";
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg2)">
+      <span style="font-size:11px;color:var(--dim);width:16px">${i+1}</span>
+      <img src="${ph}" onerror="this.style.display='none'" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
+      <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:700;color:var(--tx)">${esc(r.c.name)}</div>
+      <div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lastTxt}</div></div>
+      <span style="font-size:10px;color:${r.h>40?"var(--err)":"var(--warn)"};flex-shrink:0">${Math.round(r.h)}h</span></div>`;}).join("");
 }
-function statusPie(){const total=DATA.customers.length||1;
+function statusPie(){
  const rows=[
   ["var(--acc)","處理中",countBy("new")+countBy("collect")+countBy("form")+countBy("submit")],
   ["var(--ok)","已出單",countBy("done")],
   ["var(--err)","待補件",countBy("supply")],
   ["var(--warn)","已收報價",countBy("quote")],
-  ["#888","擱置",countBy("hold")],
+  ["#555","擱置",countBy("hold")],
  ];
- const max=Math.max(...rows.map(r=>r[2]),1);
- return `<div style="display:flex;flex-direction:column;gap:12px">
- ${rows.map(r=>{const pct=Math.round(r[2]/total*100);return `<div>
-   <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px"><span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${r[0]};margin-right:7px"></span>${r[1]}</span><b>${r[2]}</b></div>
-   <div style="height:8px;background:var(--bg2);border-radius:6px;overflow:hidden"><div style="height:100%;width:${r[2]/max*100}%;background:${r[0]};border-radius:6px"></div></div>
-   <div style="font-size:10px;color:var(--mut);margin-top:2px">${pct}%</div></div>`;}).join("")}
- <div style="margin-top:6px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--mut)">共 ${DATA.customers.length} 位客戶</div>
+ const total=rows.reduce((a,r)=>a+r[2],0)||1;
+ const R=54,C=2*Math.PI*R;let off=0;
+ const segs=rows.filter(r=>r[2]>0).map(r=>{
+   const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
+ return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+ <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="var(--tx)" font-size="20" font-weight="700">${total}</text><text x="70" y="84" text-anchor="middle" fill="var(--mut)" font-size="10">總客戶</text></svg>
+ <div style="flex:1;min-width:160px">${rows.map(r=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0"><span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px"></span>${r[1]}</span><b>${r[2]}</b></div>`).join("")}</div>
  </div>${followUpAlerts()}`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
@@ -822,7 +831,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">數據即時同步，含�
   <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:340px;overflow-y:auto">${DATA.mailboxes.map(b=>{return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">Kevin W</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 R.worklog=()=>`<h1>工作通知</h1><div class="sub">與你相關的全部事項</div>
