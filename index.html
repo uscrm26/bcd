@@ -1025,7 +1025,7 @@ function docList(no){
   return `<div class="sec-title">全部附件</div>
   <div>${rows||"<div class='empty'>尚無附件</div>"}</div>
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份，點檔案可直接預覽。</div>
-  <div style="margin-top:14px"><button class="btn" onclick="goDocCenter('${no}')">管理資料夾</button></div>`;
+  <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">管理資料夾</button><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件</button></div>`;
 }
 function goDocCenter(no){CURRENT_V="doc";render();setTimeout(()=>{try{openDocFolder(no);}catch(e){}},100);}
 async function loadStorageUsage(){
