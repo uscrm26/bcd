@@ -71,6 +71,12 @@
       "clients": "Nervaqon",
       "work": "填寫完整CBP申請表回覆SPG Anova",
       "output": "等待對方報價"
+    },
+    {
+      "date": "10 月 30 日週五 16:37",
+      "clients": "全部15箱",
+      "work": "定時巡查：逐戶連線 mail.pony-it.com IMAP 993 檢查新郵件，並查外發佇列",
+      "output": "15箱全部連線成功，新郵件0封，外發佇列待寄0封，無重要回覆"
     }
   ],
   "policy": [
