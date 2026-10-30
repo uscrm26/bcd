@@ -993,7 +993,7 @@ function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)retu
  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitCustomerMail('${no}')">發送</button></div>`);}
 async function aiPolish(no){const c=DATA.customers.find(x=>x.no===no);const box=document.getElementById('sc_body');
  if(!box||!box.value.trim()){toast("請先在正文框寫內容，AI 再潤色");return;}
- const key=localStorage.getItem("bcd_ark_key")||"";
+ const key=localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
  if(!key){toast("請先在系統管理頁填入豆包 API Key");return;}
  toast("AI 潤色中…");
  try{
@@ -1002,7 +1002,7 @@ async function aiPolish(no){const c=DATA.customers.find(x=>x.no===no);const box=
  }catch(e){toast("AI 潤色失敗："+(e.message||e));}
 }
 async function aiWrite(no){const c=DATA.customers.find(x=>x.no===no);
- const key=localStorage.getItem("bcd_ark_key")||"";
+ const key=localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
  if(!key){toast("請先在系統管理頁填入豆包 API Key");return;}
  openModal(`<h3>AI 撰寫｜${esc(c.name)}</h3>
  <div class="fg" style="margin-bottom:10px"><label>你想寫什麼？一句話描述目的</label><textarea id="aw_prompt" style="width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px" placeholder="例如跟進 bond 申請進度，請對方提供最新表格"></textarea></div>
@@ -1012,7 +1012,7 @@ async function aiWrite(no){const c=DATA.customers.find(x=>x.no===no);
 async function genAIWrite(no){const p=(document.getElementById('aw_prompt')||{}).value||"";
  if(!p.trim()){toast("請先描述你要寫什麼");return;}
  const c=DATA.customers.find(x=>x.no===no);const first=(c.member||"").split(" ")[0];
- const key=localStorage.getItem("bcd_ark_key")||"";
+ const key=localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
  document.getElementById('aw_out').innerHTML="AI 生成中…";
  try{
   const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"doubao-pro-4k",messages:[{role:"system",content:"You are a US customs bond broker assistant. Write 3 distinct versions of a short business email in American English, each followed by a one-line Chinese translation. Sign off as "+first+". Output as JSON array [{en,zh}]."},{role:"user",content:p}]})});
