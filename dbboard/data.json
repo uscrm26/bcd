@@ -1,6 +1,10 @@
 {
   "daily": [
     {
+      "t": "10/31 02:10",
+      "txt": "批量冷啟開發信：成功發出 89 封，7 戶輪詢，JELD-WEN 信箱認證失敗 15 封"
+    },
+    {
       "t": "10/31 01:13",
       "txt": "巡查 15/15 信箱連線成功，新信 0 封，無重要回覆"
     },
@@ -390,6 +394,641 @@
         "tm": "10/31 01:00",
         "src": "Kevin W",
         "tx": "同一 SSN 開兩間 LLC，上級要求先暫停，等指示再處理。"
+      }
+    ],
+    "Home Depot": [
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 bruce@boschcustomsbrokerage.com（BOSCH CUSTOMS BROKERAGE,INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@interport.us（Interport Logistics LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@glchb.com（Guy Lichtenstein CHB Corp.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 import@elmcustomsservice.com（ELM CUSTOMS BROKERAGE, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@alliancechb.com（ALLIANCE INTERNATIONAL CHB INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@wtdc.com（Warehouse Division of World Terminal and）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@arii.net（AMERICAN ROYAL INTERNATIONAL INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@promptus.us（Promptus, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@imperialfreight.com（IMPERIAL FREIGHT BROKERS INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@hartryinc.com（HOWARD HARTRY, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 mia@jtmsa.us（JOIN THE MOMENT FORWARDING CORP）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 General@jec-chb.com（JEC Customs House Brokerage）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@ranchocustomsbrokers.com（Rancho Customs Brokers, Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@robertsonforwarding.com（ROBERTSON FORWARDING COMPANY INC）"
+      }
+    ],
+    "Kervalonix": [
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 service@kappacustomsbrokers.com（Kappa Customs Brokers, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 veronica@airacs.com（Airport Customs Service Inc）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 mvincent@reliantchb.com（Reliant Customs Broker, Inc）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@tranzport.com（TRANZPORT, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 rgonzalez@biscayneimport.com（BISCAYNE IMPORT SERVICES, INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@priorityimex.com（PRIORITY IMPORT-EXPORT SERVICES, IN）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@vortexwl.com（Vortex Worldwide Logistics Corporation）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 imports.cst@worldnationsusa.com（WORLD NATIONS, INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@allbordersinc.com（ALL BORDERS INCORPORATED）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@maccbi.com（MAC Customs Brokerage, Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 logistics@blchainlogistics.com（Blockchain Logistics LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales.mia@neelevat.com（Miami International Freight Solutions, L）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 melissa@itbfusa.com（INTERNATIONAL TRADE BROKERS FRDWR）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 imports@prioritycb.com（PRIORITY CUSTOMS BROKER INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@dbcustomsbrokers.com（D & B Customs Brokers, LLC）"
+      }
+    ],
+    "Lennar": [
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 rpalekseev@gmail.com（Customs Broker Miami）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@itcg.us（INTERNATINAL TRADE CMPLNCE GRP LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 infousa@ameritransworldwide.com（AMERITRANS WORLD GROUP INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 arash@clearpointint.com（ClearPoint International, Inc）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 samuel@miamicsinc.com（MIAMI CUSTOMS SERVICES INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 INFO@JCORTINA.COM（J. CORTINA, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 mpatigler@aol.com（SERVICE EXPRESS CUSTOMS CORPORATION）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@allynintl.com（ALLYN INTERNATIONAL SERVICES INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@mborder.com（M Border Solutions, Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 pat@advancecustomsbrokers.com（Advance Customs Brokers & Consulting LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 Evertrustworld@gmail.com（Evertrust World Logistics）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@nitusa.com（Nissin International Transport U.S.A., Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 operations@elemar.com（Elemar International Forwarding Inc）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 masforwarding@marineairservice.com（MARINE AIR SERVICE FORWARDING INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@aeaglecustomsbroker.com（American Eagle Customs Broker, LLC）"
+      }
+    ],
+    "Nervaqon": [
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@dna-logistics.com（DNA Logistics Group, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 ralph@omegacb.com（OMEGA CUSTOMS BROKERS INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@jdbrokers.net（JD BROKERS & FORWARDING CO.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@GJMia.com（GJ ENTERPRISES, CUSTOMS BROKERAGE & CONS）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 alcidesfsilva@aol.com（Quicksilver Customs Brokers, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@kglogistics.com（KELLY GLOBAL LOGISTICS, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 miamiports@kcimia.com（KCI CUSTOMS BROKERS INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 imports@wlmia.com（World Logistics (MIA), Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 bgsbrokers@bgs-chb.com（Border Group Services Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 LATINB@aol.com（LATIN AMERICAN BROKERS INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 customercare@intradeco.com（INTRADECO LOGISTICS, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 contact@logiaide.com（LOGIAIDE INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@cccustomsbroker.com（CC CUSTOMS BROKER, INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@almarlogistics.net（ALMAR LOGISTICS, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 monica@pinnaclefreightus.com（Pinnacle Freight Solutions, LLC）"
+      }
+    ],
+    "Oliveware": [
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 imports@hahnintl.com（HAHN INTERNATIONAL INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@dmanganelli.com（D MANGANELLI LOGISTICS, INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@CEPBroker.com（CEP CUSTOMS BROKER, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 hello@efilog.us（EFI LOGISTICS INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 JANETHAPPY@BELLSOUTH.NET（HAPPY CUSTOMS BROKERS, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 imports@farrischb.com（Farris Global Logistics）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 truckimports@charterbrokerage.net（CHARTER BROKERAGE LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@blufenixintl.com（Blufenix International LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 ahilsabeck@amhcc.com（AMH Custom Consultants）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@bcfmiami.com（BC & F BROKERAGE, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@promptus.us（PROMPTUS, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 skimchb@gmail.com（SUNG MOO KIM）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@blufenixintl.com（Blufenix International LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 Miami@worldwidemiami.com（WORLDWIDE CUSTOMS SERVICES INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@dracofreight.com（Draco Freight Logistics Corporation）"
+      }
+    ],
+    "Leidos": [
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 rob@customsandcompliance.com（Customs & Compliance Solutions, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 dixon.smith@comcast.net（DIXON, SMITH & ASSOCIATES, INC.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 johncassidy@johncassidyintl.com（JOHN CASSIDY INT L CHB INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 imports@lmbcustomsbrokers.com（LMB Customs Brokers）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@dbcustomsbrokers.com（D & B Customs Brokers, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "New Importer Continuous Bond Setup",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 natalia@asapmarinedocs.com（HOWARD S REEDER INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 rpalekseev@gmail.com（Customs Broker Miami, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Customs Bond Inquiry",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 brokerageintl8@gmail.com（BROKERAGE INTERNATIONAL INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@americargoexpress.com（Americargo Express Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Looking for a Customs Bond Broker",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 marthamartinezbcg@gmail.com（Brokerage Consultants Group, Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@gofastcb.com（GO FAST CUSTOMS BROKERAGE INC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 david@unitedcustomservices.com（United Customs Services LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Customs Bond Services Request",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 info@overseasfreight.com（OVERSEAS FREIGHT SOLUTIONS, LLC）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 sales@imperialfreight.com（Imperial Freight Brokers, Inc.）"
+      },
+      {
+        "e": "sent",
+        "tt": "Continuous Bond Quote Needed",
+        "tm": "10/31 02:10",
+        "src": "系統自動",
+        "tx": "冷啟開發信已發送至 usa.info@seafairgroup.com（SEAFAIR USA, LLC）"
       }
     ]
   },
