@@ -423,6 +423,32 @@ async function sbReq(table,method,body,query){
     return r.status===204?[]:await r.json();
   }catch(e){console.warn("SB offline",table);return null;}
 }
+// 前端編號 no 對應庫 client_key；93 庫中無檔，不落庫
+const NO2KEY={"89":"homedepot","90":"honeywell","98":"kontoor","2":"immunora","3":"oliveware","5":"pebblehome","7":"sageware","8":"nervaqon","61":"huntingtoningalls","64":"jeldwen","66":"kervalonix","69":"l3harris","71":"laureate","73":"leidos","75":"lennar"};
+async function upsertOwnership(rec){
+  const q=`?client_key=eq.${rec.client_key}`;
+  const exist=await sbReq("client_ownership","GET",null,q);
+  if(exist&&exist.length)await sbReq("client_ownership","PATCH",rec,q);
+  else await sbReq("client_ownership","POST",rec);
+}
+// 啟動時從庫讀回歸屬、狀態、佣金、審計，覆蓋內置兜底
+async function loadSB(){
+  const own=await sbReq("client_ownership","GET",null,"?select=*");
+  if(Array.isArray(own)){
+    const KEY2NO={};Object.entries(NO2KEY).forEach(([n,k])=>KEY2NO[k]=n);
+    own.forEach(r=>{
+      const no=KEY2NO[r.client_key];if(!no)return;
+      const c=DATA.customers.find(x=>x.no===no);
+      if(c&&r.status){const s=DATA.statuses.find(x=>x.lb===r.status);if(s)c.status=s.id;}
+      if(r.owner)ownerMap[no]=r.owner;
+    });
+  }
+  const dl=await sbReq("deals","GET",null,"?select=*&order=closed_at.desc");
+  if(Array.isArray(dl)){commissions.splice(0,commissions.length);dl.forEach(d=>commissions.push({cust:"",user:d.owner,amount:d.amount,mode:d.note,t:d.closed_at}));}
+  const al=await sbReq("audit_logs","GET",null,"?select=*&order=created_at.desc&limit=100");
+  if(Array.isArray(al)){auditLog.splice(0,auditLog.length);al.forEach(a=>auditLog.push({t:a.created_at,user:a.display_name,action:a.action,detail:a.detail}));}
+  render();
+}
 const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let view="dashboard";
@@ -544,10 +570,16 @@ ${rs.map(r=>`<tr><td>${r.t}</td><td>${esc(r.user)}</td><td>${esc(r.action)}</td>
 </tbody></table>`;}
 function openStatusChange(no){const c=DATA.customers.find(x=>x.no===no);const opts=DATA.statuses.map(s=>`<option value="${s.id}" ${s.id===c.status?"selected":""}>${s.lb}</option>`).join("");
 openModal(`<h3>人工變更狀態 ｜ 客戶 ${no}</h3><div class="fg"><label>選擇新狀態</label><select id="sc_status">${opts}</select></div><div class="fg"><label>確認理由，可不填</label><textarea id="sc_reason" placeholder="人工確認，AI 不會自動判定"></textarea></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmStatus('${no}')">確認變更</button></div>`);}
-function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=document.getElementById("sc_status").value;const reason=document.getElementById("sc_reason").value;const old=st(c.status).lb;c.status=nv;addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已人工確認並留痕");}
+function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=document.getElementById("sc_status").value;const reason=document.getElementById("sc_reason").value;const old=st(c.status).lb;c.status=nv;
+  const key=NO2KEY[no];
+  if(key)upsertOwnership({client_key:key,client_name:c.name,owner:ownerMap[no]||null,status:st(nv).lb,note:reason||null});
+  addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已人工確認並留痕，已寫入資料庫");}
 function openAssign(no){const opts=USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm} ${u.role}</option>`).join("");
 openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬負責人</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
-function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);addClientAudit(no,"歸屬變更",old,u.nm,"");closeModal();render();toast("歸屬已分配並留痕");}
+function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);const c=DATA.customers.find(x=>x.no===no);
+  const key=NO2KEY[no];
+  if(key)upsertOwnership({client_key:key,client_name:c.name,owner:uid,status:st(c.status).lb});
+  addClientAudit(no,"歸屬變更",old,u.nm,"");closeModal();render();toast("歸屬已分配並留痕，已寫入資料庫");}
 function openMarkDone(no){openModal(`<h3>標記成功出單 ｜ 客戶 ${no}</h3><div class="fg"><label>佣金金額，可選或自定</label><select id="md_amt"><option>1000</option><option>2000</option><option>1500</option></select><input id="md_custom" type="number" placeholder="自定金額，留空用上方"></div><div class="fg"><label>分配方式</label><select id="md_mode"><option value="amount">按具體金額</option><option value="percent">按比例</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
 function confirmMarkDone(no){const custom=document.getElementById("md_custom").value;const amt=custom?Number(custom):Number(document.getElementById("md_amt").value);const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;c.status="done";commissions.push({cust:no,user:ownerMap[no]||"kevinyama",amount:amt,mode:document.getElementById("md_mode").value,t:nowBJ()});
 sbReq("deals","POST",{client_name:c.name,owner:ownerMap[no]||"kevinyama",amount:amt,marked_by:CURRENT_USER.id,note:document.getElementById("md_mode").value});
@@ -675,6 +707,7 @@ function openAdmin(){openModal(`<h3>新增帳戶管理員</h3><div class="form-g
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
 loadRepoData();
+loadSB();
 </script>
 </body>
 </html>
