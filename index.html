@@ -788,22 +788,19 @@ function docList(no){
   return `<div class="sec-title">全部附件 ${list.length} 份（照片 ${imgs.length} 張）</div>
   ${imgs.length?`<div class="fgrid">${imgs.map(fileThumb).join("")}</div>`:""}
   <div class="row r2">${docs.map(fileThumb).join("")||"<div class='empty'>尚無文件</div>"}</div>
-  <div style="margin-top:14px"><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件到 GitHub</button></div>`;
+  <div style="margin-top:14px"><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件到雲端</button></div>`;
 }
-const GH={owner:"uscrm26",repo:"bcd",token:""};
-function pickUpload(no){if(!GH.token){toast("文件上傳需後端代理授權，暫未開放");return;}const i=document.createElement("input");i.type="file";i.onchange=e=>{const f=e.target.files[0];if(f)uploadToGithub(no,f);};i.click();}
-async function uploadToGithub(no,f){toast("上傳中…");
- const rd=new FileReader();
- rd.onload=async()=>{
-   const b64=rd.result.split(",")[1];
-   const path="files/"+no+"/"+encodeURIComponent(f.name);
-   try{
-     const r=await fetch("https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/"+path,{method:"PUT",headers:{Authorization:"token "+GH.token,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"upload "+f.name,content:b64,branch:"main"})});
-     if(r.ok){addAudit("上傳文件",f.name);toast("已上傳 GitHub："+f.name);}
-     else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+" "+t.slice(0,80));}
-   }catch(e){toast("上傳失敗："+e.message);}
- };
- rd.readAsDataURL(f);
+const BUCKET="attachments";const MAX_MB=20;
+function pickUpload(no){const i=document.createElement("input");i.type="file";i.onchange=e=>{const f=e.target.files[0];if(f)uploadToStorage(no,f);};i.click();}
+async function uploadToStorage(no,f){
+ if(f.size>MAX_MB*1024*1024){toast("檔案超過 "+MAX_MB+"MB 上限，請壓縮後再傳");return;}
+ toast("上傳中…");
+ const path=no+"/"+Date.now()+"_"+encodeURIComponent(f.name);
+ try{
+   const r=await fetch(SB.url+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":f.type||"application/octet-stream"},body:f});
+   if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);}
+   else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"，請確認 Storage bucket 與權限已開");}
+ }catch(e){toast("上傳失敗："+e.message);}
 }
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
