@@ -788,7 +788,22 @@ function docList(no){
   return `<div class="sec-title">全部附件 ${list.length} 份（照片 ${imgs.length} 張）</div>
   ${imgs.length?`<div class="fgrid">${imgs.map(fileThumb).join("")}</div>`:""}
   <div class="row r2">${docs.map(fileThumb).join("")||"<div class='empty'>尚無文件</div>"}</div>
-  <div style="margin-top:14px"><button class="btn primary" onclick="toast('開始上傳，可同步至 GitHub')">⬆ 上傳文件</button></div>`;
+  <div style="margin-top:14px"><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件到 GitHub</button></div>`;
+}
+const GH={owner:"uscrm26",repo:"bcd",token:""};
+function pickUpload(no){if(!GH.token){toast("文件上傳需後端代理授權，暫未開放");return;}const i=document.createElement("input");i.type="file";i.onchange=e=>{const f=e.target.files[0];if(f)uploadToGithub(no,f);};i.click();}
+async function uploadToGithub(no,f){toast("上傳中…");
+ const rd=new FileReader();
+ rd.onload=async()=>{
+   const b64=rd.result.split(",")[1];
+   const path="files/"+no+"/"+encodeURIComponent(f.name);
+   try{
+     const r=await fetch("https://api.github.com/repos/"+GH.owner+"/"+GH.repo+"/contents/"+path,{method:"PUT",headers:{Authorization:"token "+GH.token,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"upload "+f.name,content:b64,branch:"main"})});
+     if(r.ok){addAudit("上傳文件",f.name);toast("已上傳 GitHub："+f.name);}
+     else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+" "+t.slice(0,80));}
+   }catch(e){toast("上傳失敗："+e.message);}
+ };
+ rd.readAsDataURL(f);
 }
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
@@ -836,8 +851,13 @@ function genReplyDraft(kind){const tpl={
  biz:`Hi,\n\nThanks for your email. I went through what you sent and we can move on this. If there's anything else you need from our side, just let me know.\n\nBest,\nKevin`,
  ask:`Hi,\n\nThanks for the update. Before I send this over, could you shoot me a couple more details so I can confirm on our end? Mainly the company EIN and owner info you mentioned.\n\nAppreciate it.\n\nBest,\nKevin`};
  const box=document.getElementById("replyBody");if(box)box.value=tpl[kind];toast("AI 草稿已填入，請手改後再送");}
-function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementById("replyBody")||{}).value||"";
+async function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementById("replyBody")||{}).value||"";
  if(!body.trim()){toast("郵件內容不能為空");return;}
+ const mb=(DATA.mailboxes||[]).find(b=>b.nm===e.c);
+ const from=mb?mb.em:e.c;
+ try{
+   await fetch(SB.url+"/rest/v1/mail_messages",{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({client_name:e.c,from_identity:from,to_addr:e.from,subject:"Re: "+e.sub,body:body,status:"pending_send",sender_account:CURRENT_USER.id||CURRENT_USER.nm})});
+ }catch(err){}
  e.unread=false;addAudit("外發郵件","Re: "+e.sub);closeModal();render();toast("已排入發送隊列，等待 SMTP 送出");}
 function dismissMail(){if(!confirm("確定標記為無需處理？"))return;const e=REPLY_EMAIL;e.unread=false;addAudit("標記無需處理",e.sub);closeModal();render();toast("已標記為無需處理");}
 // ===== Broker 池 / 轉介 / 公式文檔 =====
