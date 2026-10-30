@@ -1,6 +1,10 @@
 {
   "daily": [
     {
+      "t": "10/31 04:11",
+      "txt": "巡查 15/15 信箱成功，新信 2 封：Nervaqon 補件催促、Huntington 被 Clearit 婉拒"
+    },
+    {
       "t": "10/31 03:11",
       "txt": "巡查 15/15 信箱成功，新信 5 封：Nervaqon 補件、Kervalonix 2 封、Leidos 2 封"
     },
@@ -851,6 +855,13 @@
         "tm": "10/31 03:11",
         "src": "SPG Anova Marine Bond Department <bonds@anovamarin...>",
         "tx": "客戶已交申請表，對方要求補 2025 年完整資產負債表與損益表，以及 2026 年至 6 月的 YTD 財務報表。"
+      },
+      {
+        "e": "email",
+        "tt": "RE: Inquiry About Obtaining Customs Bond",
+        "tm": "10/31 04:11",
+        "src": "Paloma Zhou <bonds@anovamarine.com> SPG Anova",
+        "tx": "對方再次催促提供 2025 年資產負債表與損益表，以及 2026 年至 6 月 YTD 財務報表。"
       }
     ],
     "Oliveware": [
@@ -1079,6 +1090,15 @@
         "tm": "10/31 03:11",
         "src": "Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B",
         "tx": "D&B Customs Brokers 報價年費 1690 美元，12 個月保額 5 萬美元關稅，不含 ADD/CVD。"
+      }
+    ],
+    "Huntington": [
+      {
+        "e": "email",
+        "tt": "Re: Clearit Operations Right person for bond onboarding",
+        "tm": "10/31 04:11",
+        "src": "Clearit Support <support@clearitusa.com>",
+        "tx": "Clearit 婉拒：只為走他們清關的客戶辦 bond，不接受單獨 bond 需求，建議聯繫港口本地 broker。"
       }
     ]
   },
