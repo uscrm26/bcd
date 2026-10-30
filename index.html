@@ -933,7 +933,7 @@ let listMode="card";
 function custTableHTML(){
   const list=custFiltered().filter(c=>canViewCust(c.no));
   return `<table><thead><tr><th>系統編號</th><th>內部序號</th><th>公司</th><th>法人</th><th>EIN</th><th>狀態</th><th>負責人</th><th>操作</th></tr></thead><tbody>
-  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
+  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td><div style="display:flex;align-items:center;gap:8px"><img src="${PHOTO[c.no]||''}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--line)"><span>${esc(c.member)}</span></div></td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
   </tbody></table>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
@@ -1282,13 +1282,21 @@ ${brokerTab==="pool"?brokerPool():historyPanel()}`;
 function maskEmail(c,lock){if(!lock||CURRENT_USER.role==="super_admin")return esc(c);if(!c||c==="—"||!c.includes("@"))return esc(c||"—");const[u,d]=c.split("@");return esc(u[0]||"")+"***@"+esc((d||"").split(".")[0][0]||"")+"***.com";}
 function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新":s[0]==="已用過·靠後"?"3 靠後":"4 不選";
  const lock=(s[0]==="不可用"||s[0]==="已用過·靠後");
- const short=(b.reason||"").slice(0,40);const longr=(b.reason||"").length>40;
- return `<tr style="cursor:pointer" onclick="openBrokerMails('${(b.c||"").replace(/'/g,"\\'")}','${esc(b.n).replace(/'/g,"\\'")}')"><td style="max-width:280px"><div style="font-weight:700;font-size:13px">${esc(b.n)}</div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(b.a)}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${maskEmail(b.c,lock)}</div></td>
+ // 把公司名裡的（退休轉介：xxx）剝到備註
+ let cleanN=b.n||"";let tagNote="";const m=cleanN.match(/[（(]([^）)]*轉介[^）)]*)[）)]/);if(m){tagNote=m[1]+"；";cleanN=cleanN.replace(m[0],"").trim();}
+ const fullReason=tagNote+(b.reason||"");
+ const short=fullReason.slice(0,40);const longr=fullReason.length>40;
+ const domain=(b.c||"").split("@")[1]||"";
+ const list=(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(domain)||(e.sub||"").toLowerCase().includes((cleanN||"").toLowerCase().slice(0,8)));
+ return `<tr style="cursor:pointer" onclick="const t=document.getElementById('bk_thread_${i}');const show=t.style.display==='none';t.style.display=show?'table-row':'none'"><td style="max-width:280px"><div style="font-weight:700;font-size:13px">${esc(cleanN)}</div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(b.a)}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${maskEmail(b.c,lock)}</div></td>
  <td><span class="tag ${s[1]}">${s[0]}</span></td>
- <td style="max-width:340px;font-size:12px;color:var(--mut)"><span class="brk-short">${esc(short)}${longr?"…":""}</span>${longr?`<a style="color:var(--acc);cursor:pointer;margin-left:6px" onclick="event.stopPropagation();const f=this.parentElement.querySelector('.brk-full');const show=f.style.display==='none';f.style.display=show?'block':'none';this.textContent=show?'收起':'展開'">展開</a>`:""}<div class="brk-full" style="display:none;margin-top:4px;color:var(--tx)">${esc(b.reason||"")}</div></td>
+ <td style="max-width:340px;font-size:12px;color:var(--mut)"><span class="brk-short">${esc(short)}${longr?"…":""}</span>${longr?`<a style="color:var(--acc);cursor:pointer;margin-left:6px" onclick="event.stopPropagation();const f=this.parentElement.querySelector('.brk-full');const show=f.style.display==='none';f.style.display=show?'block':'none';this.textContent=show?'收起':'展開'">展開</a>`:""}<div class="brk-full" style="display:none;margin-top:4px;color:var(--tx)">${esc(fullReason)}</div></td>
  <td style="text-align:center">${pr}</td>
  <td><button class="btn small" onclick="event.stopPropagation();editBrokerNote(${i})">備註</button></td>
- ${canManage()?`<td><button class="btn small" onclick="event.stopPropagation();delBroker(${i})">移除</button></td>`:""}</tr>`;}
+ ${canManage()?`<td><button class="btn small" onclick="event.stopPropagation();delBroker(${i})">移除</button></td>`:""}</tr>
+ <tr id="bk_thread_${i}" style="display:none"><td colspan="${canManage()?7:6}" style="background:var(--bg2);padding:12px"><div style="font-size:12px;color:var(--mut);margin-bottom:8px">與此經紀的往來記錄，共 ${list.length} 封，點上面行可收起</div>
+ ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--card)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}
+ </td></tr>`;}
 function editBrokerNote(i){const b=BROKERS[i];openModal(`<h3>編輯備註 ｜ ${esc(b.n)}</h3><div class="fg"><label>備註內容</label><textarea id="bn_txt" style="width:100%;min-height:120px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px">${esc(b.reason||"")}</textarea></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="BROKERS[${i}].reason=document.getElementById('bn_txt').value;closeModal();render();toast('備註已保存')">儲存</button></div>`);}
 function openBrokerMails(mail,name){const domain=(mail||"").split("@")[1]||"";
  const list=(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(domain)||(e.sub||"").toLowerCase().includes((name||"").toLowerCase().slice(0,8)));
