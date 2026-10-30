@@ -517,7 +517,7 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
+function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","郵件佇列":"Mail Queue","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
@@ -618,6 +618,7 @@ function openBell(){renderNotifs();document.getElementById("notifDrawer").classL
 function closeDrawer(){document.getElementById("notifDrawer").classList.remove("show");}
 function openNotif(g){closeDrawer();goto(g);}
 function markAllRead(){NOTIFS.forEach(n=>n.unread=false);renderNotifs();toast("已全部標為已讀");}
+function addNotif(who,txt,goto){NOTIFS.unshift({who,txt,t:nowBJ(),unread:true,goto:goto||"customer"});}
 document.getElementById("bellBtn").onclick=openBell;
 
 // ===== 總覽看板 =====
@@ -679,12 +680,21 @@ R.customer=()=>{
   return `<h1>客戶管理</h1><div class="sub">Customer Management ｜ 內部參考 #${curCust} ｜ ${c?esc(c.name):""}</div>
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
-  return `<h1>客戶管理</h1><div class="sub">Customer Management ｜ 共 ${DATA.customers.length} 位客戶，卡片檢視</div>
+  return `<h1>客戶管理</h1><div class="sub">Customer Management ｜ 共 ${DATA.customers.length} 位客戶</div>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
   <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button></div>
-  <div id="custListArea">${custGridHTML()}</div>`;
+  <div class="switch" style="margin:10px 0"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
+  <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
+let listMode="card";
+function custTableHTML(){
+  const list=custFiltered();
+  return `<table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>EIN</th><th>狀態</th><th>負責人</th><th>信箱</th><th>操作</th></tr></thead><tbody>
+  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
+  </tbody></table>`;
+}
+function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
 function custFiltered(){
   const q=(window._cs||"").toLowerCase(),stf=window._cst||"";
   return DATA.customers.filter(c=>(!q||(c.no+c.name+c.member+c.ein).toLowerCase().includes(q))&&(!stf||c.status===stf));
@@ -741,7 +751,9 @@ openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬�
 function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);const c=DATA.customers.find(x=>x.no===no);
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:uid,status:st(c.status).lb});
-  addClientAudit(no,"歸屬變更",old,u.nm,"");closeModal();render();toast("歸屬已更新並記錄");}
+  addClientAudit(no,"歸屬變更",old,u.nm,"");
+  addNotif(u.nm,`新客戶分配給你：#${no} ${c.name}`,"customer");
+  closeModal();render();toast("歸屬已更新並通知新負責人");}
 function openMarkDone(no){if(CURRENT_USER.role!=="super_admin"){toast("成功出單由超管確認");return;}
 const base=superAdminRate();const c=DATA.customers.find(x=>x.no===no);const ow=ownerMap[no]||"kevinyama";
 openModal(`<h3>確認成功出單 ｜ 內部參考 ${no}</h3>
@@ -788,6 +800,19 @@ function docList(no){
   <div id="storageList"><div class="empty">載入雲端附件中…</div></div>
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">本機歷史索引 ${localList.length} 份</div>
   <div style="margin-top:14px"><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件到雲端</button></div>`;
+}
+async function loadStorageUsage(){
+  const box=document.getElementById("storageUsage");if(!box)return;
+  try{
+    const r=await fetch(SB.url+"/storage/v1/object/list/attachments",{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"},body:JSON.stringify({prefix:"",limit:1000,offset:0,sortBy:{column:"name",order:"asc"}})});
+    const files=await r.json();
+    const total=(files||[]).reduce((a,f)=>a+(f.metadata&&f.metadata.size||0),0);
+    const mb=(total/1024/1024).toFixed(1);
+    box.innerHTML=`<div class="field"><div class="k">檔案數量</div><div class="v">${(files||[]).length} 份</div></div>
+    <div class="field"><div class="k">已用容量</div><div class="v">${mb} MB / 1024 MB（免費版上限）</div></div>
+    <div style="height:8px;background:var(--bg2);border-radius:6px;margin-top:8px"><div style="height:8px;width:${Math.min(100,total/1024/1024/1024*100)}%;background:var(--acc);border-radius:6px"></div></div>
+    <div style="font-size:11px;color:var(--dim);margin-top:6px">單檔上限 20MB。舊客戶下完單超容量時，可至 Supabase 後台直接刪檔，本系統保留文字描述。</div>`;
+  }catch(e){box.innerHTML="<div class='empty'>用量讀取失敗</div>";}
 }
 const BUCKET="attachments";const MAX_MB=20;
 const PUB=SB.url+"/storage/v1/object/public/"+BUCKET+"/";
@@ -903,8 +928,17 @@ function exportBrokerXlsx(){const head=["經紀公司","聯絡人","信箱","可
 const stamp=new Date().toISOString().slice(0,10);
 if(typeof XLSX!=="undefined"){const ws=XLSX.utils.aoa_to_sheet([head,...rows]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"經紀資源池");XLSX.writeFile(wb,`經紀資源池_${stamp}.xlsx`);toast("最新列表已匯出 Excel");}
 else{const csv="\ufeff"+[head,...rows].map(r=>r.map(x=>`"${String(x||"").replace(/"/g,'""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`經紀資源池_${stamp}.csv`;a.click();toast("已匯出 CSV，線上可另存 Excel");}}
-function formulaDocs(){const docs=["Customs Bond 申請表填寫公式","Continuous Bond 保費計算公式","Type-8 Bond 金額對照","HTS 編碼查詢方式","個人財務表填寫範本","EIN 申請流程清單"];
-return `<div class="row r2">${docs.map(d=>`<div class="panel"><div class="docbox"><span class="fi">📄</span><div><div class="fn">${esc(d)}</div><div class="ft">舊看板公式文檔</div></div><button class="btn small" onclick="toast('開啟文件')">開啟</button></div></div>`).join("")}</div>`;}
+function formulaDocs(){
+ const doc=(t,body)=>`<div class="panel"><div class="sec-title">${t}</div><div style="font-size:13px;line-height:2;color:var(--tx)">${body}</div></div>`;
+ return `<div class="row r2">
+ ${doc("Customs Bond 保費速算","Continuous Bond 年費通常取進口額 10% 為 Bond 面額門檻，最低面額一般 $50,000。保費費率依進口商信用與 EIN 年期，常見 1% 至 2%。例：年進口 $80 萬，面額 $50 萬起，費率 1.5%，年保費約 $7,500。")}
+ ${doc("Type-8 / Type-11 / Type-2 適用","Type-1 單次進口 Bond 用於單批貨；Type-2 連續進口 Bond 全年有效，一般進口商選 Type-2；Type-8 為 Custodian Bond 監管倉專用。先確認客戶是否自有保險經紀，避免重複申報。")}
+ ${doc("PFS 個人財務表重點","淨值需為正，且通常要求淨值高於 Bond 面額。流動資產（現金＋股票＋IRA）至少佔負債 20%。無破產、無未決訴訟、無欠稅記錄。夫妻分開申報時各自出表。")}
+ ${doc("HTS 編碼與進口額","申請表必填 HTS Code 前 6 碼與預估年進口額。進口額決定 Bond 最低面額：年進口 $10 萬以下 $5 萬面額；$10 萬至 $100 萬 $5 萬至 $50 萬；超 $100 萬按 CBP 比例表。")}
+ ${doc("EIN 申請流程","客戶如無 EIN，先在 IRS 網站 SS-4 線上申請，即時發號。LLC 需先有州登記。Bond 申請表、財務表、POA 三者齊全後送 Broker。")}
+ ${doc("開發信節奏","可聯繫 Broker 每週一輪，單一 Broker 30 天內不重複發信。成交過可複用，但建議間隔 60 天以上。已用過優先級靠後，不可用名單永不發送。")}
+ </div>`;
+}
 function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化開發信逐封送達"],["10/29","Oliveware","回覆 IIA/DRI/Aurora/BorderBuddy，提交 Bluebird POA"],["10/29","Nervaqon","CBP 申請表回覆 SPG Anova，等待報價"],["10/30","A1 Worldwide","要求填 POA 開戶，待回覆"]];
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
 // ===== PFS 個人財務表生成器 =====
@@ -1020,7 +1054,8 @@ function renderDoc(){
 R.archive=()=>`<h1>歸檔包</h1><div class="sub">Customer Archive ｜ 每客戶完整 ZIP 下載，內附檔案索引清單</div>
 <div class="row r2">${DATA.customers.slice(0,6).map(c=>`<div class="panel"><div class="sec-title">${c.no} ${esc(c.name)} 完整歸檔包</div><div style="font-size:12px;color:var(--mut)">內含：客戶資訊摘要 ｜ 基礎數據 JSON ｜ 時間線 ｜ 待辦 ｜ 全部附件 ｜ _檔案索引清單</div><div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary small" onclick="toast('ZIP 已開始產生，完成後通知')">產生 / 下載</button><button class="btn small" onclick="toast('已同步至 GitHub 備份')">同步 GitHub</button></div></div>`).join("")}</div>`;
 R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">備份管理 ｜ 僅超級管理員可操作</div>
-<div class="row r2"><div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('備份已完成')">🔄 立即全量備份</button></div>
+<div class="row r2"><div class="panel"><div class="sec-title">Supabase Storage 雲端附件</div><div id="storageUsage"><div class="empty">載入用量中…</div></div><button class="btn" style="margin-top:10px" onclick="window.open('https://supabase.com/dashboard/project/xlcyumbyqcwedqwpspzs/storage/buckets/attachments','_blank')">在 Supabase 後台管理檔案</button></div>
+<div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('備份已完成')">🔄 立即全量備份</button></div>
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
 <div class="panel"><div class="sec-title">同步任務日誌</div>${[["10/30 13:17","全量 JSON 備份推送成功 commit 7f69fa6","成功"],["10/30 12:40","客戶狀態更新已推送 commit 8a021ab","成功"]].map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span><span class="o">${x[2]}</span></div>`).join("")}</div>`;
 R.system=()=>`<h1>系統管理</h1><div class="sub">System Admin ｜ 僅 super_admin</div>
