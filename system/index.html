@@ -104,7 +104,7 @@ th{background:var(--bg2);color:var(--mut);text-align:left;padding:9px 12px;font-
 td{padding:10px 12px;border-bottom:1px solid #1a2230;color:var(--txt)}
 tr:hover td{background:#1a2130}
 /* tags */
-.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
 .t-blue{background:rgba(74,158,255,.14);color:var(--acc2);border:1px solid #2b4a70}
 .t-green{background:rgba(63,202,138,.14);color:var(--ok);border:1px solid #23583f}
 .t-amber{background:rgba(255,180,84,.14);color:var(--warn);border:1px solid #5a4527}
@@ -117,7 +117,7 @@ tr:hover td{background:#1a2130}
 .ccard .cbody{flex:1;min-width:0}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ccard .no{font-size:11px;color:var(--dim)}
-.ccard .nm{font-size:14px;font-weight:700;color:var(--txt);margin-top:2px}
+.ccard .nm{font-size:14px;font-weight:700;color:var(--txt);margin-top:2px;overflow-wrap:break-word;word-break:break-word;max-width:100%}
 .ccard .meta{font-size:11px;color:var(--mut);margin-top:6px;line-height:1.7}
 .ccard .meta b{color:var(--txt);font-weight:600}
 .ccard .foots{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
@@ -202,7 +202,7 @@ tr:hover td{background:#1a2130}
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:#2a3546;border-radius:6px}
 ::-webkit-scrollbar-track{background:transparent}
-@media(max-width:900px){.side{display:none}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.side{display:none}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.ccard .foots .tag,.ccard .foots .badge{font-size:10px}.ccard .cphoto{width:60px;height:60px}.ccard .quick button{font-size:10px}}
 </style>
 </head>
 <body>
@@ -304,6 +304,16 @@ const DATA={
     {no:"73",name:"Leidos LLC",member:"Jennie Myers",ein:"43-2219490",status:"submit",dl:"正常",mail:"jennieannmyers@leidosholdings.live",todo:1},
     {no:"75",name:"Lennar LLC",member:"Corey Heaward",ein:"43-2216265",status:"supply",dl:"正常",mail:"coreymheaward@lennar.live",todo:3}
   ],
+  finance:{
+    "2":[{type:"bond_premium",desc:"Continuous Bond 保費",amount:795.60,currency:"USD",status:"paid",paid_at:"10/25"}],
+    "66":[{type:"bond_premium",desc:"Type-8 Continuous Bond",amount:1250,currency:"USD",status:"unpaid",due:"11/15"}],
+    "61":[{type:"bond_premium",desc:"Bond 保費",amount:880,currency:"USD",status:"paid",paid_at:"10/12"}],
+    "64":[{type:"bond_premium",desc:"Bond 保費",amount:760,currency:"USD",status:"paid",paid_at:"10/18"}],
+    "89":[{type:"quote",desc:"A1 Worldwide 報價",amount:1100,currency:"USD",status:"pending"}],
+    "73":[{type:"quote",desc:"Alpha Customhouse 報價",amount:980,currency:"USD",status:"pending"}],
+    "75":[{type:"quote",desc:"SuretyOne 報價",amount:1350,currency:"USD",status:"pending"}]
+  }
+  ,
   mailboxes:[
     {nm:"Immunora",em:"kashayisisramonaodom@immunora-bio.com",st:"ok",unread:1},
     {nm:"Oliveware",em:"horaciolsanchez@olivewareinc.com",st:"ok",unread:0},
@@ -350,6 +360,8 @@ const DATA={
     ]
   }
 };
+const API_BASE=(()=>{const m=location.href.match(/\/system\//);return "";})();
+async function loadAPI(){try{const r=await fetch("https://xlcyumbyqcwedqwpspzs.supabase.co/rest/v1/mail_messages?select=id,from_identity,to_addr,subject,status&limit=5",{headers:{apikey:"sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5",Authorization:"Bearer sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5"}});if(!r.ok)throw 0;const j=await r.json();if(Array.isArray(j)&&j.length){window.__live=j;console.log("後端已連線",j.length);}}catch(e){window.__live=null;}}
 const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let view="dashboard";
@@ -425,7 +437,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 全部數�
   ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
   </div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge">${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:"手動",c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號</label><input id="nc_no" placeholder="例如 99"></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
@@ -438,7 +450,7 @@ R.customer=()=>`<h1>客戶管理</h1><div class="sub">Customer Management ｜ �
   <div class="search"><input placeholder="搜尋客戶" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   <button class="btn primary" onclick="openNewCust()">新增客戶</button>
   <button class="btn" onclick="toast('已匯出選取客戶 CSV')">匯出 CSV</button></div>
-  ${curCust?`<div class="row r2"><div class="panel"><div class="sec-title">客戶 ${curCust} 詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`:``}`;
+  ${curCust?`<div class="row r2"><div class="panel"><div class="sec-title">客戶 ${curCust} 詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`:``}`;
 function custDetail(no){const c=DATA.customers.find(x=>x.no===no);const s=st(c.status);const ts=DATA.timeline[no]||[];
 return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
 <div class="field"><div class="k">法人 / Sole Member</div><div class="v">${esc(c.member)}</div></div>
@@ -448,7 +460,16 @@ return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc
 <div class="field"><div class="k">綁定信箱</div><div class="v">${esc(c.mail)}</div></div>
 <div class="field"><div class="k">文件</div><div class="v">EIN 通知 1 份 ｜ 章程 1 份 ｜ 法人證件 1 份</div></div>
 <div style="margin-top:16px;display:flex;gap:10px"><button class="btn primary" onclick="toast('已儲存客戶檔案')">儲存變更</button><button class="btn" onclick="toast('已產生完整歸檔包')">📦 匯出歸檔包</button></div>`;}
-function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);return `<div class="empty">檔案資訊編輯表單，點擊上方 Tab 切換時間線、待辦、附件</div>`;}
+function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);return `<div class="empty">檔案資訊編輯表單，點擊上方 Tab 切換時間線、待辦、附件、財務</div>`;}
+function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
+return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">➕ 新增費用</button><button class="btn" onclick="addQuote('${no}')">➕ 新增報價</button></div>
+<table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th></tr></thead><tbody>
+${rows.map(r=>`<tr><td>${r.type==="quote"?"<span class='tag t-amber'>報價</span>":"<span class='tag t-blue'>費用</span>"}</td><td>${esc(r.desc)}</td><td style="font-weight:700">${fmt(r.amount)} ${r.currency}</td><td>${r.status==="paid"?"<span class='tag t-green'>已收款</span>":r.status==="pending"?"<span class='tag t-amber'>待定</span>":"<span class='tag t-red'>未收款</span>"}</td><td style="font-size:11px;color:var(--dim)">${r.paid_at||r.due||""}</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無財務與報價記錄</td></tr>"}
+</tbody></table>`;
+const totUnpaid=rows.filter(r=>r.status!=="paid").reduce((a,b)=>a+b.amount,0);
+return totUnpaid?`<div style="margin-top:12px;font-size:13px;color:var(--warn)">待收合計 ${fmt(totUnpaid)} USD</div>`:``;}
+function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class="fg"><label>說明</label><input id="fd_desc"></div><div class="fg"><label>金額 USD</label><input id="fd_amt" type="number"></div><div class="fg"><label>狀態</label><select id="fd_st"><option value="unpaid">未收款</option><option value="paid">已收款</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="const d=document.getElementById('fd_desc').value,a=Number(document.getElementById('fd_amt').value);DATA.finance=DATA.finance||{};(DATA.finance[no]=DATA.finance[no]||[]).push({type:'bond_premium',desc:d,amount:a,currency:'USD',status:document.getElementById('fd_st').value});closeModal();render();toast('費用已新增')">儲存</button></div>`);}
+function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 USD</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
 function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎"};
 return `<div class="tl">${ts.map(t=>`<div class="tli e-${t.e}"><span class="src">${icon[t.e]} ${esc(t.src)}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
@@ -504,10 +525,16 @@ R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">GitHub Backup Manager
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
 <div class="panel"><div class="sec-title">同步任務日誌</div>${[["10/30 13:17","全量 JSON 備份推送成功 commit 7f69fa6","成功"],["10/30 12:40","客戶狀態更新已推送 commit 8a021ab","成功"]].map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span><span class="o">${x[2]}</span></div>`).join("")}</div>`;
 R.system=()=>`<h1>系統管理</h1><div class="sub">System Admin ｜ 僅 super_admin</div>
-<div class="row r2"><div class="panel"><div class="sec-title">管理員帳號</div><table><thead><tr><th>帳號</th><th>角色</th><th>狀態</th></tr></thead><tbody><tr><td>廖駿賢</td><td>super_admin</td><td>啟用</td></tr><tr><td>業務操作員</td><td>operator</td><td>啟用</td></tr></tbody></table><button class="btn primary" style="margin-top:10px" onclick="toast('新增帳號')">新增帳號</button></div>
+<div class="row r2"><div class="panel"><div class="sec-title">帳戶管理員</div><table><thead><tr><th>帳號</th><th>顯示名稱</th><th>角色</th><th>狀態</th><th>操作</th></tr></thead><tbody>${(window._admins||[
+{username:"廖駿賢",display_name:"廖駿賢",role:"super_admin",active:true},
+{username:"operator1",display_name:"業務操作員",role:"operator",active:true},
+{username:"operator2",display_name:"Ryan F",role:"operator",active:true}
+]).map(u=>`<tr><td>${esc(u.username)}</td><td>${esc(u.display_name)}</td><td><span class="tag ${u.role==="super_admin"?"t-red":"t-blue"}">${u.role==="super_admin"?"超級管理員":"操作員"}</span></td><td>${u.active?"<span class='tag t-green'>啟用</span>":"<span class='tag t-gray'>停用</span>"}</td><td><button class="btn small" onclick="toast('重設密碼')">重設</button><button class="btn small" onclick="toast('已停用')">停用</button></td></tr>`).join("")}</tbody></table><button class="btn primary" style="margin-top:10px" onclick="openAdmin()">新增帳戶</button></div>
+<div class="panel"><div class="sec-title">權限規則</div><div class="field"><div class="k">super_admin</div><div class="v">信箱配置、排程、GitHub 備份、帳戶管理、修改 SSN/EIN</div></div><div class="field"><div class="k">operator</div><div class="v">客戶檔案、時間線、待辦、AI 草稿、文件上傳、匯出歸檔包</div></div></div>
 <div class="panel"><div class="sec-title">系統參數</div><div class="field"><div class="k">時間切分</div><div class="v">凌晨 5 點切日</div></div><div class="field"><div class="k">繁轉簡</div><div class="v">開啟，UI 動態轉換</div></div><div class="field"><div class="k">資料庫備份</div><div class="v">最近 10/30 04:00</div></div></div>
 <div class="panel"><div class="sec-title">未歸類郵件池</div><div class="empty">目前無未歸類郵件</div></div>
 <div class="panel"><div class="sec-title">備註同步池</div><div class="empty">無待同步備註，synced 皆為 true</div></div></div>`;
+function openAdmin(){openModal(`<h3>新增帳戶管理員</h3><div class="form-grid"><div class="fg"><label>帳號</label><input id="au_user"></div><div class="fg"><label>顯示名稱</label><input id="au_name"></div><div class="fg"><label>密碼</label><input id="au_pwd" type="password"></div><div class="fg"><label>角色</label><select id="au_role"><option value="operator">操作員 operator</option><option value="super_admin">超級管理員 super_admin</option></select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="window._admins=window._admins||[];window._admins.push({username:document.getElementById('au_user').value,display_name:document.getElementById('au_name').value,role:document.getElementById('au_role').value,active:true});closeModal();render();toast('帳戶已建立')">建立</button></div>`);}
 // 初次渲染
 render();
 </script>
