@@ -73,6 +73,31 @@ for box in MB["mailboxes"]:
         print(f"[FAIL] {client} {addr}: {rec['err']}")
     report.append(rec)
 
+# ===== AI 自動分析新信，寫入時間線 =====
+import urllib.request
+AI_KEY = os.environ.get("OPENROUTER_KEY","")
+DATA_PATH = os.path.join(ROOT,"dbboard","data.json")
+if AI_KEY and os.path.exists(DATA_PATH):
+    try:
+        data = json.load(open(DATA_PATH,encoding="utf-8"))
+        tls = data.get("timeline",{})
+        for nm in new_here:
+            prompt = "Summarize this email in one short Chinese sentence and what action is needed.\nFrom: "+nm["from"]+"\nSubject: "+nm["subject"]+"\nBody: "+nm["body"][:600]
+            try:
+                req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions",
+                    data=json.dumps({"model":"google/gemma-4-31b-it:free","messages":[{"role":"user","content":prompt}]}).encode(),
+                    headers={"Authorization":"Bearer "+AI_KEY,"Content-Type":"application/json"})
+                r = json.loads(urllib.request.urlopen(req,timeout=20).read())
+                summary = r["choices"][0]["message"]["content"].strip()
+            except Exception as e:
+                summary = nm["subject"]
+            tls.setdefault(nm["client"],[]).append({"e":"email","src":nm["from"],"tt":nm["subject"],"tm":datetime.datetime.now().strftime("%m/%d %H:%M"),"tx":summary})
+            print(f"[AI] {nm['client']}: {summary[:80]}")
+        data["timeline"] = tls
+        json.dump(data,open(DATA_PATH,"w",encoding="utf-8"),ensure_ascii=False,indent=2)
+    except Exception as e:
+        print(f"[AI SKIP] {e}")
+
 json.dump(emails, open(EMAILS_PATH, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 ok = sum(1 for r in report if r["ok"])
 print(f"[SUMMARY] 連線 {ok}/{len(report)}，新信 {new_count} 封")
