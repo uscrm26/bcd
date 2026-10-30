@@ -250,6 +250,7 @@ tr:hover td{background:#1a2130}
   <button class="burger" onclick="toggleSide()">☰</button>
   <div class="mtitle">Customs-Bond 系統</div>
   <button class="bell2" onclick="openBell()">🔔<span class="n">3</span></button>
+  <button class="bell2" title="個人設定" onclick="openPref()">⚙</button>
 </div>
 <div class="overlay" id="overlay" onclick="toggleSide()"></div>
 <div class="app">
@@ -516,7 +517,7 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
+function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","郵件佇列":"Mail Queue","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
@@ -541,7 +542,7 @@ const ENMAP={
 "倉庫資訊":"Repository","倉庫位址":"Repo URL","工作副本":"Working Copy","就緒":"Ready","最後同步":"Last Sync","立即全量備份":"Full Backup Now","自動備份設定":"Auto Backup Settings","自動 JSON 備份":"Auto JSON Backup","開啟":"On","關閉":"Off","間隔 分鐘":"Interval (min)","儲存設定":"Save Settings","從 GitHub 導入 DB":"Import DB from GitHub","同步任務日誌":"Sync Log",
 "帳戶管理":"Accounts","頭像":"Avatar","真實姓名":"Full Name","登入帳號":"Login ID","角色":"Role","上級":"Manager","名下客戶":"Assigned Clients","最近登入":"Last Login","系統參數，可編輯":"System Parameters (editable)","營業日切換時間，24 小時制":"Day cutoff hour (24h)","目前切日":"Current Cutoff","佣金分成，僅超管可見可改":"Commission Split (admin only)","超管固定基準":"Admin Fixed Base","分單規則":"Split Rules","超管當前每單":"Admin Current Per-Deal","歸屬":"Owner","方式":"Method","下線分成":"Sub Split","改金額":"Edit Amount","全員審計日誌":"Full Audit Log","篩選動作":"Filter actions",
 "超級管理員":"Super Admin","主管":"Supervisor","業務員":"Rep","新增帳戶":"Add Account","編輯帳戶":"Edit Account","真實姓名 / 顯示名稱":"Full / Display Name","留空不變":"Leave blank to keep","無上級（超管）":"No manager (admin)","頁面權限":"Page Permissions","帳戶詳情":"Account Details","切換帳號":"Switch Account","系統通知":"Notifications","全部標為已讀":"Mark All Read","關閉":"Close","詳情":"Details","編輯":"Edit","啟用":"Enabled","停用":"Disabled","新增下屬":"Add Subordinate","密碼":"Password","頭像字":"Avatar Initial",
-"已報價":"Quoted","家":"","本人相關":"Me","下屬業務":"Subordinates"
+"已報價":"Quoted","家":"clients","本人相關":"Me","下屬業務":"Subordinates","處理中":"In Progress","已出單":"Bond Issued","待補件":"Docs Requested","已收報價":"Quoted"
 };
 let _enKeys=null;
 function applyLangText(){
@@ -626,10 +627,10 @@ function statusPie(){const total=DATA.customers.length;const done=countBy("done"
 return `<div class="ringwrap">
   <div class="ring" style="--p:${Math.round(done/total*100)}"><span class="rc">${done}/${total}</span></div>
   <div class="legend">
-    <div class="li"><span class="sw" style="background:var(--acc)"></span>處理中 ${active} 家</div>
-    <div class="li"><span class="sw" style="background:var(--ok)"></span>已出單 ${done} 家</div>
-    <div class="li"><span class="sw" style="background:var(--err)"></span>待補件 ${countBy("supply")} 家</div>
-    <div class="li"><span class="sw" style="background:var(--warn)"></span>已收報價 ${countBy("quote")} 家</div>
+    <div class="li"><span class="sw" style="background:var(--acc)"></span><span data-zh="處理中">處理中</span> ${active} <span data-zh="家">家</span></div>
+    <div class="li"><span class="sw" style="background:var(--ok)"></span><span data-zh="已出單">已出單</span> ${done} <span data-zh="家">家</span></div>
+    <div class="li"><span class="sw" style="background:var(--err)"></span><span data-zh="待補件">待補件</span> ${countBy("supply")} <span data-zh="家">家</span></div>
+    <div class="li"><span class="sw" style="background:var(--warn)"></span><span data-zh="已收報價">已收報價</span> ${countBy("quote")} <span data-zh="家">家</span></div>
   </div></div>`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
@@ -650,7 +651,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 數據即�
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
-  <div class="panel"><div class="sec-title">郵件同步狀態</div>${DATA.mailboxes.map(b=>`<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`).join("")}
+  <div class="panel"><div class="sec-title">郵件同步狀態</div>${DATA.mailboxes.map(b=>{const cc=DATA.customers.find(x=>x.mail&&x.mail.includes(b.em.split("@")[0]));const on=cc?ownerName(cc.no):"—";return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${esc(on)}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>
   <div class="sec-title">客戶檢視</div>
   <div class="switch"><button class="${cardMode==="card"?"on":""}" onclick="cardMode='card';render()">📇 卡片檢視</button><button class="${cardMode==="table"?"on":""}" onclick="cardMode='table';render()">📋 表格檢視</button></div>
@@ -782,15 +783,30 @@ function fileThumb(f){
   return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
 }
 function docList(no){
-  const list=(DATA.files||{})[no]||[];
-  const imgs=list.filter(f=>f.type==="image");
-  const docs=list.filter(f=>f.type!=="image");
-  return `<div class="sec-title">全部附件 ${list.length} 份（照片 ${imgs.length} 張）</div>
-  ${imgs.length?`<div class="fgrid">${imgs.map(fileThumb).join("")}</div>`:""}
-  <div class="row r2">${docs.map(fileThumb).join("")||"<div class='empty'>尚無文件</div>"}</div>
+  const localList=(DATA.files||{})[no]||[];
+  return `<div class="sec-title">全部附件</div>
+  <div id="storageList"><div class="empty">載入雲端附件中…</div></div>
+  <div style="margin-top:10px;font-size:11px;color:var(--dim)">本機歷史索引 ${localList.length} 份</div>
   <div style="margin-top:14px"><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件到雲端</button></div>`;
 }
 const BUCKET="attachments";const MAX_MB=20;
+const PUB=SB.url+"/storage/v1/object/public/"+BUCKET+"/";
+async function loadStorageList(no){
+  const box=document.getElementById("storageList");if(!box)return;
+  try{
+    const r=await fetch(SB.url+"/storage/v1/object/list/"+BUCKET,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"},body:JSON.stringify({prefix:no+"/",limit:200,sortBy:{column:"name",order:"desc"}})});
+    if(!r.ok){box.innerHTML="<div class='empty'>無法讀取雲端附件</div>";return;}
+    const files=await r.json();
+    if(!files.length){box.innerHTML="<div class='empty'>尚無雲端附件，請點下方上傳</div>";return;}
+    const imgs=files.filter(f=>/\.(jpe?g|png|webp|gif)$/i.test(f.name));
+    const docs=files.filter(f=>!/\.(jpe?g|png|webp|gif)$/i.test(f.name));
+    const thumb=f=>{const url=PUB+encodeURIComponent(no+"/"+f.name);const isImg=/\.(jpe?g|png|webp|gif)$/i.test(f.name);
+      if(isImg)return `<div class="fthumb" onclick="window.open('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy"><div class="fcap">${esc(f.name)}</div></div>`;
+      const ic=/\.pdf$/i.test(f.name)?"📄":"📎";
+      return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${(f.metadata&&f.metadata.size?Math.round(f.metadata.size/1024)+" KB":"")}</div></div><span class="sync ok">開啟</span></a>`;};
+    box.innerHTML=(imgs.length?`<div class="fgrid">${imgs.map(thumb).join("")}</div>`:"")+`<div class="row r2">${docs.map(thumb).join("")||""}</div>`;
+  }catch(e){box.innerHTML="<div class='empty'>雲端附件讀取失敗</div>";}
+}
 function pickUpload(no){const i=document.createElement("input");i.type="file";i.onchange=e=>{const f=e.target.files[0];if(f)uploadToStorage(no,f);};i.click();}
 async function uploadToStorage(no,f){
  if(f.size>MAX_MB*1024*1024){toast("檔案超過 "+MAX_MB+"MB 上限，請壓縮後再傳");return;}
@@ -798,7 +814,7 @@ async function uploadToStorage(no,f){
  const path=no+"/"+Date.now()+"_"+encodeURIComponent(f.name);
  try{
    const r=await fetch(SB.url+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":f.type||"application/octet-stream"},body:f});
-   if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);}
+   if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),400);}
    else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"，請確認 Storage bucket 與權限已開");}
  }catch(e){toast("上傳失敗："+e.message);}
 }
@@ -891,31 +907,96 @@ function formulaDocs(){const docs=["Customs Bond 申請表填寫公式","Continu
 return `<div class="row r2">${docs.map(d=>`<div class="panel"><div class="docbox"><span class="fi">📄</span><div><div class="fn">${esc(d)}</div><div class="ft">舊看板公式文檔</div></div><button class="btn small" onclick="toast('開啟文件')">開啟</button></div></div>`).join("")}</div>`;}
 function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化開發信逐封送達"],["10/29","Oliveware","回覆 IIA/DRI/Aurora/BorderBuddy，提交 Bluebird POA"],["10/29","Nervaqon","CBP 申請表回覆 SPG Anova，等待報價"],["10/30","A1 Worldwide","要求填 POA 開戶，待回覆"]];
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
-// ===== AI =====
-let aiSel=DATA.customers[0]||{};let aiLang="zh";
-function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;aiDraft();}
-function aiTab(l){aiLang=l;const s=document.querySelectorAll('#view .switch button');s.forEach(b=>b.classList.toggle('on',b.textContent===(l==='zh'?'繁中':'EN')));aiDraft();}
-function aiDraft(){
-  const en=aiLang==="en";
-  document.getElementById('aiZH').style.display=en?'none':'';
-  document.getElementById('aiEN').style.display=en?'':'none';
-  const c=aiSel||{};const cname=c.name||"";const czh=c.zh||cname;const no=c.no||"";
-  document.getElementById('aiZH').innerHTML=`<div class="sec-title">財務表草稿 繁中</div><div class="draftbox">客戶 ${no} ${czh}<br>婚姻狀態 已婚未聯合 ｜ 家庭年收 約 12 萬美元 ｜ 資產 美國中產典型值<br>房產 約 40 萬美元 ｜ 存款 約 3.5 萬美元 ｜ 負債 車貸／房貸合計約 25 萬美元<br>AI 草稿僅供參考，請人工確認後再送出。</div>`;
-  document.getElementById('aiEN').innerHTML=`<div class="sec-title">Financial Draft EN</div><div class="draftbox">Client ${no} ${cname}<br>Marital Married Filing Separately ｜ Household Income ~\$120k ｜ Assets US middle-class typical<br>Home ~\$400k ｜ Savings ~\$35k ｜ Liabilities auto+mortgage ~\$250k<br>AI draft for reference only, confirm before sending.</div>`;
-  toast(en?"English draft generated":"財務表草稿已產生，繁中＋英文雙份");
+// ===== PFS 個人財務表生成器 =====
+let aiSel=DATA.customers[0]||{};
+function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;}
+let pfsPersona={marital:"married_sep",income:"mid",asset:"mid"};
+function pfsGen(){
+  const c=aiSel||{};
+  const inc=pfsPersona.income==="low"?70:pfsPersona.income==="high"?220:125; // 年收 千美元
+  const scale=pfsPersona.asset==="low"?.4:pfsPersona.asset==="high"?2.2:1;
+  const married=pfsPersona.marital!=="single";
+  const cash=Math.round(25*scale),stocks=Math.round(35*scale),home=Math.round(420*scale),realE=0,ppe=Math.round(30*scale),ira=Math.round(65*scale),other=0;
+  const assets=cash+stocks+home+realE+ppe+ira+other;
+  const dueBank=0,credit=Math.round(7*scale),taxes=0,ap=0,np=0,equip=0,mortgage=Math.round(265*scale),otherL=0;
+  const liab=dueBank+credit+taxes+ap+np+equip+mortgage+otherL;
+  const net=assets-liab;
+  const salary=Math.round(inc),div=Math.round(inc*.01),rei=0,otherI=0;
+  const income=salary+div+rei+otherI;
+  const row=(a,b)=>`<tr><td>${a}</td><td style="text-align:right">$${b.toLocaleString()}</td></tr>`;
+  const frow=(a,b)=>`<tr><td>${a}</td><td style="text-align:right">$${b.toLocaleString()}</td></tr>`;
+  const html=`
+  <div style="background:#fff;color:#111;padding:28px;max-width:820px;margin:0 auto;font-family:Georgia,'Times New Roman',serif">
+    <h2 style="text-align:center;letter-spacing:2px;margin-bottom:14px">PERSONAL FINANCIAL STATEMENT</h2>
+    <p style="font-size:12px;line-height:1.7">This statement and any applicable schedules may be completed jointly by married and unmarried applicants if their assets and liabilities are sufficiently joined so that the statement can be meaningfully and fairly presented on a combined basis; otherwise separate statements and schedules are required.</p>
+    <p style="margin:8px 0;font-size:13px">Applicant is: ${married?(pfsPersona.marital==="married_joint"?"☑ Married　☐ Single　☐ Separated":"☑ Married　☐ Single　☐ Separated"):"☐ Married　☑ Single　☐ Separated"}</p>
+    <p style="font-size:13px">If married, the financial statement is: ${married?(pfsPersona.marital==="married_joint"?"☑ Completed jointly with spouse　☐ Not completed jointly":"☐ Completed jointly with spouse　☑ Not completed jointly"):"<span style='color:#888'>N/A</span>"}</p>
+    <table style="width:100%;border-collapse:collapse;margin:10px 0">
+      <tr><td style="width:50%;border:1px solid #999;padding:8px;vertical-align:top"><b>Name and address</b><br>${esc(c.member||"")}<br>${esc(c.name||"")}<br>${esc(c.ein?"EIN "+c.ein:"")}</td>
+      <td style="border:1px solid #999;padding:8px;vertical-align:top"><b>Statement of assets and liabilities as of</b><br>${new Date().toLocaleDateString("en-US")}<br><span style="color:#666;font-size:11px">(insert date, otherwise statement will be returned)</span><br>☑ Individual　☐ Co-Partnership　☐ Corporation</td></tr>
+    </table>
+    <table style="width:100%;border-collapse:collapse">
+      <tr><th style="width:50%;border:1px solid #999;padding:6px;text-align:left">ASSETS</th><th style="border:1px solid #999;padding:6px;text-align:left">LIABILITIES</th></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Cash　<span style="float:right">$${cash.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Due to banks　<span style="float:right">$${dueBank.toLocaleString()}</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Stocks, bonds, etc.　<span style="float:right">$${stocks.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Credit cards　<span style="float:right">$${credit.toLocaleString()}</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Accounts receivable　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Taxes　<span style="float:right">$${taxes.toLocaleString()}</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Notes receivable　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Accounts payable　<span style="float:right">$0</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Inventory　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Notes payable　<span style="float:right">$0</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Equipment　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Due on equipment　<span style="float:right">$0</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Home　<span style="float:right">$${home.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Due on real estate　<span style="float:right">$${mortgage.toLocaleString()}</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Real estate　<span style="float:right">$${realE.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Other liabilities　<span style="float:right">$${otherL.toLocaleString()}</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Personal property　<span style="float:right">$${ppe.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px"><b>TOTAL LIABILITIES</b>　<span style="float:right">$${liab.toLocaleString()}</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">IRA　<span style="float:right">$${ira.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Capital stock (if any)　<span style="float:right">$0</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Other Assets　<span style="float:right">$${other.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Retained earnings　<span style="float:right">$0</span></td></tr>
+      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL ASSETS</b>　<span style="float:right">$${assets.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px"><b>NET WORTH</b>　<span style="float:right">$${net.toLocaleString()}</span></td></tr>
+    </table>
+    <table style="width:100%;border-collapse:collapse;margin-top:10px">
+      <tr><th style="width:50%;border:1px solid #999;padding:6px;text-align:left">SOURCES OF INCOME FOR YEAR ENDED</th><th style="border:1px solid #999;padding:6px;text-align:left">OTHER LIABILITIES</th></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Salary, bonuses & commissions　<span style="float:right">$${salary.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Contingent liabilities (lawsuits, indemnification): None</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Dividends　<span style="float:right">$${div.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Endorser, co-maker or guarantor?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Real estate income　<span style="float:right">$${rei.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">On leases or contracts?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px">Other income　<span style="float:right">$${otherI.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Legal claims (judgments)?　$0</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL INCOME</b>　<span style="float:right">$${income.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Amount of contested income tax liens?　$0</td></tr>
+    </table>
+    <p style="text-align:center;margin-top:14px;font-size:11px;color:#666">AI 依人設生成的合理數字，送出前請人工核對修改。</p>
+  </div>`;
+  openModal(`<h3>Personal Financial Statement</h3><div style="max-height:70vh;overflow:auto">${html}</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="window.print()">🖨 列印 / 存 PDF</button></div>`);
+}
+function pfsBlank(){
+  const c=aiSel||{};
+  const blankRow=label=>`<tr><td style="border:1px solid #999;padding:6px">${label}</td><td style="border:1px solid #999;padding:6px">$　</td></tr>`;
+  const html=`
+  <div style="background:#fff;color:#111;padding:28px;max-width:860px;margin:0 auto;font-family:Georgia,serif;font-size:12px">
+    <h2 style="text-align:center;letter-spacing:2px">PERSONAL FINANCIAL STATEMENT ｜ 個人財務表</h2>
+    <p style="font-size:11px;color:#444">中文欄位對照，客戶可直接在英文欄位填寫。</p>
+    <table style="width:100%;border-collapse:collapse;margin:10px 0">
+      <tr><th style="border:1px solid #999;padding:5px;text-align:left">項目 Item</th><th style="border:1px solid #999;padding:5px;text-align:left">中文說明</th><th style="border:1px solid #999;padding:5px;text-align:left">金額 Amount (USD)</th></tr>
+      ${blankRow("Cash 現金")}${blankRow("Stocks, bonds 股票債券")}${blankRow("Home 房產自住")}${blankRow("Real estate 其他不動產")}${blankRow("Personal property 個人動產")}${blankRow("IRA 退休帳戶")}${blankRow("Other Assets 其他資產")}
+      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL ASSETS 資產合計</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
+      ${blankRow("Credit cards 信用卡")}${blankRow("Taxes 應繳稅")}${blankRow("Due on real estate 房貸")}${blankRow("Other liabilities 其他負債")}
+      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL LIABILITIES 負債合計</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
+      <tr><td style="border:1px solid #999;padding:5px"><b>NET WORTH 淨值</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
+      ${blankRow("Salary 薪資年收")}${blankRow("Dividends 股息")}${blankRow("Real estate income 租金收入")}
+    </table>
+    <p style="font-size:11px">Name 姓名：${esc(c.member||"")}　Company 公司：${esc(c.name||"")}</p>
+  </div>`;
+  openModal(`<h3>中英對照空白表單</h3><div style="max-height:70vh;overflow:auto">${html}</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="window.print()">🖨 列印 / 存 PDF</button></div>`);
 }
 R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI Assistant ｜ AI 產生草稿，人工確認後才入庫</div>
 <div class="row r3">
-<div class="panel"><div class="sec-title">個人財務表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選擇客戶自動預填法人資料，AI 依婚姻狀態產生中產財務草稿。</p>
-<select class="btn" style="width:100%;margin-bottom:10px" onchange="aiPick(this.value);aiDraft()">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>${c.no} ${c.name}</option>`).join("")}</select>
-<button class="btn primary" style="width:100%" onclick="aiDraft()">🤖 產生草稿</button>
-<div class="switch" style="margin-top:12px"><button class="on" onclick="aiTab('zh')">繁中</button><button onclick="aiTab('en')">EN</button></div></div>
+<div class="panel"><div class="sec-title">個人財務表 PFS</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選擇客戶與人設，AI 直接填好出表，或產生中英對照空白表給客戶填。</p>
+<select class="btn" style="width:100%;margin-bottom:10px" onchange="aiPick(this.value)">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>${c.no} ${c.name} ｜ ${esc(c.member)}</option>`).join("")}</select>
+<div class="fg"><label>婚姻狀態 Marital</label><select onchange="pfsPersona.marital=this.value"><option value="married_sep">已婚 分別申報 Married Separately</option><option value="married_joint">已婚 聯合申報 Married Jointly</option><option value="single">單身 Single</option></select></div>
+<div class="fg"><label>年收檔 Income</label><select onchange="pfsPersona.income=this.value"><option value="low">約 7 萬美金</option><option value="mid" selected>約 12 萬美金</option><option value="high">約 22 萬美金</option></select></div>
+<div class="fg"><label>資產檔 Asset</label><select onchange="pfsPersona.asset=this.value"><option value="low">小資產</option><option value="mid" selected>中產</option><option value="high">高淨值</option></select></div>
+<button class="btn primary" style="width:100%;margin-top:10px" onclick="pfsGen()">🤖 AI 直接填好出表</button>
+<button class="btn" style="width:100%;margin-top:8px" onclick="pfsBlank()">📋 中英對照空白指引表</button>
+</div>
 <div class="panel"><div class="sec-title">Customs-Bond 申請表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">預填 EIN、地址、法人；填 Bond 金額、HTS、進口額。</p>
 <button class="btn primary" style="width:100%" onclick="toast('申請表草稿已產生，請於下方確認')">🤖 產生草稿</button></div>
 <div class="panel"><div class="sec-title">AI 郵件草稿</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選取一封信件，AI 依客戶時間線上下文產生繁中＋英文草稿。</p>
 <button class="btn primary" style="width:100%" onclick="toast('已開啟回覆草稿編輯，繁中＋英文雙份保留')">✍ 產生回覆草稿</button></div>
 </div>
-<div class="panel"><div class="sec-title">AI 草稿輸出</div><div id="aiZH"></div><div id="aiEN" style="display:none"></div></div>
 <div class="panel"><div class="sec-title">草稿雙語保存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">草稿同時保留 <b>繁體中文</b> 與 <b>英文</b> 兩份，簡體由系統即時轉換。所有草稿僅供參考，經人工確認後才併入客戶記錄。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
 R.doc=()=>`<h1>文件中心</h1><div class="sub">Document Center ｜ 每位客戶全部上傳文件與照片，點圖片預覽、點文件開啟</div>
@@ -964,6 +1045,17 @@ function saveSettings(){const v=Number(document.getElementById("set_cutoff").val
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
 function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
+function openPref(){
+  openModal(`<h3>個人設定</h3>
+  <div class="form-grid">
+  <div class="fg"><label>主題 Theme</label><select onchange="PREF.dark=this.value==='dark';savePref();render()"><option value="dark" ${PREF.dark?"selected":""}>深色 Dark</option><option value="light" ${!PREF.dark?"selected":""}>淺色 Light</option></select></div>
+  <div class="fg"><label>時鐘格式 Clock</label><select onchange="PREF.h24=this.value==='24';savePref();render()"><option value="12" ${!PREF.h24?"selected":""}>12 小時制</option><option value="24" ${PREF.h24?"selected":""}>24 小時制</option></select></div>
+  <div class="fg"><label>語言 Language</label><select onchange="setLang(this.value)"><option value="tw" ${CURRENT_LANG==="tw"?"selected":""}>繁體中文</option><option value="cn" ${CURRENT_LANG==="cn"?"selected":""}>简体中文</option><option value="en" ${CURRENT_LANG==="en"?"selected":""}>English (UK)</option></select></div>
+  <div class="fg"><label>修改密碼</label><input id="pref_pwd" type="password" placeholder="輸入新密碼"></div>
+  </div>
+  <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="savePrefPwd()">儲存</button></div>`);
+}
+function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){CURRENT_USER.pwd=p;addAudit("修改密碼",CURRENT_USER.nm);toast("密碼已更新");}closeModal();}
 paintFoot();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
