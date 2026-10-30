@@ -628,7 +628,7 @@ function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
 const ENMAP={
-"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace",
+"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
 "開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status","客戶檢視":"Customer View","卡片檢視":"Card View","表格檢視":"Table View","每日工作記錄":"Daily Log",
 "已收報價":"Quoted","待補件":"Pending Docs","已出單":"Closed","擱置":"On Hold","待回覆":"Awaiting Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused",
@@ -651,7 +651,20 @@ const ENMAP={
 "倉庫資訊":"Repository","倉庫位址":"Repo URL","工作副本":"Working Copy","就緒":"Ready","最後同步":"Last Sync","立即全量備份":"Full Backup Now","自動備份設定":"Auto Backup Settings","自動 JSON 備份":"Auto JSON Backup","開啟":"On","關閉":"Off","間隔 分鐘":"Interval (min)","儲存設定":"Save Settings","從 GitHub 導入 DB":"Import DB from GitHub","同步任務日誌":"Sync Log",
 "帳戶管理":"Accounts","頭像":"Avatar","真實姓名":"Full Name","登入帳號":"Login ID","角色":"Role","上級":"Manager","名下客戶":"Assigned Clients","最近登入":"Last Login","系統參數，可編輯":"System Parameters (editable)","營業日切換時間，24 小時制":"Day cutoff hour (24h)","目前切日":"Current Cutoff","佣金分成，僅超管可見可改":"Commission Split (admin only)","超管固定基準":"Admin Fixed Base","分單規則":"Split Rules","超管當前每單":"Admin Current Per-Deal","歸屬":"Owner","方式":"Method","下線分成":"Sub Split","改金額":"Edit Amount","全員審計日誌":"Full Audit Log","篩選動作":"Filter actions",
 "超級管理員":"Super Admin","主管":"Supervisor","業務員":"Rep","新增帳戶":"Add Account","編輯帳戶":"Edit Account","真實姓名 / 顯示名稱":"Full / Display Name","留空不變":"Leave blank to keep","無上級（超管）":"No manager (admin)","頁面權限":"Page Permissions","帳戶詳情":"Account Details","切換帳號":"Switch Account","系統通知":"Notifications","全部標為已讀":"Mark All Read","關閉":"Close","詳情":"Details","編輯":"Edit","啟用":"Enabled","停用":"Disabled","新增下屬":"Add Subordinate","密碼":"Password","頭像字":"Avatar Initial",
-"已報價":"Quoted","家":"clients","本人相關":"Me","下屬業務":"Subordinates","處理中":"In Progress","已出單":"Bond Issued","待補件":"Docs Requested","已收報價":"Quoted"
+"已報價":"Quoted","家":"clients","本人相關":"Me","下屬業務":"Subordinates","處理中":"In Progress","已出單":"Bond Issued","待補件":"Docs Requested","已收報價":"Quoted",
+"僅Super admin":"","僅超級管理員可查看":"","Add客戶":"Add Customer","匯出 CSV":"Export CSV","卡片 View":"Card View","表格 View":"Table View","搜尋No. / 公司名 / Owner / EIN":"Search No. / Company / Owner / EIN",
+"Owner姓名":"Owner Name","Linked mailbox":"Linked Mailbox","內部 refNo.":"Internal Ref No.","護照Status":"Passport Status","未有提供護照":"No Passport Provided","Edit客戶資料":"Edit Customer","以該客戶名義發信":"Send as Client","跟進Notes":"Follow-up Notes",
+"文件":"Files","共 1 份，照片 1 張，詳見「Attachments」分頁":"1 file, 1 photo; see Attachments tab",
+"AI 依當前Status自動提示":"AI auto-suggested from current status","等客戶補交所需文件":"Waiting for client to submit required docs",
+"EmailMailbox":"Email","未讀需處理置頂，可搜尋篩選，新信自動同步":"Unread on top, searchable, auto-synced","收件箱":"Inbox","發件箱":"Outbox","搜尋To / Subject":"Search To / Subject",
+"本表供人工參考最新版本，AI 選人發信依Priority取列表，後台可隨時增刪":"Manual reference; AI outreach picks by priority. Editable anytime.",
+"共 2416 筆，預覽前 100 筆，輸入關鍵字或Status篩選查看All":"2416 records; previewing first 100. Type or filter to view all.",
+"Notes（人工 / AI 參考）":"Notes (Human / AI Ref)","個人Notes":"Personal Notes",
+"系統參數，可Edit":"System Settings (editable)","營業日切換Time，24-hour":"Business day cutoff (24h)","目前切日":"Current Cutoff","凌晨 5 點，按日統計與郵件歸日All依此":"5 AM; daily stats and email day rollover follow this",
+"佣金分成，僅超管可見可改":"Commission Split (admin only)","超管固定基準":"Admin Base","前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設":"First 30 deals ¥1000 each, then ¥1500; per-deal adjustable. No monthly target by default.",
+"分單規則":"Split Rules","Manager手動定額寫死Amount，或按比例分成，下線只認百分比，不見Manager實收":"Manager sets fixed amount or percentage; rep sees only their share.",
+"超管當前每單":"Admin Current Per-Deal","客戶":"Client","歸屬":"Owner","方式":"Method","下線分成":"Sub Split","全員審計日誌":"Full Audit Log","尚無審計記錄":"No audit records yet",
+"System Admin":"Control Panel","目前切日":"Current Cutoff","凌晨 5 點":"5 AM"
 };
 let _enKeys=null;
 function applyLangText(){
@@ -681,7 +694,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"美國海關申報",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","GitHub Backup","System Admin"],sub:"US Customs Bond Filing",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"美国海关申报",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"美國海關申報",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","GitHub Backup","Control Panel"],sub:"US Customs Bond Filing",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"美国海关申报",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
@@ -703,7 +716,7 @@ const T2S={"總":"总","覽":"览","看":"看","板":"板","智":"智","檔":"�
 function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
 // ===== 英文 UI 字典：繁中 → 英文（英式商務） =====
 const EN={
-"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","工作通知":"Notifications","系統工作記錄":"System Log","GitHub 備份":"GitHub Backup","系統管理":"System Admin",
+"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","工作通知":"Notifications","系統工作記錄":"System Log","GitHub 備份":"GitHub Backup","系統管理":"Control Panel",
 "數據即時同步，含多時區換算":"Live data with multi-timezone conversion",
 "開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status",
 "已收報價":"Quotes Received","待補件":"Docs Needed","已出單":"Bond Issued","擱置":"On Hold","待回覆":"Pending Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused","處理中":"In Progress",
@@ -1502,7 +1515,7 @@ R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">備份管理 ｜ 僅�
 <div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('備份已完成')">🔄 立即全量備份</button></div>
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
 <div class="panel"><div class="sec-title">同步任務日誌</div>${[["10/30 13:17","全量 JSON 備份推送成功 commit 7f69fa6","成功"],["10/30 12:40","客戶狀態更新已推送 commit 8a021ab","成功"]].map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span><span class="o">${x[2]}</span></div>`).join("")}</div>`;
-R.system=()=>`<h1>系統管理</h1><div class="sub">僅超級管理員</div>
+R.system=()=>`<h1>系統管理</h1>
 <div class="row r2"><div class="panel"><div class="sec-title">帳戶管理</div><table><thead><tr><th>頭像</th><th>真實姓名</th><th>登入帳號</th><th>角色</th><th>上級</th><th>名下客戶</th><th>最近登入</th><th>狀態</th><th>操作</th></tr></thead><tbody>
 ${(CURRENT_USER.role==="super_admin"?USERS:USERS.filter(u=>u.id===CURRENT_USER.id||u.parent===CURRENT_USER.id)).map(u=>{const kids=Object.keys(ownerMap).filter(no=>ownerMap[no]===u.id).length;const pn=u.parent?(USERS.find(x=>x.id===u.parent)||{}).nm:"—";return `<tr><td><div class="avatar" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg2)">${esc(u.avatar||u.nm.charAt(0))}</div></td><td>${esc(u.nm)}</td><td style="font-size:11px">${esc(u.id)}</td><td><span class="tag t-blue">${ROLE_LB[u.role]||u.role}</span></td><td>${esc(pn)}</td><td>${kids} 家</td><td style="font-size:11px">${u.lastLogin||"—"}</td><td>${u.active?"<span class='tag t-green'>啟用</span>":"<span class='tag t-gray'>停用</span>"}</td><td><button class="btn small" onclick="openUserDetail('${u.id}')">詳情</button><button class="btn small" onclick="openAdmin('${u.id}')">編輯</button><button class="btn small" onclick="toggleUserActive('${u.id}')">${u.active?"停用":"啟用"}</button></td></tr>`;}).join("")}
 </tbody></table><button class="btn primary" style="margin-top:10px" onclick="openAdmin()">${CURRENT_USER.role==="supervisor"?"新增下屬":"新增帳戶"}</button></div>
@@ -1514,8 +1527,8 @@ ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">�
 <div class="field"><div class="k">超管固定基準</div><div class="v">前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設</div></div>
 <div class="field"><div class="k">分單規則</div><div class="v">上級手動定額寫死金額，或按比例分成，下線只認百分比，不見上級實收</div></div>
 <div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} CNY</div></div>
-<table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>方式</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
-${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${Number(x.amount).toLocaleString()}</td><td>${x.mode==="percent"?"按比例":"定額"}</td><td>${x.pct!=null?x.pct+"%":"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='7' class='empty'>尚無成功單</td></tr>"}
+<table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
+${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${Number(x.amount).toLocaleString()}</td><td>${x.split_to?`${esc(x.split_to)} ¥${Number(x.split_amt).toLocaleString()}`:"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無成功單</td></tr>"}
 </tbody></table></div>`:""}
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
