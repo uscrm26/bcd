@@ -1015,15 +1015,17 @@ function fileThumb(f){
 function docList(no){
   const localList=(DATA.files||{})[no]||[];
   const rows=localList.map(f=>{const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg2)">
-      <span style="font-size:16px">${/\.(jpe?g|png|webp)$/i.test(nm)?"🖼":/\.pdf$/i.test(nm)?"📄":"📎"}</span>
+    const url=FILEBASE+(f.path||"");
+    const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
+      <span style="font-size:16px">${isImg?"🖼":/\.pdf$/i.test(nm)?"📄":"📎"}</span>
       <div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(nm)}</div>
       <div style="font-size:11px;color:var(--mut)">${esc(dt)} ｜ ${esc(up)}</div></div>
-      <button class="btn small" onclick="goDocCenter('${no}')">前往文件中心</button></div>`;}).join("");
-  return `<div class="sec-title">全部附件（與文件中心同步）</div>
+      <span style="font-size:11px;color:var(--mut)">預覽</span></div>`;}).join("");
+  return `<div class="sec-title">全部附件</div>
   <div>${rows||"<div class='empty'>尚無附件</div>"}</div>
-  <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份。檔案請至文件中心開啟與編輯。</div>
-  <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">前往文件中心</button><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件</button></div>`;
+  <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份，點檔案可直接預覽。</div>
+  <div style="margin-top:14px"><button class="btn" onclick="goDocCenter('${no}')">管理資料夾</button></div>`;
 }
 function goDocCenter(no){CURRENT_V="doc";render();setTimeout(()=>{try{openDocFolder(no);}catch(e){}},100);}
 async function loadStorageUsage(){
