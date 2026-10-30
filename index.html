@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customs-Bond 內部業務管理系統</title>
+<title>Customs-Bond 美國海關申報</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23122030'/%3E%3Ctext x='16' y='22' font-size='16' fill='%237cc0ff' text-anchor='middle' font-family='sans-serif' font-weight='bold'%3ECB%3C/text%3E%3C/svg%3E">
 <style>
 :root{
@@ -486,6 +486,8 @@ async function sbReq(table,method,body,query){
 }
 // 前端編號 no 對應庫 client_key；93 庫中無檔，不落庫
 const NO2KEY={"89":"homedepot","90":"honeywell","98":"kontoor","2":"immunora","3":"oliveware","5":"pebblehome","7":"sageware","8":"nervaqon","61":"huntingtoningalls","64":"jeldwen","66":"kervalonix","69":"l3harris","71":"laureate","73":"leidos","75":"lennar"};
+function dbRoleOf(rf){return rf==="super_admin"?"admin":rf==="supervisor"?"supervisor":"rep";}
+function syncUserToDB(u){if(!u||!u.id)return;sbReq("accounts","PATCH",{display_name:u.nm,pin:String(u.pwd||"0000"),role:dbRoleOf(u.role),parent_id:u.parent||null,active:!!u.active,avatar_url:u.avatar||null},"?id=eq."+u.id);}
 async function upsertOwnership(rec){
   const q=`?client_key=eq.${rec.client_key}`;
   const exist=await sbReq("client_ownership","GET",null,q);
@@ -494,6 +496,15 @@ async function upsertOwnership(rec){
 }
 // 啟動時從庫讀回歸屬、狀態、佣金、審計，覆蓋內置兜底
 async function loadSB(){
+  const acc=await sbReq("accounts","GET",null,"?select=*");
+  if(Array.isArray(acc)&&acc.length){
+    acc.forEach(r=>{
+      const fr=r.role==="admin"?"super_admin":r.role==="supervisor"?"supervisor":"operator";
+      const exist=USERS.find(x=>x.id===r.id);
+      const row={id:r.id,nm:r.display_name||r.id,pwd:String(r.pin||"0000"),role:fr,parent:r.parent_id||null,active:r.active!==false,lastLogin:"",avatar:(r.display_name||"X").charAt(0).toUpperCase(),perms:exist?exist.perms:{dashboard:true,customer:true,broker:true,ai:true,queue:true,doc:true,archive:true,github:fr==="super_admin",system:fr==="super_admin"}};
+      if(exist)Object.assign(exist,row,{perms:exist.perms});else USERS.push(row);
+    });
+  }
   const own=await sbReq("client_ownership","GET",null,"?select=*");
   if(Array.isArray(own)){
     const KEY2NO={};Object.entries(NO2KEY).forEach(([n,k])=>KEY2NO[k]=n);
@@ -515,7 +526,7 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",
 let view="dashboard";
 const R={};
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
-function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");}
+function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
@@ -574,7 +585,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"美國海關申報",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","GitHub Backup","System Admin"],sub:"US Customs Bond Filing",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"美国海关申报",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
@@ -594,6 +605,37 @@ document.addEventListener("click",e=>{const m=document.getElementById("langMenu"
 function simplifyPage(){const el=document.querySelectorAll("#view h1,#view .sub,#view .sec-title,#view .tt,#view .tx,#view .nm,#view .lb,#view .fl,#view .c,#view .o,#view .k,#view .v,#view th,#view td,#view .btn,#view .tabs button,#view .field .v");el.forEach(e=>{if(!e.dataset.zh)e.dataset.zh=e.textContent;e.textContent=t2s(e.dataset.zh);});}
 const T2S={"總":"总","覽":"览","看":"看","板":"板","智":"智","檔":"档","案":"案","儲":"储","時":"时","間":"间","郵":"邮","件":"件","隊":"队","佇":"伫","列":"列","號":"号","編":"编","資":"资","訊":"讯","補":"补","償":"偿","務":"务","狀":"状","態":"态","東":"东","歷":"历","史":"史","匯":"汇","導":"导","聯":"联","結":"结","構":"构","語":"语","言":"言","簡":"简","體":"体","轉":"转","換":"换","實":"实","際":"际","檢":"检","視":"视","產":"产","歸":"归","檔":"档","備":"备","份":"份","驗":"验","證":"证","課":"课","請":"请","籤":"签","標":"标","畫":"画","環":"环","統":"统","計":"计","鈦":"钛","頻":"频","繁":"繁","預":"预","覽":"览","存":"存","取":"取","填":"填","寫":"写","營":"营","運":"运","權":"权","限":"限","記":"记","錄":"录","結":"结","束":"束","項":"项","開":"开","啟":"启","關":"关","閉":"闭","較":"较","頻":"频"};
 function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
+// ===== 英文 UI 字典：繁中 → 英文（英式商務） =====
+const EN={
+"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","工作通知":"Notifications","系統工作記錄":"System Log","GitHub 備份":"GitHub Backup","系統管理":"System Admin",
+"數據即時同步，含多時區換算":"Live data with multi-timezone conversion",
+"開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status",
+"已收報價":"Quotes Received","待補件":"Docs Needed","已出單":"Bond Issued","擱置":"On Hold","待回覆":"Pending Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused","處理中":"In Progress",
+"全部客戶":"All Customers","無客戶":"No customers","無符合客戶":"No matching customers",
+"編號":"No.","公司名稱":"Company","法人":"Owner","業務狀態":"Status","待辦":"To-do","駕照":"License","信箱":"Mailbox","操作":"Actions","檢視":"View","打開":"Open","關閉":"Close","取消":"Cancel","確認":"Confirm","建立":"Create","新增":"Add","儲存":"Save","編輯":"Edit","詳情":"Details","啟用":"Activate","停用":"Deactivate","移除":"Remove",
+"返回客戶列表":"Back to customers","客戶詳細資料":"Customer Details","檔案資訊":"Profile","時間線":"Timeline","待辦清單":"To-do List","附件文件":"Attachments","財務與報價":"Finance & Quotes","操作記錄":"Activity Log",
+"歸屬負責人":"Assigned owner","人工變更狀態":"Change status","駕照狀態":"License status","已過期，需更新":"Expired, update needed","綁定信箱":"Linked mailbox","儲存變更":"Save changes","分配歸屬":"Assign owner","標記成功出單":"Mark bond issued","提交回饋與備註":"Submit feedback",
+"內部參考":"Internal ref","無此客戶":"No such customer","僅負責人與主管可編輯此表":"Only the owner and supervisors can edit",
+"時間":"Time","操作人":"By","動作":"Action","舊值":"Old","新值":"New","理由":"Reason","尚無操作記錄":"No activity yet",
+"選擇新狀態":"Select new status","確認理由，可不填":"Reason (optional)","狀態由主管人工判定":"Status is set by a supervisor","歸屬由主管分配":"Owner is assigned by a supervisor","成功出單由超管確認":"Bond issuance is confirmed by the admin",
+"新增費用":"Add expense","新增報價":"Add quote","類型":"Type","說明":"Description","金額":"Amount","報價":"Quote","費用":"Expense","已收款":"Paid","待定":"Pending","未收款":"Unpaid","尚無財務與報價記錄":"No finance or quote records","待收合計":"Total outstanding",
+"Broker 名稱":"Broker name","報價金額":"Quote amount","有效期":"Valid until",
+"新增跟進記錄":"Add follow-up","尚無時間線事件":"No timeline events","新增待辦標題":"New to-do title","補交更新駕照":"Renew expired license","等待 Broker 回覆報價":"Waiting for broker quote","未完成":"Open","無待辦":"No to-dos",
+"全部附件":"All attachments","載入雲端附件中…":"Loading cloud attachments…","上傳文件到雲端":"Upload file to cloud",
+"信箱帳戶清單":"Mailbox accounts","已連線":"Connected","失敗":"Failed","測試":"Test","新增信箱":"Add mailbox","定時輪詢排程":"Scheduled polling",
+"全部":"All","未處理":"Unprocessed","已處理":"Processed","新建外發草稿":"New outgoing draft","寄件信箱":"From","收件人":"To","主題":"Subject","回覆":"Reply","復原":"Restore","無需處理":"No action needed","無符合郵件":"No matching emails",
+"確定標記為無需處理？":"Mark as no action needed?","此郵件暫無正文預覽，完整內容由後台 IMAP 同步":"No body preview here; full content is synced from IMAP","回覆此信":"Reply","回覆郵件":"Reply email",
+"簡短回覆":"Short reply","商務溝通":"Business follow-up","追問補資料":"Ask for documents","標記為無需處理":"Mark no action","發送郵件":"Send",
+"資源列表":"Pool","公式文檔":"Guides","歷史記錄":"History","經紀公司":"Broker","聯絡人":"Contact","可用狀態":"Status","備註":"Notes","優先級":"Priority","可聯繫":"Contactable","成交過·可複用":"Closed, reusable","已用過·靠後":"Used, deprioritized","不可用":"Unavailable","全部狀態":"All statuses","匯出 Excel":"Export Excel","新增資源":"Add resource",
+"個人財務表 PFS":"Personal Financial Statement","列印 / 存 PDF":"Print / Save PDF","中英對照空白表單":"Bilingual blank form","申請表草稿已產生":"Application draft generated",
+"系統工作記錄":"System Log","僅超級管理員可查看":"Admin only","新增記錄":"Add record","手動新增今日工作筆記":"Add a work note for today","尚無通知":"No notifications","本人相關":"For me","下屬業務":"My reports",
+"在 Supabase 後台管理檔案":"Manage files in Supabase","倉庫資訊":"Repository info","倉庫位址":"Repository","工作副本":"Working copy","最後同步":"Last sync","立即全量備份":"Back up now","自動備份設定":"Auto backup settings","儲存設定":"Save settings","同步任務日誌":"Sync log",
+"帳戶管理":"Accounts","真實姓名":"Full name","登入帳號":"Login","角色":"Role","上級":"Manager","名下客戶":"Customers","最近登入":"Last login","狀態":"Status","新增下屬":"Add report","新增帳戶":"Add account","超級管理員":"Super admin","主管":"Supervisor","業務員":"Agent",
+"修改密碼":"Change password","輸入新密碼":"Enter new password","主題 Theme":"Theme","深色 Dark":"Dark","淺色 Light":"Light","時鐘格式 Clock":"Clock format","12 小時制":"12-hour","24 小時制":"24-hour","語言 Language":"Language","個人設定":"Preferences",
+"搜索收件人 / 主題":"Search recipient / subject","搜尋經紀 / 聯絡人 / 信箱":"Search broker / contact / email","篩選動作":"Filter action","搜尋文件名、公司名、法人":"Search file, company, owner"
+};
+function enMap(s){if(!s)return s;if(EN[s.trim()])return EN[s.trim()];let out=s;Object.keys(EN).sort((a,b)=>b.length-a.length).forEach(k=>{if(out.includes(k))out=out.split(k).join(EN[k]);});return out;}
+function applyLangText(){if(CURRENT_LANG!=="en")return;[document.getElementById("view"),document.getElementById("modal")].forEach(root=>{if(!root)return;root.querySelectorAll("*").forEach(el=>{if(el.children.length===0){const t=el.textContent;if(t&&t.trim()){const tr=enMap(t);if(tr!==t)el.textContent=tr;}}if(el.placeholder){const p=enMap(el.placeholder);if(p!==el.placeholder)el.placeholder=p;}});});}
 // ===== 角色權限：系統級入口僅超管 =====
 const ADMIN_ONLY=["github","system","mailbox"];
 function permsOf(u){if(u.role==="super_admin")return Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));return u.perms||{};}
@@ -1101,7 +1143,7 @@ function openPref(){
   </div>
   <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="savePrefPwd()">儲存</button></div>`);
 }
-function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){CURRENT_USER.pwd=p;addAudit("修改密碼",CURRENT_USER.nm);toast("密碼已更新");}closeModal();}
+function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){CURRENT_USER.pwd=p;syncUserToDB(CURRENT_USER);addAudit("修改密碼",CURRENT_USER.nm);toast("密碼已更新");}closeModal();}
 paintFoot();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
@@ -1124,13 +1166,16 @@ openModal(`<h3>${u?"編輯帳戶":"新增帳戶"}</h3><div class="form-grid">
 <div class="sec-title" style="margin-top:12px">頁面權限</div>
 <div class="form-grid">${Object.entries(PERM_LABELS).map(([k,lb])=>{const cur=u?(u.perms&&u.perms[k]!==false):(k!=="github"&&k!=="system");return `<div class="fg" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="au_p_${k}" ${cur?"checked":""} ${(k==="github"||k==="system")&&!canSuper?"disabled":""}><label for="au_p_${k}">${lb}</label></div>`;}).join("")}</div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="saveUser()">${u?"儲存":"建立"}</button></div>`);}
-function saveUser(){const id=document.getElementById("au_user").value.trim();const nm=document.getElementById("au_name").value.trim();if(!id||!nm){toast("請填登入帳號與真實姓名");return;}
+async function saveUser(){const id=document.getElementById("au_user").value.trim();const nm=document.getElementById("au_name").value.trim();if(!id||!nm){toast("請填登入帳號與真實姓名");return;}
 const role=document.getElementById("au_role").value;const parent=document.getElementById("au_parent").value||null;const pwd=document.getElementById("au_pwd").value;const avatar=document.getElementById("au_avatar").value.trim()||nm.charAt(0);
 const perms={};Object.keys(PERM_LABELS).forEach(k=>{const el=document.getElementById("au_p_"+k);perms[k]=el?el.checked:false;});
-if(_editUid){const u=USERS.find(x=>x.id===_editUid);u.nm=nm;u.role=role;u.parent=parent;u.avatar=avatar;u.perms=perms;if(pwd)u.pwd=pwd;addAudit("編輯帳戶",nm);}
-else{if(USERS.some(x=>x.id===id)){toast("帳號已存在");return;}USERS.push({id,nm,pwd:pwd||"0000",role,parent,active:true,lastLogin:"",avatar,perms});addAudit("新增帳戶",nm);}
+if(_editUid){const u=USERS.find(x=>x.id===_editUid);u.nm=nm;u.role=role;u.parent=parent;u.avatar=avatar;u.perms=perms;if(pwd)u.pwd=pwd;syncUserToDB(u);addAudit("編輯帳戶",nm);}
+else{if(USERS.some(x=>x.id===id)){toast("帳號已存在");return;}const row={id,nm,pwd:pwd||"0000",role,parent,active:true,lastLogin:"",avatar,perms};USERS.push(row);
+  const res=await sbReq("accounts","POST",{id,display_name:nm,pin:String(pwd||"0000"),role:dbRoleOf(role),parent_id:parent||null,active:true,avatar_url:avatar||null});
+  if(res===null)toast("注意：後台未開新帳號寫入權限，本帳號僅本機生效");
+  addAudit("新增帳戶",nm);}
 closeModal();render();toast("帳戶已儲存");}
-function toggleUserActive(id){const u=USERS.find(x=>x.id===id);u.active=!u.active;addAudit(u.active?"啟用帳戶":"停用帳戶",u.nm);render();toast(u.active?"帳戶已啟用":"帳戶已停用");}
+function toggleUserActive(id){const u=USERS.find(x=>x.id===id);u.active=!u.active;syncUserToDB(u);addAudit(u.active?"啟用帳戶":"停用帳戶",u.nm);render();toast(u.active?"帳戶已啟用":"帳戶已停用");}
 function openUserDetail(id){const u=USERS.find(x=>x.id===id);const mine=Object.keys(ownerMap).filter(no=>ownerMap[no]===id).map(no=>DATA.customers.find(c=>c.no===no)).filter(Boolean);
 const mineAudit=auditLog.filter(a=>a.user===u.nm);
 openModal(`<h3>${esc(u.nm)} 帳戶詳情</h3>
@@ -1146,6 +1191,7 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 render();
 loadRepoData();
 loadSB();
+if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
 </html>
