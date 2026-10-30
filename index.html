@@ -242,6 +242,23 @@ tr:hover td{background:#1a2130}
 ::-webkit-scrollbar-thumb{background:#2a3546;border-radius:6px}
 ::-webkit-scrollbar-track{background:transparent}
 @media(max-width:900px){.side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.ccard .foots .tag,.ccard .foots .badge{font-size:10px}.ccard .cphoto{width:60px;height:60px}.ccard .quick button{font-size:10px}}
+/* ===== 登入頁 ===== */
+#loginScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 70% -10%,rgba(74,158,255,.18),transparent),var(--bg);padding:20px}
+#loginScreen.hide{display:none}
+.login-card{width:380px;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:34px 30px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:26px}
+.login-brand .logo{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;letter-spacing:1px}
+.login-brand .bt{font-size:18px;font-weight:800}
+.login-brand .bs{font-size:12px;color:var(--mut)}
+.login-card label{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px}
+.login-card input{width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 13px;font-size:14px;outline:none}
+.login-card input:focus{border-color:var(--acc)}
+.cap-row{display:flex;gap:10px;align-items:center}
+.cap-row input{flex:1}
+#capCanvas{width:110px;height:42px;border-radius:10px;border:1px solid var(--line);cursor:pointer;background:var(--bg2)}
+.login-btn{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
+.login-err{color:var(--err);font-size:12px;min-height:16px;margin-top:10px;text-align:center}
+.login-foot{text-align:center;color:var(--dim);font-size:11px;margin-top:18px}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -298,7 +315,7 @@ tr:hover td{background:#1a2130}
       </div>
     </div>
     <button class="bell" id="bellBtn">🔔<span class="n">3</span></button>
-    <button class="btn small" onclick="toast('已登出')">登出</button>
+    <button class="btn small" onclick="doLogout()">登出</button>
   </div>
   <div id="view"></div>
 </div>
@@ -312,6 +329,20 @@ tr:hover td{background:#1a2130}
 
 <div class="modal" id="modal"></div>
 <div id="toast"></div>
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-brand"><div class="logo">CB</div><div><div class="bt">Customs-Bond</div><div class="bs">美國海關申報</div></div></div>
+    <label>登入帳號</label>
+    <input id="li_user" autocomplete="username" placeholder="例如 kevinyama">
+    <label>密碼</label>
+    <input id="li_pwd" type="password" autocomplete="current-password" placeholder="請輸入密碼">
+    <label>驗證碼</label>
+    <div class="cap-row"><input id="li_cap" placeholder="右圖字碼" maxlength="4"><canvas id="capCanvas" title="點擊更換"></canvas></div>
+    <div class="login-err" id="li_err"></div>
+    <button class="login-btn" onclick="doLogin()">登 入</button>
+    <div class="login-foot">防止機器人登入 ｜ 本系統僅供授權人員使用</div>
+  </div>
+</div>
 <!-- ===== 資料 ===== -->
 <script>
 const PHOTO={
@@ -1145,6 +1176,20 @@ function openPref(){
 }
 function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){CURRENT_USER.pwd=p;syncUserToDB(CURRENT_USER);addAudit("修改密碼",CURRENT_USER.nm);toast("密碼已更新");}closeModal();}
 paintFoot();
+// ===== 登入 / 登出 / 圖形驗證碼 =====
+function genCaptcha(){const c=document.getElementById("capCanvas");if(!c)return;c.width=110;c.height=42;const x=c.getContext("2d");x.fillStyle=getComputedStyle(document.body).getPropertyValue("--bg2");x.fillRect(0,0,110,42);const ch="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++){const ch_=ch[Math.floor(Math.random()*ch.length)];s+=ch_;x.font=(18+Math.random()*10)+"px sans-serif";x.fillStyle=`hsl(${Math.floor(Math.random()*360)},65%,60%)`;x.save();x.translate(18+i*24,26);x.rotate((Math.random()-.5)*.5);x.fillText(ch_,0,0);x.restore();}for(let i=0;i<4;i++){x.strokeStyle=`hsla(${Math.floor(Math.random()*360)},60%,65%,.5)`;x.beginPath();x.moveTo(Math.random()*110,Math.random()*42);x.lineTo(Math.random()*110,Math.random()*42);x.stroke();}window._cap=s;}
+function doLogin(){const u=document.getElementById("li_user").value.trim().toLowerCase();const p=document.getElementById("li_pwd").value;const cap=(document.getElementById("li_cap").value||"").trim().toUpperCase();const err=document.getElementById("li_err");
+if(!u||!p){err.textContent="請輸入帳號與密碼";genCaptcha();return;}
+if(!window._cap||cap!==window._cap){err.textContent="驗證碼錯誤，請重新輸入";genCaptcha();document.getElementById("li_cap").value="";return;}
+const rec=USERS.find(x=>x.id.toLowerCase()===u);
+if(!rec||String(rec.pwd)!==String(p)){err.textContent="帳號或密碼錯誤";genCaptcha();document.getElementById("li_pwd").value="";document.getElementById("li_cap").value="";return;}
+if(rec.active===false){err.textContent="此帳號已停用，請聯絡管理員";genCaptcha();return;}
+CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
+try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
+err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
+function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
+(function initAuth(){genCaptcha();const cv=document.getElementById("capCanvas");if(cv)cv.onclick=genCaptcha;document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});document.getElementById("li_cap").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
 const head=["時間","操作人","動作","詳情"];const rows=auditLog.map(a=>[a.t,a.user,a.action,a.detail||""]);
