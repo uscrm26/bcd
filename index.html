@@ -259,6 +259,12 @@ tr:hover td{background:#1a2130}
 .login-btn{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
 .login-err{color:var(--err);font-size:12px;min-height:16px;margin-top:10px;text-align:center}
 .login-foot{text-align:center;color:var(--dim);font-size:11px;margin-top:18px}
+.login-head{text-align:center;margin-bottom:8px}
+.login-head .lt{font-size:22px;font-weight:800;letter-spacing:1px}
+.login-head .ls{font-size:13px;color:var(--mut);margin-top:4px}
+.login-lang{position:absolute;top:18px;right:18px;display:flex;gap:6px}
+.login-lang button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
+.login-lang button.on{color:var(--acc);border-color:var(--acc)}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -330,17 +336,20 @@ tr:hover td{background:#1a2130}
 <div class="modal" id="modal"></div>
 <div id="toast"></div>
 <div id="loginScreen">
+  <div class="login-lang" id="loginLang">
+    <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
+  </div>
   <div class="login-card">
-    <div class="login-brand"><div class="logo">CB</div><div><div class="bt">Customs-Bond</div><div class="bs">美國海關申報</div></div></div>
-    <label>登入帳號</label>
-    <input id="li_user" autocomplete="username" placeholder="例如 kevinyama">
-    <label>密碼</label>
-    <input id="li_pwd" type="password" autocomplete="current-password" placeholder="請輸入密碼">
-    <label>驗證碼</label>
-    <div class="cap-row"><input id="li_cap" placeholder="右圖字碼" maxlength="4"><canvas id="capCanvas" title="點擊更換"></canvas></div>
+    <div class="login-head"><div class="lt" id="lh_title">內部業務系統</div><div class="ls" id="lh_sub">請登入您的帳戶</div></div>
+    <label id="ll_user">登入帳號</label>
+    <input id="li_user" autocomplete="username" placeholder="kevinyama">
+    <label id="ll_pwd">密碼</label>
+    <input id="li_pwd" type="password" autocomplete="current-password" placeholder="">
+    <label id="ll_cap">驗證碼</label>
+    <div class="cap-row"><input id="li_cap" placeholder="請輸入驗證碼" maxlength="4"><canvas id="capCanvas" title="點擊更換"></canvas></div>
     <div class="login-err" id="li_err"></div>
-    <button class="login-btn" onclick="doLogin()">登 入</button>
-    <div class="login-foot">防止機器人登入 ｜ 本系統僅供授權人員使用</div>
+    <button class="login-btn" onclick="doLogin()" id="li_btn">登 入</button>
+    <div class="login-foot">本系統僅供授權人士使用</div>
   </div>
 </div>
 <!-- ===== 資料 ===== -->
@@ -1188,7 +1197,9 @@ CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
-(function initAuth(){genCaptcha();const cv=document.getElementById("capCanvas");if(cv)cv.onclick=genCaptcha;document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});document.getElementById("li_cap").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+const LLANG={zh:{t:"內部業務系統",s:"請登入您的帳戶",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",b:"登 入"},cn:{t:"内部业务系统",s:"请登录您的账户",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",b:"登 录"},en:{t:"Internal Business System",s:"Sign in to your account",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",b:"Sign In"}};
+function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("ll_cap").textContent=L.c;document.getElementById("li_cap").placeholder=L.ph;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
+(function initAuth(){genCaptcha();setLangLogin(PREF.lang||"zh");const cv=document.getElementById("capCanvas");if(cv)cv.onclick=genCaptcha;document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});document.getElementById("li_cap").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
