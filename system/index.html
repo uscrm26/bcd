@@ -17,6 +17,27 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--txt);font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;font-size:14px;line-height:1.6}
 a{color:var(--acc);text-decoration:none}
 .app{display:flex;min-height:100vh}
+.mtop{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:rgba(14,17,22,.95);border-bottom:1px solid var(--line);z-index:60;align-items:center;gap:10px;padding:0 14px}
+.mtop .burger{background:var(--bg2);border:1px solid var(--line);width:38px;height:38px;border-radius:8px;color:var(--txt);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mtop .mtitle{font-size:14px;font-weight:700;color:var(--txt);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mtop .bell2{background:var(--bg2);border:1px solid var(--line);width:38px;height:38px;border-radius:8px;color:var(--mut);font-size:15px;cursor:pointer;position:relative}
+.overlay{display:none;position:fixed;inset:0;background:rgba(5,7,10,.6);z-index:55}
+.overlay.show{display:block}
+.side.open{transform:translateX(0)!important}
+@media(max-width:900px){
+  .mtop{display:flex}
+  .side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}
+  .main{margin-left:0;padding:74px 14px 70px}
+  .r4{grid-template-columns:repeat(2,1fr)}
+  .r3{grid-template-columns:repeat(1,1fr)}
+  .form-grid{grid-template-columns:1fr}
+  .topbar{display:none}
+  .panel{overflow:hidden}
+  .em,.mailitem .em{overflow-wrap:anywhere;word-break:break-all}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  .funnel{flex-wrap:wrap}
+  .search input{min-width:120px}
+}
 /* sidebar */
 .side{width:232px;background:linear-gradient(180deg,#12161e,#10131a);border-right:1px solid var(--line);position:fixed;inset:0 auto 0 0;padding:18px 14px;display:flex;flex-direction:column;z-index:50}
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
@@ -50,6 +71,7 @@ h1{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px}
 .sec-title::before{content:"";width:3px;height:14px;background:var(--acc);border-radius:2px}
 /* cards */
 .row{display:grid;gap:12px}
+.row>*{min-width:0}
 .r4{grid-template-columns:repeat(4,1fr)}
 .r3{grid-template-columns:repeat(3,1fr)}
 .r2{grid-template-columns:repeat(2,1fr)}
@@ -89,14 +111,17 @@ tr:hover td{background:#1a2130}
 .t-red{background:rgba(255,93,108,.14);color:var(--err);border:1px solid #5a2b34}
 .t-gray{background:rgba(132,148,167,.14);color:var(--mut);border:1px solid #333c4c}
 /* client card */
-.ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.15s;position:relative}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.15s;position:relative;display:flex;gap:14px;align-items:flex-start}
 .ccard:hover{border-color:#2f4a6e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.cphoto{width:76px;height:76px;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid var(--line);background:#1a2230;display:block}
+.ccard .cbody{flex:1;min-width:0}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ccard .no{font-size:11px;color:var(--dim)}
 .ccard .nm{font-size:14px;font-weight:700;color:var(--txt);margin-top:2px}
 .ccard .meta{font-size:11px;color:var(--mut);margin-top:6px;line-height:1.7}
 .ccard .meta b{color:var(--txt);font-weight:600}
 .ccard .foots{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
+.ccard .foots .badge{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .badge{font-size:10px;color:var(--mut);border:1px solid var(--line);padding:2px 8px;border-radius:6px}
 .badge.warn{color:var(--err);border-color:#5a2b34}
 /* quick buttons */
@@ -181,6 +206,12 @@ tr:hover td{background:#1a2130}
 </style>
 </head>
 <body>
+<div class="mtop">
+  <button class="burger" onclick="toggleSide()">☰</button>
+  <div class="mtitle">Customs-Bond 系統</div>
+  <button class="bell2" onclick="openBell()">🔔<span class="n">3</span></button>
+</div>
+<div class="overlay" id="overlay" onclick="toggleSide()"></div>
 <div class="app">
 <aside class="side">
   <div class="brand">
@@ -213,8 +244,7 @@ tr:hover td{background:#1a2130}
 <div class="main">
   <div class="topbar">
     <div class="time" id="clock">載入時間…</div>
-    <div class="lang"><button onclick="switchLang()" id="langBtn">繁體中文 ▾</button></div>
-    <button class="bell" id="bellBtn">🔔<span class="n">3</span></button>
+    <div class="lang"><button onclick="switchLang()" id="langBtn">繁體中文 ▾</button></div>    <button class="bell" id="bellBtn">🔔<span class="n">3</span></button>
     <button class="btn small" onclick="toast('已登出')">登出</button>
   </div>
   <div id="view"></div>
@@ -225,6 +255,24 @@ tr:hover td{background:#1a2130}
 <div id="toast"></div>
 <!-- ===== 資料 ===== -->
 <script>
+const PHOTO={
+"93":"docs/clients/Interface/Interface%20LLC——法人人像.jpg",
+"89":"docs/clients/Home%20Depot/Home%20Depot%20LLC——法人照片.jpeg",
+"90":"docs/clients/Honeywell/Honeywell%20International%20LLC——法人照片.JPG",
+"98":"docs/clients/Kontoor/Kontoor%20Brands%20LLC——法人照片.jpg",
+"2":"docs/clients/Immunora-Bio/Immunora%20Bio%20LLC——法人照片.jpg",
+"3":"docs/clients/Oliveware/Oliveware%20LLC——法人照片.jpg",
+"5":"docs/clients/Pebblehome/Pebblehome%20LLC——法人照片.png",
+"7":"docs/clients/Sageware/Sageware%20LLC——法人照片.jpg",
+"8":"docs/clients/Nervaqon/Nervaqon%20LLC——法人人像.jpg",
+"61":"docs/clients/Huntington/Huntington%20Ingalls%20Industries%20LLC——法人照片.png",
+"64":"docs/clients/JELD-WEN/JELD-WEN%20Holding%20LLC——法人照片.jpg",
+"66":"docs/clients/Kervalonix/Kervalonix%20LLC——法人照片.png",
+"69":"docs/clients/L3Harris/L3Harris%20Technologies%20LLC——法人照片.jpg",
+"71":"docs/clients/Laureate/Laureate%20Education%20LLC——法人照片.png",
+"73":"docs/clients/Leidos/Leidos%20Holdings%20LLC——法人照片.jpg",
+"75":"docs/clients/Lennar/Lennar%20LLC——法人照片.png"
+};
 const DATA={
   statuses:[
     {id:"new",lb:"新線索",cl:"t-blue"},
@@ -309,7 +357,7 @@ const R={};
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
 function openModal(html){const m=document.getElementById("modal");m.innerHTML=html;m.classList.add("show");}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
-function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);}
+function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;}
 const empty=()=>`<div class="empty">頁面載入中</div>`;
@@ -319,8 +367,21 @@ document.getElementById("clock").textContent=`北京 ${bj.getUTCFullYear()}-${f(
 setInterval(clock,1000);clock();
 // bell
 let langIdx=0;
-function switchLang(){const langs=["繁體中文","English","简体中文"];langIdx=(langIdx+1)%3;document.getElementById("langBtn").textContent=langs[langIdx]+" ▾";toast("語言已切換為 "+langs[langIdx]+"，簡體為即時轉換");}
-document.getElementById("bellBtn").onclick=()=>{const n=[["10/30 10:59","A1 Worldwide 要求填 POA 開戶，需回覆"],["10/30 05:14","Immunora 發票歸屬待確認"],["10/30 05:14","Lennar 需補財務材料"]];openModal(`<h3>系統通知</h3>`+n.map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span></div>`).join("")+`<div class="mrow"><button class="btn small" onclick="toast('已全部標為已讀');closeModal()">全部標為已讀</button><button class="btn small" onclick="closeModal()">關閉</button></div>`);};
+const LANGS={zh:{label:"繁體中文",nav:["工作區","總覽看板","客戶管理","AI 表單助手","郵件","信箱配置","郵件佇列","檔案","文件中心","歸檔包","系統","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Workspace","Dashboard","Customers","AI Assistant","Mail","Mailboxes","Mail Queue","Files","Documents","Archives","System","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["工作区","总览看板","客户管理","AI 表单助手","邮件","信箱配置","邮件队列","档案","文件中心","归档包","系统","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
+function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
+function switchLang(){langIdx=(langIdx+1)%3;const key=["zh","en","cn"][langIdx];const L=LANGS[key];
+const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(a&&a.children.length>1)a.children[1].textContent=t;});
+document.querySelector(".brand .bs").textContent=L.sub;
+document.querySelector(".brand .bt").textContent="Customs-Bond";
+document.getElementById("langBtn").textContent=L.label+" ▾";
+document.querySelector(".topbar .btn.small").textContent=L.logout;
+toast("語言已切換為 "+L.label+"，簡體為即時轉換");
+if(key==="cn"){simplifyPage();}}
+function simplifyPage(){const el=document.querySelectorAll("#view h1,#view .sub,#view .sec-title,#view .tt,#view .tx,#view .nm,#view .lb,#view .fl,#view .c,#view .o,#view .k,#view .v,#view th,#view td,#view .btn,#view .tabs button,#view .field .v");el.forEach(e=>{if(!e.dataset.zh)e.dataset.zh=e.textContent;e.textContent=t2s(e.dataset.zh);});}
+const T2S={"總":"总","覽":"览","看":"看","板":"板","智":"智","檔":"档","案":"案","儲":"储","時":"时","間":"间","郵":"邮","件":"件","隊":"队","佇":"伫","列":"列","號":"号","編":"编","資":"资","訊":"讯","補":"补","償":"偿","務":"务","狀":"状","態":"态","東":"东","歷":"历","史":"史","匯":"汇","導":"导","聯":"联","結":"结","構":"构","語":"语","言":"言","簡":"简","體":"体","轉":"转","換":"换","實":"实","際":"际","檢":"检","視":"视","產":"产","歸":"归","檔":"档","備":"备","份":"份","驗":"验","證":"证","課":"课","請":"请","籤":"签","標":"标","畫":"画","環":"环","統":"统","計":"计","鈦":"钛","頻":"频","繁":"繁","預":"预","覽":"览","存":"存","取":"取","填":"填","寫":"写","營":"营","運":"运","權":"权","限":"限","記":"记","錄":"录","結":"结","束":"束","項":"项","開":"开","啟":"启","關":"关","閉":"闭","較":"较","頻":"频"};
+function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
+function openBell(){const n=[["10/30 10:59","A1 Worldwide 要求填 POA 開戶，需回覆"],["10/30 05:14","Immunora 發票歸屬待確認"],["10/30 05:14","Lennar 需補財務材料"]];openModal(`<h3>系統通知</h3>`+n.map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span></div>`).join("")+`<div class="mrow"><button class="btn small" onclick="toast('已全部標為已讀');closeModal()">全部標為已讀</button><button class="btn small" onclick="closeModal()">關閉</button></div>`);}
+document.getElementById("bellBtn").onclick=openBell;
 
 // ===== 總覽看板 =====
 let cardMode="card";
@@ -339,10 +400,13 @@ const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit"
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
 function cardGrid(){return `<div class="row r3">`+DATA.customers.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
+  <img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')">
+  <div class="cbody">
   <div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
   <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">${esc(c.mail)}</span></div>
-  </div>`;}).join("")+`</div>`;}
+  </div></div>`;}).join("")+`</div>`;}
+function openModalImg(src){openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
 R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 全部數據即時取自資料庫，含美東時間換算</div>
   <div class="row r4">
@@ -361,7 +425,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 全部數�
   ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
   </div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge">${esc(c.mail)}</span></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge">${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:"手動",c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號</label><input id="nc_no" placeholder="例如 99"></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
