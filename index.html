@@ -265,14 +265,24 @@ tr:hover td{background:#1a2130}
 .login-lang{position:absolute;top:18px;right:18px;display:flex;gap:6px}
 .login-lang button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
 .login-lang button.on{color:var(--acc);border-color:var(--acc)}
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-.doc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 12px;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.doc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;cursor:pointer;transition:transform .15s,border-color .15s}
 .doc-card:hover{transform:translateY(-3px);border-color:var(--acc)}
-.doc-ava{width:84px;height:84px;margin:0 auto 10px;border-radius:50%;overflow:hidden;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--acc);font-weight:800;font-size:28px}
+.doc-ava{width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--acc);font-weight:800;font-size:30px;margin-bottom:10px}
 .doc-ava img{width:100%;height:100%;object-fit:cover}
 .doc-nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .doc-mb{font-size:11px;color:var(--mut);margin-top:2px}
 .doc-cnt{font-size:11px;color:var(--dim);margin-top:6px}
+.doc-own{display:inline-block;margin-top:6px;font-size:10px;padding:1px 7px;border-radius:20px;background:rgba(90,140,255,.15);color:#8fb4ff}
+.own-chip{display:inline-flex;align-items:center;gap:5px;background:transparent;border:none;color:var(--mut);font-size:12px;padding:5px 10px;border-radius:8px;cursor:pointer}
+.own-chip.on{background:var(--acc);color:#fff}
+.own-face{width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.file-cell{background:var(--bg2);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.file-cell .pv{width:100%;aspect-ratio:4/3;background:#0d1420;display:flex;align-items:center;justify-content:center;font-size:34px;overflow:hidden;cursor:pointer}
+.file-cell .pv img{width:100%;height:100%;object-fit:cover}
+.file-cell .fn{font-size:11px;padding:6px 8px;line-height:1.3;word-break:break-all;min-height:30px}
+.file-cell .meta{font-size:10px;color:var(--dim);padding:0 8px 6px}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -514,7 +524,7 @@ const USERS=[
 const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
 const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",github:"備份",system:"系統管理"};
 let CURRENT_USER=USERS[0];
-const ownerMap={"93":"kevinyama","89":"ryanfan","90":"kevinyama","98":"kevinyama","2":"ryanfan","3":"kevinyama","5":"kevinyama","7":"kevinyama","8":"kevinyama","61":"kevinyama","64":"kevinyama","66":"kevinyama","69":"kevinyama","71":"kevinyama","73":"kevinyama","75":"ryanfan"};
+const ownerMap={"93":"kevinyama","89":"kevinyama","90":"kevinyama","98":"kevinyama","2":"kevinyama","3":"kevinyama","5":"kevinyama","7":"kevinyama","8":"kevinyama","61":"kevinyama","64":"kevinyama","66":"kevinyama","69":"kevinyama","71":"kevinyama","73":"kevinyama","75":"kevinyama"};
 const clientAudit={};
 const auditLog=[];
 function nowBJ(){const d=new Date();const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}
@@ -1180,18 +1190,21 @@ R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI Assistant ｜ AI 產生草
 <div class="panel"><div class="sec-title">草稿雙語保存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">草稿同時保留 <b>繁體中文</b> 與 <b>英文</b> 兩份，簡體由系統即時轉換。所有草稿僅供參考，經人工確認後才併入客戶記錄。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
 R.doc=()=>`<h1>文件中心</h1><div class="sub">Document Center ｜ 點法人頭像進入資料夾，預覽圖片、開啟文件</div>
-<div style="display:flex;gap:10px;flex-wrap:wrap">
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
   <div class="search" style="flex:2;min-width:200px"><input placeholder="搜尋公司名、法人、檔名" oninput="window._df=this.value;renderDoc()"></div>
-  <select id="docOwnerFilter" onchange="renderDoc()" style="background:var(--card);border:1px solid var(--line);color:var(--fg);border-radius:10px;padding:0 12px;height:42px">
-    <option value="">全部歸屬人</option>
-    <option value="kevinyama">Kevin W（主管）</option>
-    <option value="ryanfan">Ryan F（業務員）</option>
-  </select>
+  <div style="display:flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 8px" id="docOwnerBar">
+    <span style="font-size:11px;color:var(--mut);padding:0 4px">歸屬</span>
+    <button class="own-chip on" data-v="" onclick="setDocOwner(this)">全部</button>
+    <button class="own-chip" data-v="kevinyama" onclick="setDocOwner(this)"><span class="own-face">K</span>Kevin W</button>
+    <button class="own-chip" data-v="ryanfan" onclick="setDocOwner(this)"><span class="own-face">R</span>Ryan F</button>
+  </div>
 </div>
 <div id="docArea"></div>`;
+function setDocOwner(btn){document.querySelectorAll("#docOwnerBar .own-chip").forEach(b=>b.classList.remove("on"));btn.classList.add("on");window._do=btn.dataset.v;renderDoc();}
+const CUST_CREATED={"93":"10/30","89":"10/22","90":"10/22","98":"10/22","2":"10/24","3":"10/28","5":"10/29","7":"10/29","8":"10/24","61":"10/29","64":"10/29","66":"10/29","69":"10/22","71":"10/29","73":"10/30","75":"10/29"};
 function renderDoc(){
   const q=(window._df||"").toLowerCase();
-  const ow=document.getElementById("docOwnerFilter");const owv=ow?ow.value:"";
+  const owv=window._do||"";
   const box=document.getElementById("docArea");if(!box)return;
   const groups=DATA.customers.map(c=>({c,list:(DATA.files||{})[c.no]||[]}))
     .filter(g=>canViewCust(g.c.no))
@@ -1204,7 +1217,8 @@ function renderDoc(){
       <div class="doc-ava">${ph?`<img src="${ph}">`:`<span>${esc((g.c.member||g.c.name||"?").charAt(0).toUpperCase())}</span>`}</div>
       <div class="doc-nm">${esc(g.c.member||g.c.name)}</div>
       <div class="doc-mb">${esc(g.c.name)} · #${g.c.no}</div>
-      <div class="doc-mb">歸屬：${esc(own)}</div>
+      <div class="doc-mb">建檔 ${CUST_CREATED[g.c.no]||"—"}</div>
+      <span class="doc-own">${esc(own)}</span>
       <div class="doc-cnt">${g.list.length} 份檔案</div>
     </div>`;
   };
@@ -1218,7 +1232,7 @@ function openDocFolder(no){
   const head=`<div class="login-brand" style="justify-content:center;margin-bottom:14px">
     <div class="doc-ava" style="width:64px;height:64px">${PHOTO[no]?`<img src="${PHOTO[no]}">`:`<span style="font-size:24px">${esc((c.member||"?").charAt(0).toUpperCase())}</span>`}</div>
     <div><div style="font-weight:800;font-size:16px">${esc(c.name)}</div><div style="font-size:12px;color:var(--mut)">法人 ${esc(c.member)} ｜ ${list.length} 份</div></div></div>`;
-  const body=list.length?`<div style="max-height:55vh;overflow:auto"><div class="row r2">${list.map(f=>fileThumbDel(f,no,isAdmin)).join("")}</div></div>`:`<div class="empty" style="padding:30px">這個資料夾還沒有檔案</div>`;
+  const body=list.length?`<div style="max-height:55vh;overflow:auto;padding:4px"><div class="file-grid">${list.map((f,i)=>fileThumbDel(f,no,isAdmin)).join("")}</div></div>`:`<div class="empty" style="padding:30px">這個資料夾還沒有檔案</div>`;
   const foot=`<div class="mrow" style="margin-top:14px;justify-content:flex-end">
     ${canUp?`<button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳檔案</button>`:""}
     <button class="btn" onclick="closeModal()">關閉</button></div>`;
@@ -1226,13 +1240,17 @@ function openDocFolder(no){
 }
 function fileThumbDel(f,no,isAdmin){
   const url=FILEBASE+f.path;
-  const base=fileThumb(f);
-  if(!isAdmin)return base;
-  const acts=`<div style="display:flex;gap:4px;margin-top:6px;justify-content:center">
-    <a class="btn small" style="text-decoration:none" href="${url}" download>下載</a>
-    <button class="btn small" onclick="event.stopPropagation();moveFile('${no}','${esc(f.name)}')">轉存他客戶</button>
-    <button class="btn small" style="background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')">刪除</button></div>`;
-  return `<div style="position:relative">${base}${acts}</div>`;
+  const isImg=f.type==="image";
+  const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
+  const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" loading="lazy"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
+  const dt=CUST_CREATED[no]||"—";
+  const cell=`${pv}<div class="fn">${esc(f.name)}</div><div class="meta">${dt} · 系統管理員上傳</div>`;
+  if(!isAdmin)return `<div class="file-cell">${cell}</div>`;
+  const acts=`<div style="display:flex;gap:4px;padding:0 6px 8px">
+    <a class="btn small" style="text-decoration:none;flex:1;text-align:center" href="${url}" download>下載</a>
+    <button class="btn small" style="flex:1" onclick="moveFile('${no}','${esc(f.name)}')">轉存</button>
+    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')">刪</button></div>`;
+  return `<div class="file-cell">${cell}${acts}</div>`;
 }
 function moveFile(no,name){
   const targets=DATA.customers.filter(c=>c.no!==no).map(c=>`${c.no} ${c.name}`).join("｜");
