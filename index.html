@@ -985,19 +985,50 @@ return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6
 function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
  openModal(`<h3>以 ${esc(c.name)} 名義發信</h3>
  <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">寄件人</div><div style="font-size:13px">${esc(c.mail||"—")}</div></div>
- <div class="fg" style="margin-bottom:8px"><label>收件人</label><input id="sc_to" placeholder="recipient@example.com"></div>
+ <div class="fg" style="margin-bottom:8px"><label>收件人</label><div style="display:flex;gap:8px"><input id="sc_to" placeholder="recipient@example.com" oninput="matchBroker()"><button class="btn small" onclick="openBrokerPicker()">選擇 Broker</button></div><div id="sc_broker_match" style="font-size:11px;color:var(--mut);margin-top:4px"></div></div>
  <div class="fg" style="margin-bottom:8px"><label>主題</label><input id="sc_sub" placeholder="信件主旨"></div>
  <div style="margin:12px 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;color:var(--mut)">正文內容：</span><button class="btn small" onclick="aiPolish('${no}')">AI 潤色</button><button class="btn small" onclick="aiWrite('${no}')">AI 撰寫</button></div>
  <textarea id="sc_body" style="width:100%;min-height:160px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px;line-height:1.6;box-sizing:border-box" placeholder="輸入信件正文"></textarea>
  <div style="margin-top:10px"><label class="btn small" style="cursor:pointer">📎 附加檔案<input type="file" multiple style="display:none" onchange="this.parentElement.nextElementSibling.textContent=[...this.files].map(f=>f.name).join('、')||'無附件'"></label> <span style="font-size:11px;color:var(--mut)">無附件</span></div>
  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitCustomerMail('${no}')">發送</button></div>`);}
+function openBrokerPicker(){
+ const list=BROKERS;
+ const html=`<h3>選擇 Broker</h3>
+ <input id="bp_q" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:8px;margin-bottom:10px" placeholder="搜尋公司名、聯絡人、信箱" oninput="renderBrokerList(this.value)">
+ <div id="bp_list" style="max-height:400px;overflow-y:auto">${list.map((b,i)=>brokerRow(b,i)).join("")}</div>`;
+ openModal(html);
+ renderBrokerList("");
+}
+function brokerRow(b,i){
+ return `<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;cursor:pointer;background:var(--bg2)" onclick="pickBroker(${i})">
+ <div style="font-size:13px;color:var(--tx)">${esc(b.n)} <span style="font-size:10px;background:var(--blue);color:#fff;padding:1px 6px;border-radius:6px;margin-left:6px">${esc(b.tag||"")}</span></div>
+ <div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(b.c||"")}</div>
+ <div style="font-size:11px;color:var(--mut);margin-top:2px">${esc(b.l||b.reason||"")}</div>
+ </div>`;
+}
+function renderBrokerList(q){
+ q=(q||"").toLowerCase();
+ const list=BROKERS.filter(b=>!q||(b.n+b.c+b.l).toLowerCase().includes(q));
+ document.getElementById("bp_list").innerHTML=list.length?list.map(b=>brokerRow(b,BROKERS.indexOf(b))).join(""):'<div style="color:var(--mut);text-align:center;padding:20px">無符合</div>';
+}
+function pickBroker(i){
+ const b=BROKERS[i];
+ const email=b.c||b.m;if(email&&email!=="—"){document.getElementById("sc_to").value=email;closeModal();toast("已填入："+b.n);}
+}
+function matchBroker(){
+ const v=(document.getElementById("sc_to")||{}).value||"";
+ const out=document.getElementById("sc_broker_match");if(!out)return;
+ if(!v){out.innerHTML="";return;}
+ const hits=BROKERS.filter(b=>(b.m||"").toLowerCase().includes(v.toLowerCase()));
+ out.innerHTML=hits.length?`匹配：${hits.map(b=>esc(b.n)+" ["+esc(b.tag||"")+"]").join("、")}`:"無匹配";
+}
 async function aiPolish(no){const c=DATA.customers.find(x=>x.no===no);const box=document.getElementById('sc_body');
  if(!box||!box.value.trim()){toast("請先在正文框寫內容，AI 再潤色");return;}
  const key=localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
  if(!key){toast("請先在系統管理頁填入豆包 API Key");return;}
  toast("AI 潤色中…");
  try{
-  const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"doubao-pro-4k",messages:[{role:"system",content:"You are a US customs bond broker. Polish the user's draft into natural American business English. Add a greeting and sign off as "+(c.member||"").split(" ")[0]+" at "+c.name+". Return only the email body, no explanation."},{role:"user",content:box.value}]})});
+  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"google/gemma-4-31b-it:free",messages:[{role:"system",content:"You are a US customs bond broker. Polish the user's draft into natural American business English. Add a greeting and sign off as "+(c.member||"").split(" ")[0]+" at "+c.name+". Return only the email body, no explanation."},{role:"user",content:box.value}]})});
   const j=await r.json();box.value=j.choices[0].message.content.trim();toast("已潤色");
  }catch(e){toast("AI 潤色失敗："+(e.message||e));}
 }
@@ -1015,7 +1046,7 @@ async function genAIWrite(no){const p=(document.getElementById('aw_prompt')||{})
  const key=localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
  document.getElementById('aw_out').innerHTML="AI 生成中…";
  try{
-  const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"doubao-pro-4k",messages:[{role:"system",content:"You are a US customs bond broker assistant. Write 3 distinct versions of a short business email in American English, each followed by a one-line Chinese translation. Sign off as "+first+". Output as JSON array [{en,zh}]."},{role:"user",content:p}]})});
+  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"google/gemma-4-31b-it:free",messages:[{role:"system",content:"You are a US customs bond broker assistant. Write 3 distinct versions of a short business email in American English, each followed by a one-line Chinese translation. Sign off as "+first+". Output as JSON array [{en,zh}]."},{role:"user",content:p}]})});
   const j=await r.json();let v=[];try{v=JSON.parse(j.choices[0].message.content.replace(/```json|```/g,"").trim());}catch(e){v=[{en:j.choices[0].message.content,zh:""}];}
   window._awV=v;
   document.getElementById('aw_out').innerHTML=v.map((x,i)=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">版本 ${i+1}｜中文：${esc(x.zh||"")}</div><pre style="white-space:pre-wrap;font-family:inherit;font-size:12px;color:var(--tx);margin:0 0 6px">${esc(x.en)}</pre><button class="btn small primary" onclick="pickAIWrite('${no}',${i})">用這個版本</button></div>`).join("");
