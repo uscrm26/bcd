@@ -233,7 +233,7 @@ tr:hover td{background:#1a2130}
     <div class="grp">工作區</div>
     <a data-v="dashboard" class="on"><span class="ic">◧</span>總覽看板</a>
     <a data-v="customer"><span class="ic">▤</span>客戶管理</a>
-    <a data-v="broker"><span class="ic">◍</span>Broker 池</a>
+    <a data-v="broker"><span class="ic">◍</span>經紀資源池</a>
     <a data-v="ai"><span class="ic">✦</span>AI 表單助手</a>
     <div class="grp">郵件</div>
     <a data-v="mailbox"><span class="ic">✉</span>信箱配置</a>
@@ -376,13 +376,11 @@ const DATA={
 // ===== 系統設定 / 員工 / 歸屬 / 審計 / 佣金 =====
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
 const USERS=[
-{id:"kevinyama",nm:"廖駿賢",role:"super_admin",parent:null,active:true},
-{id:"gong",nm:"龔經理",role:"supervisor",parent:"kevinyama",active:true},
-{id:"ryanfan",nm:"Ryan F",role:"operator",parent:"gong",active:true},
-{id:"operator1",nm:"業務員一",role:"operator",parent:"gong",active:true}
+{id:"kevinyama",nm:"Kevin W",role:"super_admin",parent:null,active:true},
+{id:"ryanfan",nm:"Ryan F",role:"operator",parent:"kevinyama",active:true}
 ];
 let CURRENT_USER=USERS[0];
-const ownerMap={"93":"kevinyama","89":"ryanfan","90":"operator1","98":"operator1","2":"ryanfan","61":"kevinyama","64":"kevinyama","66":"kevinyama","73":"operator1","75":"ryanfan"};
+const ownerMap={"93":"kevinyama","89":"ryanfan","90":"kevinyama","98":"kevinyama","2":"ryanfan","61":"kevinyama","64":"kevinyama","66":"kevinyama","73":"kevinyama","75":"ryanfan"};
 const clientAudit={};
 const auditLog=[];
 function nowBJ(){const d=new Date();const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}
@@ -476,7 +474,7 @@ if(sc)sc.innerHTML=`<div class="z"><b>北京</b><span>${bj.getUTCMonth()+1}/${bj
 setInterval(clock,1000);clock();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["工作區","總覽看板","客戶管理","Broker 池","AI 表單助手","郵件","信箱配置","郵件佇列","檔案","文件中心","歸檔包","系統","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Workspace","Dashboard","Customers","Broker Pool","AI Assistant","Mail","Mailboxes","Mail Queue","Files","Documents","Archives","System","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["工作区","总览看板","客户管理","Broker 池","AI 表单助手","邮件","信箱配置","邮件队列","档案","文件中心","归档包","系统","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["工作區","總覽看板","客戶管理","經紀資源池","AI 表單助手","郵件","信箱配置","郵件佇列","檔案","文件中心","歸檔包","系統","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Workspace","Dashboard","Customers","Broker Pool","AI Assistant","Mail","Mailboxes","Mail Queue","Files","Documents","Archives","System","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["工作区","总览看板","客户管理","经纪资源池","AI 表单助手","邮件","信箱配置","邮件队列","档案","文件中心","归档包","系统","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function switchLang(){langIdx=(langIdx+1)%3;const key=["zh","en","cn"][langIdx];const L=LANGS[key];CURRENT_LANG=key;
@@ -678,15 +676,16 @@ const BROKERS=[
 {n:"Alpha Customhouse",a:"—",c:"—",m:"—",l:"待回覆",tag:"quote",reason:"報價 980"}
 ];
 let brokerTab="pool";
-R.broker=()=>`<h1>Broker 池</h1><div class="sub">Broker Pool ｜ 舊看板經紀池與轉介聯絡人完整回補</div>
-<div class="tabs"><button class="${brokerTab==="pool"?"on":""}" onclick="brokerTab='pool';render()">經紀池</button><button class="${brokerTab==="ref"?"on":""}" onclick="brokerTab='ref';render()">轉介聯絡人</button><button class="${brokerTab==="formula"?"on":""}" onclick="brokerTab='formula';render()">公式文檔</button></div>
-${brokerTab==="pool"?brokerPool():brokerTab==="ref"?refList():formulaDocs()}`;
-function brokerPool(){return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 狀態" oninput="filterBroker(this.value)"></div>
-<table><thead><tr><th>經紀公司</th><th>聯絡人</th><th>信箱</th><th>狀態</th><th>原因</th><th>操作</th></tr></thead><tbody id="bk_body">
-${BROKERS.map(b=>`<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${b.tag==="reject"?"t-gray":"t-blue"}">${esc(b.l)}</span></td><td>${esc(b.reason)}</td><td><button class="btn small" onclick="toast('已開啟聯絡記錄')">記錄</button></td></tr>`).join("")}
+function bkStatus(b){if(b.tag==="reject"||/拒絕|婉拒|不可用|停用/.test(b.l))return["不可用","t-gray"];if(/成交|已出單|成功/.test(b.l))return["成交過·可複用","t-green"];if(/用過|已用|跟進中|補件|報價/.test(b.l))return["已用過·靠後","t-amber"];return["可聯繫","t-blue"];}
+R.broker=()=>`<h1>經紀資源池</h1><div class="sub">經紀資源池 ｜ 人工參考最新版本，AI 選人發信時依優先級取列表，後台隨時增減</div>
+<div class="tabs"><button class="${brokerTab==="pool"?"on":""}" onclick="brokerTab='pool';render()">資源列表</button><button class="${brokerTab==="formula"?"on":""}" onclick="brokerTab='formula';render()">公式文檔</button></div>
+${brokerTab==="pool"?brokerPool():formulaDocs()}`;
+function brokerPool(){return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerCsv()">⬇ 匯出列表</button></div>
+<table><thead><tr><th>經紀公司</th><th>聯絡人</th><th>信箱</th><th>可用狀態</th><th>使用記錄 / 備註（AI 參考）</th><th>優先級</th></tr></thead><tbody id="bk_body">
+${BROKERS.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新聯繫":s[0]==="已用過·靠後"?"3 靠後":"4 不選";return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td></tr>`;}).join("")}
 </tbody></table>`;}
-function filterBroker(f){const list=BROKERS.filter(b=>!f||(b.n+b.a+b.l).toLowerCase().includes(f.toLowerCase()));document.getElementById("bk_body").innerHTML=list.map(b=>`<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag t-blue">${esc(b.l)}</span></td><td>${esc(b.reason)}</td><td><button class="btn small" onclick="toast('已開啟聯絡記錄')">記錄</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合</td></tr>";}
-function refList(){return `<div class="row r2">${BROKERS.slice(0,4).map(b=>`<div class="panel"><div class="sec-title">${esc(b.n)}</div><div class="field"><div class="k">聯絡人</div><div class="v">${esc(b.a)}</div></div><div class="field"><div class="k">信箱</div><div class="v">${esc(b.c)}</div></div><button class="btn primary small" onclick="toast('轉介郵件草稿已開啟')">發轉介信</button></div>`).join("")}</div>`;}
+function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.filter(b=>{const s=bkStatus(b)[0];return(!f||(b.n+b.a+b.c).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新聯繫":s[0]==="已用過·靠後"?"3 靠後":"4 不選";return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td></tr>`;}).join("")||"<tr><td colspan='6' class='empty'>無符合</td></tr>";}
+function exportBrokerCsv(){const head=["經紀公司","聯絡人","信箱","可用狀態","使用記錄/AI參考","優先級"];const rows=BROKERS.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1可複用":s[0]==="可聯繫"?"2優先新":s[0]==="已用過·靠後"?"3靠後":"4不選";return [b.n,b.a,b.c,s[0],b.reason,pr];});const csv="\ufeff"+[head,...rows].map(r=>r.map(x=>`"${String(x||"").replace(/"/g,'""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="經紀資源池_"+new Date().toISOString().slice(0,10)+".csv";a.click();toast("列表已匯出，表格更新後隨時重新下載最新版");}
 function formulaDocs(){const docs=["Customs Bond 申請表填寫公式","Continuous Bond 保費計算公式","Type-8 Bond 金額對照","HTS 編碼查詢方式","個人財務表填寫範本","EIN 申請流程清單"];
 return `<div class="row r2">${docs.map(d=>`<div class="panel"><div class="docbox"><span class="fi">📄</span><div><div class="fn">${esc(d)}</div><div class="ft">舊看板公式文檔</div></div><button class="btn small" onclick="toast('開啟文件')">開啟</button></div></div>`).join("")}</div>`;}
 // ===== AI =====
