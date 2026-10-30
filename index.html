@@ -47,7 +47,7 @@ a{color:var(--acc);text-decoration:none}
 .brand .bs{font-size:10px;color:var(--dim)}
 .sideclock{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.9;color:var(--mut)}
 .sideclock b{color:var(--txt);font-weight:600}
-.sideclock .z{display:flex;justify-content:space-between}
+.sideclock .z{display:flex;align-items:center;gap:6px}.sideclock .z .zem{font-size:12px;flex:0 0 auto}.sideclock .z b{flex:1 1 auto}.sideclock .z span:last-child{font-variant-numeric:tabular-nums}
 .nav{flex:1;overflow-y:auto}
 .nav .grp{font-size:10px;color:var(--dim);text-transform:none;padding:12px 10px 6px;letter-spacing:.4px}
 .nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--mut);font-size:13px;margin-bottom:2px;border:1px solid transparent;transition:.15s}
@@ -214,6 +214,7 @@ tr:hover td{background:#1a2130}
 ::-webkit-scrollbar-track{background:transparent}
 @media(max-width:900px){.side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.ccard .foots .tag,.ccard .foots .badge{font-size:10px}.ccard .cphoto{width:60px;height:60px}.ccard .quick button{font-size:10px}}
 </style>
+<script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="mtop">
@@ -246,9 +247,9 @@ tr:hover td{background:#1a2130}
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
   </nav>
   <div class="foot">
-    <div class="user-row">
-      <div class="avatar">廖</div>
-      <div><div class="nm">廖駿賢</div><div class="rl">super_admin</div></div>
+    <div class="user-row" style="cursor:pointer" onclick="openSwitchUser()">
+      <div class="avatar" id="footAvatar">K</div>
+      <div><div class="nm" id="footName">Kevin W</div><div class="rl" id="footRole">super_admin</div></div>
     </div>
   </div>
 </aside>
@@ -464,13 +465,17 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=ht
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(CURRENT_LANG==="cn")simplifyPage();}
+function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
+const ENMAP={"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","郵件佇列":"Mail Queue","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace","新增客戶":"Add Customer","匯出 CSV":"Export CSV","內部參考":"Internal Ref","法人":"Owner","信箱":"Email","業務狀態":"Status","待辦":"To-do","時間線":"Timeline","附件文件":"Files","財務與報價":"Finance","操作記錄":"Audit Log","檔案資訊":"Profile","確認成功出單":"Mark Deal Closed","分配歸屬":"Assign Owner","人工變更狀態":"Update Status","標記成功出單":"Mark Closed","確認新增":"Confirm","取消":"Cancel","儲存":"Save","儲存變更":"Save Changes","新增跟進記錄":"Add Follow-up","狀態":"Status","可用狀態":"Availability","優先級":"Priority","備註":"Notes","歷史記錄":"History","公式文檔":"Formula Guides","匯出 Excel":"Export Excel","新增資源":"Add Resource","移除":"Remove","處理中":"In Progress","已出單":"Closed","待補件":"Pending Docs","已收報價":"Quoted","開發信漏斗":"Outreach Funnel","每日工作記錄":"Daily Log"};
+function applyLangText(){document.querySelectorAll("#view h1,#view .sub,#view .sec-title,#view .tabs button,#view th,#view .field .k,#view .btn").forEach(e=>{const t=e.textContent.trim();if(ENMAP[t])e.textContent=ENMAP[t];});}
 const empty=()=>`<div class="empty">頁面載入中</div>`;
 // clock
-function clock(){const d=new Date();const bj=new Date(d.getTime()+8*3600e3);const et=new Date(d.getTime()-5*3600e3);const pt=new Date(d.getTime()-8*3600e3);const f=x=>String(x).padStart(2,"0");
-document.getElementById("clock").textContent=`北京 ${bj.getUTCFullYear()}-${f(bj.getUTCMonth()+1)}-${f(bj.getUTCDate())} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())} ｜ 美東 ${et.getUTCMonth()+1}/${et.getUTCDate()} ${f(et.getUTCHours())}:${f(et.getUTCMinutes())}`;
+const TZS=[["🇨🇳","北京",8],["🇸🇬","新加坡",8],["🇩🇪","柏林",1],["🇬🇧","倫敦",0],["🇺🇸","美東紐約",-5],["🌴","美西洛杉磯",-8]];
+function clock(){const d=new Date();const f=x=>String(x).padStart(2,"0");
+const bj=new Date(d.getTime()+8*3600e3);
+document.getElementById("clock").textContent=`北京 ${bj.getUTCFullYear()}-${f(bj.getUTCMonth()+1)}-${f(bj.getUTCDate())} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())} ｜ 美東 ${(new Date(d.getTime()-5*3600e3)).getUTCMonth()+1}/${(new Date(d.getTime()-5*3600e3)).getUTCDate()} ${f((new Date(d.getTime()-5*3600e3)).getUTCHours())}:${f((new Date(d.getTime()-5*3600e3)).getUTCMinutes())}`;
 const sc=document.getElementById("sideClock");
-if(sc)sc.innerHTML=`<div class="z"><b>北京</b><span>${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}</span></div><div class="z"><b>美東</b><span>${et.getUTCMonth()+1}/${et.getUTCDate()} ${f(et.getUTCHours())}:${f(et.getUTCMinutes())}</span></div><div class="z"><b>美西</b><span>${pt.getUTCMonth()+1}/${pt.getUTCDate()} ${f(pt.getUTCHours())}:${f(pt.getUTCMinutes())}</span></div>`;}
+if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600e3);return `<div class="z"><span class="zem">${ic}</span><b>${nm}</b><span>${t.getUTCMonth()+1}/${t.getUTCDate()} ${f(t.getUTCHours())}:${f(t.getUTCMinutes())}</span></div>`;}).join("");}
 setInterval(clock,1000);clock();
 // bell
 let langIdx=0;
@@ -483,6 +488,7 @@ document.querySelector(".brand .bs").textContent=L.sub;
 document.querySelector(".brand .bt").textContent="Customs-Bond";
 document.getElementById("langBtn").textContent=L.label+" ▾";
 document.querySelector(".topbar .btn.small").textContent=L.logout;
+document.querySelectorAll("#view [data-zh]").forEach(e=>delete e.dataset.zh);
 render();
 if(key==="cn")simplifyPage();
 applyPerm();
@@ -497,8 +503,9 @@ document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;
 if(ADMIN_ONLY.includes(v)&&role!=="super_admin"){a.style.display="none";}else{a.style.display="";}
 });
 if(ADMIN_ONLY.includes(view)&&role!=="super_admin"){goto("dashboard");toast("此頁面僅超管可進入");}}
-function canEditKey(no){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
-function canViewCust(no){if(CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor")return true;return ownerMap[no]===CURRENT_USER.id;}
+function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
+function canEditKey(no){return canManage();}
+function canViewCust(no){if(canManage())return true;return ownerMap[no]===CURRENT_USER.id;}
 applyPerm();
 function openBell(){const n=[["10/30 10:59","A1 Worldwide 要求填 POA 開戶，需回覆"],["10/30 05:14","Immunora 發票歸屬待確認"],["10/30 05:14","Lennar 需補財務材料"]];openModal(`<h3>系統通知</h3>`+n.map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span></div>`).join("")+`<div class="mrow"><button class="btn small" onclick="toast('已全部標為已讀');closeModal()">全部標為已讀</button><button class="btn small" onclick="closeModal()">關閉</button></div>`);}
 document.getElementById("bellBtn").onclick=openBell;
@@ -528,7 +535,7 @@ function cardGrid(){return `<div class="row r3">`+DATA.customers.map(c=>{const s
   </div></div>`;}).join("")+`</div>`;}
 function openModalImg(src){openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
-R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 全部數據即時取自資料庫，含美東時間換算</div>
+R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 數據即時同步，含多時區換算</div>
   <div class="row r4">
     ${[["quote","已收報價",countBy("quote"),"待回覆"],["supply","待補件",countBy("supply"),"需動作"],["done","已出單",countBy("done"),"完成"],["hold","擱置",countBy("hold"),"暫停"]].map(x=>`<div class="stat"><div class="lb">${x[1]}</div><div class="vl">${x[2]}</div><div class="tg">${x[3]}</div></div>`).join("")}
   </div>
@@ -561,8 +568,8 @@ R.customer=()=>{
   <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
   return `<h1>客戶管理</h1><div class="sub">Customer Management ｜ 共 ${DATA.customers.length} 位客戶，卡片檢視</div>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
-  <button class="btn primary" onclick="openNewCust()">新增客戶</button>
-  <button class="btn" onclick="toast('已匯出選取客戶 CSV')">匯出 CSV</button></div>
+  ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
+  <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button></div>
   <div id="custListArea">${custGridHTML()}</div>`;
 };
 function custFiltered(){
@@ -588,28 +595,40 @@ return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc
 <div class="field"><div class="k">駕照狀態</div><div class="v ${c.dl==="過期"?"warn":""}">${c.dl==="過期"?"⚠️ 已過期，需更新":c.dl}</div></div>
 <div class="field"><div class="k">綁定信箱</div><div class="v">${esc(c.mail)}</div></div>
 <div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
-<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary" onclick="toast('已儲存客戶檔案')">儲存變更</button><button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button><button class="btn" onclick="toast('已產生完整歸檔包')">📦 匯出歸檔包</button></div>`;}
+<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">${canManage()?`<button class="btn primary" onclick="toast('已儲存客戶檔案')">儲存變更</button><button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:`<button class="btn" onclick="openNote('${no}')">提交回饋與備註</button>`}<button class="btn" onclick="toast('已產生完整歸檔包')">📦 匯出歸檔包</button></div>`;}
 function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return `<div class="empty">檔案資訊編輯表單，點擊上方 Tab 切換時間線、待辦、附件、財務、操作記錄</div>`;}
 function clientAuditList(no){const rs=clientAudit[no]||[];
 return `<table><thead><tr><th>時間</th><th>操作人</th><th>動作</th><th>舊值</th><th>新值</th><th>理由</th></tr></thead><tbody>
 ${rs.map(r=>`<tr><td>${r.t}</td><td>${esc(r.user)}</td><td>${esc(r.action)}</td><td>${esc(r.old)}</td><td>${esc(r.new)}</td><td>${esc(r.reason)}</td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無操作記錄</td></tr>"}
 </tbody></table>`;}
-function openStatusChange(no){const c=DATA.customers.find(x=>x.no===no);const opts=DATA.statuses.map(s=>`<option value="${s.id}" ${s.id===c.status?"selected":""}>${s.lb}</option>`).join("");
-openModal(`<h3>人工變更狀態 ｜ 客戶 ${no}</h3><div class="fg"><label>選擇新狀態</label><select id="sc_status">${opts}</select></div><div class="fg"><label>確認理由，可不填</label><textarea id="sc_reason" placeholder="人工確認，AI 不會自動判定"></textarea></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmStatus('${no}')">確認變更</button></div>`);}
+function openStatusChange(no){if(!canManage()){toast("狀態由主管人工判定");return;}const c=DATA.customers.find(x=>x.no===no);const opts=DATA.statuses.map(s=>`<option value="${s.id}" ${s.id===c.status?"selected":""}>${s.lb}</option>`).join("");
+openModal(`<h3>人工變更狀態 ｜ 客戶 ${no}</h3><div class="fg"><label>選擇新狀態</label><select id="sc_status">${opts}</select></div><div class="fg"><label>確認理由，可不填</label><textarea id="sc_reason" placeholder="由主管確認後更新，可填說明"></textarea></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmStatus('${no}')">確認變更</button></div>`);}
 function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=document.getElementById("sc_status").value;const reason=document.getElementById("sc_reason").value;const old=st(c.status).lb;c.status=nv;
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:ownerMap[no]||null,status:st(nv).lb,note:reason||null});
-  addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已人工確認並留痕，已寫入資料庫");}
-function openAssign(no){const opts=USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm} ${u.role}</option>`).join("");
+  addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已更新並記錄");}
+function openAssign(no){if(!canManage()){toast("歸屬由主管分配");return;}const opts=USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm} ${u.role}</option>`).join("");
 openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬負責人</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
 function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);const c=DATA.customers.find(x=>x.no===no);
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:uid,status:st(c.status).lb});
-  addClientAudit(no,"歸屬變更",old,u.nm,"");closeModal();render();toast("歸屬已分配並留痕，已寫入資料庫");}
-function openMarkDone(no){openModal(`<h3>標記成功出單 ｜ 客戶 ${no}</h3><div class="fg"><label>佣金金額，可選或自定</label><select id="md_amt"><option>1000</option><option>2000</option><option>1500</option></select><input id="md_custom" type="number" placeholder="自定金額，留空用上方"></div><div class="fg"><label>分配方式</label><select id="md_mode"><option value="amount">按具體金額</option><option value="percent">按比例</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
-function confirmMarkDone(no){const custom=document.getElementById("md_custom").value;const amt=custom?Number(custom):Number(document.getElementById("md_amt").value);const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;c.status="done";commissions.push({cust:no,user:ownerMap[no]||"kevinyama",amount:amt,mode:document.getElementById("md_mode").value,t:nowBJ()});
-sbReq("deals","POST",{client_name:c.name,owner:ownerMap[no]||"kevinyama",amount:amt,marked_by:CURRENT_USER.id,note:document.getElementById("md_mode").value});
-addClientAudit(no,"標記成功出單",old,"已出單",`佣金 ${amt}`);closeModal();render();toast("成功已手動標記，佣金已記錄並寫入資料庫");}
+  addClientAudit(no,"歸屬變更",old,u.nm,"");closeModal();render();toast("歸屬已更新並記錄");}
+function openMarkDone(no){if(CURRENT_USER.role!=="super_admin"){toast("成功出單由超管確認");return;}
+const base=superAdminRate();const c=DATA.customers.find(x=>x.no===no);const ow=ownerMap[no]||"kevinyama";
+openModal(`<h3>確認成功出單 ｜ 內部參考 ${no}</h3>
+<div class="fg"><label>本單基準佣金，超管固定前 30 單 1000、第 31 單起 1500，可逐單微調</label><input id="md_custom" type="number" value="${base}"></div>
+<div class="fg"><label>分配方式</label><select id="md_mode" onchange="document.getElementById('md_pct').style.display=this.value==='percent'?'':'none'"><option value="amount">上級手動定額，寫死金額</option><option value="percent">按比例，下線只認百分比</option></select></div>
+<div class="fg" id="md_pct" style="display:none"><label>下線分成百分比，例如 30 代表 30%</label><input id="md_split" type="number" min="0" max="100" placeholder="30"></div>
+<div class="fg"><label>歸屬業務</label><select id="md_owner">${USERS.filter(u=>u.active).map(u=>`<option value="${u.id}" ${u.id===ow?"selected":""}>${u.nm}</option>`).join("")}</select></div>
+<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
+function confirmMarkDone(no){const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;
+const amt=Number(document.getElementById("md_custom").value)||superAdminRate();
+const mode=document.getElementById("md_mode").value;const ow=document.getElementById("md_owner").value;
+const pct=mode==="percent"?Number(document.getElementById("md_split").value)||0:null;
+c.status="done";commissions.push({cust:no,user:ow,amount:amt,mode,pct,t:nowBJ(),by:CURRENT_USER.id});
+sbReq("deals","POST",{client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_USER.id,note:mode==="percent"?`比例${pct}%`:"定額"});
+addClientAudit(no,"確認成功出單",old,"已出單",`佣金 ${amt}${pct!=null?`，下線分成 ${pct}%`:""}`);closeModal();render();toast("成功已確認，佣金已歸檔");}
+function editDealAmt(i){const v=prompt("修改本單佣金金額 USD",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
 function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
 return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">➕ 新增費用</button><button class="btn" onclick="addQuote('${no}')">➕ 新增報價</button></div>
 <table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th></tr></thead><tbody>
@@ -644,12 +663,14 @@ function docList(no){
   <div style="margin-top:14px"><button class="btn primary" onclick="toast('開始上傳，可同步至 GitHub')">⬆ 上傳文件</button></div>`;
 }
 // ===== 跟進備註 =====
-function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 客戶 ${no}</h3>
-<div class="fg" style="margin-bottom:10px"><label>事件標題</label><input id="ntitle" placeholder="例如 電話與 Broker 溝通補件事項"></div>
+function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
+<div class="fg" style="margin-bottom:10px"><label>事件標題</label><input id="ntitle" placeholder="例如 與經紀溝通補件事項"></div>
 <div class="fg" style="margin-bottom:10px"><label>內容</label><textarea id="nbody" placeholder="輸入跟進內容"></textarea></div>
-<div style="margin-bottom:14px"><button class="btn" onclick="document.getElementById('nbody').value='AI 草稿：與 Broker 電話溝通，對方口頭確認將寄出補件資料，具體進度待郵件確認。'">🤖 AI 生成草稿</button>
-<button class="btn small" onclick="toast('已切換英文草稿')">Show English</button></div>
-<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();DATA.timeline['${no}']=DATA.timeline['${no}']||[];DATA.timeline['${no}'].unshift({e:'note',tt:document.getElementById('ntitle').value||'手動跟進',tm:'10/30 現在',src:'📝 手動',tx:document.getElementById('nbody').value});render();toast('跟進記錄已寫入時間線')">確認新增</button></div>`);}
+<div style="margin-bottom:14px"><button class="btn" onclick="document.getElementById('nbody').value='與經紀口頭確認將補寄資料，具體進度待郵件確認。'">🤖 產生參考草稿</button>
+<button class="btn small" onclick="toast('已切換英文草稿')">English</button></div>
+<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmNote('${no}')">確認新增</button></div>`);}
+function confirmNote(no){const tt=document.getElementById("ntitle").value||"手動跟進";const tx=document.getElementById("nbody").value||"";DATA.timeline[no]=DATA.timeline[no]||[];DATA.timeline[no].unshift({e:"note",tt,tm:nowBJ(),src:"📝 "+CURRENT_USER.nm,tx});
+addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
 R.mailbox=()=>`<h1>信箱配置</h1><div class="sub">Mailbox Configuration ｜ 僅 super_admin 可編輯</div>
@@ -666,7 +687,7 @@ function renderQueueTable(){const f=(document.getElementById("q_search")||{}).va
 let list=DATA.emails.filter(e=>(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
 const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td>${esc(e.sub)}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="markRead('${e.t}')">回覆</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
-function markRead(t){const e=DATA.emails.find(x=>x.t===t);if(e){e.unread=false;addAudit("處理郵件",e.sub);}render();toast("已標為處理並留痕");}
+function markRead(t){const e=DATA.emails.find(x=>x.t===t);if(e){e.unread=false;addAudit("處理郵件",e.sub);}render();toast("已標為處理");}
 // ===== Broker 池 / 轉介 / 公式文檔 =====
 const BROKERS=[
 {n:"A1 Worldwide",a:"Angely Arias",c:"angely@a1wwl.com",m:"—",l:"跟進中",tag:"quote",reason:"要求填 POA 開戶"},
@@ -677,17 +698,27 @@ const BROKERS=[
 ];
 let brokerTab="pool";
 function bkStatus(b){if(b.tag==="reject"||/拒絕|婉拒|不可用|停用/.test(b.l))return["不可用","t-gray"];if(/成交|已出單|成功/.test(b.l))return["成交過·可複用","t-green"];if(/用過|已用|跟進中|補件|報價/.test(b.l))return["已用過·靠後","t-amber"];return["可聯繫","t-blue"];}
-R.broker=()=>`<h1>經紀資源池</h1><div class="sub">經紀資源池 ｜ 人工參考最新版本，AI 選人發信時依優先級取列表，後台隨時增減</div>
-<div class="tabs"><button class="${brokerTab==="pool"?"on":""}" onclick="brokerTab='pool';render()">資源列表</button><button class="${brokerTab==="formula"?"on":""}" onclick="brokerTab='formula';render()">公式文檔</button></div>
-${brokerTab==="pool"?brokerPool():formulaDocs()}`;
-function brokerPool(){return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerCsv()">⬇ 匯出列表</button></div>
-<table><thead><tr><th>經紀公司</th><th>聯絡人</th><th>信箱</th><th>可用狀態</th><th>使用記錄 / 備註（AI 參考）</th><th>優先級</th></tr></thead><tbody id="bk_body">
-${BROKERS.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新聯繫":s[0]==="已用過·靠後"?"3 靠後":"4 不選";return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td></tr>`;}).join("")}
+R.broker=()=>`<h1>經紀資源池</h1><div class="sub">經紀資源池 ｜ 本表供人工參考最新版本，AI 選人發信依優先級取列表，後台可隨時增刪</div>
+<div class="tabs"><button class="${brokerTab==="pool"?"on":""}" onclick="brokerTab='pool';render()">資源列表</button><button class="${brokerTab==="formula"?"on":""}" onclick="brokerTab='formula';render()">公式文檔</button><button class="${brokerTab==="history"?"on":""}" onclick="brokerTab='history';render()">歷史記錄</button></div>
+${brokerTab==="pool"?brokerPool():brokerTab==="history"?historyPanel():formulaDocs()}`;
+function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新":s[0]==="已用過·靠後"?"3 靠後":"4 不選";
+return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td>${canManage()?`<td><button class="btn small" onclick="delBroker(${i})">移除</button></td>`:""}</tr>`;}
+function brokerPool(){const cols=canManage()?7:6;return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerXlsx()">⬇ 匯出 Excel</button>${canManage()?`<button class="btn" onclick="openAddBroker()">＋ 新增資源</button>`:""}</div>
+<table><thead><tr><th>經紀公司</th><th>聯絡人</th><th>信箱</th><th>可用狀態</th><th>備註（人工 / AI 參考）</th><th>優先級</th>${canManage()?"<th>操作</th>":""}</tr></thead><tbody id="bk_body">
+${BROKERS.map((b,i)=>bkRow(b,i)).join("")}
 </tbody></table>`;}
-function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.filter(b=>{const s=bkStatus(b)[0];return(!f||(b.n+b.a+b.c).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新聯繫":s[0]==="已用過·靠後"?"3 靠後":"4 不選";return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td></tr>`;}).join("")||"<tr><td colspan='6' class='empty'>無符合</td></tr>";}
-function exportBrokerCsv(){const head=["經紀公司","聯絡人","信箱","可用狀態","使用記錄/AI參考","優先級"];const rows=BROKERS.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1可複用":s[0]==="可聯繫"?"2優先新":s[0]==="已用過·靠後"?"3靠後":"4不選";return [b.n,b.a,b.c,s[0],b.reason,pr];});const csv="\ufeff"+[head,...rows].map(r=>r.map(x=>`"${String(x||"").replace(/"/g,'""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="經紀資源池_"+new Date().toISOString().slice(0,10)+".csv";a.click();toast("列表已匯出，表格更新後隨時重新下載最新版");}
+function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.map((b,i)=>({b,i})).filter(x=>{const s=bkStatus(x.b)[0];return(!f||(x.b.n+x.b.a+x.b.c).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(x=>bkRow(x.b,x.i)).join("")||`<tr><td colspan='${canManage()?7:6}' class='empty'>無符合</td></tr>`;}
+function openAddBroker(){openModal(`<h3>新增經紀資源</h3><div class="form-grid"><div class="fg"><label>經紀公司</label><input id="ab_n"></div><div class="fg"><label>聯絡人</label><input id="ab_a"></div><div class="fg full"><label>信箱</label><input id="ab_c"></div><div class="fg"><label>可用狀態</label><select id="ab_tag"><option value="quote">可聯繫</option><option value="deal">成交過·可複用</option><option value="used">已用過·靠後</option><option value="reject">不可用</option></select></div><div class="fg"><label>備註 / AI 參考</label><input id="ab_r"></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="addBroker()">新增</button></div>`);}
+function addBroker(){const n=document.getElementById("ab_n").value.trim();if(!n){toast("請填經紀公司名稱");return;}const tag=document.getElementById("ab_tag").value;const l=tag==="reject"?"不可用":tag==="deal"?"成交過":tag==="used"?"已用過":"待聯繫";BROKERS.push({n,a:document.getElementById("ab_a").value||"—",c:document.getElementById("ab_c").value||"—",m:"—",l,tag,reason:document.getElementById("ab_r").value||""});addAudit("新增經紀資源",n);closeModal();render();toast("資源已加入列表");}
+function delBroker(i){const b=BROKERS[i];BROKERS.splice(i,1);addAudit("移除經紀資源",b.n);render();toast("已從列表移除");}
+function exportBrokerXlsx(){const head=["經紀公司","聯絡人","信箱","可用狀態","備註/AI參考","優先級"];const rows=BROKERS.map(b=>{const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1可複用":s[0]==="可聯繫"?"2優先新":s[0]==="已用過·靠後"?"3靠後":"4不選";return [b.n,b.a,b.c,s[0],b.reason,pr];});
+const stamp=new Date().toISOString().slice(0,10);
+if(typeof XLSX!=="undefined"){const ws=XLSX.utils.aoa_to_sheet([head,...rows]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"經紀資源池");XLSX.writeFile(wb,`經紀資源池_${stamp}.xlsx`);toast("最新列表已匯出 Excel");}
+else{const csv="\ufeff"+[head,...rows].map(r=>r.map(x=>`"${String(x||"").replace(/"/g,'""')}"`).join(",")).join("\n");const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`經紀資源池_${stamp}.csv`;a.click();toast("已匯出 CSV，線上可另存 Excel");}}
 function formulaDocs(){const docs=["Customs Bond 申請表填寫公式","Continuous Bond 保費計算公式","Type-8 Bond 金額對照","HTS 編碼查詢方式","個人財務表填寫範本","EIN 申請流程清單"];
 return `<div class="row r2">${docs.map(d=>`<div class="panel"><div class="docbox"><span class="fi">📄</span><div><div class="fn">${esc(d)}</div><div class="ft">舊看板公式文檔</div></div><button class="btn small" onclick="toast('開啟文件')">開啟</button></div></div>`).join("")}</div>`;}
+function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化開發信逐封送達"],["10/29","Oliveware","回覆 IIA/DRI/Aurora/BorderBuddy，提交 Bluebird POA"],["10/29","Nervaqon","CBP 申請表回覆 SPG Anova，等待報價"],["10/30","A1 Worldwide","要求填 POA 開戶，待回覆"]];
+return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
 // ===== AI =====
 let aiSel=DATA.customers[0]||{};let aiLang="zh";
 function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;aiDraft();}
@@ -713,7 +744,7 @@ R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI Assistant ｜ AI 產生草
 <button class="btn primary" style="width:100%" onclick="toast('已開啟回覆草稿編輯，繁中＋英文雙份保留')">✍ 產生回覆草稿</button></div>
 </div>
 <div class="panel"><div class="sec-title">AI 草稿輸出</div><div id="aiZH"></div><div id="aiEN" style="display:none"></div></div>
-<div class="panel"><div class="sec-title">AI 草稿雙語儲存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">AI 全部輸出同時儲存 <b>繁體中文</b> 與 <b>英文</b> 兩份，永不丟失。簡體中文由後端即時繁轉簡，資料庫不存簡體。AI 不會自動寫入時間線或待辦，一律經人工確認才落庫。</p></div>`;
+<div class="panel"><div class="sec-title">草稿雙語保存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">草稿同時保留 <b>繁體中文</b> 與 <b>英文</b> 兩份，簡體由系統即時轉換。所有草稿僅供參考，經人工確認後才併入客戶記錄。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
 R.doc=()=>`<h1>文件中心</h1><div class="sub">Document Center ｜ 每位客戶全部上傳文件與照片，點圖片預覽、點文件開啟</div>
 <div class="search"><input placeholder="搜尋文件名、公司名、法人" oninput="window._df=this.value;renderDoc()"></div>
@@ -735,8 +766,8 @@ function renderDoc(){
 }
 R.archive=()=>`<h1>歸檔包</h1><div class="sub">Customer Archive ｜ 每客戶完整 ZIP 下載，內附檔案索引清單</div>
 <div class="row r2">${DATA.customers.slice(0,6).map(c=>`<div class="panel"><div class="sec-title">${c.no} ${esc(c.name)} 完整歸檔包</div><div style="font-size:12px;color:var(--mut)">內含：客戶資訊摘要 ｜ 基礎數據 JSON ｜ 時間線 ｜ 待辦 ｜ 全部附件 ｜ _檔案索引清單</div><div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary small" onclick="toast('ZIP 已開始產生，完成後通知')">產生 / 下載</button><button class="btn small" onclick="toast('已同步至 GitHub 備份')">同步 GitHub</button></div></div>`).join("")}</div>`;
-R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">GitHub Backup Manager ｜ 僅 super_admin ｜ 前端不直連 GitHub，後端完成 git 操作</div>
-<div class="row r2"><div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('全量 JSON 備份已推送 GitHub')">🔄 立即全量 JSON 備份</button></div>
+R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">備份管理 ｜ 僅超級管理員可操作</div>
+<div class="row r2"><div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('備份已完成')">🔄 立即全量備份</button></div>
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
 <div class="panel"><div class="sec-title">同步任務日誌</div>${[["10/30 13:17","全量 JSON 備份推送成功 commit 7f69fa6","成功"],["10/30 12:40","客戶狀態更新已推送 commit 8a021ab","成功"]].map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span><span class="o">${x[2]}</span></div>`).join("")}</div>`;
 R.system=()=>`<h1>系統管理</h1><div class="sub">System Admin ｜ 僅 super_admin</div>
@@ -747,16 +778,21 @@ ${USERS.map(u=>`<tr><td>${esc(u.id)}</td><td>${esc(u.nm)}</td><td><span class="t
 <div class="fg"><label>營業日切換時間，24 小時制</label><input id="set_cutoff" type="number" min="0" max="23" value="${SETTINGS.cutoff_hour}"></div>
 <div class="mrow"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
 <div class="field" style="margin-top:10px"><div class="k">目前切日</div><div class="v">凌晨 ${SETTINGS.cutoff_hour} 點，按日統計與郵件歸日全部依此</div></div></div>
-<div class="panel"><div class="sec-title">佣金分成</div>
-<div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} 元，前 30 單 1000、超過 30 單 1500，可逐單改</div></div>
-<table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>方式</th><th>時間</th></tr></thead><tbody>
-${commissions.map(x=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>${x.amount}</td><td>${x.mode==="percent"?"按比例":"按金額"}</td><td>${x.t}</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無成功單</td></tr>"}
+<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
+<div class="field"><div class="k">超管固定基準</div><div class="v">前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設</div></div>
+<div class="field"><div class="k">分單規則</div><div class="v">上級手動定額寫死金額，或按比例分成，下線只認百分比，不見上級實收</div></div>
+<div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} USD</div></div>
+<table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>方式</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
+${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>$${Number(x.amount).toLocaleString()}</td><td>${x.mode==="percent"?"按比例":"定額"}</td><td>${x.pct!=null?x.pct+"%":"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='7' class='empty'>尚無成功單</td></tr>"}
 </tbody></table></div>
 <div class="panel"><div class="sec-title">全員審計日誌</div>
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"></div>
 <div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div></div>`;
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}}
-function switchUser(id){CURRENT_USER=USERS.find(u=>u.id===id);addAudit("登入",CURRENT_USER.nm);document.querySelector(".foot .nm").textContent=CURRENT_USER.nm;document.querySelector(".foot .rl").textContent=CURRENT_USER.role;applyPerm();render();toast("已切換為 "+CURRENT_USER.nm);}
+function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.nm.charAt(0);}
+function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;CURRENT_USER=u;addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
+function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:pointer" onclick="switchUser('${u.id}');closeModal()"><div class="sec-title">${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""}</div><div class="field"><div class="k">角色</div><div class="v">${u.role==="super_admin"?"超級管理員":"業務員"}</div></div></div>`).join("")}</div>`);}
+paintFoot();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function openAdmin(){openModal(`<h3>新增帳戶管理員</h3><div class="form-grid"><div class="fg"><label>帳號</label><input id="au_user"></div><div class="fg"><label>顯示名稱</label><input id="au_name"></div><div class="fg"><label>密碼</label><input id="au_pwd" type="password"></div><div class="fg"><label>角色</label><select id="au_role"><option value="operator">操作員 operator</option><option value="super_admin">超級管理員 super_admin</option></select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="window._admins=window._admins||[];window._admins.push({username:document.getElementById('au_user').value,display_name:document.getElementById('au_name').value,role:document.getElementById('au_role').value,active:true});closeModal();render();toast('帳戶已建立')">建立</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
