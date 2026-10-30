@@ -1,6 +1,10 @@
 {
   "daily": [
     {
+      "t": "10/31 03:11",
+      "txt": "巡查 15/15 信箱成功，新信 5 封：Nervaqon 補件、Kervalonix 2 封、Leidos 2 封"
+    },
+    {
       "t": "10/31 02:12",
       "txt": "巡查 15/15 信箱成功，新信 2 封（Home Depot 收到 GLCHB 兩封正面回覆）"
     },
@@ -612,6 +616,20 @@
         "tm": "10/31 02:10",
         "src": "系統自動",
         "tx": "冷啟開發信已發送至 info@dbcustomsbrokers.com（D & B Customs Brokers, LLC）"
+      },
+      {
+        "e": "email",
+        "tt": "RE: Continuous Bond Quote Needed",
+        "tm": "10/31 03:11",
+        "src": "Francisco Ollino <CF.Ollino@vortexwl.com> VORTEX",
+        "tx": "VORTEX Worldwide Logistics 要求提供介紹人姓名與公司，待回覆。"
+      },
+      {
+        "e": "email",
+        "tt": "Re: Customs Bond Services Request",
+        "tm": "10/31 03:11",
+        "src": "Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B",
+        "tx": "D&B Customs Brokers 報價年費 1690 美元，12 個月保額 5 萬美元關稅，不含 ADD/CVD，待客戶決定是否進行。"
       }
     ],
     "Lennar": [
@@ -826,6 +844,13 @@
         "tm": "10/31 02:10",
         "src": "系統自動",
         "tx": "冷啟開發信已發送至 monica@pinnaclefreightus.com（Pinnacle Freight Solutions, LLC）"
+      },
+      {
+        "e": "email",
+        "tt": "RE: [EXTERNAL] Inquiry About Obtaining Customs Bond",
+        "tm": "10/31 03:11",
+        "src": "SPG Anova Marine Bond Department <bonds@anovamarin...>",
+        "tx": "客戶已交申請表，對方要求補 2025 年完整資產負債表與損益表，以及 2026 年至 6 月的 YTD 財務報表。"
       }
     ],
     "Oliveware": [
@@ -1040,6 +1065,20 @@
         "tm": "10/31 02:10",
         "src": "系統自動",
         "tx": "冷啟開發信已發送至 usa.info@seafairgroup.com（SEAFAIR USA, LLC）"
+      },
+      {
+        "e": "email",
+        "tt": "Re: Continuous Customs Bond Inquiry",
+        "tm": "10/31 03:11",
+        "src": "Armando Hevia <brokerageintl8@gmail.com> Brokerage International",
+        "tx": "Brokerage International 請客戶直接致電 305-639-3335 洽談。"
+      },
+      {
+        "e": "email",
+        "tt": "Re: Customs Bond Services Request",
+        "tm": "10/31 03:11",
+        "src": "Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B",
+        "tx": "D&B Customs Brokers 報價年費 1690 美元，12 個月保額 5 萬美元關稅，不含 ADD/CVD。"
       }
     ]
   },
