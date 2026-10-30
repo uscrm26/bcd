@@ -23,11 +23,11 @@ a{color:var(--acc);text-decoration:none}
 .mtop .bell2{background:var(--bg2);border:1px solid var(--line);width:38px;height:38px;border-radius:8px;color:var(--mut);font-size:15px;cursor:pointer;position:relative}
 .overlay{display:none;position:fixed;inset:0;background:rgba(5,7,10,.6);z-index:55}
 .overlay.show{display:block}
-.side.open{transform:translateX(0)!important}
-@media(max-width:900px){
+.side.open{transform:translateX(0)!important}@media(max-width:900px){
   body{overflow-x:hidden}
   .mtop{display:flex}
-  .side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}
+  .side{display:none;width:248px;z-index:70;transform:none;transition:none}
+  .side.open{display:flex}
   .main{margin-left:0;padding:74px 14px 70px}
   .r4{grid-template-columns:repeat(2,1fr)}
   .r3{grid-template-columns:repeat(1,1fr)}
@@ -194,6 +194,7 @@ tr:hover td{background:#1a2130}
 .docbox .fi{font-size:20px}
 .docbox .fn{font-size:12px;color:var(--txt);flex:1;word-break:break-all}
 .docbox .ft{font-size:10px;color:var(--dim)}
+.draftbox{background:var(--bg2);border:1px dashed var(--line);border-radius:8px;padding:12px;font-size:12px;line-height:2;color:var(--txt)}
 .sync{display:inline-block;font-size:10px;padding:1px 8px;border-radius:6px;white-space:nowrap}
 .sync.ok{color:var(--ok);border:1px solid #23583f}
 .sync.no{color:var(--warn);border:1px solid #5a4527}
@@ -504,17 +505,30 @@ R.queue=()=>`<h1>郵件佇列</h1><div class="sub">Mail Queue ｜ 外發 pending
 ${DATA.emails.map(e=>`<tr><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td>${esc(e.sub)}</td><td><span class="tag ${e.unread?"t-red":"t-green"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="toast('回覆草稿已開啟')">回覆</button></td></tr>`).join("")}
 </tbody></table>`;
 // ===== AI =====
+let aiSel=DATA.customers[0]||{};let aiLang="zh";
+function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;aiDraft();}
+function aiTab(l){aiLang=l;const s=document.querySelectorAll('#view .switch button');s.forEach(b=>b.classList.toggle('on',b.textContent===(l==='zh'?'繁中':'EN')));aiDraft();}
+function aiDraft(){
+  const en=aiLang==="en";
+  document.getElementById('aiZH').style.display=en?'none':'';
+  document.getElementById('aiEN').style.display=en?'':'none';
+  const c=aiSel||{};const cname=c.name||"";const czh=c.zh||cname;const no=c.no||"";
+  document.getElementById('aiZH').innerHTML=`<div class="sec-title">財務表草稿 繁中</div><div class="draftbox">客戶 ${no} ${czh}<br>婚姻狀態 已婚未聯合 ｜ 家庭年收 約 12 萬美元 ｜ 資產 美國中產典型值<br>房產 約 40 萬美元 ｜ 存款 約 3.5 萬美元 ｜ 負債 車貸／房貸合計約 25 萬美元<br>AI 草稿僅供參考，請人工確認後再送出。</div>`;
+  document.getElementById('aiEN').innerHTML=`<div class="sec-title">Financial Draft EN</div><div class="draftbox">Client ${no} ${cname}<br>Marital Married Filing Separately ｜ Household Income ~\$120k ｜ Assets US middle-class typical<br>Home ~\$400k ｜ Savings ~\$35k ｜ Liabilities auto+mortgage ~\$250k<br>AI draft for reference only, confirm before sending.</div>`;
+  toast(en?"English draft generated":"財務表草稿已產生，繁中＋英文雙份");
+}
 R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI Assistant ｜ AI 產生草稿，人工確認後才入庫</div>
 <div class="row r3">
 <div class="panel"><div class="sec-title">個人財務表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選擇客戶自動預填法人資料，AI 依婚姻狀態產生中產財務草稿。</p>
-<select class="btn" style="width:100%;margin-bottom:10px">${DATA.customers.map(c=>`<option>${c.no} ${c.name}</option>`).join("")}</select>
-<button class="btn primary" style="width:100%" onclick="toast('財務表草稿已產生，繁體＋英文雙份')">🤖 產生草稿</button>
-<div class="switch" style="margin-top:12px"><button class="on">繁中</button><button>EN</button></div></div>
+<select class="btn" style="width:100%;margin-bottom:10px" onchange="aiPick(this.value);aiDraft()">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>${c.no} ${c.name}</option>`).join("")}</select>
+<button class="btn primary" style="width:100%" onclick="aiDraft()">🤖 產生草稿</button>
+<div class="switch" style="margin-top:12px"><button class="on" onclick="aiTab('zh')">繁中</button><button onclick="aiTab('en')">EN</button></div></div>
 <div class="panel"><div class="sec-title">Customs-Bond 申請表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">預填 EIN、地址、法人；填 Bond 金額、HTS、進口額。</p>
-<button class="btn primary" style="width:100%" onclick="toast('申請表草稿已產生')">🤖 產生草稿</button></div>
+<button class="btn primary" style="width:100%" onclick="toast('申請表草稿已產生，請於下方確認')">🤖 產生草稿</button></div>
 <div class="panel"><div class="sec-title">AI 郵件草稿</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選取一封信件，AI 依客戶時間線上下文產生繁中＋英文草稿。</p>
 <button class="btn primary" style="width:100%" onclick="toast('已開啟回覆草稿編輯，繁中＋英文雙份保留')">✍ 產生回覆草稿</button></div>
 </div>
+<div class="panel"><div class="sec-title">AI 草稿輸出</div><div id="aiZH"></div><div id="aiEN" style="display:none"></div></div>
 <div class="panel"><div class="sec-title">AI 草稿雙語儲存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">AI 全部輸出同時儲存 <b>繁體中文</b> 與 <b>英文</b> 兩份，永不丟失。簡體中文由後端即時繁轉簡，資料庫不存簡體。AI 不會自動寫入時間線或待辦，一律經人工確認才落庫。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
 R.doc=()=>`<h1>文件中心</h1><div class="sub">Document Center ｜ 依客戶分組管理，支援網頁預覽</div>
