@@ -382,7 +382,9 @@ const clientAudit={};
 const auditLog=[];
 function nowBJ(){const d=new Date();const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}
 function ownerName(no){const u=USERS.find(x=>x.id===ownerMap[no]);return u?u.nm:"未分配";}
-function addAudit(action,detail){auditLog.unshift({t:nowBJ(),user:CURRENT_USER.nm,action,detail});}
+function addAudit(action,detail){auditLog.unshift({t:nowBJ(),user:CURRENT_USER.nm,action,detail});
+  sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action,target_client:"",detail:detail||""});
+}
 function addClientAudit(no,action,oldv,newv,reason){clientAudit[no]=clientAudit[no]||[];clientAudit[no].unshift({t:nowBJ(),user:CURRENT_USER.nm,action,old:oldv,new:newv,reason:reason||""});addAudit(action,`客戶 ${no} ${oldv||""} → ${newv||""}`);}
 // 佣金：成功單記錄，超管手動標記
 const commissions=[];
@@ -409,6 +411,17 @@ async function loadRepoData(){
     }
     render();
   }catch(e){/* 離線或檔案缺失時保留內置兜底資料 */}
+}
+// ===== Supabase 直連動態保存（publishable key 公開可曝，寫入走現有表）=====
+const SB={url:"https://xlcyumbyqcwedqwpspzs.supabase.co",key:"sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5"};
+async function sbReq(table,method,body,query){
+  try{
+    const opt={method,headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json",Prefer:method==="POST"?"return=representation":"return=minimal"}};
+    if(body)opt.body=JSON.stringify(body);
+    const r=await fetch(`${SB.url}/rest/v1/${table}${query||""}`,opt);
+    if(!r.ok){console.warn("SB",table,r.status,await r.text().catch(()=>""));return null;}
+    return r.status===204?[]:await r.json();
+  }catch(e){console.warn("SB offline",table);return null;}
 }
 const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
@@ -536,7 +549,9 @@ function openAssign(no){const opts=USERS.filter(u=>u.active).map(u=>`<option val
 openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬負責人</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
 function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);addClientAudit(no,"歸屬變更",old,u.nm,"");closeModal();render();toast("歸屬已分配並留痕");}
 function openMarkDone(no){openModal(`<h3>標記成功出單 ｜ 客戶 ${no}</h3><div class="fg"><label>佣金金額，可選或自定</label><select id="md_amt"><option>1000</option><option>2000</option><option>1500</option></select><input id="md_custom" type="number" placeholder="自定金額，留空用上方"></div><div class="fg"><label>分配方式</label><select id="md_mode"><option value="amount">按具體金額</option><option value="percent">按比例</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
-function confirmMarkDone(no){const custom=document.getElementById("md_custom").value;const amt=custom?Number(custom):Number(document.getElementById("md_amt").value);const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;c.status="done";commissions.push({cust:no,user:ownerMap[no]||"kevinyama",amount:amt,mode:document.getElementById("md_mode").value,t:nowBJ()});addClientAudit(no,"標記成功出單",old,"已出單",`佣金 ${amt}`);closeModal();render();toast("成功已手動標記，佣金已記錄");}
+function confirmMarkDone(no){const custom=document.getElementById("md_custom").value;const amt=custom?Number(custom):Number(document.getElementById("md_amt").value);const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;c.status="done";commissions.push({cust:no,user:ownerMap[no]||"kevinyama",amount:amt,mode:document.getElementById("md_mode").value,t:nowBJ()});
+sbReq("deals","POST",{client_name:c.name,owner:ownerMap[no]||"kevinyama",amount:amt,marked_by:CURRENT_USER.id,note:document.getElementById("md_mode").value});
+addClientAudit(no,"標記成功出單",old,"已出單",`佣金 ${amt}`);closeModal();render();toast("成功已手動標記，佣金已記錄並寫入資料庫");}
 function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
 return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">➕ 新增費用</button><button class="btn" onclick="addQuote('${no}')">➕ 新增報價</button></div>
 <table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th></tr></thead><tbody>
