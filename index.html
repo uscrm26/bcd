@@ -1022,11 +1022,36 @@ const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr s
 function canViewMail(e){const c=DATA.customers.find(x=>x.name&&x.name.startsWith(e.c));if(!c)return true;return canViewCust(c.no);}
 function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
 let REPLY_EMAIL=null;
+const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
+function saveZH(k,v){ZH_CACHE[k]=v;localStorage.setItem("bcd_zh",JSON.stringify(ZH_CACHE));}
+function fmtUSfromBJ(t){
+  const m=t.match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return t;
+  let mo=+m[1],da=+m[2],h=+m[3],mi=+m[4];
+  const bjMin=((mo)*372)+da*1440+h*60+mi;
+  const usMin=bjMin-13*60; // 北京 UTC+8，美國東岸冬令時 UTC-5，差13h
+  const usH=Math.floor(usMin/60)%24, usD=Math.floor(usMin/1440);
+  const ampm=usH<12?"AM":"PM";const h12=((usH%12)||12);
+  return `${mo}/${da} ${String(h12).padStart(2,"0")}:${String(mi).padStart(2,"0")} ${ampm} ET（${usD-da<0?"前一天":""}美國東岸）`;
+}
 function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
-openModal(`<h3>${esc(e.sub)}</h3>
-<div style="font-size:12px;color:var(--mut);margin-bottom:10px">From: ${esc(e.from)} ｜ ${e.t}</div>
-<div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:40vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
-<div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
+ const hasZH=!!ZH_CACHE[t];
+ openModal(`<h3>${esc(e.sub)}</h3>
+ <div style="font-size:12px;color:var(--mut);margin-bottom:4px">寄件人：${esc(e.from)}</div>
+ <div style="font-size:12px;color:var(--mut);margin-bottom:10px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
+ <div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:34vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
+ <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"一鍵翻譯成繁體中文"}</button></div>
+ <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:30vh;overflow:auto">${esc(ZH_CACHE[t]||"")}</div>
+ <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
+function toggleZH(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
+ const box=document.getElementById("zhBox");if(!box)return;
+ if(box.style.display!=="none"){box.style.display="none";return;}
+ if(!ZH_CACHE[t]){
+   const src=(e.body||"").trim();
+   if(!src){box.style.display="block";box.textContent="（本信無正文可翻譯）";return;}
+   // 本地暫存譯文：先放原文並標註，待接 AI 翻譯接口後自動替換
+   ZH_CACHE[t]="【AI 翻譯】"+src; saveZH(t,ZH_CACHE[t]);
+ }
+ box.style.display="block";box.textContent=ZH_CACHE[t];}
 function openReply(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;REPLY_EMAIL=e;
  const row=(k,v)=>`<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">${k}</div><div style="font-size:13px">${v}</div></div>`;
  openModal(`<h3>回覆郵件</h3>
