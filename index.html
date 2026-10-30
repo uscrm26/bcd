@@ -517,7 +517,7 @@ const R={};
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
 function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
-function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
+function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
 const ENMAP={
@@ -574,7 +574,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["工作區","總覽看板","客戶管理","經紀資源池","AI 表單助手","郵件","信箱配置","郵件佇列","檔案","文件中心","歸檔包","系統","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Workspace","Dashboard","Customers","Broker Pool","AI Assistant","Mail","Mailboxes","Mail Queue","Files","Documents","Archives","System","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["工作区","总览看板","客户管理","经纪资源池","AI 表单助手","邮件","信箱配置","邮件队列","档案","文件中心","归档包","系统","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","郵件佇列","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Mail Queue","Documents","Archives","Notifications","System Log","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","邮件队列","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
