@@ -928,21 +928,22 @@ function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  <div class="fg"><label>EIN</label><input id="cf_ein" value="${esc(c.ein)}" ${dis}></div>
  <div class="fg"><label>綁定信箱</label><input id="cf_mail" value="${esc(c.mail)}" ${dis} style="word-break:break-all"></div>
  <div class="fg"><label>內部參考編號</label><input value="#${c.no}" ${CURRENT_USER.role==="super_admin"?"":"disabled"}></div>
- <div class="fg"><label>駕照狀態</label><input id="cf_dl" value="${esc(c.dl)}" ${dis}></div>
+ <div class="fg"><label>駕照狀態</label><select id="cf_dl" ${dis}>${["正常","馬上過期","過期","未有駕照"].map(o=>`<option ${c.dl===o?"selected":""}>${o}</option>`).join("")}</select></div>
+ <div class="fg"><label>護照狀態</label><select id="cf_pp" ${dis}>${["正常","馬上過期","過期","未有提供護照"].map(o=>`<option ${(c.pp||"未有提供護照")===o?"selected":""}>${o}</option>`).join("")}</select></div>
  </div>
  ${canEdit?`<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
    ${editing?`<button class="btn" onclick="restoreCust('${no}')">恢復資料</button><button class="btn primary" onclick="saveCustInfo('${no}')">儲存</button>`:`<button class="btn primary" onclick="enterEditCust('${no}')">編輯客戶資料</button>`}
  </div>`:`<div class="empty">僅負責人與主管可編輯此表</div>`}`;}
-function enterEditCust(no){window._custSnapshot={name:DATA.customers.find(x=>x.no===no).name,member:DATA.customers.find(x=>x.no===no).member,ein:DATA.customers.find(x=>x.no===no).ein,mail:DATA.customers.find(x=>x.no===no).mail,dl:DATA.customers.find(x=>x.no===no).dl};window._editCust=no;render();}
+function enterEditCust(no){const c=DATA.customers.find(x=>x.no===no);window._custSnapshot=JSON.parse(JSON.stringify(c));window._editCust=no;render();}
 function restoreCust(no){openModal(`<h3>恢復資料</h3><div style="font-size:13px;line-height:1.8">即將放棄目前所有未儲存的修改，還原到進入編輯前的狀態。</div>
  <div id="cdCount" style="margin:14px 0;font-size:14px;color:var(--err)">確認倒數 3 秒…</div>
  <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" id="cdBtn" disabled onclick="doRestoreCust('${no}')">確認恢復</button></div>`);
  let n=3;const t=setInterval(()=>{n--;const el=document.getElementById("cdCount");const b=document.getElementById("cdBtn");if(n<=0){clearInterval(t);if(el)el.textContent="可以確認";if(b)b.disabled=false;}else{if(el)el.textContent="確認倒數 "+n+" 秒…";}},1000);}
-function doRestoreCust(no){const c=DATA.customers.find(x=>x.no===no);const s=window._custSnapshot||{};Object.assign(c,s);window._editCust=null;closeModal();render();toast("已恢復到編輯前狀態");}
+function doRestoreCust(no){const idx=DATA.customers.findIndex(x=>x.no===no);const s=window._custSnapshot;if(idx>=0&&s){DATA.customers[idx]=JSON.parse(JSON.stringify(s));}window._editCust=null;closeModal();render();toast("已恢復到編輯前狀態");}
 function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
  const old=c.name+" / "+c.member+" / "+c.ein;
  c.name=document.getElementById("cf_name").value;c.member=document.getElementById("cf_member").value;
- c.ein=document.getElementById("cf_ein").value;c.mail=document.getElementById("cf_mail").value;c.dl=document.getElementById("cf_dl").value;
+ c.ein=document.getElementById("cf_ein").value;c.mail=document.getElementById("cf_mail").value;c.dl=document.getElementById("cf_dl").value;c.pp=document.getElementById("cf_pp").value;
  addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
 function clientAuditList(no){const rs=clientAudit[no]||[];
 return `<table><thead><tr><th>時間</th><th>操作人</th><th>動作</th><th>舊值</th><th>新值</th><th>理由</th></tr></thead><tbody>
