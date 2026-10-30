@@ -358,7 +358,7 @@ tr:hover td{background:#1a2130}
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
   </div>
   <div class="login-card">
-    <div class="login-head"><div class="lt" id="lh_title">美國海關申報業務</div><div class="ls" id="lh_sub">內部業務管理系統 · 請登入您的帳戶</div></div>
+    <div class="login-head"><div class="lt" id="lh_title">美國海關申報業務</div><div class="ls" id="lh_sub">內部業務管理系統</div></div>
     <label id="ll_user">登入帳號</label>
     <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
     <label id="ll_pwd">密碼</label>
@@ -1395,8 +1395,8 @@ CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
-const LLANG={zh:{t:"美國海關申報業務",s:"內部業務管理系統 · 請登入您的帳戶",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",b:"登 入"},cn:{t:"美国海关申报业务",s:"内部业务管理系统 · 请登录您的账户",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",b:"登 录"},en:{t:"US Customs Bond Filing",s:"Internal Business System · Sign in to your account",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",b:"Sign In"}};
-function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("ll_cap").textContent=L.c;document.getElementById("li_cap").placeholder=L.ph;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
+const LLANG={zh:{t:"美國海關申報業務",s:"內部業務管理系統",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入"},cn:{t:"美国海关申报业务",s:"内部业务管理系统",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录"},en:{t:"US Customs Bond Filing",s:"Internal Business System",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",up:"Enter username",pp:"Enter password",b:"Sign In"}};
+function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("ll_cap").textContent=L.c;document.getElementById("li_cap").placeholder=L.ph;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){genCaptcha();setLangLogin(PREF.lang||"zh");const cv=document.getElementById("capCanvas");if(cv)cv.onclick=genCaptcha;document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});document.getElementById("li_cap").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
