@@ -854,7 +854,7 @@ R.commission=()=>{
     const myShare=meIsSplit?(d.split_amt||0):(d.amount-(d.split_amt||0));
     const pct=d.amount>0?Math.round(myShare/d.amount*100):100;
     const sub=d.split_to&&!meIsSplit?(()=>{const s=USERS.find(x=>x.id===d.split_to);return s?`<div style="font-size:11px;color:var(--mut);margin-top:3px">下線 ${s.nm} ${Math.round((d.split_amt||0)/d.amount*100)}%，($${Number(d.split_amt).toLocaleString()})</div>`:"";})():"";
-    return `<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">$${Number(myShare).toLocaleString()}</td><td>佣金 ${un||d.user} ${pct}%<div style="font-size:10px;color:var(--dim)">總額 $${Number(d.amount).toLocaleString()}</div>${sub}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td><td>${canManage()?`<button class="btn small" onclick="editDealAmt(${commissions.indexOf(d)})">改</button>`:""}</td></tr>`;
+    return `<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">$${Number(myShare).toLocaleString()}</td><td>佣金 ${un||d.user} ${pct}%<div style="font-size:10px;color:var(--dim)">總額 $${Number(d.amount).toLocaleString()}</div>${sub}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td><td>${canManage()?`<button class="btn small" onclick="editDealAmt(${commissions.indexOf(d)})">更改</button>`:""}</td></tr>`;
   }).join("");
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
   const curYM=(bj.getUTCMonth()+1)+"/"+bj.getUTCFullYear();
