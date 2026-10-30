@@ -121,6 +121,7 @@ tr:hover td{background:#1a2130}
 .ccard .cbody{flex:1;min-width:0}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ccard .no{font-size:11px;color:var(--dim)}
+.noref{font-weight:400;font-size:9px;color:var(--mut);margin-left:4px;opacity:.8}
 .ccard .nm{font-size:14px;font-weight:700;color:var(--txt);margin-top:2px;overflow-wrap:break-word;word-break:break-word;max-width:100%}
 .ccard .meta{font-size:11px;color:var(--mut);margin-top:6px;line-height:1.7}
 .ccard .meta b{color:var(--txt);font-weight:600}
@@ -193,8 +194,12 @@ tr:hover td{background:#1a2130}
 /* toast */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e3a5c;color:#e6f0ff;padding:11px 20px;border-radius:9px;font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.4);z-index:200;display:none;border:1px solid #2b5a92}
 .ghgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
-.docbox{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg2)}
+.docbox{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg2);text-decoration:none;color:inherit}
 .docbox .fi{font-size:20px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;margin:10px 0}
+.fthumb{cursor:pointer;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--bg2)}
+.fthumb img{width:100%;height:90px;object-fit:cover;display:block}
+.fthumb .fcap{font-size:10px;padding:6px 8px;color:var(--mut);word-break:break-all;line-height:1.3;max-height:3.4em;overflow:hidden}
 .docbox .fn{font-size:12px;color:var(--txt);flex:1;word-break:break-all}
 .docbox .ft{font-size:10px;color:var(--dim)}
 .draftbox{background:var(--bg2);border:1px dashed var(--line);border-radius:8px;padding:12px;font-size:12px;line-height:2;color:var(--txt)}
@@ -394,10 +399,13 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   try{
-    const [emRes,mbRes,dbRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json")]);
+    const [emRes,mbRes,dbRes,fiRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json"),fetch("files.json")]);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
+    const fi=fiRes.ok?await fiRes.json():null;
+    DATA.files=DATA.files||{};
+    if(fi&&typeof fi==="object")DATA.files=fi;
     if(Array.isArray(em)&&em.length){
       DATA.emails=em.map(x=>({c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:fmtMailDate(x.date),unread:!x.read,type:guessMailType(x)}));
     }
@@ -458,7 +466,7 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=ht
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(CURRENT_LANG==="cn")simplifyPage();}
+function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(CURRENT_LANG==="cn")simplifyPage();}
 const empty=()=>`<div class="empty">頁面載入中</div>`;
 // clock
 function clock(){const d=new Date();const bj=new Date(d.getTime()+8*3600e3);const et=new Date(d.getTime()-5*3600e3);const pt=new Date(d.getTime()-8*3600e3);const f=x=>String(x).padStart(2,"0");
@@ -516,9 +524,9 @@ function cardGrid(){return `<div class="row r3">`+DATA.customers.map(c=>{const s
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
   <img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')">
   <div class="cbody">
-  <div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
+  <div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">${esc(c.mail)}</span></div>
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div>
   </div></div>`;}).join("")+`</div>`;}
 function openModalImg(src){openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
@@ -539,7 +547,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 全部數�
   ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
   </div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no">#${c.no}</span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:"手動",c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號</label><input id="nc_no" placeholder="例如 99"></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
@@ -548,11 +556,31 @@ function createCust(){const no=document.getElementById("nc_no").value;const name
 // ===== 客戶管理 =====
 let custTab="info";let curCust="93";
 function openCust(no){curCust=no;custTab="info";view="customer";render();window.scrollTo(0,0);}
-R.customer=()=>`<h1>客戶管理</h1><div class="sub">Customer Management ｜ 共 ${DATA.customers.length} 個帳戶</div>
-  <div class="search"><input placeholder="搜尋客戶" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
+R.customer=()=>{
+  if(curCust){const c=DATA.customers.find(x=>x.no===curCust);
+  return `<h1>客戶管理</h1><div class="sub">Customer Management ｜ 內部參考 #${curCust} ｜ ${c?esc(c.name):""}</div>
+  <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
+  <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
+  return `<h1>客戶管理</h1><div class="sub">Customer Management ｜ 共 ${DATA.customers.length} 位客戶，卡片檢視</div>
+  <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   <button class="btn primary" onclick="openNewCust()">新增客戶</button>
   <button class="btn" onclick="toast('已匯出選取客戶 CSV')">匯出 CSV</button></div>
-  ${curCust?`<div class="row r2"><div class="panel"><div class="sec-title">客戶 ${curCust} 詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`:``}`;
+  <div id="custListArea">${custGridHTML()}</div>`;
+};
+function custFiltered(){
+  const q=(window._cs||"").toLowerCase(),stf=window._cst||"";
+  return DATA.customers.filter(c=>(!q||(c.no+c.name+c.member+c.ein).toLowerCase().includes(q))&&(!stf||c.status===stf));
+}
+function custGridHTML(){
+  const list=custFiltered();
+  return `<div class="row r3">${list.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
+  <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
+  <img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')">
+  <div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
+  <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
+}
+function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=custGridHTML();}
 function custDetail(no){const c=DATA.customers.find(x=>x.no===no);const s=st(c.status);const ts=DATA.timeline[no]||[];
 return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
 <div class="field"><div class="k">法人 / Sole Member</div><div class="v">${esc(c.member)}</div></div>
@@ -561,7 +589,7 @@ return `<div class="field"><div class="k">公司名稱</div><div class="v">${esc
 <div class="field"><div class="k">業務狀態</div><div class="v"><span class="tag ${s.cl}">${s.lb}</span> <button class="btn small" onclick="openStatusChange('${no}')">人工變更狀態</button></div></div>
 <div class="field"><div class="k">駕照狀態</div><div class="v ${c.dl==="過期"?"warn":""}">${c.dl==="過期"?"⚠️ 已過期，需更新":c.dl}</div></div>
 <div class="field"><div class="k">綁定信箱</div><div class="v">${esc(c.mail)}</div></div>
-<div class="field"><div class="k">文件</div><div class="v">EIN 通知 1 份 ｜ 章程 1 份 ｜ 法人證件 1 份</div></div>
+<div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
 <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap"><button class="btn primary" onclick="toast('已儲存客戶檔案')">儲存變更</button><button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button><button class="btn" onclick="toast('已產生完整歸檔包')">📦 匯出歸檔包</button></div>`;}
 function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return `<div class="empty">檔案資訊編輯表單，點擊上方 Tab 切換時間線、待辦、附件、財務、操作記錄</div>`;}
 function clientAuditList(no){const rs=clientAudit[no]||[];
@@ -601,9 +629,22 @@ function todoList(no){const c=DATA.customers.find(x=>x.no===no);const n=c.todo;
 return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
 ${n?Array.from({length:n},(_,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${i===0?"⚠️ 補交更新駕照":"等待 Broker 回覆報價"}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>無待辦</div>"}`;}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
-function docList(no){const c=DATA.customers.find(x=>x.no===no);
-return `<div class="row r2">${["EIN.pdf","公司章程.pdf","法人證件.pdf"].map(d=>`<div class="docbox"><span class="fi">📄</span><div><div class="fn">${esc(d)}</div><div class="ft">10/30 上傳</div></div><button class="btn small" onclick="toast('開啟預覽')">預覽</button></div>`).join("")}</div>
-<div style="margin-top:14px"><button class="btn primary" onclick="toast('開始上傳，可同步至 GitHub')">⬆ 上傳文件</button></div>`;}
+const FILEBASE="https://uscrm26.github.io/bcd/";
+function fileThumb(f){
+  const url=FILEBASE+f.path;
+  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy"><div class="fcap">${esc(f.name)}</div></div>`;
+  const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
+  return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
+}
+function docList(no){
+  const list=(DATA.files||{})[no]||[];
+  const imgs=list.filter(f=>f.type==="image");
+  const docs=list.filter(f=>f.type!=="image");
+  return `<div class="sec-title">全部附件 ${list.length} 份（照片 ${imgs.length} 張）</div>
+  ${imgs.length?`<div class="fgrid">${imgs.map(fileThumb).join("")}</div>`:""}
+  <div class="row r2">${docs.map(fileThumb).join("")||"<div class='empty'>尚無文件</div>"}</div>
+  <div style="margin-top:14px"><button class="btn primary" onclick="toast('開始上傳，可同步至 GitHub')">⬆ 上傳文件</button></div>`;
+}
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 客戶 ${no}</h3>
 <div class="fg" style="margin-bottom:10px"><label>事件標題</label><input id="ntitle" placeholder="例如 電話與 Broker 溝通補件事項"></div>
@@ -675,9 +716,24 @@ R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI Assistant ｜ AI 產生草
 <div class="panel"><div class="sec-title">AI 草稿輸出</div><div id="aiZH"></div><div id="aiEN" style="display:none"></div></div>
 <div class="panel"><div class="sec-title">AI 草稿雙語儲存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">AI 全部輸出同時儲存 <b>繁體中文</b> 與 <b>英文</b> 兩份，永不丟失。簡體中文由後端即時繁轉簡，資料庫不存簡體。AI 不會自動寫入時間線或待辦，一律經人工確認才落庫。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
-R.doc=()=>`<h1>文件中心</h1><div class="sub">Document Center ｜ 依客戶分組管理，支援網頁預覽</div>
-<div class="search"><input placeholder="搜尋文件名"><button class="btn primary" onclick="toast('上傳文件')">⬆ 上傳</button><button class="btn" onclick="toast('打包全客戶文件')">打包 ZIP</button></div>
-<div class="row r2">${DATA.customers.slice(0,6).map(c=>`<div class="panel"><div class="sec-title">${c.no} ${esc(c.name)}</div><div class="docbox" style="margin-bottom:8px"><span class="fi">📄</span><div><div class="fn">EIN.pdf</div><div class="ft">10/30</div></div><span class="sync ok">已同步</span><button class="btn small" onclick="toast('預覽')">預覽</button></div><div class="docbox"><span class="fi">📄</span><div><div class="fn">章程.pdf</div><div class="ft">10/30</div></div><span class="sync no">未同步</span><button class="btn small" onclick="toast('預覽')">預覽</button></div></div>`).join("")}</div>`;
+R.doc=()=>`<h1>文件中心</h1><div class="sub">Document Center ｜ 每位客戶全部上傳文件與照片，點圖片預覽、點文件開啟</div>
+<div class="search"><input placeholder="搜尋文件名、公司名、法人" oninput="window._df=this.value;renderDoc()"></div>
+<div id="docArea"></div>`;
+function renderDoc(){
+  const q=(window._df||"").toLowerCase();
+  const box=document.getElementById("docArea");if(!box)return;
+  const groups=DATA.customers.map(c=>({c,list:(DATA.files||{})[c.no]||[]}))
+    .filter(g=>!q||(g.c.no+g.c.name+g.c.member+g.list.map(f=>f.name).join(" ")).toLowerCase().includes(q));
+  const pub=(DATA.files||{})["_public"]||[];
+  const block=g=>{
+    const imgs=g.list.filter(f=>f.type==="image"),docs=g.list.filter(f=>f.type!=="image");
+    return `<div class="panel"><div class="sec-title">內部參考 #${g.c.no} ｜ ${esc(g.c.name)} <span style="font-weight:400;color:var(--mut)">法人 ${esc(g.c.member)} ｜ ${g.list.length} 份</span></div>
+    ${imgs.length?`<div class="fgrid">${imgs.map(fileThumb).join("")}</div>`:""}
+    <div class="row r2">${docs.map(fileThumb).join("")||"<div class='empty'>無文件</div>"}</div></div>`;
+  };
+  box.innerHTML=`<div class="row r2">${groups.map(block).join("")||"<div class='empty'>無符合文件</div>"}
+  ${pub.length?`<div class="panel"><div class="sec-title">公共附件（開發信樣本、表單、帳戶文件）</div><div class="row r2">${pub.map(fileThumb).join("")}</div></div>`:""}</div>`;
+}
 R.archive=()=>`<h1>歸檔包</h1><div class="sub">Customer Archive ｜ 每客戶完整 ZIP 下載，內附檔案索引清單</div>
 <div class="row r2">${DATA.customers.slice(0,6).map(c=>`<div class="panel"><div class="sec-title">${c.no} ${esc(c.name)} 完整歸檔包</div><div style="font-size:12px;color:var(--mut)">內含：客戶資訊摘要 ｜ 基礎數據 JSON ｜ 時間線 ｜ 待辦 ｜ 全部附件 ｜ _檔案索引清單</div><div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary small" onclick="toast('ZIP 已開始產生，完成後通知')">產生 / 下載</button><button class="btn small" onclick="toast('已同步至 GitHub 備份')">同步 GitHub</button></div></div>`).join("")}</div>`;
 R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">GitHub Backup Manager ｜ 僅 super_admin ｜ 前端不直連 GitHub，後端完成 git 操作</div>
