@@ -554,7 +554,7 @@ async function loadRepoData(){
     DATA.files=DATA.files||{};
     if(fi&&typeof fi==="object")DATA.files=fi;
     if(Array.isArray(em)&&em.length){
-      DATA.emails=em.map(x=>({c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:fmtMailDate(x.date),unread:!x.read,type:guessMailType(x)}));
+      DATA.emails=em.map(x=>({c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:fmtMailDate(x.date),unread:!x.read,type:guessMailType(x),body:x.body||""}));
     }
     if(mb&&Array.isArray(mb.mailboxes)){
       const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
@@ -1001,16 +1001,16 @@ async function loadStorageList(no){
     box.innerHTML=(imgs.length?`<div class="fgrid">${imgs.map(thumb).join("")}</div>`:"")+`<div class="row r2">${docs.map(thumb).join("")||""}</div>`;
   }catch(e){box.innerHTML="<div class='empty'>雲端附件讀取失敗</div>";}
 }
-function pickUpload(no){const i=document.createElement("input");i.type="file";i.onchange=e=>{const f=e.target.files[0];if(f)uploadToStorage(no,f);};i.click();}
+function pickUpload(no){const i=document.createElement("input");i.type="file";i.multiple=true;i.onchange=e=>{Array.from(e.target.files).forEach((f,idx)=>setTimeout(()=>uploadToStorage(no,f),idx*300));};i.click();}
 async function uploadToStorage(no,f){
- if(f.size>MAX_MB*1024*1024){toast("檔案超過 "+MAX_MB+"MB 上限，請壓縮後再傳");return;}
- toast("上傳中…");
+ if(f.size>MAX_MB*1024*1024){toast(f.name+" 超過 "+MAX_MB+"MB");return;}
+ toast("上傳中："+f.name);
  const path=no+"/"+Date.now()+"_"+encodeURIComponent(f.name);
  try{
    const r=await fetch(SB.url+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":f.type||"application/octet-stream"},body:f});
-   if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),400);}
-   else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"，請確認 Storage bucket 與權限已開");}
- }catch(e){toast("上傳失敗："+e.message);}
+   if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),500);}
+   else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"：需在 Supabase 後台給 attachments bucket 開 anon 上傳權限");}
+ }catch(e){toast("上傳失敗：網路或 CORS 被擋，需後台開 Storage 政策");}
 }
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
@@ -1038,7 +1038,21 @@ R.queue=()=>`<h1>電子郵件</h1><div class="sub">Email ｜ 未讀需處理置�
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";
 let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
-const tb=document.getElementById("qtbody");if(tb)tb.innerHTML=list.map(e=>`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="openMailDetail('${e.t}')">${esc(e.sub)}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
+const tb=document.getElementById("qtbody");if(!tb)return;
+let html="";
+list.forEach((e,idx)=>{
+ const open=window._openMail===e.t;
+ html+=`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${e.t.replace(/'/g,"\\'")}')">${esc(e.sub)}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
+ if(open){const hasZH=!!ZH_CACHE[e.t];
+ html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
+ <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
+ <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow:auto">${esc(e.body||"(此郵件暫無正文)")}</div>
+ <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${e.t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"一鍵翻譯成繁體"}</button></div>
+ <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(ZH_CACHE[e.t]||"")}</div>
+ </div></td></tr>`;}
+});
+tb.innerHTML=html||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
+function toggleMailRow(t){window._openMail=(window._openMail===t?"":t);renderQueueTable();}
 function canViewMail(e){const c=DATA.customers.find(x=>x.name&&x.name.startsWith(e.c));if(!c)return true;return canViewCust(c.no);}
 function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
 let REPLY_EMAIL=null;
