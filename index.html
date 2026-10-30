@@ -387,8 +387,24 @@ function addClientAudit(no,action,oldv,newv,reason){clientAudit[no]=clientAudit[
 // 佣金：成功單記錄，超管手動標記
 const commissions=[];
 function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").length;return n<30?1000:1500;}
-const API_BASE=(()=>{const m=location.href.match(/\/system\//);return "";})();
-async function loadAPI(){try{const r=await fetch("https://xlcyumbyqcwedqwpspzs.supabase.co/rest/v1/mail_messages?select=id,from_identity,to_addr,subject,status&limit=5",{headers:{apikey:"sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5",Authorization:"Bearer sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5"}});if(!r.ok)throw 0;const j=await r.json();if(Array.isArray(j)&&j.length){window.__live=j;console.log("後端已連線",j.length);}}catch(e){window.__live=null;}}
+// ===== GitHub JSON 數據層：同倉讀取，不依賴 Supabase、不需要數據庫密碼 =====
+function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
+function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
+async function loadRepoData(){
+  try{
+    const [emRes,mbRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json")]);
+    const em=emRes.ok?await emRes.json():[];
+    const mb=mbRes.ok?await mbRes.json():null;
+    if(Array.isArray(em)&&em.length){
+      DATA.emails=em.map(x=>({c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:fmtMailDate(x.date),unread:!x.read,type:guessMailType(x)}));
+    }
+    if(mb&&Array.isArray(mb.mailboxes)){
+      const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
+      DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
+    }
+    render();
+  }catch(e){/* 離線或檔案缺失時保留內置兜底資料 */}
+}
 const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let view="dashboard";
@@ -636,8 +652,9 @@ function saveSettings(){const v=Number(document.getElementById("set_cutoff").val
 function switchUser(id){CURRENT_USER=USERS.find(u=>u.id===id);addAudit("登入",CURRENT_USER.nm);document.querySelector(".foot .nm").textContent=CURRENT_USER.nm;document.querySelector(".foot .rl").textContent=CURRENT_USER.role;applyPerm();render();toast("已切換為 "+CURRENT_USER.nm);}
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function openAdmin(){openModal(`<h3>新增帳戶管理員</h3><div class="form-grid"><div class="fg"><label>帳號</label><input id="au_user"></div><div class="fg"><label>顯示名稱</label><input id="au_name"></div><div class="fg"><label>密碼</label><input id="au_pwd" type="password"></div><div class="fg"><label>角色</label><select id="au_role"><option value="operator">操作員 operator</option><option value="super_admin">超級管理員 super_admin</option></select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="window._admins=window._admins||[];window._admins.push({username:document.getElementById('au_user').value,display_name:document.getElementById('au_name').value,role:document.getElementById('au_role').value,active:true});closeModal();render();toast('帳戶已建立')">建立</button></div>`);}
-// 初次渲染
+// 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
+loadRepoData();
 </script>
 </body>
 </html>
