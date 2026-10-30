@@ -25,6 +25,7 @@ a{color:var(--acc);text-decoration:none}
 .overlay.show{display:block}
 .side.open{transform:translateX(0)!important}
 @media(max-width:900px){
+  body{overflow-x:hidden}
   .mtop{display:flex}
   .side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}
   .main{margin-left:0;padding:74px 14px 70px}
@@ -202,7 +203,7 @@ tr:hover td{background:#1a2130}
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:#2a3546;border-radius:6px}
 ::-webkit-scrollbar-track{background:transparent}
-@media(max-width:900px){.side{display:none}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.ccard .foots .tag,.ccard .foots .badge{font-size:10px}.ccard .cphoto{width:60px;height:60px}.ccard .quick button{font-size:10px}}
+@media(max-width:900px){.side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.ccard .foots .tag,.ccard .foots .badge{font-size:10px}.ccard .cphoto{width:60px;height:60px}.ccard .quick button{font-size:10px}}
 </style>
 </head>
 <body>
