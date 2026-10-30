@@ -144,9 +144,9 @@ tr:hover td{background:#1a2130}
 .t-red{background:rgba(255,93,108,.14);color:var(--err);border:1px solid #5a2b34}
 .t-gray{background:rgba(132,148,167,.14);color:var(--mut);border:1px solid #333c4c}
 /* client card */
-.ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.15s;position:relative;display:flex;gap:14px;align-items:flex-start}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.15s;position:relative;display:flex;gap:14px;align-items:stretch}
 .ccard:hover{border-color:#2f4a6e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
-.cphoto{width:96px;height:110px;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid var(--line);background:#1a2230;display:block}
+.cphoto{width:100px;align-self:stretch;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid var(--line);background:#1a2230;display:block}
 .ccard .cbody{flex:1;min-width:0;padding-bottom:34px;position:relative}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ccard .no{font-size:11px;color:var(--dim)}
@@ -963,13 +963,35 @@ return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6
 <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button></div>`;}
 function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
  openModal(`<h3>以 ${esc(c.name)} 名義發信</h3>
- <div style="font-size:12px;color:var(--mut);margin-bottom:10px">發件信箱自動使用客戶綁定的 ${esc(c.mail||"（未綁定）")}</div>
  <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">寄件人</div><div style="font-size:13px">${esc(c.mail||"—")}</div></div>
  <div class="fg" style="margin-bottom:8px"><label>收件人</label><input id="sc_to" placeholder="recipient@example.com"></div>
  <div class="fg" style="margin-bottom:8px"><label>主題</label><input id="sc_sub" placeholder="信件主旨"></div>
- <div style="margin:12px 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;color:var(--mut)">AI 草稿：</span><button class="btn small" onclick="document.getElementById('sc_body').value='Hi,\\n\\nThanks for reaching out. I wanted to follow up on our ongoing customs bond setup. Could you please share an update?\\n\\nBest regards,'">英文跟進</button></div>
+ <div style="margin:12px 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;color:var(--mut)">正文內容：</span><button class="btn small" onclick="aiPolish('${no}')">AI 潤色</button><button class="btn small" onclick="aiWrite('${no}')">AI 撰寫</button></div>
  <textarea id="sc_body" style="width:100%;min-height:160px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px;line-height:1.6;box-sizing:border-box" placeholder="輸入信件正文"></textarea>
+ <div style="margin-top:10px"><label class="btn small" style="cursor:pointer">📎 附加檔案<input type="file" multiple style="display:none" onchange="this.parentElement.nextElementSibling.textContent=[...this.files].map(f=>f.name).join('、')||'無附件'"></label> <span style="font-size:11px;color:var(--mut)">無附件</span></div>
  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitCustomerMail('${no}')">發送</button></div>`);}
+function aiPolish(no){const c=DATA.customers.find(x=>x.no===no);const box=document.getElementById('sc_body');
+ if(!box||!box.value.trim()){toast("請先在正文框寫內容，AI 再潤色");return;}
+ toast("AI 潤色中，已自動加入問候與落款");
+ box.value="Hi,\n\n"+box.value.trim()+"\n\nBest regards,\n"+(c.member||"").split(" ")[0];
+}
+function aiWrite(no){const c=DATA.customers.find(x=>x.no===no);
+ openModal(`<h3>AI 撰寫｜${esc(c.name)}</h3>
+ <div class="fg" style="margin-bottom:10px"><label>你想寫什麼？一句話描述目的</label><textarea id="aw_prompt" style="width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px" placeholder="例如跟進 bond 申請進度，請對方提供最新表格"></textarea></div>
+ <div id="aw_out" style="font-size:12px;color:var(--mut)">按下生成，AI 會給 3 個英文版本附中文翻譯。</div>
+ <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="genAIWrite('${no}')">生成 3 個版本</button></div>`);
+}
+function genAIWrite(no){const p=(document.getElementById('aw_prompt')||{}).value||"";
+ if(!p.trim()){toast("請先描述你要寫什麼");return;}
+ const c=DATA.customers.find(x=>x.no===no);const first=(c.member||"").split(" ")[0];
+ const v=[
+   {en:`Hi,\n\nHope this note finds you well. I'm reaching out regarding the customs bond for ${c.name}. Could you share the latest status?\n\nBest regards,\n${first}`,zh:"嗨，希望一切順利。關於貴司的海關保證金，想請問最新進度？"},
+   {en:`Hi there,\n\nQuick follow-up on the bond application for ${c.name}. I'd appreciate any update you can provide.\n\nThanks,\n${first}`,zh:"嗨，快速跟進一下 ${c.name} 的保證金申請，麻煩回個進度。"},
+   {en:`Dear partner,\n\nI hope you're doing well. I wanted to check in on the bond setup for ${c.name} and see what we should prepare next.\n\nBest,\n${first}`,zh:"親愛的合作夥伴，關於 ${c.name} 的保證金安排，想確認下一步要準備什麼。"}];
+ document.getElementById('aw_out').innerHTML=v.map((x,i)=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">版本 ${i+1}｜中文：${esc(x.zh)}</div><pre style="white-space:pre-wrap;font-family:inherit;font-size:12px;color:var(--tx);margin:0 0 6px">${esc(x.en)}</pre><button class="btn small primary" onclick="pickAIWrite('${no}',${i})">用這個版本</button></div>`).join("");
+ window._awV=v;
+}
+function pickAIWrite(no,i){const box=document.getElementById('sc_body');if(box)box.value=window._awV[i].en;closeModal();toast("已插入正文");}
 function submitCustomerMail(no){const to=(document.getElementById("sc_to")||{}).value||"",sub=(document.getElementById("sc_sub")||{}).value||"",body=(document.getElementById("sc_body")||{}).value||"";
  if(!to.trim()||!body.trim()){toast("收件人和正文不能為空");return;}
  const c=DATA.customers.find(x=>x.no===no);
