@@ -12,6 +12,35 @@
   --acc:#4a9eff; --acc2:#7cc0ff; --ok:#3fca8a; --warn:#ffb454; --err:#ff5d6c;
   --ind:#4a9eff; --radius:12px;
 }
+body[data-theme="light"]{
+  --bg:#f4f6fa; --bg2:#ffffff; --card:#ffffff; --card2:#eef2f8;
+  --line:#d8e0ec; --txt:#1c2733; --mut:#5d6f84; --dim:#94a3b5;
+  --acc:#1f6fe0; --acc2:#3b8bf5; --ok:#18a05f; --warn:#d98a16; --err:#d83a4b;
+  --ind:#1f6fe0;
+}
+body[data-theme="light"] .side{background:linear-gradient(180deg,#ffffff,#f0f4fa);border-right:1px solid var(--line)}
+body[data-theme="light"] .brand .logo{background:linear-gradient(135deg,#dce9fb,#eaf2fc);border-color:#bcd4f5;color:var(--acc)}
+body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
+/* language dropdown */
+.lang{position:relative}
+.lang .menu{display:none;position:absolute;right:0;top:38px;background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:160px;overflow:hidden;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.lang .menu.show{display:block}
+.lang .menu button{display:block;width:100%;text-align:left;background:none;border:none;color:var(--txt);padding:10px 14px;font-size:13px;cursor:pointer}
+.lang .menu button:hover{background:var(--card2)}
+/* notification drawer */
+.drawer{position:fixed;top:0;right:-380px;width:360px;max-width:92vw;height:100vh;background:var(--card);border-left:1px solid var(--line);z-index:90;transition:right .25s ease;display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(0,0,0,.3)}
+.drawer.show{right:0}
+.drawer .dh{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer .dh b{font-size:15px}
+.drawer .db{flex:1;overflow:auto;padding:10px}
+.drawer .dgroup{font-size:11px;color:var(--dim);padding:8px 8px 4px;letter-spacing:.05em}
+.drawer .ditem{display:flex;gap:10px;padding:11px 10px;border-radius:10px;cursor:pointer;margin-bottom:6px;background:var(--card2)}
+.drawer .ditem.unread{box-shadow:inset 3px 0 0 var(--err)}
+.drawer .ditem .who{flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px;height:fit-content}
+.drawer .ditem .tx{flex:1;min-width:0}
+.drawer .ditem .tt{font-size:13px;line-height:1.4}
+.drawer .ditem .tm{font-size:11px;color:var(--dim);margin-top:2px}
+.drawer .df{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{background:var(--bg);color:var(--txt);font-family:"PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif;font-size:14px;line-height:1.6}
@@ -257,10 +286,25 @@ tr:hover td{background:#1a2130}
 <div class="main">
   <div class="topbar">
     <div class="time" id="clock">載入時間…</div>
-    <div class="lang"><button onclick="switchLang()" id="langBtn">繁體中文 ▾</button></div>    <button class="bell" id="bellBtn">🔔<span class="n">3</span></button>
+    <button class="btn small" id="themeBtn" onclick="toggleTheme()">🌙 深色</button>
+    <div class="lang">
+      <button onclick="event.stopPropagation();document.getElementById('langMenu').classList.toggle('show')" id="langBtn">繁體中文 ▾</button>
+      <div class="menu" id="langMenu">
+        <button onclick="setLang('zh')">繁體中文</button>
+        <button onclick="setLang('cn')">简体中文</button>
+        <button onclick="setLang('en')">English (UK)</button>
+      </div>
+    </div>
+    <button class="bell" id="bellBtn">🔔<span class="n">3</span></button>
     <button class="btn small" onclick="toast('已登出')">登出</button>
   </div>
   <div id="view"></div>
+</div>
+
+<div class="drawer" id="notifDrawer">
+  <div class="dh"><b>通知</b><button class="btn small" onclick="closeDrawer()">✕</button></div>
+  <div class="db" id="notifBody"></div>
+  <div class="df"><button class="btn small" style="flex:1" onclick="markAllRead()">全部標為已讀</button></div>
 </div>
 </div>
 
@@ -468,33 +512,79 @@ function closeModal(){document.getElementById("modal").classList.remove("show");
 function goto(v){view=v;document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
-const ENMAP={"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","郵件佇列":"Mail Queue","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace","新增客戶":"Add Customer","匯出 CSV":"Export CSV","內部參考":"Internal Ref","法人":"Owner","信箱":"Email","業務狀態":"Status","待辦":"To-do","時間線":"Timeline","附件文件":"Files","財務與報價":"Finance","操作記錄":"Audit Log","檔案資訊":"Profile","確認成功出單":"Mark Deal Closed","分配歸屬":"Assign Owner","人工變更狀態":"Update Status","標記成功出單":"Mark Closed","確認新增":"Confirm","取消":"Cancel","儲存":"Save","儲存變更":"Save Changes","新增跟進記錄":"Add Follow-up","狀態":"Status","可用狀態":"Availability","優先級":"Priority","備註":"Notes","歷史記錄":"History","公式文檔":"Formula Guides","匯出 Excel":"Export Excel","新增資源":"Add Resource","移除":"Remove","處理中":"In Progress","已出單":"Closed","待補件":"Pending Docs","已收報價":"Quoted","開發信漏斗":"Outreach Funnel","每日工作記錄":"Daily Log","帳戶管理":"Accounts","真實姓名":"Full Name","登入帳號":"Login ID","角色":"Role","上級":"Manager","名下客戶":"Assigned Clients","最近登入":"Last Login","啟用":"Enabled","停用":"Disabled","詳情":"Details","編輯":"Edit","新增帳戶":"Add Account","新增下屬":"Add Subordinate","頁面權限":"Page Permissions","密碼":"Password","頭像字":"Avatar Initial","定時輪詢排程":"Polling Schedule","美東白天密查":"US East Business Hours","非美國時段兜底":"Off-hours Check","其餘時間":"Other Hours","時節說明":"Seasonal Note"};
-function applyLangText(){document.querySelectorAll("#view h1,#view .sub,#view .sec-title,#view .tabs button,#view th,#view .field .k,#view .btn").forEach(e=>{const t=e.textContent.trim();if(ENMAP[t])e.textContent=ENMAP[t];});}
+const ENMAP={
+"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","郵件佇列":"Mail Queue","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace",
+"數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
+"開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status","客戶檢視":"Customer View","卡片檢視":"Card View","表格檢視":"Table View","每日工作記錄":"Daily Log",
+"已收報價":"Quoted","待補件":"Pending Docs","已出單":"Closed","擱置":"On Hold","待回覆":"Awaiting Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused",
+"新線索":"New Lead","資料收集中":"Collecting Info","待填申請表":"Form Pending","待提交Broker":"Broker Submission Pending","Broker要求補件":"Docs Requested by Broker","報價已收到":"Quote Received","等待客戶確認":"Awaiting Client Confirmation","Bond已出單":"Bond Issued","申請被拒":"Rejected","擱置暫停":"Suspended",
+"收集中":"Collecting","待填表":"Form Pending","待提交":"Pending Submission",
+"處理中":"In Progress","已讀":"Read","已連線":"Connected","失敗":"Failed","成功":"Success",
+"待辦":"To-do","跟進":"Follow-up","匯出":"Export","內部參考":"Internal Ref","法人":"Owner","駕照":"License","信箱":"Email","過期":"Expired",
+"編號":"No.","公司名稱":"Company","業務狀態":"Status","操作":"Action","檢視":"View","檔案資訊":"Profile","待辦清單":"Task List","附件文件":"Attachments","財務與報價":"Finance & Quotes","時間線":"Timeline",
+"返回客戶列表":"Back to Customer List","客戶詳細資料":"Customer Details","公司名稱":"Company Name","歸屬負責人":"Assigned Owner","駕照狀態":"License Status","綁定信箱":"Bound Email","文件":"Documents","已過期，需更新":"Expired, needs renewal","儲存變更":"Save Changes","分配歸屬":"Assign Owner","人工變更狀態":"Update Status","標記成功出單":"Mark Deal Closed","提交回饋與備註":"Submit Feedback & Notes","匯出歸檔包":"Export Archive",
+"全部狀態":"All Statuses","搜尋客戶編號 / 公司名稱 / 法人":"Search by no. / company / owner","無符合客戶":"No matching customers","無符合郵件":"No matching mail","無符合文件":"No matching files","無符合記錄":"No matching records","無符合":"No match","無待辦":"No tasks","無文件":"No files","頁面載入中":"Loading","尚無操作記錄":"No audit records yet","尚無時間線事件":"No timeline events","尚無財務與報價記錄":"No finance or quote records yet","尚無成功單":"No closed deals yet","尚無審計記錄":"No audit log yet","尚無歸屬客戶":"No assigned clients","尚無記錄":"No records yet",
+"時間":"Time","操作人":"Operator","動作":"Action","舊值":"Old","新值":"New","理由":"Reason",
+"類型":"Type","說明":"Description","金額":"Amount","狀態":"Status","報價":"Quote","費用":"Expense","已收款":"Paid","待定":"Pending","未收款":"Unpaid","待收合計":"Total Due","新增費用":"Add Expense","新增報價":"Add Quote",
+"新增跟進記錄":"Add Follow-up","事件標題":"Event Title","內容":"Content","產生參考草稿":"Generate Draft","輸入跟進內容":"Enter follow-up note","確認新增":"Confirm","取消":"Cancel","儲存":"Save","建立":"Create",
+"信箱帳戶清單":"Mailbox Accounts","測試":"Test","新增信箱":"Add Mailbox","定時輪詢排程（對齊美東工作時段）":"Polling Schedule (US East Business Hours)","美東白天密查":"US East Business Hours","非美國時段兜底":"Off-hours Check","其餘時間":"Other Hours","不主動巡查，避免空轉":"No active check outside these hours","時節說明":"Seasonal Note",
+"未讀需處理置頂，可搜尋篩選":"Unread on top, searchable and filterable","搜尋收件人 / 主題":"Search recipient / subject","全部":"All","未處理":"Unprocessed","已處理":"Processed","新建外發草稿":"New Outgoing Draft","寄件信箱":"Sender","收件人":"Recipient","主題":"Subject","回覆":"Reply",
+"資源列表":"Resource List","公式文檔":"Formula Guides","歷史記錄":"History","經紀公司":"Brokerage","聯絡人":"Contact","可用狀態":"Availability","備註（人工 / AI 參考）":"Notes (Human / AI Ref)","備註 / AI 參考":"Notes / AI Ref","優先級":"Priority","可聯繫":"Reachable","成交過·可複用":"Closed · Reusable","已用過·靠後":"Used · Lower Priority","不可用":"Unavailable","搜尋經紀 / 聯絡人 / 信箱":"Search brokerage / contact / email","新增經紀資源":"Add Broker Resource","新增資源":"Add Resource","成交過":"Closed","待聯繫":"To Contact","資源已加入列表":"Resource added","已從列表移除":"Removed from list","開啟":"Open","舊看板公式文檔":"Legacy Formula Guides","日期":"Date","對象":"Target","歷史進展":"History",
+"個人財務表":"Personal Financial Statement","Customs-Bond 申請表":"Customs-Bond Application","AI 郵件草稿":"AI Email Draft","AI 草稿輸出":"AI Draft Output","草稿雙語保存原則":"Bilingual Draft Policy","產生草稿":"Generate Draft","繁中":"Chinese",
+"每位客戶全部上傳文件與照片，點圖片預覽、點文件開啟":"All files and photos per client; click image to preview, file to open","搜尋文件名、公司名、法人":"Search filename, company, owner","公共附件（開發信樣本、表單、帳戶文件）":"Shared attachments","全部附件":"All Attachments","照片":"Photos","上傳文件":"Upload File",
+"每客戶完整 ZIP 下載，內附檔案索引清單":"Full ZIP per client with file index","完整歸檔包":"Full Archive","產生 / 下載":"Generate / Download","同步 GitHub":"Sync to GitHub",
+"倉庫資訊":"Repository","倉庫位址":"Repo URL","工作副本":"Working Copy","就緒":"Ready","最後同步":"Last Sync","立即全量備份":"Full Backup Now","自動備份設定":"Auto Backup Settings","自動 JSON 備份":"Auto JSON Backup","開啟":"On","關閉":"Off","間隔 分鐘":"Interval (min)","儲存設定":"Save Settings","從 GitHub 導入 DB":"Import DB from GitHub","同步任務日誌":"Sync Log",
+"帳戶管理":"Accounts","頭像":"Avatar","真實姓名":"Full Name","登入帳號":"Login ID","角色":"Role","上級":"Manager","名下客戶":"Assigned Clients","最近登入":"Last Login","系統參數，可編輯":"System Parameters (editable)","營業日切換時間，24 小時制":"Day cutoff hour (24h)","目前切日":"Current Cutoff","佣金分成，僅超管可見可改":"Commission Split (admin only)","超管固定基準":"Admin Fixed Base","分單規則":"Split Rules","超管當前每單":"Admin Current Per-Deal","歸屬":"Owner","方式":"Method","下線分成":"Sub Split","改金額":"Edit Amount","全員審計日誌":"Full Audit Log","篩選動作":"Filter actions",
+"超級管理員":"Super Admin","主管":"Supervisor","業務員":"Rep","新增帳戶":"Add Account","編輯帳戶":"Edit Account","真實姓名 / 顯示名稱":"Full / Display Name","留空不變":"Leave blank to keep","無上級（超管）":"No manager (admin)","頁面權限":"Page Permissions","帳戶詳情":"Account Details","切換帳號":"Switch Account","系統通知":"Notifications","全部標為已讀":"Mark All Read","關閉":"Close","詳情":"Details","編輯":"Edit","啟用":"Enabled","停用":"Disabled","新增下屬":"Add Subordinate","密碼":"Password","頭像字":"Avatar Initial",
+"已報價":"Quoted","家":"","本人相關":"Me","下屬業務":"Subordinates"
+};
+let _enKeys=null;
+function applyLangText(){
+  if(!_enKeys)_enKeys=Object.keys(ENMAP).sort((a,b)=>b.length-a.length);
+  document.querySelectorAll("#view [placeholder]").forEach(e=>{const p=e.placeholder.trim();if(ENMAP[p])e.placeholder=ENMAP[p];});
+  // 只替换叶子元素，保留 DOM 结构；叶子内中文短语按字典子串替换
+  document.querySelectorAll("#view").forEach(root=>{
+    root.querySelectorAll("*").forEach(e=>{
+      if(e.children.length>0)return;
+      let t=e.textContent;if(!t||!t.trim())return;let out=t;
+      _enKeys.forEach(k=>{if(out.includes(k))out=out.split(k).join(ENMAP[k]);});
+      if(out!==t)e.textContent=out;
+    });
+  });
+}
 const empty=()=>`<div class="empty">頁面載入中</div>`;
 // clock
-const TZS=[["🇨🇳","北京",8],["🇸🇬","新加坡",8],["🇩🇪","柏林",1],["🇬🇧","倫敦",0],["🇺🇸","美東紐約",-5],["🌴","美西洛杉磯",-8]];
+const TZS=[["🇨🇳","北京",8],["🇺🇸","西雅圖",-8],["🏔️","丹佛",-7],["🌆","芝加哥",-6],["🗽","紐約",-5]];
+let PREF={theme:"dark",h24:true,lang:"zh"};try{Object.assign(PREF,JSON.parse(localStorage.getItem("bcd_pref")||"{}"));}catch(e){}
+function savePref(){try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}}
+function fmtH(h){if(!PREF.h24)return ((h+11)%12+1)+(h<12?" AM":" PM");return String(h).padStart(2,"0");}
+function applyTheme(){document.body.dataset.theme=PREF.theme;const tb=document.getElementById("themeBtn");if(tb)tb.textContent=PREF.theme==="light"?"☀️ 淺色":"🌙 深色";}
+function toggleTheme(){PREF.theme=PREF.theme==="light"?"dark":"light";savePref();applyTheme();}
 function clock(){const d=new Date();const f=x=>String(x).padStart(2,"0");
 const bj=new Date(d.getTime()+8*3600e3);
-document.getElementById("clock").textContent=`北京 ${bj.getUTCFullYear()}-${f(bj.getUTCMonth()+1)}-${f(bj.getUTCDate())} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())} ｜ 美東 ${(new Date(d.getTime()-5*3600e3)).getUTCMonth()+1}/${(new Date(d.getTime()-5*3600e3)).getUTCDate()} ${f((new Date(d.getTime()-5*3600e3)).getUTCHours())}:${f((new Date(d.getTime()-5*3600e3)).getUTCMinutes())}`;
+document.getElementById("clock").textContent=`北京 ${bj.getUTCFullYear()}-${f(bj.getUTCMonth()+1)}-${f(bj.getUTCDate())} ${fmtH(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;
 const sc=document.getElementById("sideClock");
-if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600e3);return `<div class="z"><span class="zem">${ic}</span><b>${nm}</b><span>${t.getUTCMonth()+1}/${t.getUTCDate()} ${f(t.getUTCHours())}:${f(t.getUTCMinutes())}</span></div>`;}).join("");}
-setInterval(clock,1000);clock();
+if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600e3);return `<div class="z"><span class="zem">${ic}</span><b>${nm}</b><span>${t.getUTCMonth()+1}/${t.getUTCDate()} ${fmtH(t.getUTCHours())}:${f(t.getUTCMinutes())}</span></div>`;}).join("");}
+setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
 const LANGS={zh:{label:"繁體中文",nav:["工作區","總覽看板","客戶管理","經紀資源池","AI 表單助手","郵件","信箱配置","郵件佇列","檔案","文件中心","歸檔包","系統","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Workspace","Dashboard","Customers","Broker Pool","AI Assistant","Mail","Mailboxes","Mail Queue","Files","Documents","Archives","System","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["工作区","总览看板","客户管理","经纪资源池","AI 表单助手","邮件","信箱配置","邮件队列","档案","文件中心","归档包","系统","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
-function switchLang(){langIdx=(langIdx+1)%3;const key=["zh","en","cn"][langIdx];const L=LANGS[key];CURRENT_LANG=key;
-const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(a&&a.children.length>1)a.children[1].textContent=t;});
+function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
+const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});
+const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};
+document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[key][i])g.textContent=grpMap[key][i];});
 document.querySelector(".brand .bs").textContent=L.sub;
-document.querySelector(".brand .bt").textContent="Customs-Bond";
 document.getElementById("langBtn").textContent=L.label+" ▾";
-document.querySelector(".topbar .btn.small").textContent=L.logout;
+const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;
 document.querySelectorAll("#view [data-zh]").forEach(e=>delete e.dataset.zh);
+const menu=document.getElementById("langMenu");if(menu)menu.classList.remove("show");
 render();
 if(key==="cn")simplifyPage();
 applyPerm();
 toast("語言已切換為 "+L.label);}
+document.addEventListener("click",e=>{const m=document.getElementById("langMenu");if(m&&!e.target.closest(".lang"))m.classList.remove("show");});
 function simplifyPage(){const el=document.querySelectorAll("#view h1,#view .sub,#view .sec-title,#view .tt,#view .tx,#view .nm,#view .lb,#view .fl,#view .c,#view .o,#view .k,#view .v,#view th,#view td,#view .btn,#view .tabs button,#view .field .v");el.forEach(e=>{if(!e.dataset.zh)e.dataset.zh=e.textContent;e.textContent=t2s(e.dataset.zh);});}
 const T2S={"總":"总","覽":"览","看":"看","板":"板","智":"智","檔":"档","案":"案","儲":"储","時":"时","間":"间","郵":"邮","件":"件","隊":"队","佇":"伫","列":"列","號":"号","編":"编","資":"资","訊":"讯","補":"补","償":"偿","務":"务","狀":"状","態":"态","東":"东","歷":"历","史":"史","匯":"汇","導":"导","聯":"联","結":"结","構":"构","語":"语","言":"言","簡":"简","體":"体","轉":"转","換":"换","實":"实","際":"际","檢":"检","視":"视","產":"产","歸":"归","檔":"档","備":"备","份":"份","驗":"验","證":"证","課":"课","請":"请","籤":"签","標":"标","畫":"画","環":"环","統":"统","計":"计","鈦":"钛","頻":"频","繁":"繁","預":"预","覽":"览","存":"存","取":"取","填":"填","寫":"写","營":"营","運":"运","權":"权","限":"限","記":"记","錄":"录","結":"结","束":"束","項":"项","開":"开","啟":"启","關":"关","閉":"闭","較":"较","頻":"频"};
 function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
@@ -508,7 +598,20 @@ function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role
 function canEditKey(no){return canManage();}
 function canViewCust(no){if(canManage())return true;return ownerMap[no]===CURRENT_USER.id;}
 applyPerm();
-function openBell(){const n=[["10/30 10:59","A1 Worldwide 要求填 POA 開戶，需回覆"],["10/30 05:14","Immunora 發票歸屬待確認"],["10/30 05:14","Lennar 需補財務材料"]];openModal(`<h3>系統通知</h3>`+n.map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span></div>`).join("")+`<div class="mrow"><button class="btn small" onclick="toast('已全部標為已讀');closeModal()">全部標為已讀</button><button class="btn small" onclick="closeModal()">關閉</button></div>`);}
+const NOTIFS=[
+{who:"Ryan F",t:"10/30 10:59",txt:"A1 Worldwide 要求填 POA 開戶，需回覆",unread:true,goto:"customer"},
+{who:"Kevin W",t:"10/30 05:14",txt:"Immunora 發票歸屬待確認",unread:true,goto:"customer"},
+{who:"Ryan F",t:"10/30 05:14",txt:"Lennar 需補財務材料",unread:true,goto:"customer"},
+{who:"系統",t:"10/30 04:00",txt:"郵件同步完成：15 個信箱，新信 2 封",unread:false,goto:"queue"}
+];
+function renderNotifs(){const me=CURRENT_USER.nm;const mine=NOTIFS.filter(n=>n.who===me||n.who==="系統");const subs=NOTIFS.filter(n=>n.who!==me&&n.who!=="系統");
+const item=n=>`<div class="ditem ${n.unread?"unread":""}" onclick="openNotif('${n.goto}')"><span class="who">${esc(n.who)}</span><div class="tx"><div class="tt">${esc(n.txt)}</div><div class="tm">${n.t}</div></div></div>`;
+const body=document.getElementById("notifBody");
+body.innerHTML=(mine.length?`<div class="dgroup">本人相關</div>`+mine.map(item).join(""):"")+(subs.length?`<div class="dgroup">下屬業務</div>`+subs.map(item).join(""):"");}
+function openBell(){renderNotifs();document.getElementById("notifDrawer").classList.add("show");}
+function closeDrawer(){document.getElementById("notifDrawer").classList.remove("show");}
+function openNotif(g){closeDrawer();goto(g);}
+function markAllRead(){NOTIFS.forEach(n=>n.unread=false);renderNotifs();toast("已全部標為已讀");}
 document.getElementById("bellBtn").onclick=openBell;
 
 // ===== 總覽看板 =====
@@ -556,7 +659,10 @@ function refreshCust(){const f=window._s||"";const s=window._st||"";const list=D
 const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:"手動",c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
-function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號</label><input id="nc_no" placeholder="例如 99"></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
+function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");
+const autoNo=String(Math.max(...DATA.customers.map(c=>Number(c.no)||0),0)+1).padStart(4,"0");
+const isAdmin=CURRENT_USER.role==="super_admin";
+openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號${isAdmin?"":"（系統自動，僅超管可改）"}</label><input id="nc_no" placeholder="例如 99" value="${isAdmin?"":autoNo}" ${isAdmin?"":"disabled"}></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
 function createCust(){const no=document.getElementById("nc_no").value;const name=document.getElementById("nc_name").value;if(!no||!name){toast("請填客戶編號與公司全名");return;}DATA.customers.unshift({no,name,member:document.getElementById("nc_member").value||"待填",ein:document.getElementById("nc_ein").value||"",status:document.getElementById("nc_status").value,dl:"正常",mail:"—",todo:0});closeModal();render();toast("客戶已建立");}
 
 // ===== 客戶管理 =====
@@ -704,8 +810,10 @@ function bkStatus(b){if(b.tag==="reject"||/拒絕|婉拒|不可用|停用/.test(
 R.broker=()=>`<h1>經紀資源池</h1><div class="sub">經紀資源池 ｜ 本表供人工參考最新版本，AI 選人發信依優先級取列表，後台可隨時增刪</div>
 <div class="tabs"><button class="${brokerTab==="pool"?"on":""}" onclick="brokerTab='pool';render()">資源列表</button><button class="${brokerTab==="formula"?"on":""}" onclick="brokerTab='formula';render()">公式文檔</button><button class="${brokerTab==="history"?"on":""}" onclick="brokerTab='history';render()">歷史記錄</button></div>
 ${brokerTab==="pool"?brokerPool():brokerTab==="history"?historyPanel():formulaDocs()}`;
+function maskEmail(c,lock){if(!lock||CURRENT_USER.role==="super_admin")return esc(c);if(!c||c==="—"||!c.includes("@"))return esc(c||"—");const[u,d]=c.split("@");return esc(u[0]||"")+"***@"+esc((d||"").split(".")[0][0]||"")+"***.com";}
 function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"1 可複用":s[0]==="可聯繫"?"2 優先新":s[0]==="已用過·靠後"?"3 靠後":"4 不選";
-return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${esc(b.c)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td>${canManage()?`<td><button class="btn small" onclick="delBroker(${i})">移除</button></td>`:""}</tr>`;}
+const lock=(s[0]==="不可用"||s[0]==="已用過·靠後");
+return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${maskEmail(b.c,lock)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td>${canManage()?`<td><button class="btn small" onclick="delBroker(${i})">移除</button></td>`:""}</tr>`;}
 function brokerPool(){const cols=canManage()?7:6;return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerXlsx()">⬇ 匯出 Excel</button>${canManage()?`<button class="btn" onclick="openAddBroker()">＋ 新增資源</button>`:""}</div>
 <table><thead><tr><th>經紀公司</th><th>聯絡人</th><th>信箱</th><th>可用狀態</th><th>備註（人工 / AI 參考）</th><th>優先級</th>${canManage()?"<th>操作</th>":""}</tr></thead><tbody id="bk_body">
 ${BROKERS.map((b,i)=>bkRow(b,i)).join("")}
@@ -789,7 +897,7 @@ ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">�
 ${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>$${Number(x.amount).toLocaleString()}</td><td>${x.mode==="percent"?"按比例":"定額"}</td><td>${x.pct!=null?x.pct+"%":"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='7' class='empty'>尚無成功單</td></tr>"}
 </tbody></table></div>`:""}
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
-<div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"></div>
+<div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
 <div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div>`:""}</div>`;
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);}
@@ -797,6 +905,10 @@ function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.acti
 function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
 paintFoot();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
+function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
+const head=["時間","操作人","動作","詳情"];const rows=auditLog.map(a=>[a.t,a.user,a.action,a.detail||""]);
+if(typeof XLSX!=="undefined"){const ws=XLSX.utils.aoa_to_sheet([head,...rows]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"審計日誌");XLSX.writeFile(wb,"審計日誌_"+new Date().toISOString().slice(0,10)+".xlsx");toast("審計日誌已匯出 Excel");}
+else{const csv="\ufeff"+[head,...rows].map(r=>r.map(x=>`"${String(x||"").replace(/"/g,'""')}"`).join(",")).join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));a.download="審計日誌.csv";a.click();toast("已匯出 CSV");}}
 let _editUid=null;
 function openAdmin(editId){_editUid=editId||null;const u=_editUid?USERS.find(x=>x.id===_editUid):null;
 const canSuper=CURRENT_USER.role==="super_admin";
