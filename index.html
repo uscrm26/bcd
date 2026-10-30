@@ -444,11 +444,16 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   try{
-    const [emRes,mbRes,dbRes,fiRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json"),fetch("files.json")]);
+    const [emRes,mbRes,dbRes,fiRes,bkRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json"),fetch("files.json"),fetch("brokers.json")]);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
     const fi=fiRes.ok?await fiRes.json():null;
+    const bk=bkRes.ok?await bkRes.json():null;
+    if(Array.isArray(bk)&&bk.length){
+      BROKERS.length=0;
+      bk.forEach(x=>BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""}));
+    }
     DATA.files=DATA.files||{};
     if(fi&&typeof fi==="object")DATA.files=fi;
     if(Array.isArray(em)&&em.length){
@@ -836,7 +841,7 @@ function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementById("re
  e.unread=false;addAudit("外發郵件","Re: "+e.sub);closeModal();render();toast("已排入發送隊列，等待 SMTP 送出");}
 function dismissMail(){if(!confirm("確定標記為無需處理？"))return;const e=REPLY_EMAIL;e.unread=false;addAudit("標記無需處理",e.sub);closeModal();render();toast("已標記為無需處理");}
 // ===== Broker 池 / 轉介 / 公式文檔 =====
-const BROKERS=[
+let BROKERS=[
 {n:"A1 Worldwide",a:"Angely Arias",c:"angely@a1wwl.com",m:"—",l:"跟進中",tag:"quote",reason:"要求填 POA 開戶"},
 {n:"RPS",a:"Joe Allen",c:"joe_allen@rpsins.com",m:"—",l:"補件中",tag:"supply",reason:"要求財務文件"},
 {n:"SuretyOne",a:"Underwriter",c:"StaffUnderwriters@SuretyOne.com",m:"—",l:"已報價",tag:"quote",reason:"Bond lead time 確認"},
@@ -853,8 +858,9 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
 const lock=(s[0]==="不可用"||s[0]==="已用過·靠後");
 return `<tr><td>${esc(b.n)}</td><td>${esc(b.a)}</td><td style="font-size:11px">${maskEmail(b.c,lock)}</td><td><span class="tag ${s[1]}">${s[0]}</span></td><td>${esc(b.reason)}</td><td>${pr}</td>${canManage()?`<td><button class="btn small" onclick="delBroker(${i})">移除</button></td>`:""}</tr>`;}
 function brokerPool(){const cols=canManage()?7:6;return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerXlsx()">⬇ 匯出 Excel</button>${canManage()?`<button class="btn" onclick="openAddBroker()">＋ 新增資源</button>`:""}</div>
+<div style="font-size:12px;color:var(--mut);margin:8px 0">共 ${BROKERS.length} 筆，預覽前 100 筆，輸入關鍵字或狀態篩選查看全部</div>
 <table><thead><tr><th>經紀公司</th><th>聯絡人</th><th>信箱</th><th>可用狀態</th><th>備註（人工 / AI 參考）</th><th>優先級</th>${canManage()?"<th>操作</th>":""}</tr></thead><tbody id="bk_body">
-${BROKERS.map((b,i)=>bkRow(b,i)).join("")}
+${BROKERS.slice(0,100).map((b,i)=>bkRow(b,i)).join("")}
 </tbody></table>`;}
 function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.map((b,i)=>({b,i})).filter(x=>{const s=bkStatus(x.b)[0];return(!f||(x.b.n+x.b.a+x.b.c).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(x=>bkRow(x.b,x.i)).join("")||`<tr><td colspan='${canManage()?7:6}' class='empty'>無符合</td></tr>`;}
 function openAddBroker(){openModal(`<h3>新增經紀資源</h3><div class="form-grid"><div class="fg"><label>經紀公司</label><input id="ab_n"></div><div class="fg"><label>聯絡人</label><input id="ab_a"></div><div class="fg full"><label>信箱</label><input id="ab_c"></div><div class="fg"><label>可用狀態</label><select id="ab_tag"><option value="quote">可聯繫</option><option value="deal">成交過·可複用</option><option value="used">已用過·靠後</option><option value="reject">不可用</option></select></div><div class="fg"><label>備註 / AI 參考</label><input id="ab_r"></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="addBroker()">新增</button></div>`);}
