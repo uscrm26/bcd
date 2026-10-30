@@ -298,7 +298,7 @@ tr:hover td{background:#1a2130}
 <aside class="side">
   <div class="brand">
     <div class="logo">CB</div>
-    <div><div class="bt">Customs-Bond</div><div class="bs">內部業務管理系統</div></div>
+    <div><div class="bt">美國海關申報業務</div><div class="bs">內部業務管理系統</div></div>
   </div>
   <div class="sideclock" id="sideClock"></div>
   <nav class="nav">
@@ -358,7 +358,7 @@ tr:hover td{background:#1a2130}
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
   </div>
   <div class="login-card">
-    <div class="login-head"><div class="lt" id="lh_title">內部業務系統</div><div class="ls" id="lh_sub">請登入您的帳戶</div></div>
+    <div class="login-head"><div class="lt" id="lh_title">美國海關申報業務</div><div class="ls" id="lh_sub">內部業務管理系統 · 請登入您的帳戶</div></div>
     <label id="ll_user">登入帳號</label>
     <input id="li_user" autocomplete="username" placeholder="kevinyama">
     <label id="ll_pwd">密碼</label>
@@ -760,6 +760,26 @@ document.getElementById("bellBtn").onclick=openBell;
 // ===== 總覽看板 =====
 let cardMode="card";
 const countBy=id=>DATA.customers.filter(c=>c.status===id).length;
+function hoursSince(tm){
+  const m=String(tm).match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return 999;
+  const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
+  const curMin=(bj.getUTCMonth()+1)*372+bj.getUTCDate()*1440+bj.getUTCHours()*60+bj.getUTCMinutes();
+  const thatMin=(+m[1])*372+(+m[2])*1440+(+m[3])*60+(+m[4]);
+  return (curMin-thatMin)/60;
+}
+function followUpAlerts(){
+  const rows=[];
+  DATA.customers.forEach(c=>{
+    const tl=(DATA.timeline||{})[c.no]||[];
+    const last=tl[0]?tl[0].tm:"";
+    const h=hoursSince(last);
+    const isNewMail=(DATA.emails||[]).some(e=>e.unread&&e.c===c.name.split(" ")[0]);
+    const limit=isNewMail?12:20;
+    if(h>limit&&h<300)rows.push({c,h,limit,newMail:isNewMail});
+  });
+  if(!rows.length)return `<div style="margin-top:10px;font-size:11px;color:var(--ok)">✓ 所有客戶均在跟進時效內（一般 20h / 新郵件 12h）</div>`;
+  return `<div style="margin-top:10px"><div style="font-size:11px;color:var(--err);margin-bottom:4px">需跟進（${rows.length} 家）</div>`+rows.map(r=>`<div style="font-size:11px;color:var(--mut);padding:2px 0">· ${esc(r.c.name)}：已 ${Math.round(r.h)} 小時${r.newMail?"，新郵件逾 12h":""}</div>`).join("")+`</div>`;
+}
 function statusPie(){const total=DATA.customers.length;const done=countBy("done");const active=total-done;
 return `<div class="ringwrap">
   <div class="ring" style="--p:${Math.round(done/total*100)}"><span class="rc">${done}/${total}</span></div>
@@ -768,7 +788,7 @@ return `<div class="ringwrap">
     <div class="li"><span class="sw" style="background:var(--ok)"></span><span data-zh="已出單">已出單</span> ${done} <span data-zh="家">家</span></div>
     <div class="li"><span class="sw" style="background:var(--err)"></span><span data-zh="待補件">待補件</span> ${countBy("supply")} <span data-zh="家">家</span></div>
     <div class="li"><span class="sw" style="background:var(--warn)"></span><span data-zh="已收報價">已收報價</span> ${countBy("quote")} <span data-zh="家">家</span></div>
-  </div></div>`;}
+  </div></div>${followUpAlerts()}`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
@@ -792,7 +812,7 @@ R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">Dashboard ｜ 數據即�
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
-  <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:340px;overflow-y:auto">${DATA.mailboxes.map(b=>{const cc=DATA.customers.find(x=>x.mail&&x.mail.includes(b.em.split("@")[0]));const on=cc?ownerName(cc.no):"—";return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${esc(on)}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
+  <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:340px;overflow-y:auto">${DATA.mailboxes.map(b=>{return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">Kevin W</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>`;
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
 const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 $${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
@@ -1342,7 +1362,7 @@ CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
-const LLANG={zh:{t:"內部業務系統",s:"請登入您的帳戶",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",b:"登 入"},cn:{t:"内部业务系统",s:"请登录您的账户",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",b:"登 录"},en:{t:"Internal Business System",s:"Sign in to your account",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",b:"Sign In"}};
+const LLANG={zh:{t:"美國海關申報業務",s:"內部業務管理系統 · 請登入您的帳戶",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",b:"登 入"},cn:{t:"美国海关申报业务",s:"内部业务管理系统 · 请登录您的账户",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",b:"登 录"},en:{t:"US Customs Bond Filing",s:"Internal Business System · Sign in to your account",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",b:"Sign In"}};
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("ll_cap").textContent=L.c;document.getElementById("li_cap").placeholder=L.ph;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){genCaptcha();setLangLogin(PREF.lang||"zh");const cv=document.getElementById("capCanvas");if(cv)cv.onclick=genCaptcha;document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});document.getElementById("li_cap").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();
