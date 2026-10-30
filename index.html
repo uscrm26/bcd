@@ -780,15 +780,22 @@ function followUpAlerts(){
   if(!rows.length)return `<div style="margin-top:10px;font-size:11px;color:var(--ok)">✓ 所有客戶均在跟進時效內（一般 20h / 新郵件 12h）</div>`;
   return `<div style="margin-top:10px"><div style="font-size:11px;color:var(--err);margin-bottom:4px">需跟進（${rows.length} 家）</div>`+rows.map(r=>`<div style="font-size:11px;color:var(--mut);padding:2px 0">· ${esc(r.c.name)}：已 ${Math.round(r.h)} 小時${r.newMail?"，新郵件逾 12h":""}</div>`).join("")+`</div>`;
 }
-function statusPie(){const total=DATA.customers.length;const done=countBy("done");const active=total-done;
-return `<div class="ringwrap">
-  <div class="ring" style="--p:${Math.round(done/total*100)}"><span class="rc">${done}/${total}</span></div>
-  <div class="legend">
-    <div class="li"><span class="sw" style="background:var(--acc)"></span><span data-zh="處理中">處理中</span> ${active} <span data-zh="家">家</span></div>
-    <div class="li"><span class="sw" style="background:var(--ok)"></span><span data-zh="已出單">已出單</span> ${done} <span data-zh="家">家</span></div>
-    <div class="li"><span class="sw" style="background:var(--err)"></span><span data-zh="待補件">待補件</span> ${countBy("supply")} <span data-zh="家">家</span></div>
-    <div class="li"><span class="sw" style="background:var(--warn)"></span><span data-zh="已收報價">已收報價</span> ${countBy("quote")} <span data-zh="家">家</span></div>
-  </div></div>${followUpAlerts()}`;}
+function statusPie(){const total=DATA.customers.length||1;
+ const rows=[
+  ["var(--acc)","處理中",countBy("new")+countBy("collect")+countBy("form")+countBy("submit")],
+  ["var(--ok)","已出單",countBy("done")],
+  ["var(--err)","待補件",countBy("supply")],
+  ["var(--warn)","已收報價",countBy("quote")],
+  ["#888","擱置",countBy("hold")],
+ ];
+ const max=Math.max(...rows.map(r=>r[2]),1);
+ return `<div style="display:flex;flex-direction:column;gap:12px">
+ ${rows.map(r=>{const pct=Math.round(r[2]/total*100);return `<div>
+   <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:5px"><span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${r[0]};margin-right:7px"></span>${r[1]}</span><b>${r[2]}</b></div>
+   <div style="height:8px;background:var(--bg2);border-radius:6px;overflow:hidden"><div style="height:100%;width:${r[2]/max*100}%;background:${r[0]};border-radius:6px"></div></div>
+   <div style="font-size:10px;color:var(--mut);margin-top:2px">${pct}%</div></div>`;}).join("")}
+ <div style="margin-top:6px;padding-top:10px;border-top:1px solid var(--line);font-size:12px;color:var(--mut)">共 ${DATA.customers.length} 位客戶</div>
+ </div>${followUpAlerts()}`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
@@ -975,9 +982,18 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
 return `<div class="tl">${ts.map(t=>`<div class="tli e-${t.e}"><span class="src">${icon[t.e]} ${esc(t.src)}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
 function convET(bj){const d=new Date();const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
-function todoList(no){const c=DATA.customers.find(x=>x.no===no);const n=c.todo;
-return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
-${n?Array.from({length:n},(_,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${i===0?"⚠️ 補交更新駕照":"等待 Broker 回覆報價"}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>無待辦</div>"}`;}
+function autoTodos(c){const t=[];
+ const unread=(DATA.emails||[]).some(e=>e.c===c.name&&e.unread);
+ if(unread)t.push({lv:"high",t:"有新郵件待回覆"});
+ const sm={new:"首封開發信尚未送出",collect:"資料收集中，待客戶補齊 EIN／章程／地址證明",form:"Bond 申請表尚未填寫",submit:"已提交，跟進 Broker 出單進度",supply:"等客戶補交所需文件",quote:"等待 Broker 回覆報價",confirm:"等待客戶確認報價"};
+ if(sm[c.status])t.push({lv:c.status==="new"?"mid":"low",t:sm[c.status]});
+ if(c.dl==="過期")t.push({lv:"high",t:"駕照已過期，需更新"});
+ return t;}
+function todoList(no){const c=DATA.customers.find(x=>x.no===no);
+ const auto=autoTodos(c);
+ return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
+ <div style="font-size:11px;color:var(--mut);margin:8px 0">AI 依當前業務狀態自動提示</div>
+ ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}`;}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 function fileThumb(f){
