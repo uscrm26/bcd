@@ -838,7 +838,7 @@ function openCustList(statusId){const list=DATA.customers.filter(c=>canViewCust(
 openModal(`<h3>${s}（${list.length}）</h3><table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>負責人</th><th>狀態</th><th></th></tr></thead><tbody>
 ${list.map(c=>`<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td>${esc(ownerName(c.no))}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td><button class="btn small" onclick="closeModal();openCust('${c.no}')">打開</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無客戶</td></tr>"}
 </tbody></table><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
-R.dashboard=()=>`<h1>總覽看板</h1><div class="sub">數據即時同步，含多時區換算</div>
+R.dashboard=()=>`<h1>總覽看板</h1>
   <div class="row r4">
     ${[["quote","已收報價",countBy("quote"),"待回覆"],["supply","待補件",countBy("supply"),"需動作"],["done","已出單",countBy("done"),"完成"],["hold","擱置",countBy("hold"),"暫停"]].map(x=>`<div class="stat" style="cursor:pointer" onclick="openCustList('${x[0]}')"><div class="lb">${x[1]}</div><div class="vl">${x[2]}</div><div class="tg">${x[3]}</div></div>`).join("")}
   </div>
@@ -850,10 +850,10 @@ function refreshCust(){const f=window._s||"";const s=window._st||"";const list=D
 const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 ¥${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
-R.worklog=()=>`<h1>工作通知</h1><div class="sub">與你相關的全部事項</div>
+R.worklog=()=>`<h1>工作通知</h1>
 <div class="panel">${NOTIFS.map(n=>`<div class="logrow" style="cursor:pointer" onclick="openNotif('${n.goto}')"><span class="t">${n.t}</span><span class="c"><span class="who" style="display:inline-block;background:var(--ind);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px;margin-right:6px">${esc(n.who)}</span>${n.unread?"<b style='color:var(--err)'>● </b>":""}${esc(n.txt)}</span></div>`).join("")||"<div class='empty'>尚無通知</div>"}</div>`;
 R.worklog_admin=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
-return `<h1>系統工作記錄</h1><div class="sub">定時巡查與人工記錄，僅超管可見</div>
+return `<h1>系統工作記錄</h1>
 <div class="panel"><div class="search"><input id="manualLog" placeholder="手動新增今日工作筆記"><button class="btn primary" onclick="addLog()">新增記錄</button></div>
 ${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
 </div>`;}
@@ -882,7 +882,7 @@ R.commission=()=>{
   const actualCur=curDone.reduce((a,b)=>a+Number(b.amount||0),0)-curCut;
   const actualPrev=prevDone.reduce((a,b)=>a+Number(b.amount||0),0)-prevCut;
   const isAdmin=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
-  return `<h1>佣金記錄</h1><div class="sub">預估與實收，按下線與扣款即時結算</div>
+  return `<h1>佣金記錄</h1>
   <div class="row r3" style="margin-bottom:12px">
     <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）CNY</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">¥${est.toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">前 30 戶 ¥1,000 ／ 超出 ¥1,500</div></div>
     <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 ¥${curCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">¥${Math.max(0,actualCur).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${curDone.length} 筆出單</div></div>
@@ -932,10 +932,10 @@ let custTab="info";let curCust="93";
 function openCust(no){curCust=no;custTab="info";view="customer";render();window.scrollTo(0,0);}
 R.customer=()=>{
   if(curCust){const c=DATA.customers.find(x=>x.no===curCust);
-  return `<h1>客戶管理</h1><div class="sub">內部參考 #${curCust} ｜ ${c?esc(c.name):""}</div>
+  return `<h1>客戶管理</h1>
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
-  return `<h1>客戶管理</h1><div class="sub">共 ${DATA.customers.length} 位客戶</div>
+  return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
   <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button></div>
@@ -1163,15 +1163,19 @@ async function loadStorageList(no){
   }catch(e){box.innerHTML="<div class='empty'>雲端附件讀取失敗</div>";}
 }
 function pickUpload(no){const i=document.createElement("input");i.type="file";i.multiple=true;i.onchange=e=>{Array.from(e.target.files).forEach((f,idx)=>setTimeout(()=>uploadToStorage(no,f),idx*300));};i.click();}
-async function uploadToStorage(no,f){
+function uploadToStorage(no,f){
  if(f.size>MAX_MB*1024*1024){toast(f.name+" 超過 "+MAX_MB+"MB");return;}
  toast("上傳中："+f.name);
  const path=no+"/"+Date.now()+"_"+encodeURIComponent(f.name);
- try{
-   const r=await fetch(SB.url+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":f.type||"application/octet-stream","x-upsert":"true"},body:f});
-   if(r.ok){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),500);}
-   else{const t=await r.text().catch(()=>"");toast("上傳失敗 "+r.status+"："+t.slice(0,120));}
- }catch(e){toast("上傳失敗："+(e&&e.message||e));}
+ const xhr=new XMLHttpRequest();
+ xhr.open("POST",SB.url+"/storage/v1/object/"+BUCKET+"/"+path);
+ xhr.setRequestHeader("apikey",SB.key);
+ xhr.setRequestHeader("Authorization","Bearer "+SB.key);
+ xhr.setRequestHeader("Content-Type",f.type||"application/octet-stream");
+ xhr.setRequestHeader("x-upsert","true");
+ xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),500);}else{toast("上傳失敗 "+xhr.status+"："+(xhr.responseText||"").slice(0,120));}};
+ xhr.onerror=()=>{toast("上傳失敗：網路或 CORS 被擋");};
+ xhr.send(f);
 }
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
@@ -1184,7 +1188,7 @@ function confirmNote(no){const tt=document.getElementById("ntitle").value||"手�
 addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
-R.mailbox=()=>`<h1>信箱配置</h1><div class="sub">僅超級管理員可編輯</div>
+R.mailbox=()=>`<h1>信箱配置</h1>
 <div class="row r2"><div class="panel"><div class="sec-title">信箱帳戶清單</div>${DATA.mailboxes.map(b=>`<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><div class="em">${esc(b.em)}</div><div class="nm">${esc(b.nm)}</div>${b.st==="ok"?"<span class='tag t-green'>已連線</span>":"<span class='tag t-red'>失敗</span>"}<button class="btn small" onclick="toast('測試連線成功')">測試</button></div>`).join("")}
 <button class="btn primary" style="margin-top:12px" onclick="toast('新增信箱已建立')">新增信箱</button></div>
 <div class="panel"><div class="sec-title">定時輪詢排程（對齊美東工作時段）</div>
@@ -1192,7 +1196,7 @@ R.mailbox=()=>`<h1>信箱配置</h1><div class="sub">僅超級管理員可編輯
 <div class="field"><div class="k">非美國時段兜底</div><div class="v">北京 12:10、16:10 各查一次，不漏隔夜郵件</div></div>
 <div class="field"><div class="k">其餘時間</div><div class="v">不主動巡查，避免空轉</div></div>
 <div class="field"><div class="k">時節說明</div><div class="v">美東冬令時與北京相差 13 小時，屆時密查窗口順延一小時</div></div></div></div>`;
-R.queue=()=>`<h1>電子郵件信箱</h1><div class="sub">未讀需處理置頂，可搜尋篩選，新信自動同步</div>
+R.queue=()=>`<h1>電子郵件信箱</h1>
 <div style="display:flex;gap:6px;margin:10px 0" id="mailTabs">
   <button class="btn small" data-mt="inbox" onclick="setMailTab(this)">收件箱</button>
   <button class="btn small" data-mt="sent" onclick="setMailTab(this)">發件箱</button>
@@ -1289,7 +1293,7 @@ let BROKERS=[
 ];
 let brokerTab="pool";
 function bkStatus(b){if(b.tag==="reject"||/拒絕|婉拒|不可用|停用/.test(b.l))return["不可用","t-gray"];if(/成交|已出單|成功/.test(b.l))return["成交過·可複用","t-green"];if(/用過|已用|跟進中|補件|報價/.test(b.l))return["已用過·靠後","t-amber"];return["可聯繫","t-blue"];}
-R.broker=()=>`<h1>經紀資源池</h1><div class="sub">經紀資源池 ｜ 本表供人工參考最新版本，AI 選人發信依優先級取列表，後台可隨時增刪</div>
+R.broker=()=>`<h1>經紀資源池</h1>
 <div class="tabs"><button class="${brokerTab==="pool"?"on":""}" onclick="brokerTab='pool';render()">資源列表</button><button class="${brokerTab==="history"?"on":""}" onclick="brokerTab='history';render()">歷史記錄</button></div>
 ${brokerTab==="pool"?brokerPool():historyPanel()}`;
 function maskEmail(c,lock){if(!lock||CURRENT_USER.role==="super_admin")return esc(c);if(!c||c==="—"||!c.includes("@"))return esc(c||"—");const[u,d]=c.split("@");return esc(u[0]||"")+"***@"+esc((d||"").split(".")[0][0]||"")+"***.com";}
@@ -1416,7 +1420,7 @@ function pfsBlank(){
   </div>`;
   openModal(`<h3>中英對照空白表單</h3><div style="max-height:70vh;overflow:auto">${html}</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="window.print()">🖨 列印 / 存 PDF</button></div>`);
 }
-R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI 產生草稿，人工確認後才入庫</div>
+R.ai=()=>`<h1>AI 表單助手</h1>
 <div class="row r3">
 <div class="panel"><div class="sec-title">個人財務表 PFS</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選擇客戶與人設，AI 直接填好出表，或產生中英對照空白表給客戶填。</p>
 <select class="btn" style="width:100%;margin-bottom:10px" onchange="aiPick(this.value)">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>${c.no} ${c.name} ｜ ${esc(c.member)}</option>`).join("")}</select>
@@ -1433,7 +1437,7 @@ R.ai=()=>`<h1>AI 表單助手</h1><div class="sub">AI 產生草稿，人工確�
 </div>
 <div class="panel"><div class="sec-title">草稿雙語保存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">草稿同時保留 <b>繁體中文</b> 與 <b>英文</b> 兩份，簡體由系統即時轉換。所有草稿僅供參考，經人工確認後才併入客戶記錄。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
-R.doc=()=>`<h1>文件中心</h1><div class="sub">點法人頭像進入資料夾，預覽圖片、開啟文件</div>
+R.doc=()=>`<h1>文件中心</h1>
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
   <div class="search" style="flex:2;min-width:200px"><input placeholder="搜尋公司名、法人、檔名" oninput="window._df=this.value;renderDoc()"></div>
   <div style="display:flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 8px" id="docOwnerBar">
@@ -1493,7 +1497,7 @@ function fileThumbDel(f,no,isAdmin){
   const acts=`<div style="display:flex;gap:4px;padding:0 6px 8px">
     <a class="btn small" style="text-decoration:none;flex:1;text-align:center" href="${url}" download>下載</a>
     <button class="btn small" style="flex:1" onclick="moveFile('${no}','${esc(f.name)}')">轉存</button>
-    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')">刪</button></div>`;
+    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')"title="刪除">🗑</button></div>`;
   return `<div class="file-cell">${cell}${acts}</div>`;
 }
 function moveFile(no,name){
@@ -1508,9 +1512,9 @@ function moveFile(no,name){
 function delFile(no,name){if(CURRENT_USER.role!=="super_admin"){toast("僅超級管理員可刪除");return;}if(!confirm("確定刪除 "+name+"？此動作會同步從雲端移除"))return;
   const arr=(DATA.files||{})[no]||[];const i=arr.findIndex(x=>x.name===name);if(i>=0)arr.splice(i,1);
   addAudit("刪除檔案",no+" / "+name);render();openDocFolder(no);toast("已刪除");}
-R.archive=()=>`<h1>歸檔包</h1><div class="sub">每客戶完整 ZIP 下載，內附檔案索引清單</div>
+R.archive=()=>`<h1>歸檔包</h1>
 <div class="row r2">${DATA.customers.slice(0,6).map(c=>`<div class="panel"><div class="sec-title">${c.no} ${esc(c.name)} 完整歸檔包</div><div style="font-size:12px;color:var(--mut)">內含：客戶資訊摘要 ｜ 基礎數據 JSON ｜ 時間線 ｜ 待辦 ｜ 全部附件 ｜ _檔案索引清單</div><div style="margin-top:10px;display:flex;gap:8px"><button class="btn primary small" onclick="toast('ZIP 已開始產生，完成後通知')">產生 / 下載</button><button class="btn small" onclick="toast('已同步至 GitHub 備份')">同步 GitHub</button></div></div>`).join("")}</div>`;
-R.github=()=>`<h1>GitHub 備份管理</h1><div class="sub">備份管理 ｜ 僅超級管理員可操作</div>
+R.github=()=>`<h1>GitHub 備份管理</h1>
 <div class="row r2"><div class="panel"><div class="sec-title">Supabase Storage 雲端附件</div><div id="storageUsage"><div class="empty">載入用量中…</div></div><button class="btn" style="margin-top:10px" onclick="window.open('https://supabase.com/dashboard/project/xlcyumbyqcwedqwpspzs/storage/buckets/attachments','_blank')">在 Supabase 後台管理檔案</button></div>
 <div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('備份已完成')">🔄 立即全量備份</button></div>
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
