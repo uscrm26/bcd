@@ -1,6 +1,10 @@
 {
   "daily": [
     {
+      "t": "10/31 02:12",
+      "txt": "巡查 15/15 信箱成功，新信 2 封（Home Depot 收到 GLCHB 兩封正面回覆）"
+    },
+    {
       "t": "10/31 02:10",
       "txt": "批量冷啟開發信：成功發出 89 封，7 戶輪詢，JELD-WEN 信箱認證失敗 15 封"
     },
@@ -494,6 +498,13 @@
         "tm": "10/31 02:10",
         "src": "系統自動",
         "tx": "冷啟開發信已發送至 info@robertsonforwarding.com（ROBERTSON FORWARDING COMPANY INC）"
+      },
+      {
+        "e": "email",
+        "tt": "Re: Looking for a Bond Broker",
+        "tm": "10/31 02:12",
+        "src": "GLCHB Team <info@glchb.com>",
+        "tx": "GLCHB 正面回覆，詢問所需 bond 金額後報價；另派 Enrique 接手跟進，將補發所需文件清單。地址 2550 NW 72 Ave Ste 100 Miami FL 33122，電話 305-593-5022。"
       }
     ],
     "Kervalonix": [
