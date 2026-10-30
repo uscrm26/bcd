@@ -268,7 +268,7 @@ tr:hover td{background:#1a2130}
     <a data-v="ai"><span class="ic">✦</span>AI 表單助手</a>
     <div class="grp">郵件</div>
     <a data-v="mailbox"><span class="ic">✉</span>信箱配置</a>
-    <a data-v="queue"><span class="ic">⇆</span>郵件佇列<span class="dot" id="qdot">0</span></a>
+    <a data-v="queue"><span class="ic">⇆</span>電子郵件<span class="dot" id="qdot">0</span></a>
     <div class="grp">檔案</div>
     <a data-v="doc"><span class="ic">▤</span>文件中心</a>
     <a data-v="archive"><span class="ic">▦</span>歸檔包</a>
@@ -428,7 +428,7 @@ const USERS=[
 {id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
 ];
 const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
-const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"郵件佇列",doc:"文件中心",archive:"歸檔包",github:"備份",system:"系統管理"};
+const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",github:"備份",system:"系統管理"};
 let CURRENT_USER=USERS[0];
 const ownerMap={"93":"kevinyama","89":"ryanfan","90":"kevinyama","98":"kevinyama","2":"ryanfan","61":"kevinyama","64":"kevinyama","66":"kevinyama","73":"kevinyama","75":"ryanfan"};
 const clientAudit={};
@@ -521,7 +521,7 @@ function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
 const ENMAP={
-"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","郵件佇列":"Mail Queue","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace",
+"總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"System Admin","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
 "開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status","客戶檢視":"Customer View","卡片檢視":"Card View","表格檢視":"Table View","每日工作記錄":"Daily Log",
 "已收報價":"Quoted","待補件":"Pending Docs","已出單":"Closed","擱置":"On Hold","待回覆":"Awaiting Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused",
@@ -574,7 +574,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","郵件佇列","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Mail Queue","Documents","Archives","Notifications","System Log","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","邮件队列","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","GitHub 備份","系統管理"],sub:"內部業務管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","GitHub Backup","System Admin"],sub:"Internal Business System",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","GitHub 备份","系统管理"],sub:"内部业务管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
@@ -866,7 +866,7 @@ R.mailbox=()=>`<h1>信箱配置</h1><div class="sub">Mailbox Configuration ｜ �
 <div class="field"><div class="k">非美國時段兜底</div><div class="v">北京 12:10、16:10 各查一次，不漏隔夜郵件</div></div>
 <div class="field"><div class="k">其餘時間</div><div class="v">不主動巡查，避免空轉</div></div>
 <div class="field"><div class="k">時節說明</div><div class="v">美東冬令時與北京相差 13 小時，屆時密查窗口順延一小時</div></div></div></div>`;
-R.queue=()=>`<h1>郵件佇列</h1><div class="sub">Mail Queue ｜ 未讀需處理置頂，可搜尋篩選</div>
+R.queue=()=>`<h1>電子郵件</h1><div class="sub">Email ｜ 未讀需處理置頂，可搜尋篩選，新信自動同步</div>
 <div class="search"><input id="q_search" placeholder="搜尋收件人 / 主題" oninput="renderQueueTable()"><select id="q_filter" onchange="renderQueueTable()"><option value="">全部</option><option value="unread">未處理</option><option value="read">已處理</option></select><button class="btn primary" onclick="toast('新建草稿')">新建外發草稿</button></div>
 <table><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody">
 </tbody></table>`;
@@ -907,7 +907,7 @@ async function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementBy
  try{
    await fetch(SB.url+"/rest/v1/mail_messages",{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({client_name:e.c,from_identity:from,to_addr:e.from,subject:"Re: "+e.sub,body:body,status:"pending_send",sender_account:CURRENT_USER.id||CURRENT_USER.nm})});
  }catch(err){}
- e.unread=false;addAudit("外發郵件","Re: "+e.sub);closeModal();render();toast("已排入發送隊列，等待 SMTP 送出");}
+ e.unread=false;addAudit("電子郵件","Re: "+e.sub);closeModal();render();toast("已排入寄信，下輪自動寄出");}
 function dismissMail(){if(!confirm("確定標記為無需處理？"))return;const e=REPLY_EMAIL;e.unread=false;addAudit("標記無需處理",e.sub);closeModal();render();toast("已標記為無需處理");}
 // ===== Broker 池 / 轉介 / 公式文檔 =====
 let BROKERS=[
