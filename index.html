@@ -1045,10 +1045,15 @@ R.mailbox=()=>`<h1>信箱配置</h1><div class="sub">Mailbox Configuration ｜ �
 <div class="field"><div class="k">非美國時段兜底</div><div class="v">北京 12:10、16:10 各查一次，不漏隔夜郵件</div></div>
 <div class="field"><div class="k">其餘時間</div><div class="v">不主動巡查，避免空轉</div></div>
 <div class="field"><div class="k">時節說明</div><div class="v">美東冬令時與北京相差 13 小時，屆時密查窗口順延一小時</div></div></div></div>`;
-R.queue=()=>`<h1>電子郵件</h1><div class="sub">Email ｜ 未讀需處理置頂，可搜尋篩選，新信自動同步</div>
+R.queue=()=>`<h1>電子郵件信箱</h1><div class="sub">Mailbox ｜ 未讀需處理置頂，可搜尋篩選，新信自動同步</div>
+<div style="display:flex;gap:6px;margin:10px 0" id="mailTabs">
+  <button class="btn small" data-mt="inbox" onclick="setMailTab(this)">收件箱</button>
+  <button class="btn small" data-mt="sent" onclick="setMailTab(this)">發件箱</button>
+</div>
 <div class="search"><input id="q_search" placeholder="搜尋收件人 / 主題" oninput="renderQueueTable()"><select id="q_filter" onchange="renderQueueTable()"><option value="">全部</option><option value="unread">未處理</option><option value="read">已處理</option></select><button class="btn primary" onclick="toast('新建草稿')">新建外發草稿</button></div>
-<table><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody">
-</tbody></table>`;
+<div id="inboxPane"><table style="width:100%"><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody"></tbody></table></div>
+<div id="sentPane" style="display:none"><div class="empty" style="padding:40px">發件箱：已外發郵件將自動記錄在此，目前尚無發送記錄</div></div>`;
+function setMailTab(btn){window._mailTab=btn.dataset.mt;document.querySelectorAll("#mailTabs .btn").forEach(b=>b.style.background=(b===btn?"var(--acc)":""));document.getElementById("inboxPane").style.display=window._mailTab==="inbox"?"":"none";document.getElementById("sentPane").style.display=window._mailTab==="sent"?"":"none";}
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";
 let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
@@ -1061,7 +1066,7 @@ list.forEach((e,idx)=>{
  html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
  <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow:auto">${esc(e.body||"(此郵件暫無正文)")}</div>
- <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${e.t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"一鍵翻譯成繁體"}</button></div>
+ <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${e.t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button></div>
  <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(ZH_CACHE[e.t]||"")}</div>
  </div></td></tr>`;}
 });
@@ -1087,7 +1092,7 @@ function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
  <div style="font-size:12px;color:var(--mut);margin-bottom:4px">寄件人：${esc(e.from)}</div>
  <div style="font-size:12px;color:var(--mut);margin-bottom:10px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:34vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
- <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"一鍵翻譯成繁體中文"}</button></div>
+ <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button></div>
  <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:30vh;overflow:auto">${esc(ZH_CACHE[t]||"")}</div>
  <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
 function toggleZH(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
