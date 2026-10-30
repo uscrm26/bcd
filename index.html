@@ -991,26 +991,35 @@ function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)retu
  <textarea id="sc_body" style="width:100%;min-height:160px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px;line-height:1.6;box-sizing:border-box" placeholder="輸入信件正文"></textarea>
  <div style="margin-top:10px"><label class="btn small" style="cursor:pointer">📎 附加檔案<input type="file" multiple style="display:none" onchange="this.parentElement.nextElementSibling.textContent=[...this.files].map(f=>f.name).join('、')||'無附件'"></label> <span style="font-size:11px;color:var(--mut)">無附件</span></div>
  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitCustomerMail('${no}')">發送</button></div>`);}
-function aiPolish(no){const c=DATA.customers.find(x=>x.no===no);const box=document.getElementById('sc_body');
+async function aiPolish(no){const c=DATA.customers.find(x=>x.no===no);const box=document.getElementById('sc_body');
  if(!box||!box.value.trim()){toast("請先在正文框寫內容，AI 再潤色");return;}
- toast("AI 潤色中，已自動加入問候與落款");
- box.value="Hi,\n\n"+box.value.trim()+"\n\nBest regards,\n"+(c.member||"").split(" ")[0];
+ const key=localStorage.getItem("bcd_ark_key")||"";
+ if(!key){toast("請先在系統管理頁填入豆包 API Key");return;}
+ toast("AI 潤色中…");
+ try{
+  const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"doubao-pro-4k",messages:[{role:"system",content:"You are a US customs bond broker. Polish the user's draft into natural American business English. Add a greeting and sign off as "+(c.member||"").split(" ")[0]+" at "+c.name+". Return only the email body, no explanation."},{role:"user",content:box.value}]})});
+  const j=await r.json();box.value=j.choices[0].message.content.trim();toast("已潤色");
+ }catch(e){toast("AI 潤色失敗："+(e.message||e));}
 }
-function aiWrite(no){const c=DATA.customers.find(x=>x.no===no);
+async function aiWrite(no){const c=DATA.customers.find(x=>x.no===no);
+ const key=localStorage.getItem("bcd_ark_key")||"";
+ if(!key){toast("請先在系統管理頁填入豆包 API Key");return;}
  openModal(`<h3>AI 撰寫｜${esc(c.name)}</h3>
  <div class="fg" style="margin-bottom:10px"><label>你想寫什麼？一句話描述目的</label><textarea id="aw_prompt" style="width:100%;min-height:80px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px" placeholder="例如跟進 bond 申請進度，請對方提供最新表格"></textarea></div>
  <div id="aw_out" style="font-size:12px;color:var(--mut)">按下生成，AI 會給 3 個英文版本附中文翻譯。</div>
  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="genAIWrite('${no}')">生成 3 個版本</button></div>`);
 }
-function genAIWrite(no){const p=(document.getElementById('aw_prompt')||{}).value||"";
+async function genAIWrite(no){const p=(document.getElementById('aw_prompt')||{}).value||"";
  if(!p.trim()){toast("請先描述你要寫什麼");return;}
  const c=DATA.customers.find(x=>x.no===no);const first=(c.member||"").split(" ")[0];
- const v=[
-   {en:`Hi,\n\nHope this note finds you well. I'm reaching out regarding the customs bond for ${c.name}. Could you share the latest status?\n\nBest regards,\n${first}`,zh:"嗨，希望一切順利。關於貴司的海關保證金，想請問最新進度？"},
-   {en:`Hi there,\n\nQuick follow-up on the bond application for ${c.name}. I'd appreciate any update you can provide.\n\nThanks,\n${first}`,zh:"嗨，快速跟進一下 ${c.name} 的保證金申請，麻煩回個進度。"},
-   {en:`Dear partner,\n\nI hope you're doing well. I wanted to check in on the bond setup for ${c.name} and see what we should prepare next.\n\nBest,\n${first}`,zh:"親愛的合作夥伴，關於 ${c.name} 的保證金安排，想確認下一步要準備什麼。"}];
- document.getElementById('aw_out').innerHTML=v.map((x,i)=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">版本 ${i+1}｜中文：${esc(x.zh)}</div><pre style="white-space:pre-wrap;font-family:inherit;font-size:12px;color:var(--tx);margin:0 0 6px">${esc(x.en)}</pre><button class="btn small primary" onclick="pickAIWrite('${no}',${i})">用這個版本</button></div>`).join("");
- window._awV=v;
+ const key=localStorage.getItem("bcd_ark_key")||"";
+ document.getElementById('aw_out').innerHTML="AI 生成中…";
+ try{
+  const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"doubao-pro-4k",messages:[{role:"system",content:"You are a US customs bond broker assistant. Write 3 distinct versions of a short business email in American English, each followed by a one-line Chinese translation. Sign off as "+first+". Output as JSON array [{en,zh}]."},{role:"user",content:p}]})});
+  const j=await r.json();let v=[];try{v=JSON.parse(j.choices[0].message.content.replace(/```json|```/g,"").trim());}catch(e){v=[{en:j.choices[0].message.content,zh:""}];}
+  window._awV=v;
+  document.getElementById('aw_out').innerHTML=v.map((x,i)=>`<div style="border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:11px;color:var(--mut);margin-bottom:4px">版本 ${i+1}｜中文：${esc(x.zh||"")}</div><pre style="white-space:pre-wrap;font-family:inherit;font-size:12px;color:var(--tx);margin:0 0 6px">${esc(x.en)}</pre><button class="btn small primary" onclick="pickAIWrite('${no}',${i})">用這個版本</button></div>`).join("");
+ }catch(e){document.getElementById('aw_out').innerHTML="生成失敗："+(e.message||e);}
 }
 function pickAIWrite(no,i){const box=document.getElementById('sc_body');if(box)box.value=window._awV[i].en;closeModal();toast("已插入正文");}
 function submitCustomerMail(no){const to=(document.getElementById("sc_to")||{}).value||"",sub=(document.getElementById("sc_sub")||{}).value||"",body=(document.getElementById("sc_body")||{}).value||"";
@@ -1091,7 +1100,12 @@ return totUnpaid?`<div style="margin-top:12px;font-size:13px;color:var(--warn)">
 function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class="fg"><label>說明</label><input id="fd_desc"></div><div class="fg"><label>金額 CNY</label><input id="fd_amt" type="number"></div><div class="fg"><label>狀態</label><select id="fd_st"><option value="unpaid">未收款</option><option value="paid">已收款</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="const d=document.getElementById('fd_desc').value,a=Number(document.getElementById('fd_amt').value);DATA.finance=DATA.finance||{};(DATA.finance[no]=DATA.finance[no]||[]).push({type:'bond_premium',desc:d,amount:a,currency:'CNY',status:document.getElementById('fd_st').value});closeModal();render();toast('費用已新增')">儲存</button></div>`);}
 function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 CNY</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
 function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎"};
-return `<div class="tl">${ts.map(t=>`<div class="tli e-${t.e}"><span class="src">${icon[t.e]} ${esc(t.src)}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ const c=DATA.customers.find(x=>x.no===no);
+ const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
+ const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
+ const mailRows=mails.map(e=>({e:"email",src:e.from,tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):""}));
+ const all=ts.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
+ return `<div class="tl">${all.map(t=>`<div class="tli e-${t.e}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
 function convET(bj){const d=new Date();const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
 function autoTodos(c){const t=[];
@@ -1525,6 +1539,7 @@ ${(CURRENT_USER.role==="super_admin"?USERS:USERS.filter(u=>u.id===CURRENT_USER.i
 </tbody></table><button class="btn primary" style="margin-top:10px" onclick="openAdmin()">${CURRENT_USER.role==="supervisor"?"新增下屬":"新增帳戶"}</button></div>
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">系統參數，可編輯</div>
 <div class="fg"><label>營業日切換時間，24 小時制</label><input id="set_cutoff" type="number" min="0" max="23" value="${SETTINGS.cutoff_hour}"></div>
+<div class="fg" style="margin-top:8px"><label>豆包 API Key（用於 AI 潤色／撰寫／翻譯）</label><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}"></div>
 <div class="mrow"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
 <div class="field" style="margin-top:10px"><div class="k">目前切日</div><div class="v">凌晨 ${SETTINGS.cutoff_hour} 點，按日統計與郵件歸日全部依此</div></div></div>`:""}
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
@@ -1537,7 +1552,7 @@ ${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${N
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
 <div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div>`:""}</div>`;
-function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}}
+function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;}const ak=document.getElementById("set_ark");if(ak)localStorage.setItem("bcd_ark_key",ak.value.trim());addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
 function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
