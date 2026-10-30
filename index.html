@@ -392,15 +392,20 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   try{
-    const [emRes,mbRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json")]);
+    const [emRes,mbRes,dbRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json")]);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
+    const db=dbRes.ok?await dbRes.json():null;
     if(Array.isArray(em)&&em.length){
       DATA.emails=em.map(x=>({c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:fmtMailDate(x.date),unread:!x.read,type:guessMailType(x)}));
     }
     if(mb&&Array.isArray(mb.mailboxes)){
       const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
       DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
+    }
+    if(db&&Array.isArray(db.daily)&&db.daily.length){
+      const remoteLogs=db.daily.map(x=>({t:x.date||"",c:x.work||"",o:x.output||""}));
+      DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
     }
     render();
   }catch(e){/* 離線或檔案缺失時保留內置兜底資料 */}
