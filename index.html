@@ -159,7 +159,7 @@ tr:hover td{background:#1a2130}
 .badge{font-size:10px;color:var(--mut);border:1px solid var(--line);padding:2px 8px;border-radius:6px}
 .badge.warn{color:var(--err);border-color:#5a2b34}
 /* quick buttons */
-.quick{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.quick{position:absolute;top:10px;right:10px;display:flex;gap:5px;flex-wrap:wrap;opacity:0;transition:.15s;z-index:2}
 .ccard:hover .quick{opacity:1}
 .quick button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);font-size:10px;padding:3px 7px;border-radius:6px;cursor:pointer}
 .quick button:hover{color:var(--acc2);border-color:#2f4a6e}
