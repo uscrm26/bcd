@@ -385,7 +385,7 @@ const PHOTO={
 };
 const DATA={};
 // 系統自動 4 位不重複編號，放最左邊搜索用；原 no 保留為內部序號
-(function(){let seq=1000;DATA.customers.forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
+(function(){let seq=1000;(DATA.customers||[]).forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
 const USERS=[
 {id:"kevinyama",nm:"Kevin W",pwd:"0521",role:"super_admin",parent:null,active:true,lastLogin:"",avatar:"K",perms:{dashboard:true,customer:true,broker:true,ai:true,mail:true,doc:true,archive:true,github:true,system:true}},
