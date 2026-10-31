@@ -1514,14 +1514,32 @@ sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.
 addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
-R.mailbox=()=>`<h1>信箱配置</h1>
-<div class="row r2"><div class="panel"><div class="sec-title">信箱帳戶清單</div>${DATA.mailboxes.map(b=>`<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><div class="em">${esc(b.em)}</div><div class="nm">${esc(b.nm)}</div>${b.st==="ok"?"<span class='tag t-green'>已連線</span>":"<span class='tag t-red'>失敗</span>"}<button class="btn small" onclick="toast('測試連線成功')">測試</button></div>`).join("")}
-<button class="btn primary" style="margin-top:12px" onclick="toast('新增信箱已建立')">新增信箱</button></div>
+R.mailbox=()=>{
+  if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||""}));}
+  const list=window._mbDraft;
+  return `<h1>信箱配置</h1>
+<div class="row r2"><div class="panel"><div class="sec-title">信箱帳戶清單</div>
+<div style="font-size:12px;color:var(--mut);margin-bottom:10px">在客戶頁填好 email 後，可在此新增到巡查清單。儲存後下一次自動巡查生效。</div>
+<div id="mb_list">${list.map((b,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)">
+<span class="st ok"></span>
+<div style="flex:1"><div style="font-size:13px">${esc(b.client)}</div><div style="font-size:11px;color:var(--mut)">${esc(b.email)}</div></div>
+<span class="tag t-green">已連線</span>
+<button class="btn small" onclick="window._mbDraft.splice(${i},1);render()">刪除</button></div>`).join("")}</div>
+<div style="display:flex;gap:6px;margin-top:10px">
+<input id="mb_new_client" placeholder="客戶名稱" style="flex:1;padding:6px">
+<input id="mb_new_email" placeholder="信箱 email" style="flex:2;padding:6px">
+<button class="btn" onclick="addMbRow()">加入</button></div>
+<button class="btn primary" style="margin-top:12px" onclick="saveMailboxes()">儲存信箱清單到 GitHub</button>
+<div id="mb_msg" style="font-size:12px;margin-top:6px"></div>
+</div>
 <div class="panel"><div class="sec-title">定時輪詢排程（對齊美東工作時段）</div>
 <div class="field"><div class="k">美東白天密查</div><div class="v">北京 21:00 至次日 06:00，每小時巡查一次</div></div>
 <div class="field"><div class="k">非美國時段兜底</div><div class="v">北京 12:10、16:10 各查一次，不漏隔夜郵件</div></div>
 <div class="field"><div class="k">其餘時間</div><div class="v">不主動巡查，避免空轉</div></div>
-<div class="field"><div class="k">時節說明</div><div class="v">美東冬令時與北京相差 13 小時，屆時密查窗口順延一小時</div></div></div></div>`;
+<div class="field"><div class="k">時節說明</div><div class="v">美東冬令時與北京相差 13 小時，屆時密查窗口順延一小時</div></div>
+<div class="field"><div class="k">郵箱密碼</div><div class="v">目前全體共用 123456，要改個別密碼在後台輸入後告訴我，我用加密方式存進 GitHub Secrets，不外露。</div></div></div></div>`;}
+function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:""});render();}
+async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||""})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok"}));}catch(e){msg.textContent="儲存失敗："+e;}}
 R.queue=()=>`<h1>電子郵件信箱</h1>
 <div style="display:flex;gap:6px;margin:10px 0" id="mailTabs">
   <button class="btn small" data-mt="inbox" onclick="setMailTab(this)">收件箱</button>
