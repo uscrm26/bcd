@@ -1782,34 +1782,102 @@ R.github=()=>`<h1>GitHub 備份管理</h1>
 <div class="panel"><div class="sec-title">倉庫資訊</div><div class="field"><div class="k">倉庫位址</div><div class="v">uscrm26/bcd</div></div><div class="field"><div class="k">工作副本</div><div class="v">就緒</div></div><div class="field"><div class="k">最後同步</div><div class="v">10/30 13:17</div></div><button class="btn primary" style="margin-top:10px" onclick="toast('備份已完成')">🔄 立即全量備份</button></div>
 <div class="panel"><div class="sec-title">自動備份設定</div><div class="form-grid"><div class="fg"><label>自動 JSON 備份</label><select><option>開啟</option><option>關閉</option></select></div><div class="fg"><label>間隔 分鐘</label><input value="240"></div></div><button class="btn primary" style="margin-top:10px" onclick="toast('自動備份設定已儲存')">儲存設定</button><button class="btn" style="margin-top:10px;margin-left:8px" onclick="toast('高風險操作，請確認')">📥 從 GitHub 導入 DB</button></div></div>
 <div class="panel"><div class="sec-title">同步任務日誌</div>${[["10/30 13:17","全量 JSON 備份推送成功 commit 7f69fa6","成功"],["10/30 12:40","客戶狀態更新已推送 commit 8a021ab","成功"]].map(x=>`<div class="logrow"><span class="t">${x[0]}</span><span class="c">${x[1]}</span><span class="o">${x[2]}</span></div>`).join("")}</div>`;
-R.system=()=>`<h1>系統管理</h1>
-<div class="row r2"><div class="panel"><div class="sec-title">帳戶管理</div><table><thead><tr><th>頭像</th><th>真實姓名</th><th>登入帳號</th><th>角色</th><th>上級</th><th>名下客戶</th><th>最近登入</th><th>狀態</th><th>操作</th></tr></thead><tbody>
-${(CURRENT_USER.role==="super_admin"?USERS:USERS.filter(u=>u.id===CURRENT_USER.id||u.parent===CURRENT_USER.id)).map(u=>{const kids=Object.keys(ownerMap).filter(no=>ownerMap[no]===u.id).length;const pn=u.parent?(USERS.find(x=>x.id===u.parent)||{}).nm:"—";return `<tr><td><div class="avatar" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg2)">${esc(u.avatar||u.nm.charAt(0))}</div></td><td>${esc(u.nm)}</td><td style="font-size:11px">${esc(u.id)}</td><td><span class="tag t-blue">${ROLE_LB[u.role]||u.role}</span></td><td>${esc(pn)}</td><td>${kids} 家</td><td style="font-size:11px">${u.lastLogin||"—"}</td><td>${u.active?"<span class='tag t-green'>啟用</span>":"<span class='tag t-gray'>停用</span>"}</td><td><button class="btn small" onclick="openUserDetail('${u.id}')">詳情</button><button class="btn small" onclick="openAdmin('${u.id}')">編輯</button><button class="btn small" onclick="toggleUserActive('${u.id}')">${u.active?"停用":"啟用"}</button></td></tr>`;}).join("")}
-</tbody></table><button class="btn primary" style="margin-top:10px" onclick="openAdmin()">${CURRENT_USER.role==="supervisor"?"新增下屬":"新增帳戶"}</button></div>
-${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">系統參數，可編輯</div>
-<div class="fg"><label>營業日切換時間，24 小時制</label><input id="set_cutoff" type="number" min="0" max="23" value="${SETTINGS.cutoff_hour}"></div>
-<div class="fg" style="margin-top:8px"><label>豆包 API Key（用於 AI 潤色／撰寫／翻譯）</label><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}"></div>
-<div class="mrow"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
-<div class="field" style="margin-top:10px"><div class="k">目前切日</div><div class="v">凌晨 ${SETTINGS.cutoff_hour} 點，按日統計與郵件歸日全部依此</div></div></div>`:""}
-${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">AI 功能權限（每位帳戶單獨開關，預設全開）</div>
-<table style="width:100%"><thead><tr><th>帳戶</th><th>角色</th><th>郵件 AI 解讀</th><th>批量 AI 解讀所有客戶</th><th>客戶 AI 跟進分析</th></tr></thead><tbody>
-${USERS.map(u=>`<tr><td>${esc(u.nm)} <span style="font-size:10px;color:var(--mut)">${esc(u.id)}</span></td><td><span class="tag t-blue">${ROLE_LB[u.role]||u.role}</span></td>
-<td><button class="btn small" style="${u.aiMail!==false?'background:#34d39922;color:#34d399;border-color:#34d39955':'background:var(--bg2);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiMail')">${u.aiMail!==false?'已啟用':'已關閉'}</button></td>
-<td><button class="btn small" style="${u.aiBatch!==false?'background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf655':'background:var(--bg2);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiBatch')">${u.aiBatch!==false?'已啟用':'已關閉'}</button></td>
-<td><button class="btn small" style="${u.aiFollow!==false?'background:#6366f122;color:#6366f1;border-color:#6366f155':'background:var(--bg2);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiFollow')">${u.aiFollow!==false?'已啟用':'已關閉'}</button></td>
-</tr>`).join("")}
-</tbody></table>
-<div style="font-size:11px;color:var(--mut);margin-top:8px">關閉後，該帳戶介面對應按鈕會自動隱藏，不影響其他帳戶。</div></div>`:""}
-${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
-<div class="field"><div class="k">超管固定基準</div><div class="v">前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設</div></div>
-<div class="field"><div class="k">分單規則</div><div class="v">上級手動定額寫死金額，或按比例分成，下線只認百分比，不見上級實收</div></div>
-<div class="field"><div class="k">超管當前每單</div><div class="v">${superAdminRate()} CNY</div></div>
-<table><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
-${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${Number(x.amount).toLocaleString()}</td><td>${x.split_to?`${esc(x.split_to)} ¥${Number(x.split_amt).toLocaleString()}`:"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無成功單</td></tr>"}
-</tbody></table></div>`:""}
-${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
-<div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
-<div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div>`:""}</div>`;
+R.system=()=>{
+ const tabs=[["accounts","帳戶管理"],["params","系統參數"],["ai","AI 功能權限"],["commission","佣金分成"],["audit","審計日誌"]];
+ const t=window._sysTab||"accounts";
+ const isAdmin=CURRENT_USER.role==="super_admin";
+ const visibleTabs=isAdmin?tabs:tabs.filter(x=>x[0]==="accounts"||x[0]==="audit");
+ let body="";
+ if(t==="accounts"){
+   body=`<div class="panel">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+     <div style="font-size:13px;color:var(--mut)">管理系統所有帳戶、角色與權限</div>
+     <button class="btn primary" onclick="openAdmin()">${CURRENT_USER.role==="supervisor"?"＋ 新增下屬":"＋ 新增帳戶"}</button>
+   </div>
+   <table style="width:100%"><thead><tr><th>帳戶</th><th>登入帳號</th><th>角色</th><th>上級</th><th>名下客戶</th><th>狀態</th><th>操作</th></tr></thead><tbody>
+   ${(isAdmin?USERS:USERS.filter(u=>u.id===CURRENT_USER.id||u.parent===CURRENT_USER.id)).map(u=>{
+     const kids=Object.keys(ownerMap).filter(no=>ownerMap[no]===u.id).length;
+     const pn=u.parent?(USERS.find(x=>x.id===u.parent)||{}).nm:"—";
+     return `<tr>
+     <td><div style="display:flex;align-items:center;gap:10px"><div class="avatar" style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#1e4d80,#6366f1);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">${esc(u.avatar||u.nm.charAt(0))}</div><div><div style="font-weight:600;font-size:14px">${esc(u.nm)}</div></div></div></td>
+     <td style="font-size:12px;color:var(--mut)">${esc(u.id)}</td>
+     <td><span class="tag t-blue">${ROLE_LB[u.role]||u.role}</span></td>
+     <td style="font-size:12px">${esc(pn)}</td>
+     <td>${kids} 家</td>
+     <td>${u.active?"<span class='tag t-green'>啟用</span>":"<span class='tag t-gray'>停用</span>"}</td>
+     <td style="white-space:nowrap"><button class="btn small" onclick="openUserDetail('${u.id}')">詳情</button><button class="btn small" onclick="openAdmin('${u.id}')">編輯</button><button class="btn small" onclick="toggleUserActive('${u.id}')">${u.active?"停用":"啟用"}</button></td>
+     </tr>`;
+   }).join("")}
+   </tbody></table></div>`;
+ } else if(t==="params" && isAdmin){
+   body=`<div class="panel">
+   <div style="font-size:13px;color:var(--mut);margin-bottom:16px">系統全域參數，僅超級管理員可修改</div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+     <div style="padding:16px;background:var(--bg2);border-radius:12px">
+       <div style="font-size:12px;color:var(--mut);margin-bottom:6px">營業日切換時間</div>
+       <div style="font-size:24px;font-weight:700;margin-bottom:8px">凌晨 ${SETTINGS.cutoff_hour}:00</div>
+       <div style="font-size:11px;color:var(--mut);line-height:1.6">按北京時間切日，每日統計與郵件歸日均依此時間區分</div>
+       <div class="fg" style="margin-top:10px"><input id="set_cutoff" type="number" min="0" max="23" value="${SETTINGS.cutoff_hour}" style="width:100%"></div>
+     </div>
+     <div style="padding:16px;background:var(--bg2);border-radius:12px">
+       <div style="font-size:12px;color:var(--mut);margin-bottom:6px">火山方舟 API Key</div>
+       <div style="font-size:13px;margin-bottom:8px">用於 AI 郵件解讀、客戶跟進分析與批量處理</div>
+       <div class="fg"><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}" style="width:100%"></div>
+     </div>
+     <div style="padding:16px;background:var(--bg2);border-radius:12px">
+       <div style="font-size:12px;color:var(--mut);margin-bottom:6px">批量 AI 使用次數</div>
+       <div style="font-size:14px;font-weight:600;margin-bottom:4px">超級管理員 3 次 / 24 小時</div>
+       <div style="font-size:12px;color:var(--mut)">其他帳戶 1 次 / 24 小時，凌晨 5 點重置</div>
+     </div>
+     <div style="padding:16px;background:var(--bg2);border-radius:12px">
+       <div style="font-size:12px;color:var(--mut);margin-bottom:6px">AI 輸出長度</div>
+       <div style="font-size:14px;font-weight:600;margin-bottom:4px">精簡模式</div>
+       <div style="font-size:12px;color:var(--mut)">每段 2 到 3 句，直接給結論</div>
+     </div>
+   </div>
+   <div style="margin-top:16px"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
+   </div>`;
+ } else if(t==="ai" && isAdmin){
+   body=`<div class="panel">
+   <div style="font-size:13px;color:var(--mut);margin-bottom:16px">為每位帳戶單獨開關 AI 功能，關閉後該帳戶介面對應按鈕自動隱藏</div>
+   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px">
+   ${USERS.map(u=>`<div style="padding:16px;background:var(--bg2);border-radius:12px;border:1px solid var(--line)">
+     <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+       <div class="avatar" style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1e4d80,#6366f1);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff">${esc(u.avatar||u.nm.charAt(0))}</div>
+       <div><div style="font-weight:600">${esc(u.nm)}</div><div style="font-size:11px;color:var(--mut)">${esc(u.id)} · ${ROLE_LB[u.role]||u.role}</div></div>
+     </div>
+     <div style="display:flex;flex-direction:column;gap:8px">
+       <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer">郵件 AI 解讀
+         <button class="btn small" style="${u.aiMail!==false?'background:#34d39922;color:#34d399;border-color:#34d39955':'background:var(--card);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiMail')">${u.aiMail!==false?'開啟':'關閉'}</button>
+       </label>
+       <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer">批量 AI 解讀所有客戶
+         <button class="btn small" style="${u.aiBatch!==false?'background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf655':'background:var(--card);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiBatch')">${u.aiBatch!==false?'開啟':'關閉'}</button>
+       </label>
+       <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer">客戶 AI 跟進分析
+         <button class="btn small" style="${u.aiFollow!==false?'background:#6366f122;color:#6366f1;border-color:#6366f155':'background:var(--card);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiFollow')">${u.aiFollow!==false?'開啟':'關閉'}</button>
+       </label>
+     </div>
+   </div>`).join("")}
+   </div></div>`;
+ } else if(t==="commission" && isAdmin){
+   body=`<div class="panel">
+   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:16px">
+     <div style="padding:14px;background:var(--bg2);border-radius:12px"><div style="font-size:11px;color:var(--mut)">超管固定基準</div><div style="font-size:16px;font-weight:700;margin-top:4px">¥${superAdminRate()} / 單</div></div>
+     <div style="padding:14px;background:var(--bg2);border-radius:12px"><div style="font-size:11px;color:var(--mut)">前 30 單</div><div style="font-size:16px;font-weight:700;margin-top:4px">¥1,000 / 單</div></div>
+     <div style="padding:14px;background:var(--bg2);border-radius:12px"><div style="font-size:11px;color:var(--mut)">第 31 單起</div><div style="font-size:16px;font-weight:700;margin-top:4px">¥1,500 / 單</div></div>
+   </div>
+   <table style="width:100%"><thead><tr><th>客戶</th><th>歸屬</th><th>金額</th><th>下線分成</th><th>時間</th><th>操作</th></tr></thead><tbody>
+   ${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${Number(x.amount).toLocaleString()}</td><td>${x.split_to?`${esc(x.split_to)} ¥${Number(x.split_amt).toLocaleString()}`:"—"}</td><td>${x.t}</td><td><button class="btn small" onclick="editDealAmt(${i})">改金額</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無成功單</td></tr>"}
+   </tbody></table></div>`;
+ } else if(t==="audit"){
+   body=`<div class="panel">
+   <div style="display:flex;gap:10px;margin-bottom:14px"><input placeholder="篩選動作" oninput="filterAudit(this.value)" style="flex:1"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
+   <div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div>`;
+ }
+ return `<h1>系統管理 <span style="font-size:13px;color:var(--mut);font-weight:400;margin-left:8px">Control Panel</span></h1>
+ <div class="tabs" style="margin-bottom:16px">${visibleTabs.map(x=>`<button class="${t===x[0]?'on':''}" onclick="window._sysTab='${x[0]}';render()">${x[1]}</button>`).join("")}</div>
+ ${body}`;
+};
 function toggleAiPerm(uid,key){const u=USERS.find(x=>x.id===uid);if(!u)return;u[key]=!(u[key]!==false);addAudit("AI 權限變更",u.nm+" "+key+" → "+(u[key]?"啟用":"關閉"));render();toast(u.nm+" 的 "+key+(u[key]?"已啟用":"已關閉"));}
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;}const ak=document.getElementById("set_ark");if(ak)localStorage.setItem("bcd_ark_key",ak.value.trim());addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
