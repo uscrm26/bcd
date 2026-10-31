@@ -1883,11 +1883,36 @@ function openReply(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;REPLY_EM
  <button class="btn small" onclick="genReplyDraft('ask')">追問補資料</button></div>
  <textarea id="replyBody" style="width:100%;min-height:170px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px;line-height:1.6;box-sizing:border-box" placeholder="先選 AI 草稿，再依對方郵件手改"></textarea>
  <div class="mrow"><button class="btn" onclick="dismissMail()">標記為無需處理</button><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="sendReply()">發送郵件</button></div>`);}
-function genReplyDraft(kind){const tpl={
- short:`Hi,\n\nThanks for getting back to me. I'll take a look and circle back shortly.\n\nBest,\nKevin`,
- biz:`Hi,\n\nThanks for your email. I went through what you sent and we can move on this. If there's anything else you need from our side, just let me know.\n\nBest,\nKevin`,
- ask:`Hi,\n\nThanks for the update. Before I send this over, could you shoot me a couple more details so I can confirm on our end? Mainly the company EIN and owner info you mentioned.\n\nAppreciate it.\n\nBest,\nKevin`};
- const box=document.getElementById("replyBody");if(box)box.value=tpl[kind];toast("AI 草稿已填入，請手改後再送");}
+async function genReplyDraft(kind){
+  const box=document.getElementById("replyBody");
+  if(box){box.value="AI 撰寫中...";}
+  const e=REPLY_EMAIL;
+  const cust=DATA.customers.find(c=>c.name===e.c||c.name.startsWith(e.c.split(" ")[0]));
+  const hist=(DATA.emails||[]).filter(x=>x.c===e.c).slice(0,5).map(x=>"From: "+x.from+"\nSubject: "+x.sub+"\n"+(x.body||"").slice(0,500)).join("\n---\n");
+  const kindMap={short:"簡短得體回覆",biz:"商務專業跟進",ask:"禮貌地追問缺失資料"};
+  const sys=`你是美國海關bond業務公司的回覆助理。根據往來郵件和客戶資料，撰寫一封英文回覆郵件。
+要求：
+1. 開頭用對方名字稱呼，例如 "Hi Kashay,"
+2. 以公司名義回覆，不是個人身份
+3. 落款格式：第一行是公司法人名字，第二行是公司全名，第三行是公司地址電話
+4. 語氣專業簡潔，符合${kindMap[kind]||"商務回覆"}的風格
+5. 不要加任何解釋，直接輸出郵件正文`;
+  const ctx=`客戶：${e.c}
+法人：${cust?cust.member:"未知"}
+EIN：${cust?cust.ein:"未知"}
+當前郵件：From ${e.from} | Subject ${e.sub}
+正文：${(e.body||"").slice(0,800)}
+過往往來：
+${hist}`;
+  try{
+    const out=await callAI(sys,ctx);
+    if(box)box.value=out;
+    toast("AI 草稿已填入");
+  }catch(err){
+    if(box)box.value="Hi,\n\nThanks for your email. We'll follow up shortly.\n\nBest regards";
+    toast("AI 撰寫失敗，已填入預設草稿");
+  }
+}
 async function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementById("replyBody")||{}).value||"";
  if(!body.trim()){toast("郵件內容不能為空");return;}
  const mb=(DATA.mailboxes||[]).find(b=>b.nm===e.c);
