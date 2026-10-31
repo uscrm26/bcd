@@ -630,6 +630,7 @@ function applyLangText(){
 }
 const empty=()=>`<div class="empty">頁面載入中</div>`;
 // clock
+let CURRENT_LANG="zh";
 const TZS=[["🇨🇳","北京","Beijing","北京",8],["🇺🇸","西雅圖","Seattle","西雅图",-8],["🏔️","丹佛","Denver","丹佛",-7],["🌆","芝加哥","Chicago","芝加哥",-6],["🗽","紐約","New York","纽约",-5]];
 let PREF={theme:"dark",h24:true,lang:"zh"};try{Object.assign(PREF,JSON.parse(localStorage.getItem("bcd_pref")||"{}"));}catch(e){}
 function savePref(){try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}}
@@ -644,7 +645,6 @@ setInterval(clock,1000);clock();applyTheme();
 let langIdx=0;
 const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","手動登錄信箱","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","佣金記錄","GitHub 備份","巡查排程","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Webmail Login","Email","Documents","Archives","Notifications","System Log","Commission","GitHub Backup","Polling Schedule","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","手动登录信箱","电子邮件","文件中心","归档包","工作通知","系统工作记录","佣金记录","GitHub 备份","巡查排程","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
-let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
 const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});
 const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};
