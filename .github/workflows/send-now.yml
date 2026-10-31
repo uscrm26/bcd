@@ -1,0 +1,27 @@
+name: 立刻發信
+
+on:
+  repository_dispatch:
+    types: [send-now]
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 安裝 nodemailer
+        run: npm install nodemailer
+
+      - name: 立刻跑外發佇列
+        env:
+          MAIL_PWD: ${{ secrets.MAIL_PWD }}
+        run: node send_pending.js
