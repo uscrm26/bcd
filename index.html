@@ -1515,6 +1515,15 @@ function batchAIAnalyze(){
       return true;});}
   function renderBatchList(){
     const t=filterTargets();
+    const d=document.getElementById("batchDesc");
+    if(d){
+      const txt={
+        zh:"系統將為您分析以下 "+t.length+" 位客戶的申請狀態，並向 AI 提交其最近往來郵件及檔案等基礎信息。",
+        en:"The system will analyze "+t.length+" customers' application status, submitting their recent emails and documents to AI.",
+        zhcn:"系统将为您分析以下 "+t.length+" 位客户的申请状态，并向 AI 提交其最近往来邮件及档案等基础信息。"
+      };
+      d.textContent=txt[LANG]||txt.zh;
+    }
     const bl=document.getElementById("batchList");
     bl.innerHTML=t.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
     document.getElementById("batchPct").textContent="0 / "+t.length+"（0%）";
@@ -1526,7 +1535,7 @@ function batchAIAnalyze(){
     <div style="font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.15);color:#a78bfa;font-weight:600">今日已用 ${count} / ${limit} 次</div>
     ${lastRun?`<div style="font-size:11px;color:var(--mut)">上次分析：${lastRun}</div>`:""}
   </div>
-  <div style="font-size:13px;line-height:1.7;color:var(--mut);margin-bottom:12px">系統將為您分析以下 ${allTargets.length} 位客戶的申請狀態，並向 AI 提交其最近往來郵件及檔案等基礎信息。</div>
+  <div id="batchDesc" style="font-size:13px;line-height:1.7;color:var(--mut);margin-bottom:12px"></div>
   <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
     <button class="btn small batch-f" data-m="all" style="background:var(--acc);color:#fff" onclick="setBatchFilter('all','')">分析全部客戶</button>
     <button class="btn small batch-f" data-m="mine" onclick="setBatchFilter('mine','')">僅分析我跟進的</button>
