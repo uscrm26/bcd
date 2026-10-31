@@ -291,9 +291,8 @@ tr:hover td{background:#1a2130}
 <div class="overlay" id="overlay" onclick="toggleSide()"></div>
 <div class="app">
 <aside class="side">
-  <div class="brand">
-    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM">
-    <div><div class="bt">UCRM</div><div class="bs">美國進口客戶關係管理系統</div></div>
+  <div class="brand" style="justify-content:center">
+    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM" style="height:44px">
   </div>
   <div class="sideclock" id="sideClock"></div>
   <nav class="nav">
@@ -1365,7 +1364,7 @@ function formulaDocs(){
 function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化開發信逐封送達"],["10/29","Oliveware","回覆 IIA/DRI/Aurora/BorderBuddy，提交 Bluebird POA"],["10/29","Nervaqon","CBP 申請表回覆 SPG Anova，等待報價"],["10/30","A1 Worldwide","要求填 POA 開戶，待回覆"]];
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
 // ===== PFS 個人財務表生成器 =====
-let aiSel=DATA.customers[0]||{};
+let aiSel=(DATA.customers&&DATA.customers[0])||{};
 function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;}
 let pfsPersona={marital:"married_sep",income:"mid",asset:"mid"};
 function pfsGen(){
