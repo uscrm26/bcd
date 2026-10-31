@@ -1183,8 +1183,22 @@ function finalizeCreate(no){
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(aiItem)});
   addAudit("新增客戶",cust.name);
   window._pickedFiles=[];
+  syncCustomerToRepo(no);
   closeModal();render();toast("客戶已建立，資料已保存");
   setTimeout(()=>openCust(no),400);
+}
+async function syncCustomerToRepo(no){
+  try{
+    const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return;
+    const c=DATA.customers.find(x=>x.no===no);if(!c)return;
+    const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{headers:{Authorization:"token "+ghtok}});
+    const meta=await metaR.json();
+    const dj=JSON.parse(decodeURIComponent(escape(atob((meta.content||"").replace(/\n/g,"")))));
+    const cs=dj.customers=dj.customers||[];
+    if(!cs.find(x=>String(x.no)===String(no)))cs.push(c);
+    const b=JSON.stringify(dj);
+    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"新增客戶 "+no,content:btoa(unescape(encodeURIComponent(b))),sha:meta.sha})});
+  }catch(e){console.warn("syncCustomerToRepo",e);}
 }
 
 // ===== 客戶管理 =====
