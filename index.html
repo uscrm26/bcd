@@ -428,7 +428,7 @@ function persistCust(no){
   try{
     const c=DATA.customers.find(x=>x.no===no);if(!c)return;
     const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
-    saved[no]={aiTodos:c.aiTodos||[],aiLastAt:c.aiLastAt||null,status:c.status};
+    saved[no]={aiTodos:c.aiTodos||[],aiSuggestions:c.aiSuggestions||[],aiLastAt:c.aiLastAt||null,status:c.status};
     localStorage.setItem("bcd_cust_override",JSON.stringify(saved));
     if(DATA.timeline&&DATA.timeline[no])localStorage.setItem("bcd_tl_"+no,JSON.stringify(DATA.timeline[no]));
     if(clientAudit[no])localStorage.setItem("bcd_client_audit_"+no,JSON.stringify(clientAudit[no]));
@@ -546,12 +546,14 @@ async function loadSB(){
     DATA.timeline=DATA.timeline||{};clientAudit=clientAudit||{};
     al.forEach(a=>{
       if(a.action==="timeline"&&a.target_client){
-        try{const item=JSON.parse(a.detail);DATA.timeline[a.target_client]=DATA.timeline[a.target_client]||[];if(!DATA.timeline[a.target_client].some(x=>x.key===item.key))DATA.timeline[a.target_client].unshift(item);}catch(e){}
+        try{const item=JSON.parse(a.detail);DATA.timeline[a.target_client]=DATA.timeline[a.target_client]||[];if(!DATA.timeline[a.target_client].some(x=>x.key===item.key))DATA.timeline[a.target_client].push(item);}catch(e){}
       }else if(a.action==="client_audit"&&a.target_client){
         try{const rec=JSON.parse(a.detail);clientAudit[a.target_client]=clientAudit[a.target_client]||[];clientAudit[a.target_client].unshift(rec);}catch(e){}
       }else if(a.action==="cust_state"&&a.target_client){const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const st=JSON.parse(a.detail);if(st.aiTodos)c.aiTodos=st.aiTodos;if(st.aiSuggestions)c.aiSuggestions=st.aiSuggestions;if(st.aiLastAt)c.aiLastAt=st.aiLastAt;}catch(e){}}
       }else if(a.action==="ai_todo_add"&&a.target_client){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const rec=JSON.parse(a.detail);c.aiTodos=c.aiTodos||[];if(!c.aiTodos.some(t=>t.t===rec.t))c.aiTodos.unshift(rec);}catch(e){}}
+      }else if(a.action==="ai_todo_ignore"&&a.target_client){
+        const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const rec=JSON.parse(a.detail);c.aiSuggestions=c.aiSuggestions||[];const s=c.aiSuggestions.find(x=>x.t===rec.t);if(s)s.ignored=rec.ignored;}catch(e){}}
       }else if(a.action==="ai_last_at"&&a.target_client){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c)c.aiLastAt=parseInt(a.detail);
       }
@@ -1736,9 +1738,10 @@ function applyAiAnalysis(no){
   }
   // 自动写入，不用手动确认
   const cust2=DATA.customers.find(x=>x.no===no);
-  if(cust2){cust2.aiLastAt=Date.now();}
+  if(cust2){cust2.aiLastAt=Date.now();persistCust(no);}
+  sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:cust.aiTodos||[],aiSuggestions:cust.aiSuggestions||[],aiLastAt:cust.aiLastAt})});
   res.style.display="none";
-  render();toast("AI 分析完成，狀態已自動更新");
+  render();toast("AI 分析完成，已保存到雲端");
 }
 // ===== 批量 AI 分析 =====
 function batchDayKey(){
