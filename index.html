@@ -1316,7 +1316,8 @@ function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</
 <div style="margin-bottom:14px"><button class="btn" onclick="document.getElementById('nbody').value='與經紀口頭確認將補寄資料，具體進度待郵件確認。'">🤖 產生參考草稿</button>
 <button class="btn small" onclick="toast('已切換英文草稿')">English</button></div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmNote('${no}')">確認新增</button></div>`);}
-function confirmNote(no){const tt=document.getElementById("ntitle").value||"手動跟進";const tx=document.getElementById("nbody").value||"";DATA.timeline[no]=DATA.timeline[no]||[];DATA.timeline[no].unshift({e:"note",tt,tm:nowBJ(),src:"📝 "+CURRENT_USER.nm,tx});
+function confirmNote(no){const tt=document.getElementById("ntitle").value||"手動跟進";const tx=document.getElementById("nbody").value||"";DATA.timeline[no]=DATA.timeline[no]||[];const noteItem={e:"note",tt,tm:nowBJ(),src:"📝 "+CURRENT_USER.nm,tx,key:"note_"+Date.now()};DATA.timeline[no].unshift(noteItem);
+sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(noteItem)});
 addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
@@ -1636,7 +1637,9 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
     }
     // 同時寫一條時間線
     DATA.timeline[no]=DATA.timeline[no]||[];
-    DATA.timeline[no].unshift({t:nowBJ(),who:"AI 跟進",txt:"🤖 "+(j.summary||"AI 已分析客戶檔案"),key:"ai_"+Date.now()});
+    const aiItem={t:nowBJ(),who:"AI 跟進 · "+CURRENT_USER.nm,txt:"🤖 "+(j.summary||"AI 已分析客戶檔案"),key:"ai_"+Date.now()};
+    DATA.timeline[no].unshift(aiItem);
+    sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(aiItem)});
   const _c=DATA.customers.find(x=>x.no===no);if(_c){_c.aiLastAt=Date.now();persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_last_at",target_client:String(no),detail:String(Date.now())});}
     addClientAudit(no,"AI 跟進分析","","","AI 自動分析完成");
   }catch(err){
@@ -1787,7 +1790,9 @@ async function runBatchAI(){
       window._batchResults.push({no,cust,j});
       if(row){row.firstChild.textContent="✅";row.style.opacity=.55;row.style.background="";}
       DATA.timeline[no]=DATA.timeline[no]||[];
-      DATA.timeline[no].unshift({t:nowBJ(),who:"AI 批量分析",txt:"🤖 "+(j.summary||""),key:"batch_"+Date.now()+"_"+no});
+      const batchItem={t:nowBJ(),who:"AI 批量分析 · "+CURRENT_USER.nm,txt:"🤖 "+(j.summary||""),key:"batch_"+Date.now()+"_"+no};
+      DATA.timeline[no].unshift(batchItem);
+      sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(batchItem)});
     }catch(e){
       if(row){row.firstChild.textContent="❌";row.style.background="rgba(248,113,113,.08)";}
     }
