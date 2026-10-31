@@ -1446,7 +1446,7 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
  const c=DATA.customers.find(x=>x.no===no);
  const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
- const mailRows=mails.map(e=>({e:"email",src:e.from,tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
+ const mailRows=mails.map(e=>({e:"email",src:mailDirLabel(e),tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
  const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||"跟進",tt:x.txt||"",tm:x.t||"",tx:"",key:x.key||""}));
  const all=tsRows.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
  const f=window._tlFilter||"all";
@@ -1757,6 +1757,33 @@ list.forEach((e,idx)=>{
 });
 tb.innerHTML=html||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
 function toggleMailRow(t){window._openMail=(window._openMail===t?"":t);renderQueueTable();}
+function extractAddr(s){const m=(s||"").match(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i);return m?m[0].toLowerCase():null;}
+function mailIsOutgoing(e){
+  const cust=mailOwnerClient(e);
+  if(!cust||!cust.mail)return false;
+  const ca=extractAddr(cust.mail),fa=extractAddr(e.from);
+  return !!(ca&&fa&&ca===fa);
+}
+function mailDirLabel(e){
+  const out=mailIsOutgoing(e);
+  const addr=extractAddr(e.from)||e.from||"";
+  const L=CURRENT_LANG;
+  const zh=out?("寄件：發送電子郵件至 "+addr):("收件：收到來自 "+addr+" 的電子郵件");
+  const cn=out?("寄件：发送电子邮件至 "+addr):("收件：收到来自 "+addr+" 的电子邮件");
+  const en=out?("Outbound: Sent email to "+addr):("Inbound: Received email from "+addr);
+  return L==='en'?en:L==='cn'?cn:zh;
+}
+function mailActionLabel(e){
+  const out=mailIsOutgoing(e);
+  const L=CURRENT_LANG;
+  if(out){return L==='en'?"Email this contact again":(L==='cn'?"再次向该联系人发电邮":"再次向該聯絡人發電郵");}
+  return L==='en'?"Reply":(L==='cn'?"回复此信":"回覆此信");
+}
+function mailActionClick(e){
+  const out=mailIsOutgoing(e);
+  if(out){const cust=mailOwnerClient(e);return cust?("closeModal();sendAsCustomer('"+cust.no+"')"):("closeModal();openReply('"+e.t+"')");}
+  return "closeModal();openReply('"+e.t+"')";
+}
 function mailOwnerClient(e){
   const cn=(e.c||"").trim();
   let cust=DATA.customers.find(x=>x.name&&(x.name===cn||x.name.startsWith(cn)||(cn&&x.name.includes(cn))));
@@ -1852,7 +1879,7 @@ function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
   <button class="btn small" style="${e.done?"background:#2ecc71;color:#fff;border-color:transparent":""}" onclick="markProcessedKey('${t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
  <div id="aiBox" data-done="${done?1:0}" style="${done?"":"display:none"};background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:40vh;overflow:auto">${done?renderAICard(ZH_CACHE[t],INTERP_CACHE[t]||e.auto_interp||""):""}</div>
- <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
+ <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="${mailActionClick(e)}">${mailActionLabel(e)}</button></div>`);}
 function markProcessedKey(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e.done=true;e.unread=false;saveMailDone(t,true);addAudit("已處理來信",e.sub);closeModal();render();toast("已標記為已處理，紅點已清除");}
 function renderAICard(zh,interp){
   const card=(icon,title,color,content)=>content?`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:600;color:${color};margin-bottom:4px">${icon} ${title}</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(content)}</div></div>`:"";
