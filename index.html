@@ -1851,7 +1851,7 @@ function applyBatchResults(){
   (window._batchResults||[]).forEach(r=>{
     const cust=DATA.customers.find(x=>x.no===r.no);if(!cust)return;
     cust.aiTodos=cust.aiTodos||[];
-    (r.j.next_actions||[]).forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a))cust.aiTodos.unshift({t:a,done:false,t:Date.now()});});
+    (r.j.next_actions||[]).forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a))cust.aiTodos.unshift({t:a,done:false,ts:Date.now()});});
     addClientAudit(r.no,"AI 批量分析","","","AI 自動分析");
     n++;
   });
