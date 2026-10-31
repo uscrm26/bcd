@@ -2082,6 +2082,7 @@ ${hist}`;
     toast("AI 撰寫失敗，已填入預設草稿");
   }
 }
+function wakeSendNow(){const tok=localStorage.getItem("bcd_ghtok");if(!tok)return;fetch("https://api.github.com/repos/uscrm26/bcd/dispatches",{method:"POST",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({event_type:"send-now"})}).catch(()=>{});}
 async function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementById("replyBody")||{}).value||"";
  if(!body.trim()){toast("郵件內容不能為空");return;}
  const mb=(DATA.mailboxes||[]).find(b=>b.nm===e.c);
@@ -2089,7 +2090,7 @@ async function sendReply(){const e=REPLY_EMAIL;const body=(document.getElementBy
  try{
    await fetch(SB.url+"/rest/v1/mail_messages",{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({client_name:e.c,from_identity:from,to_addr:e.from,subject:"Re: "+e.sub,body:body,status:"pending_send",sender_account:CURRENT_USER.id||CURRENT_USER.nm})});
  }catch(err){}
- e.unread=false;addAudit("電子郵件","Re: "+e.sub);closeModal();render();toast("已排入寄信，下輪自動寄出");}
+ e.unread=false;addAudit("電子郵件","Re: "+e.sub);closeModal();render();wakeSendNow();toast("已送出，約 1 分鐘內寄出");}
 function dismissMail(){if(!confirm("確定標記為無需處理？"))return;const e=REPLY_EMAIL;e.unread=false;addAudit("標記無需處理",e.sub);closeModal();render();toast("已標記為無需處理");}
 
 // ===== 客戶回收站 =====
