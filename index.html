@@ -1212,7 +1212,9 @@ function renderCustAvatarBar(){
 function setMailCustFilter(no){window._mailCust=(window._mailCust===no?"":no);renderCustAvatarBar();renderQueueTable();}
 
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";const cf=window._mailCust||"";
-let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
+let custDom="";
+ if(cf){const c=DATA.customers.find(x=>x.no===cf);if(c&&c.mail)custDom=c.mail.split("@")[1].toLowerCase();}
+ let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread))&&(!cf||(custDom&&(e.from||"").toLowerCase().includes(custDom)||e.c===(DATA.customers.find(x=>x.no===cf)||{}).name)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
 window._qlist=list;
 const tb=document.getElementById("qtbody");if(!tb)return;
