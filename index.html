@@ -507,7 +507,7 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();}
+function render(){syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
@@ -652,6 +652,37 @@ function openNotif(g){closeDrawer();goto(g);}
 function markAllRead(){NOTIFS.forEach(n=>n.unread=false);renderNotifs();toast("已全部標為已讀");}
 function addNotif(who,txt,goto){NOTIFS.unshift({who,txt,t:nowBJ(),unread:true,goto:goto||"customer"});}
 document.getElementById("bellBtn").onclick=openBell;
+
+// 從來信寄件人抽公司/名稱顯示
+function brokerCo(from){
+  const m=(from||"").match(/^\s*"?([^"<]+?)"?\s*<([^>]+)>\s*$/);
+  if(m)return m[1].trim();
+  const em=(from||"").match(/([\w.-]+)@([\w.-]+)/);
+  return em?em[2].replace(/\.[a-z]+$/i,""):from;
+}
+// 掃描未讀來信，為歸屬自己的客戶自動生成通知（去重）
+function syncMailNotifs(){
+  if(!Array.isArray(DATA.emails))return;
+  const seen=new Set(NOTIFS.filter(n=>n._key).map(n=>n._key));
+  DATA.emails.forEach(e=>{
+    if(!e.unread)return;
+    if(!canViewMail(e))return;
+    const key="mail:"+(e.sub||"")+"|"+(e.from||"");
+    if(seen.has(key))return;
+    seen.add(key);
+    const cust=mailOwnerClient(e);
+    const co=brokerCo(e.from);
+    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name+" ":""}收到 ${co} 的來信：${e.sub}`,t:nowBJ(),unread:true,goto:"queue",_key:key});
+  });
+}
+// 更新導航紅點與鈴鐺未讀數
+function updateBadges(){
+  const n=(DATA.emails||[]).filter(e=>e.unread&&canViewMail(e)).length;
+  const qd=document.getElementById("qdot");
+  if(qd){qd.textContent=n>0?n:"";qd.style.display=n>0?"":"none";}
+  const bn=document.querySelector("#bellBtn .n");
+  if(bn){bn.textContent=n>0?n:"";bn.style.display=n>0?"":"none";}
+}
 
 // ===== 總覽看板 =====
 let cardMode="card";
@@ -810,7 +841,7 @@ function createCust(){const no=document.getElementById("nc_no").value;const name
 
 // ===== 客戶管理 =====
 let custTab="info";let curCust="93";
-function openCust(no){curCust=no;custTab="info";view="customer";render();window.scrollTo(0,0);}
+function openCust(no){if(!canViewCust(no)){toast("你沒有權限查看這位客戶");return;}curCust=no;custTab="info";view="customer";render();window.scrollTo(0,0);}
 R.customer=()=>{
   if(curCust){const c=DATA.customers.find(x=>x.no===curCust);
   return `<h1>客戶管理</h1>
@@ -1072,6 +1103,7 @@ async function loadStorageUsage(){
 const BUCKET="attachments";const MAX_MB=20;
 const PUB=SB.url+"/storage/v1/object/public/"+BUCKET+"/";
 async function loadStorageList(no){
+  if(!canViewCust(no)){const box0=document.getElementById("storageList");if(box0)box0.innerHTML="<div class='empty'>無權限</div>";return;}
   const box=document.getElementById("storageList");if(!box)return;
   try{
     const r=await fetch(SB.url+"/storage/v1/object/list/"+BUCKET,{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"},body:JSON.stringify({prefix:no+"/",limit:200,sortBy:{column:"name",order:"desc"}})});
@@ -1149,7 +1181,21 @@ list.forEach((e,idx)=>{
 });
 tb.innerHTML=html||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
 function toggleMailRow(t){window._openMail=(window._openMail===t?"":t);renderQueueTable();}
-function canViewMail(e){const c=DATA.customers.find(x=>x.name&&x.name.startsWith(e.c));if(!c)return true;return canViewCust(c.no);}
+function mailOwnerClient(e){
+  const cn=(e.c||"").trim();
+  let cust=DATA.customers.find(x=>x.name&&(x.name===cn||x.name.startsWith(cn)||(cn&&x.name.includes(cn))));
+  if(!cust&&cn){
+    const mb=(DATA.mailboxes||[]).find(m=>m.nm===cn);
+    if(mb)cust=DATA.customers.find(x=>x.mail===mb.em||(x.name&&mb.nm&&x.name.includes(mb.nm)));
+  }
+  return cust||null;
+}
+function canViewMail(e){
+  if(CURRENT_USER.role==="super_admin")return true;
+  const cust=mailOwnerClient(e);
+  if(!cust)return false;
+  return canViewCust(cust.no);
+}
 function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
 let REPLY_EMAIL=null;
 const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
@@ -1399,6 +1445,7 @@ function renderDoc(){
   box.innerHTML=`<div class="doc-grid">${groups.map(card).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
 }
 function openDocFolder(no){
+  if(!canViewCust(no)){toast("你沒有權限查看這個資料夾");return;}
   const c=DATA.customers.find(x=>x.no===no);if(!c)return;
   const list=(DATA.files||{})[no]||[];
   const isAdmin=CURRENT_USER.role==="super_admin";
