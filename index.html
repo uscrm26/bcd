@@ -1625,7 +1625,7 @@ function batchResetCountdown(){
 }
 function batchAIAnalyze(){
   const isAdmin=CURRENT_USER.role==="super_admin";
-  const limit=isAdmin?3:1;
+  const limit=isAdmin?10:1;
   const dayKey=batchDayKey();
   const used=JSON.parse(localStorage.getItem("bcd_batch_ai_used")||"{}");
   used[CURRENT_USER.id]=used[CURRENT_USER.id]||{};
