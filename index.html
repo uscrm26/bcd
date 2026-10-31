@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customs-Bond 美國海關申報</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23122030'/%3E%3Ctext x='16' y='22' font-size='16' fill='%237cc0ff' text-anchor='middle' font-family='sans-serif' font-weight='bold'%3ECB%3C/text%3E%3C/svg%3E">
+<title>UCRM｜美國進口客戶關係管理系統</title>
+<link rel="icon" href="favicon-32.png">
 <style>
 :root{
   --bg:#0e1116; --bg2:#141922; --card:#171d28; --card2:#1d2431;
@@ -72,6 +72,7 @@ a{color:var(--acc);text-decoration:none}
 .side{width:232px;background:linear-gradient(180deg,#12161e,#10131a);border-right:1px solid var(--line);position:fixed;inset:0 auto 0 0;padding:18px 14px;display:flex;flex-direction:column;z-index:50}
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1d3350,#0e1c2e);border:1px solid #2b4a70;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--acc2);font-size:16px}
+.brand .logo-img{height:32px;width:auto;border-radius:8px;object-fit:contain;flex:0 0 auto}
 .brand .bt{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3}
 .brand .bs{font-size:10px;color:var(--dim)}
 .sideclock{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.9;color:var(--mut)}
@@ -260,6 +261,7 @@ tr:hover td{background:#1a2130}
 .login-err{color:var(--err);font-size:12px;min-height:16px;margin-top:10px;text-align:center}
 .login-foot{text-align:center;color:var(--dim);font-size:11px;margin-top:18px}
 .login-head{text-align:center;margin-bottom:8px}
+.login-head .logo-ico{width:58px;height:58px;border-radius:14px;margin:0 auto 10px;object-fit:cover;display:block}
 .login-head .lt{font-size:22px;font-weight:800;letter-spacing:1px}
 .login-head .ls{font-size:13px;color:var(--mut);margin-top:4px}
 .login-lang{position:absolute;top:18px;right:18px;display:flex;gap:6px}
@@ -289,7 +291,7 @@ tr:hover td{background:#1a2130}
 <body>
 <div class="mtop">
   <button class="burger" onclick="toggleSide()">☰</button>
-  <div class="mtitle">Customs-Bond 系統</div>
+  <div class="mtitle">UCRM</div>
   <button class="bell2" onclick="openBell()">🔔<span class="n">3</span></button>
   <button class="bell2" title="個人設定" onclick="openPref()">⚙</button>
 </div>
@@ -297,8 +299,8 @@ tr:hover td{background:#1a2130}
 <div class="app">
 <aside class="side">
   <div class="brand">
-    <div class="logo">CB</div>
-    <div><div class="bt">美國海關申報業務</div><div class="bs">內部業務管理系統</div></div>
+    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM">
+    <div><div class="bt">UCRM</div><div class="bs">美國進口客戶關係管理系統</div></div>
   </div>
   <div class="sideclock" id="sideClock"></div>
   <nav class="nav">
@@ -358,7 +360,7 @@ tr:hover td{background:#1a2130}
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
   </div>
   <div class="login-card">
-    <div class="login-head"><div class="lt" id="lh_title">美國海關申報業務</div><div class="ls" id="lh_sub">內部業務管理系統</div></div>
+    <div class="login-head"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">UCRM</div><div class="ls" id="lh_sub">美國進口客戶關係管理系統</div></div>
     <label id="ll_user">登入帳號</label>
     <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
     <label id="ll_pwd">密碼</label>
@@ -526,7 +528,7 @@ const ENMAP={
 "信箱帳戶清單":"Mailbox Accounts","測試":"Test","新增信箱":"Add Mailbox","定時輪詢排程（對齊美東工作時段）":"Polling Schedule (US East Business Hours)","美東白天密查":"US East Business Hours","非美國時段兜底":"Off-hours Check","其餘時間":"Other Hours","不主動巡查，避免空轉":"No active check outside these hours","時節說明":"Seasonal Note",
 "未讀需處理置頂，可搜尋篩選":"Unread on top, searchable and filterable","搜尋收件人 / 主題":"Search recipient / subject","全部":"All","未處理":"Unprocessed","已處理":"Processed","新建外發草稿":"New Outgoing Draft","寄件信箱":"Sender","收件人":"Recipient","主題":"Subject","回覆":"Reply",
 "資源列表":"Resource List","公式文檔":"Formula Guides","歷史記錄":"History","經紀公司":"Brokerage","聯絡人":"Contact","可用狀態":"Availability","備註（人工 / AI 參考）":"Notes (Human / AI Ref)","備註 / AI 參考":"Notes / AI Ref","優先級":"Priority","可聯繫":"Reachable","成交過·可複用":"Closed · Reusable","已用過·靠後":"Used · Lower Priority","不可用":"Unavailable","搜尋經紀 / 聯絡人 / 信箱":"Search brokerage / contact / email","新增經紀資源":"Add Broker Resource","新增資源":"Add Resource","成交過":"Closed","待聯繫":"To Contact","資源已加入列表":"Resource added","已從列表移除":"Removed from list","開啟":"Open","舊看板公式文檔":"Legacy Formula Guides","日期":"Date","對象":"Target","歷史進展":"History",
-"個人財務表":"Personal Financial Statement","Customs-Bond 申請表":"Customs-Bond Application","AI 郵件草稿":"AI Email Draft","AI 草稿輸出":"AI Draft Output","草稿雙語保存原則":"Bilingual Draft Policy","產生草稿":"Generate Draft","繁中":"Chinese",
+"個人財務表":"Personal Financial Statement","Customs-Bond 申請表":"UCRM Application","AI 郵件草稿":"AI Email Draft","AI 草稿輸出":"AI Draft Output","草稿雙語保存原則":"Bilingual Draft Policy","產生草稿":"Generate Draft","繁中":"Chinese",
 "每位客戶全部上傳文件與照片，點圖片預覽、點文件開啟":"All files and photos per client; click image to preview, file to open","搜尋文件名、公司名、法人":"Search filename, company, owner","公共附件（開發信樣本、表單、帳戶文件）":"Shared attachments","全部附件":"All Attachments","照片":"Photos","上傳文件":"Upload File",
 "每客戶完整 ZIP 下載，內附檔案索引清單":"Full ZIP per client with file index","完整歸檔包":"Full Archive","產生 / 下載":"Generate / Download","同步 GitHub":"Sync to GitHub",
 "倉庫資訊":"Repository","倉庫位址":"Repo URL","工作副本":"Working Copy","就緒":"Ready","最後同步":"Last Sync","立即全量備份":"Full Backup Now","自動備份設定":"Auto Backup Settings","自動 JSON 備份":"Auto JSON Backup","開啟":"On","關閉":"Off","間隔 分鐘":"Interval (min)","儲存設定":"Save Settings","從 GitHub 導入 DB":"Import DB from GitHub","同步任務日誌":"Sync Log",
@@ -575,7 +577,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","佣金記錄","GitHub 備份","系統管理"],sub:"美國海關申報",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","Commission","GitHub Backup","Control Panel"],sub:"US Customs Bond Filing",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","佣金记录","GitHub 备份","系统管理"],sub:"美国海关申报",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","佣金記錄","GitHub 備份","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","Commission","GitHub Backup","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","佣金记录","GitHub 备份","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
@@ -1442,7 +1444,7 @@ R.ai=()=>`<h1>AI 表單助手</h1>
 <button class="btn primary" style="width:100%;margin-top:10px" onclick="pfsGen()">🤖 AI 直接填好出表</button>
 <button class="btn" style="width:100%;margin-top:8px" onclick="pfsBlank()">📋 中英對照空白指引表</button>
 </div>
-<div class="panel"><div class="sec-title">Customs-Bond 申請表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">預填 EIN、地址、法人；填 Bond 金額、HTS、進口額。</p>
+<div class="panel"><div class="sec-title">UCRM 申請表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">預填 EIN、地址、法人；填 Bond 金額、HTS、進口額。</p>
 <button class="btn primary" style="width:100%" onclick="toast('申請表草稿已產生，請於下方確認')">🤖 產生草稿</button></div>
 <div class="panel"><div class="sec-title">AI 郵件草稿</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選取一封信件，AI 依客戶時間線上下文產生繁中＋英文草稿。</p>
 <button class="btn primary" style="width:100%" onclick="toast('已開啟回覆草稿編輯，繁中＋英文雙份保留')">✍ 產生回覆草稿</button></div>
@@ -1579,7 +1581,7 @@ CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
-const LLANG={zh:{t:"美國海關申報業務",s:"內部業務管理系統",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入"},cn:{t:"美国海关申报业务",s:"内部业务管理系统",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录"},en:{t:"US Customs Bond Filing",s:"Internal Business System",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",up:"Enter username",pp:"Enter password",b:"Sign In"}};
+const LLANG={zh:{t:"UCRM",s:"美國進口客戶關係管理系統",u:"登入帳號",p:"密碼",c:"驗證碼",ph:"請輸入驗證碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入"},cn:{t:"UCRM",s:"美国进口客户关系管理系统",u:"登录账号",p:"密码",c:"验证码",ph:"请输入验证码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录"},en:{t:"UCRM",s:"US Customs Relationship Manager",u:"Username",p:"Password",c:"Captcha",ph:"Enter the code",up:"Enter username",pp:"Enter password",b:"Sign In"}};
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("ll_cap").textContent=L.c;document.getElementById("li_cap").placeholder=L.ph;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function init(){setTimeout(genCaptcha,100);setTimeout(genCaptcha,500);})();(function initAuth(){genCaptcha();setLangLogin(PREF.lang||"zh");const cv=document.getElementById("capCanvas");if(cv)cv.onclick=genCaptcha;document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});document.getElementById("li_cap").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();

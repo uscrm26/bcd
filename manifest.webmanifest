@@ -1,13 +1,13 @@
 {
-  "name": "凱文的代辦業務看板",
-  "short_name": "業務看板",
-  "description": "海關Bond代辦業務看板，客戶、郵件、備註與開發信一站式追蹤。",
+  "name": "UCRM｜美國進口客戶關係管理系統",
+  "short_name": "UCRM",
+  "description": "美國進口客戶關係管理系統，客戶、郵件、備註與開發信一站式追蹤。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f0f1f3",
-  "theme_color": "#3f4854",
+  "background_color": "#0e1116",
+  "theme_color": "#4a9eff",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
