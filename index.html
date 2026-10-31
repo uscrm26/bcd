@@ -2245,7 +2245,7 @@ R.system=()=>{
      <div style="padding:16px;background:var(--bg2);border-radius:12px">
        <div style="font-size:12px;color:var(--mut);margin-bottom:6px">火山方舟 API Key</div>
        <div style="font-size:13px;margin-bottom:8px">用於 AI 郵件解讀、客戶跟進分析與批量處理</div>
-       <div class="fg"><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}" style="width:100%"></div>
+       <div class="fg"><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}" style="width:100%"></div><div class="fg"><label>GitHub Token（用於上傳客戶附件）</label><input id="set_ghtok" type="password" placeholder="ghp_開頭的 Personal Access Token" value="${esc(localStorage.getItem('bcd_ghtok')||'')}" style="width:100%"></div>
      </div>
      <div style="padding:16px;background:var(--bg2);border-radius:12px">
        <div style="font-size:12px;color:var(--mut);margin-bottom:6px">批量 AI 使用次數</div>
