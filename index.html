@@ -1612,7 +1612,7 @@ function openPref(){
 }
 function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){CURRENT_USER.pwd=p;syncUserToDB(CURRENT_USER);addAudit("修改密碼",CURRENT_USER.nm);toast("密碼已更新");}closeModal();}
 paintFoot();
-// ===== 登入 / 登出 / 圖形驗證碼 =====
+// ===== 登入 / 登出 =====
 function doLogin(){const u=document.getElementById("li_user").value.trim().toLowerCase();const p=document.getElementById("li_pwd").value;const err=document.getElementById("li_err");
 if(!u||!p){err.textContent="請輸入帳號與密碼";return;}
 const rec=USERS.find(x=>x.id.toLowerCase()===u);
