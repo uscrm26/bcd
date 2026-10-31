@@ -481,8 +481,12 @@ async function loadRepoData(){
       DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
     }
     if(db){
-      // 远端 data.json 覆盖 DATA 中的客户/状态/时间线等业务数据
+      // 保存云端恢复的 AI 状态，避免被 data.json 覆盖
+      const savedAI={};
+      (DATA.customers||[]).forEach(c=>{savedAI[c.no]={aiLastAt:c.aiLastAt,aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions};});
       ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
+      // 恢复 AI 状态
+      (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
     }
     if(db&&Array.isArray(db.daily)&&db.daily.length){
       const remoteLogs=db.daily.map(x=>({t:x.date||"",c:x.work||"",o:x.output||""}));
@@ -2314,8 +2318,7 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
-loadRepoData();
-loadSB();
+(async()=>{await loadRepoData();await loadSB();})();
 if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
