@@ -1503,23 +1503,47 @@ function batchAIAnalyze(){
     setInterval(()=>{const el=document.getElementById("batchCountdown");if(el)el.textContent=batchResetCountdown();},1000);
     return;
   }
-  const targets=DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
-  if(!targets.length){toast("所有客戶都已出單，無需分析");return;}
-  window._batchTotal=targets.length;
+  const allTargets=DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
+  if(!allTargets.length){toast("所有客戶都已出單，無需分析");return;}
+  window._batchFilter={mode:"all",sub:""};
+  const subs=USERS.filter(u=>u.parent===CURRENT_USER.id);
+  function filterTargets(){const f=window._batchFilter;
+    return allTargets.filter(c=>{const owner=ownerMap[c.no];
+      if(f.mode==="mine")return owner===CURRENT_USER.id;
+      if(f.mode==="subs")return USERS.find(u=>u.parent===CURRENT_USER.id&&u.id===owner);
+      if(f.mode==="sub")return owner===f.sub;
+      return true;});}
+  function renderBatchList(){
+    const t=filterTargets();
+    const bl=document.getElementById("batchList");
+    bl.innerHTML=t.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
+    document.getElementById("batchPct").textContent="0 / "+t.length+"（0%）";
+    document.getElementById("batchBar").style.width="0%";
+    window._batchTargets=t.map(c=>c.no);
+  }
   openModal(`<h3>🤖 AI 解讀所有客戶</h3>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <div style="font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.15);color:#a78bfa;font-weight:600">今日已用 ${count} / ${limit} 次</div>
     ${lastRun?`<div style="font-size:11px;color:var(--mut)">上次分析：${lastRun}</div>`:""}
   </div>
-  <div style="font-size:13px;line-height:1.7;color:var(--mut);margin-bottom:12px">即將分析 ${targets.length} 位未出單客戶，每位調取最近 7 天郵件與檔案。</div>
+  <div style="font-size:13px;line-height:1.7;color:var(--mut);margin-bottom:12px">系統將為您分析以下 ${allTargets.length} 位客戶的申請狀態，並向 AI 提交其最近往來郵件及檔案等基礎信息。</div>
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+    <button class="btn small batch-f" data-m="all" style="background:var(--acc);color:#fff" onclick="setBatchFilter('all','')">分析全部客戶</button>
+    <button class="btn small batch-f" data-m="mine" onclick="setBatchFilter('mine','')">僅分析我跟進的</button>
+    <button class="btn small batch-f" data-m="subs" onclick="setBatchFilter('subs','')">僅分析所有下線</button>
+    <button class="btn small batch-f" data-m="sub" onclick="setBatchFilter('sub','__first')">指定下線</button>
+    <select id="batchSubSel" style="display:none;padding:4px 10px;font-size:12px;border-radius:8px;background:var(--bg2);color:var(--text);border:1px solid var(--line)" onchange="setBatchFilter('sub',this.value)">
+      <option value="">選擇下線…</option>
+      ${subs.map(u=>`<option value="${u.id}">${esc(u.nm)}</option>`).join("")}
+    </select>
+  </div>
   <div style="margin-bottom:12px">
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:4px"><span>進度</span><span id="batchPct">0 / ${targets.length}（0%）</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:4px"><span>進度</span><span id="batchPct">0 / ${allTargets.length}（0%）</span></div>
     <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden"><div id="batchBar" style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .3s"></div></div>
   </div>
   <div id="batchList" style="max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg2)"></div>
-  <div class="mrow" style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="closeModal()">取消</button><button class="btn" id="batchPauseBtn" style="display:none" onclick="pauseBatchAI()">⏸ 暫停分析</button><button class="btn primary" id="batchStartBtn" onclick="runBatchAI(${targets.map(c=>"'"+c.no+"'").join(",")})">開始分析</button></div>`);
-  const bl=document.getElementById("batchList");
-  bl.innerHTML=targets.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
+  <div class="mrow" style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="closeModal()">取消</button><button class="btn" id="batchPauseBtn" style="display:none" onclick="pauseBatchAI()">⏸ 暫停分析</button><button class="btn primary" id="batchStartBtn" onclick="startBatchFromFilter()">開始分析</button></div>`);
+  renderBatchList();
   used[CURRENT_USER.id][dayKey]=count+1;
   localStorage.setItem("bcd_batch_ai_used",JSON.stringify(used));
 }
@@ -1577,6 +1601,13 @@ async function runBatchAI(){
   localStorage.setItem("bcd_batch_ai_last",nowBJ()+" 完成 "+window._batchResults.length+" 位客戶");
 }
 function pauseBatchAI(){window._batchPaused=true;}
+function setBatchFilter(m,sub){window._batchFilter={mode:m,sub:sub==="__first"?"":sub};
+ document.querySelectorAll(".batch-f").forEach(b=>{const on=b.dataset.m===m;b.style.background=on?"var(--acc)":"var(--bg2)";b.style.color=on?"#fff":"var(--text)";});
+ const sel=document.getElementById("batchSubSel");
+ if(sel)sel.style.display=(m==="sub")?"inline-block":"none";
+ const t=window._batchFilter.sub?DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單"&&ownerMap[c.no]===window._batchFilter.sub):DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
+ renderBatchList();}
+function startBatchFromFilter(){runBatchAI(...(window._batchTargets||[]));}
 function applyBatchResults(){
   let n=0;
   (window._batchResults||[]).forEach(r=>{
