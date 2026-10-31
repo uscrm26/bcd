@@ -388,6 +388,12 @@ const PHOTO={
 "75":"docs/clients/Lennar/Lennar%20LLC——法人照片.png"
 };
 const DATA={customers:[],statuses:[],timeline:[],finance:{},policy:{},companyDocs:{},todos:[],archive:{},emails:[],daily:[],notes:[],files:{},logs:[],mailboxes:[]};
+function setBatchFilter(m,sub){window._batchFilter={mode:m,sub:sub==="__first"?"":sub};
+ document.querySelectorAll(".batch-f").forEach(b=>{const on=b.dataset.m===m;b.style.background=on?"var(--acc)":"var(--bg2)";b.style.color=on?"#fff":"var(--text)";});
+ const sel=document.getElementById("batchSubSel");
+ if(sel)sel.style.display=(m==="sub")?"inline-block":"none";
+ const t=window._batchFilter.sub?DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單"&&ownerMap[c.no]===window._batchFilter.sub):DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
+ renderBatchList();}
 // 系統自動 4 位不重複編號，放最左邊搜索用；原 no 保留為內部序號
 (function(){let seq=1000;(DATA.customers||[]).forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
