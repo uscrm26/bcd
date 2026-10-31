@@ -1511,20 +1511,29 @@ async function loadStorageList(no){
   }catch(e){box.innerHTML="<div class='empty'>雲端附件讀取失敗</div>";}
 }
 function pickUpload(no){const i=document.createElement("input");i.type="file";i.multiple=true;i.onchange=e=>{Array.from(e.target.files).forEach((f,idx)=>setTimeout(()=>uploadToStorage(no,f),idx*300));};i.click();}
+let QT="";let QT_EXP=0;
+function loadQiniuToken(){if(QT&&Date.now()<QT_EXP)return Promise.resolve(QT);return fetch("upload_token.json?v="+Date.now()).then(r=>r.json()).then(j=>{QT=j.token||"";QT_EXP=(j.expires||0)*1000;return QT;}).catch(()=>{QT="";return QT;});}
 function uploadToStorage(no,f){
  if(f.size>MAX_MB*1024*1024){toast(f.name+" 超過 "+MAX_MB+"MB");return;}
  toast("上傳中："+f.name);
- const path=no+"/"+Date.now()+"_"+encodeURIComponent(f.name);
- const xhr=new XMLHttpRequest();
- xhr.open("POST",SB.url+"/storage/v1/object/"+BUCKET+"/"+path);
- xhr.setRequestHeader("apikey",SB.key);
- xhr.setRequestHeader("Authorization","Bearer "+SB.key);
- xhr.setRequestHeader("Content-Type",f.type||"application/octet-stream");
- xhr.setRequestHeader("x-upsert","true");
- xhr.onload=()=>{if(xhr.status>=200&&xhr.status<300){addAudit("上傳文件",f.name);toast("已上傳："+f.name);setTimeout(()=>loadStorageList(no),500);}else{toast("上傳失敗 "+xhr.status+"："+(xhr.responseText||"").slice(0,120));}};
- xhr.onerror=()=>{toast("上傳失敗：網路或 CORS 被擋");};
- xhr.send(f);
+ loadQiniuToken().then(token=>{
+  if(!token){toast("上傳服務未就緒，稍後再試");return;}
+  const safeName=(f.name||"file").replace(/[\\/:*?"<>|\s]/g,"_");
+  const key="docs/"+no+"/"+Date.now()+"_"+safeName;
+  const fd=new FormData();fd.append("token",token);fd.append("key",key);fd.append("file",f);
+  fetch("https://upload-z2.qiniup.com/",{method:"POST",body:fd}).then(r=>r.json()).then(async j=>{
+    if(j.key===key){
+      addAudit("上傳文件",f.name);
+      const meta=JSON.stringify({no:no,name:f.name,key:key});
+      fetch("https://api.github.com/repos/uscrm26/bcd/issues",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:"SIGN:"+key,body:meta})}).catch(()=>{});
+      const ok=await waitForSign(key,45);
+      if(ok)toast("已上傳："+f.name);else toast("已上傳，簽名同步中");
+      setTimeout(()=>loadStorageList(no),500);
+    }else{toast("上傳失敗："+((j.error||j.message||"").toString().slice(0,100)||"未知錯誤"));}
+  }).catch(()=>toast("上傳失敗：網路或 CORS 被擋"));
+ });
 }
+function waitForSign(key,sec){return new Promise(res=>{const t0=Date.now();const iv=setInterval(async()=>{try{const r=await fetch("qiniu_map.json?v="+Date.now());const m=await r.json();if(m[key]||m[decodeURIComponent(key)]){clearInterval(iv);res(true);return;}}catch(e){}if(Date.now()-t0>sec*1000){clearInterval(iv);res(false);}},2000);});}
 // ===== 跟進備註 =====
 function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
 <div class="fg" style="margin-bottom:10px"><label>事件標題</label><input id="ntitle" placeholder="例如 與經紀溝通補件事項"></div>

@@ -32,4 +32,9 @@ for k in keys:
 with open("qiniu_map.json", "w") as f:
     json.dump(m, f, ensure_ascii=False)
 
-print(f"已生成 {len(m)} 条签名链接，有效期 30 天")
+# 生成前端直传用的受限上传凭证，30 天有效，仅限 docs/ 前缀
+token = q.upload_token(BUCKET, "docs/", expires=deadline - int(time.time()), policy={"isPrefixalScope": 1, "fsizeLimit": 20 * 1024 * 1024})
+with open("upload_token.json", "w") as f:
+    json.dump({"token": token, "expires": deadline, "prefix": "docs/"}, f)
+
+print(f"已生成 {len(m)} 条签名链接，有效期 30 天；upload_token 已更新")

@@ -1,0 +1,37 @@
+name: sign-on-demand
+on:
+  issues:
+    types: [opened]
+permissions:
+  contents: write
+  issues: write
+jobs:
+  sign:
+    runs-on: ubuntu-latest
+    if: startsWith(github.event.issue.title, 'SIGN:')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install qiniu
+      - name: 补签名并同步文件清单
+        env:
+          QINIU_AK: ${{ secrets.QINIU_AK }}
+          QINIU_SK: ${{ secrets.QINIU_SK }}
+          QINIU_BUCKET: ${{ secrets.QINIU_BUCKET }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: python scripts/sign_on_demand.py
+      - name: 提交更新
+        run: |
+          git config user.name "Kevin W"
+          git config user.email "kevinyama@local"
+          git add qiniu_map.json files.json
+          git diff --staged --quiet || git commit -m "自动签名新上传附件"
+          git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }}.git HEAD:main
+      - name: 关闭触发 issue
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: gh issue close ${{ github.event.issue.number }} --comment "已自动补签名并同步文件清单"
