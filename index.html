@@ -391,8 +391,8 @@ const DATA={customers:[],statuses:[],timeline:[],finance:{},policy:{},companyDoc
 (function(){let seq=1000;(DATA.customers||[]).forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
 const USERS=[
-{id:"kevinyama",nm:"Kevin W",pwd:"0521",role:"super_admin",parent:null,active:true,lastLogin:"",avatar:"K",perms:{dashboard:true,customer:true,broker:true,ai:true,mail:true,doc:true,archive:true,github:true,system:true}},
-{id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
+{id:"kevinyama",nm:"Kevin W",pwd:"0521",role:"super_admin",parent:null,active:true,lastLogin:"",avatar:"K",aiMail:true,aiBatch:true,aiFollow:true,perms:{dashboard:true,customer:true,broker:true,ai:true,mail:true,doc:true,archive:true,github:true,system:true}},
+{id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",aiMail:true,aiBatch:true,aiFollow:true,perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
 ];
 const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
 const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",github:"備份",system:"系統管理"};
@@ -852,8 +852,9 @@ R.customer=()=>{
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
-  <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button></div>
-  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button><button class="btn" style="margin-left:auto;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 解讀所有客戶</button></div>
+  <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button>
+  ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 解讀所有客戶</button>`:""}</div>
+  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
 let listMode="card";
@@ -895,7 +896,7 @@ return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6
   <div class="field"><div class="k">綁定信箱</div><div class="v" style="word-break:break-all">${esc(c.mail)}</div></div>
   <div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
   </div></div>
-<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button><button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button></div>
+<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button>${CURRENT_USER.aiFollow!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button>`:""}</div>
 <div id="aiProgress_${no}" style="display:none;margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px"></div>
 <div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div>`;}
 function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
@@ -1376,6 +1377,7 @@ function writeMailTimeline(e,zh,interp){
   DATA.timeline[cust.no].unshift({t:e.t,who:"AI 解讀",txt:"📧 "+(e.from||"").split("<")[0].trim()+"｜"+(e.sub||"")+"："+summary,key:key});
   addAudit("AI 解讀完成","郵件 "+e.sub+" 已翻譯並寫入客戶時間線");
   toast("AI 解讀已寫入客戶時間線");
+}
 
 // ===== AI 客戶綜合分析 =====
 function recentMailsForCustomer(cust, days){
@@ -1445,7 +1447,7 @@ function batchAIAnalyze(){
   const limit=isAdmin?3:1;
   const today=new Date();
   const bj=new Date(today.getTime()+8*3600e3);
-  const cutHour=17;
+  const cutHour=5;
   let dayKey;
   if(bj.getUTCHours()<cutHour){const y=new Date(bj.getTime()-86400e3);dayKey=y.getUTCFullYear()+"-"+(y.getUTCMonth()+1)+"-"+y.getUTCDate();}
   else dayKey=bj.getUTCFullYear()+"-"+(bj.getUTCMonth()+1)+"-"+bj.getUTCDate();
@@ -1509,7 +1511,6 @@ function applyBatchResults(){
   closeModal();render();toast("批量分析結果已寫入客戶檔案");
 }
 
-}
 // 隊列展開行
 function aiRun(idx){const e=window._qlist[idx];const box=document.getElementById("aibox_"+idx);if(!e||!box)return;
  if(box.style.display!=="none"&&box.dataset.done==="1"){box.style.display="none";return;}
@@ -1790,6 +1791,15 @@ ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">�
 <div class="fg" style="margin-top:8px"><label>豆包 API Key（用於 AI 潤色／撰寫／翻譯）</label><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}"></div>
 <div class="mrow"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
 <div class="field" style="margin-top:10px"><div class="k">目前切日</div><div class="v">凌晨 ${SETTINGS.cutoff_hour} 點，按日統計與郵件歸日全部依此</div></div></div>`:""}
+${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">AI 功能權限（每位帳戶單獨開關，預設全開）</div>
+<table style="width:100%"><thead><tr><th>帳戶</th><th>角色</th><th>郵件 AI 解讀</th><th>批量 AI 解讀所有客戶</th><th>客戶 AI 跟進分析</th></tr></thead><tbody>
+${USERS.map(u=>`<tr><td>${esc(u.nm)} <span style="font-size:10px;color:var(--mut)">${esc(u.id)}</span></td><td><span class="tag t-blue">${ROLE_LB[u.role]||u.role}</span></td>
+<td><button class="btn small" style="${u.aiMail!==false?'background:#34d39922;color:#34d399;border-color:#34d39955':'background:var(--bg2);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiMail')">${u.aiMail!==false?'已啟用':'已關閉'}</button></td>
+<td><button class="btn small" style="${u.aiBatch!==false?'background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf655':'background:var(--bg2);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiBatch')">${u.aiBatch!==false?'已啟用':'已關閉'}</button></td>
+<td><button class="btn small" style="${u.aiFollow!==false?'background:#6366f122;color:#6366f1;border-color:#6366f155':'background:var(--bg2);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiFollow')">${u.aiFollow!==false?'已啟用':'已關閉'}</button></td>
+</tr>`).join("")}
+</tbody></table>
+<div style="font-size:11px;color:var(--mut);margin-top:8px">關閉後，該帳戶介面對應按鈕會自動隱藏，不影響其他帳戶。</div></div>`:""}
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">佣金分成，僅超管可見可改</div>
 <div class="field"><div class="k">超管固定基準</div><div class="v">前 30 單每單 1000，第 31 單起每單 1500，可逐單微調；月目標預設不設</div></div>
 <div class="field"><div class="k">分單規則</div><div class="v">上級手動定額寫死金額，或按比例分成，下線只認百分比，不見上級實收</div></div>
@@ -1800,6 +1810,7 @@ ${commissions.map((x,i)=>`<tr><td>${x.cust}</td><td>${esc(x.user)}</td><td>¥${N
 ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">全員審計日誌</div>
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
 <div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div>`:""}</div>`;
+function toggleAiPerm(uid,key){const u=USERS.find(x=>x.id===uid);if(!u)return;u[key]=!(u[key]!==false);addAudit("AI 權限變更",u.nm+" "+key+" → "+(u[key]?"啟用":"關閉"));render();toast(u.nm+" 的 "+key+(u[key]?"已啟用":"已關閉"));}
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;}const ak=document.getElementById("set_ark");if(ak)localStorage.setItem("bcd_ark_key",ak.value.trim());addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
