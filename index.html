@@ -509,7 +509,7 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue")renderQueueTable();if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
+function render(){syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
@@ -853,7 +853,7 @@ R.customer=()=>{
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
   <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button></div>
-  <div class="switch" style="margin:10px 0"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
+  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button><button class="btn" style="margin-left:auto;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 解讀所有客戶</button></div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
 let listMode="card";
@@ -895,7 +895,9 @@ return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6
   <div class="field"><div class="k">綁定信箱</div><div class="v" style="word-break:break-all">${esc(c.mail)}</div></div>
   <div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
   </div></div>
-<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button></div>`;}
+<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button><button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button></div>
+<div id="aiProgress_${no}" style="display:none;margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px"></div>
+<div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div>`;}
 function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
  openModal(`<h3>以 ${esc(c.name)} 名義發信</h3>
  <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">寄件人</div><div style="font-size:13px">${esc(c.mail||"—")}</div></div>
@@ -1044,13 +1046,20 @@ const totUnpaid=rows.filter(r=>r.status!=="paid").reduce((a,b)=>a+b.amount,0);
 return totUnpaid?`<div style="margin-top:12px;font-size:13px;color:var(--warn)">待收合計 ${fmt(totUnpaid)} CNY</div>`:``;}
 function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class="fg"><label>說明</label><input id="fd_desc"></div><div class="fg"><label>金額 CNY</label><input id="fd_amt" type="number"></div><div class="fg"><label>狀態</label><select id="fd_st"><option value="unpaid">未收款</option><option value="paid">已收款</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="const d=document.getElementById('fd_desc').value,a=Number(document.getElementById('fd_amt').value);DATA.finance=DATA.finance||{};(DATA.finance[no]=DATA.finance[no]||[]).push({type:'bond_premium',desc:d,amount:a,currency:'CNY',status:document.getElementById('fd_st').value});closeModal();render();toast('費用已新增')">儲存</button></div>`);}
 function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 CNY</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
-function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎"};
+function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎",ai:"🤖"};
  const c=DATA.customers.find(x=>x.no===no);
  const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
- const mailRows=mails.map(e=>({e:"email",src:e.from,tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):""}));
+ const mailRows=mails.map(e=>({e:"email",src:e.from,tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
  const all=ts.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
- return `<div class="tl">${all.map(t=>`<div class="tli e-${t.e}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ const f=window._tlFilter||"all";
+ const filtered=f==="ai"?all.filter(t=>t.who&&t.who.indexOf("AI")>=0||t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
+ return `<div style="margin-bottom:10px;display:flex;gap:6px">
+  <button class="btn small ${f==='all'?'':'btn'}" style="${f==='all'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='all';render()">全部</button>
+  <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
+  <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
+ </div>
+ <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map(t=>`<div class="tli e-${t.e}" style="cursor:pointer" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src||t.who||"")}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
 function convET(bj){const d=new Date();const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
 function autoTodos(c){const t=[];
@@ -1062,9 +1071,13 @@ function autoTodos(c){const t=[];
  return t;}
 function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  const auto=autoTodos(c);
+ const aiTodos=(c.aiTodos||[]).filter(t=>!t.done);
  return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
  <div style="font-size:11px;color:var(--mut);margin:8px 0">AI 依當前業務狀態自動提示</div>
- ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}`;}
+ ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
+ ${aiTodos.length?`<div style="font-size:11px;color:#8b5cf6;margin:14px 0 6px">🤖 AI 建議待辦</div>`:""}
+ ${aiTodos.map((t,i)=>`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">🤖 ${esc(t.t)}</span><span class="o" style="color:#8b5cf6">AI</span><button class="btn small" onclick="completeAiTodo('${no}',${i})">完成</button></div>`).join("")}`;}
+function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].done=true;addClientAudit(no,"待辦完成","",c.aiTodos[i].t,"AI 待辦");render();toast("待辦已完成");}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 function fileThumb(f){
@@ -1162,10 +1175,42 @@ R.queue=()=>`<h1>電子郵件信箱</h1>
   <button class="btn small" data-mt="sent" onclick="setMailTab(this)">發件箱</button>
 </div>
 <div class="search"><input id="q_search" placeholder="搜尋收件人 / 主題" oninput="renderQueueTable()"><select id="q_filter" onchange="renderQueueTable()"><option value="">全部</option><option value="unread">未處理</option><option value="read">已處理</option></select><button class="btn primary" onclick="toast('新建草稿')">新建外發草稿</button></div>
+<div id="custAvatarBar" style="display:flex;gap:10px;align-items:center;overflow-x:auto;padding:8px 2px;margin-bottom:10px;border-bottom:1px solid var(--line)"></div>
 <div id="inboxPane"><table style="width:100%"><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody"></tbody></table></div>
 <div id="sentPane" style="display:none"><div class="empty" style="padding:40px">發件箱：已外發郵件將自動記錄在此，目前尚無發送記錄</div></div>`;
 function setMailTab(btn){window._mailTab=btn.dataset.mt;document.querySelectorAll("#mailTabs .btn").forEach(b=>b.style.background=(b===btn?"var(--acc)":""));document.getElementById("inboxPane").style.display=window._mailTab==="inbox"?"":"none";document.getElementById("sentPane").style.display=window._mailTab==="sent"?"":"none";}
-function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";
+function renderCustAvatarBar(){
+ const bar=document.getElementById("custAvatarBar");if(!bar)return;
+ const myId=CURRENT_USER.id;
+ let list=DATA.customers.slice();
+ list.sort((a,b)=>{
+   const ao=ownerMap[a.no]||"",bo=ownerMap[b.no]||"";
+   const aMine=ao===myId?0:1, bMine=bo===myId?0:1;
+   if(aMine!==bMine)return aMine-bMine;
+   return (a.name||"").localeCompare(b.name||"");
+ });
+ const cur=window._mailCust||"";
+ let html=`<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;margin-right:8px" onclick="setMailCustFilter('')">
+   <div style="width:44px;height:44px;border-radius:50%;background:${cur?"var(--bg2)":"var(--acc)"};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid ${cur?"var(--line)":"transparent"}">全部</div>
+   <div style="font-size:9px;color:var(--mut);margin-top:3px">全部</div></div>`;
+ list.forEach(c=>{
+   const ph=PHOTO[c.no]||"";
+   const ow=ownerName(c.no);
+   const active=cur===c.no;
+   const short=(c.name||"").replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"");
+   html+=`<div style="display:flex;flex-direction:column;align-items:center;cursor:pointer;margin-right:8px" onclick="setMailCustFilter('${c.no}')">
+     <div style="width:44px;height:44px;border-radius:50%;overflow:hidden;border:2px solid ${active?"var(--acc)":"var(--line)"};background:var(--bg2);display:flex;align-items:center;justify-content:center;${active?"box-shadow:0 0 0 2px rgba(59,130,246,.3)":""}">
+       ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<span style="font-size:14px;color:var(--mut)">${esc((c.member||"?").charAt(0))}</span>`}
+     </div>
+     <div style="font-size:9px;color:${active?"var(--acc)":"var(--tx)"};margin-top:3px;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(short)}</div>
+     <div style="font-size:8px;color:${ow==="Kevin W"?"#60a5fa":"var(--mut)"}">${esc(ow)}</div>
+   </div>`;
+ });
+ bar.innerHTML=html;
+}
+function setMailCustFilter(no){window._mailCust=(window._mailCust===no?"":no);renderCustAvatarBar();renderQueueTable();}
+
+function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";const cf=window._mailCust||"";
 let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
 window._qlist=list;
@@ -1304,7 +1349,7 @@ async function doAI(e,box){
     ZH_CACHE[e.t]=zh;saveZH(e.t,zh);
     // 2. 前後文解讀
     const ctx=buildMailContext(e);
-    const sys="你是美國海關 continuous Customs Bond 業務的資深顧問，熟悉報關行(broker)流程、CBP 規定、bond 申請與補件。請基於提供的客戶檔案與完整往來郵件歷史，對這封「本次新收到的郵件」做綜合分析。用繁體中文，嚴格分三段輸出，每段開頭必須是【前後文定位】【對方來意與訴求】【建議下一步】，不要加其他標題。";
+    const sys="你是美國海關 continuous Customs Bond 業務的資深顧問。基於客戶檔案與往來郵件，對這封新郵件做精簡分析。用繁體中文，嚴格分三段，每段開頭必須是【前後文定位】【對方來意與訴求】【建議下一步】。每段最多 2 到 3 句，直接給結論，不要客套、不要重複郵件原文、不要長篇大論。";
     const userMsg=ctx+"\n\n【本次新收到的郵件】\n寄件人："+(e.from||"")+"\n主旨："+(e.sub||"")+"\n時間："+(e.t||"")+"\n\n正文：\n"+src;
     const interp=await callAI(sys,userMsg);
     INTERP_CACHE[e.t]=interp;saveInterp(e.t,interp);
@@ -1331,6 +1376,139 @@ function writeMailTimeline(e,zh,interp){
   DATA.timeline[cust.no].unshift({t:e.t,who:"AI 解讀",txt:"📧 "+(e.from||"").split("<")[0].trim()+"｜"+(e.sub||"")+"："+summary,key:key});
   addAudit("AI 解讀完成","郵件 "+e.sub+" 已翻譯並寫入客戶時間線");
   toast("AI 解讀已寫入客戶時間線");
+
+// ===== AI 客戶綜合分析 =====
+function recentMailsForCustomer(cust, days){
+  const dom=(cust.mail||"").split("@")[1]||"";
+  const cutoff=Date.now()-days*86400e3;
+  return (DATA.emails||[]).filter(e=>{
+    if(dom && (e.from||"").toLowerCase().includes(dom.toLowerCase())) return true;
+    if(e.c===cust.name) return true;
+    return false;
+  }).slice(0,10);
+}
+async function aiAnalyzeCustomer(no){
+  const cust=DATA.customers.find(x=>x.no===no);if(!cust)return;
+  const prog=document.getElementById("aiProgress_"+no);
+  const res=document.getElementById("aiResult_"+no);
+  if(prog){prog.style.display="block";prog.innerHTML="<div style='color:#8b5cf6;font-size:13px'>🤖 AI 正在調取客戶檔案、最近 7 天郵件與附件清單，請稍候…</div>";}
+  if(res)res.style.display="none";
+  try{
+    const mails=recentMailsForCustomer(cust,7);
+    const files=((DATA.files||{})[no]||[]).map(f=>f.name||f.nm).slice(0,15);
+    const status=st(cust.status);
+    const ctx=`客戶檔案：公司=${cust.name}，法人=${cust.member}，EIN=${cust.ein}，狀態=${status.lb}，負責人=${ownerName(no)}，信箱=${cust.mail}，駕照=${cust.dl}，護照=${cust.pp||"未有提供"}
+已收到附件：${files.length?files.join("、"):"無"}
+最近 7 天來往郵件：
+${mails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body||"").slice(0,400)).join("\n\n")||"（最近 7 天無新郵件）"}`;
+    const sys=`你是美國海關 continuous Customs Bond 業務的資深顧問。請對這個客戶做整體跟進分析，用繁體中文，嚴格輸出 JSON，不要加 markdown 標記或說明文字，JSON schema 如下：
+{"summary":"一句話總結客戶目前處境","status_suggest":"建議的業務狀態（用「資料收集中」「等待客戶確認」「已提交」「等待報價」「已出單」之一）","next_actions":["待辦事項1","待辦事項2"],"risk":"風險點或需要注意的事，沒有就填空字符串"}
+每個欄位精簡，summary 不超過 50 字，next_actions 最多 3 條，每條不超過 30 字。`;
+    const out=await callAI(sys,ctx);
+    let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,200),next_actions:[]};}
+    if(prog)prog.style.display="none";
+    if(res){res.style.display="block";
+      res.innerHTML=`<div style="font-size:12px;color:#8b5cf6;font-weight:700;margin-bottom:8px">🤖 AI 跟進分析結果</div>
+      <div style="font-size:13px;line-height:1.8;margin-bottom:10px">${esc(j.summary||"")}</div>
+      ${j.status_suggest?`<div style="font-size:12px;margin-bottom:8px">建議狀態：<span class="tag t-blue">${esc(j.status_suggest)}</span></div>`:""}
+      ${j.next_actions&&j.next_actions.length?`<div style="font-size:12px;color:var(--mut);margin-bottom:4px">建議待辦：</div><ul style="margin:0 0 8px 18px;padding:0;font-size:13px;line-height:1.9">${j.next_actions.map(a=>`<li>${esc(a)}</li>`).join("")}</ul>`:""}
+      ${j.risk?`<div style="font-size:12px;color:#f87171">⚠️ ${esc(j.risk)}</div>`:""}
+      <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary small" onclick="applyAiAnalysis('${no}')">✓ 採用並寫入</button><button class="btn small" onclick="document.getElementById('aiResult_${no}').style.display='none'">忽略</button></div>`;
+      res.dataset.json=JSON.stringify(j);
+    }
+    // 同時寫一條時間線
+    DATA.timeline[no]=DATA.timeline[no]||[];
+    DATA.timeline[no].unshift({t:nowBJ(),who:"AI 跟進",txt:"🤖 "+(j.summary||"AI 已分析客戶檔案"),key:"ai_"+Date.now()});
+    addClientAudit(no,"AI 跟進分析","","","AI 自動分析完成");
+  }catch(err){
+    if(prog)prog.innerHTML="<div style='color:#f87171;font-size:13px'>AI 分析失敗，請稍後重試。</div>";
+  }
+}
+function applyAiAnalysis(no){
+  const res=document.getElementById("aiResult_"+no);if(!res)return;
+  let j={};try{j=JSON.parse(res.dataset.json||"{}");}catch(e){}
+  const cust=DATA.customers.find(x=>x.no===no);if(!cust)return;
+  if(j.status_suggest){
+    const stRec=DATA.statuses.find(s=>s.lb===j.status_suggest);
+    if(stRec){const old=st(cust.status).lb;cust.status=stRec.id;addClientAudit(no,"狀態更新",old,j.status_suggest,"AI 建議");}
+  }
+  if(j.next_actions&&j.next_actions.length){
+    cust.aiTodos=cust.aiTodos||[];
+    j.next_actions.forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a&&!t.done))cust.aiTodos.unshift({t:a,done:false,t:Date.now()});});
+  }
+  res.style.display="none";
+  render();toast("AI 分析結果已採用並寫入");
+}
+// ===== 批量 AI 分析 =====
+function batchAIAnalyze(){
+  const isAdmin=CURRENT_USER.role==="super_admin";
+  const limit=isAdmin?3:1;
+  const today=new Date();
+  const bj=new Date(today.getTime()+8*3600e3);
+  const cutHour=17;
+  let dayKey;
+  if(bj.getUTCHours()<cutHour){const y=new Date(bj.getTime()-86400e3);dayKey=y.getUTCFullYear()+"-"+(y.getUTCMonth()+1)+"-"+y.getUTCDate();}
+  else dayKey=bj.getUTCFullYear()+"-"+(bj.getUTCMonth()+1)+"-"+bj.getUTCDate();
+  const used=JSON.parse(localStorage.getItem("bcd_batch_ai_used")||"{}");
+  used[CURRENT_USER.id]=used[CURRENT_USER.id]||{};
+  const count=used[CURRENT_USER.id][dayKey]||0;
+  if(count>=limit){toast("今日批量分析次數已用完（"+limit+" 次/天），請明天下午 5 點後再試");return;}
+  // 收集待分析客戶：跳過已出單
+  const targets=DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
+  if(!targets.length){toast("所有客戶都已出單，無需分析");return;}
+  openModal(`<h3>🤖 AI 解讀所有客戶</h3>
+  <div style="font-size:13px;line-height:1.8;color:var(--mut);margin-bottom:12px">
+    即將分析 ${targets.length} 位未出單客戶，每位會調取最近 7 天郵件與檔案。此過程需要幾分鐘，請保持本視窗開啟。
+    <br>今日已用 ${count}/${limit} 次。
+  </div>
+  <div id="batchList" style="max-height:360px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg2)"></div>
+  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" id="batchStartBtn" onclick="runBatchAI(${targets.map(c=>"'"+c.no+"'").join(",")})">開始分析</button></div>`);
+  const bl=document.getElementById("batchList");
+  bl.innerHTML=targets.map((c,i)=>`<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line)"><span style="color:var(--mut)">⏳</span> ${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></div>`).join("");
+  // 記錄使用次數
+  used[CURRENT_USER.id][dayKey]=count+1;
+  localStorage.setItem("bcd_batch_ai_used",JSON.stringify(used));
+}
+async function runBatchAI(){
+  const nos=[...arguments];
+  document.getElementById("batchStartBtn").disabled=true;
+  window._batchResults=[];
+  for(const no of nos){
+    const row=document.getElementById("batch_"+no);
+    if(row)row.firstChild.textContent="⏳ ";
+    try{
+      const cust=DATA.customers.find(x=>x.no===no);
+      const mails=recentMailsForCustomer(cust,7);
+      const files=((DATA.files||{})[no]||[]).map(f=>f.name||f.nm).slice(0,10);
+      const ctx="客戶："+cust.name+"，法人="+cust.member+"，狀態="+st(cust.status).lb+"，信箱="+cust.mail+"\n附件："+(files.join("、")||"無")+"\n最近 7 天郵件：\n"+(mails.slice(0,5).map(m=>m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body||"").slice(0,300)).join("\n\n")||"無");
+      const sys=`你是美國海關 bond 業務顧問。精簡分析這個客戶目前狀態，輸出 JSON：{"summary":"一句話","next_actions":["待辦1","待辦2"]}。不要輸出其他內容。`;
+      const out=await callAI(sys,ctx);
+      let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,100),next_actions:[]};}
+      window._batchResults.push({no,cust,j});
+      if(row){row.firstChild.textContent="✅ ";row.style.opacity=.7;}
+      // 寫時間線
+      DATA.timeline[no]=DATA.timeline[no]||[];
+      DATA.timeline[no].unshift({t:nowBJ(),who:"AI 批量分析",txt:"🤖 "+(j.summary||""),key:"batch_"+Date.now()+"_"+no});
+    }catch(e){
+      if(row)row.firstChild.textContent="❌ ";
+    }
+  }
+  // 完成
+  const bl=document.getElementById("batchList");
+  bl.innerHTML+=`<div style="padding:12px;font-size:13px;color:#34d399;text-align:center">✅ 分析完成，共 ${window._batchResults.length} 位客戶</div>`;
+  document.querySelector("#batchList").nextElementSibling.querySelector(".btn.primary").textContent="✓ 確認寫入";
+  document.querySelector("#batchList").nextElementSibling.querySelector(".btn.primary").onclick=applyBatchResults;
+}
+function applyBatchResults(){
+  (window._batchResults||[]).forEach(r=>{
+    const cust=DATA.customers.find(x=>x.no===r.no);if(!cust)return;
+    cust.aiTodos=cust.aiTodos||[];
+    (r.j.next_actions||[]).forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a))cust.aiTodos.unshift({t:a,done:false,t:Date.now()});});
+    addClientAudit(r.no,"AI 批量分析","","","AI 自動分析");
+  });
+  closeModal();render();toast("批量分析結果已寫入客戶檔案");
+}
+
 }
 // 隊列展開行
 function aiRun(idx){const e=window._qlist[idx];const box=document.getElementById("aibox_"+idx);if(!e||!box)return;
