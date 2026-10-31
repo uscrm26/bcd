@@ -1021,12 +1021,16 @@ function removePicked(i){window._pickedFiles.splice(i,1);renderFileList();}
 async function startAnalyzeAndCreate(){
   if(!window._pickedFiles.length){toast("請至少上傳一個檔案");return;}
   const autoNo=Math.max(...DATA.customers.map(c=>parseInt(c.no)||0))+1;
-  openModal(`<h3>AI 檔案分析中</h3>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:12px">正在依序分析 ${window._pickedFiles.length} 個檔案，完成後會自動建立客戶</div>
-  <div style="display:flex;gap:12px;min-height:220px">
+  openModal(`<h3>AI 分析與檔案分流上傳</h3>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:12px">第一通道 AI 分析，第二通道上傳分流，圖片進 GitHub 圖片雲端，文件進七牛文件雲端。全部完成後才確認建立客戶</div>
+  <div style="display:flex;gap:12px;min-height:240px">
     <div style="flex:1;background:var(--bg2);border-radius:10px;padding:10px;border:1px solid var(--line)">
-      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">分析進度</div>
+      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">第一通道 AI 分析</div>
       <div id="analyzeProgress" style="display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+    <div style="flex:1;background:var(--bg2);border-radius:10px;padding:10px;border:1px solid var(--line)">
+      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">第二通道 上傳結果</div>
+      <div id="uploadProgress" style="display:flex;flex-direction:column;gap:6px"></div>
     </div>
     <div style="flex:1;background:var(--bg2);border-radius:10px;padding:10px;border:1px solid var(--line)">
       <div style="font-size:11px;color:var(--mut);margin-bottom:8px">已辨識資料</div>
@@ -1034,33 +1038,36 @@ async function startAnalyzeAndCreate(){
     </div>
   </div>`);
   const results=[];
-  for(let i=0;i<window._pickedFiles.length;i++){
-    const f=window._pickedFiles[i];
-    const el=document.getElementById("analyzeProgress");
-    if(el)el.innerHTML+=`<div id="ap_${i}" style="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px">
-      <span style="font-size:12px;color:#8b5cf6">◌</span>
-      <span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span>
-      <span style="font-size:11px;color:#8b5cf6">分析中</span></div>`;
+  let allUp=true;
+  const tasks=window._pickedFiles.map(async(f,i)=>{
+    const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
+    const upEl=document.getElementById("uploadProgress");
+    const upRow=document.createElement("div");
+    upRow.style.cssText="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;margin-bottom:4px";
+    upRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">上傳中</span>`;
+    if(upEl)upEl.appendChild(upRow);
+    const upOK=isImg?await uploadToGithub(autoNo,f):await uploadFileToQiniu(autoNo,f);
+    if(!upOK)allUp=false;
+    const upLabel=isImg?"已成功上傳至 GitHub 圖片雲端":"已成功上傳至 七牛文件雲端";
+    upRow.innerHTML=`<span style="font-size:12px;color:${upOK?"#10b981":"#ef4444"}">${upOK?"✓":"✕"}</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:${upOK?"#10b981":"#ef4444"}">${upOK?upLabel:"上傳失敗"}</span>`;
+    const apEl=document.getElementById("analyzeProgress");
+    const apRow=document.createElement("div");
+    apRow.style.cssText="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;margin-bottom:4px";
+    apRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">分析中</span>`;
+    if(apEl)apEl.appendChild(apRow);
     try{
       const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
       let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       results.push({file:f.name,data:j});
-      const row=document.getElementById("ap_"+i);
-      if(row)row.innerHTML=`<div style="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:12px;color:#10b981">✓</span>
-        <span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span>
-        <span style="font-size:11px;color:#10b981">完成</span></div>`;
+      apRow.innerHTML=`<span style="font-size:12px;color:#10b981">✓</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#10b981">完成</span>`;
       const resEl=document.getElementById("analyzeResult");
       if(resEl)resEl.innerHTML+=`<div style="padding:2px 0"><b>${esc(j.doc_type||f.name)}</b>：${esc(j.company||j.member||"—")}</div>`;
-      await uploadToGithub(autoNo,f);
     }catch(e){
-      const row=document.getElementById("ap_"+i);
-      if(row)row.innerHTML=`<div style="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px">
-        <span style="font-size:12px;color:#ef4444">✕</span>
-        <span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span>
-        <span style="font-size:11px;color:#ef4444">失敗</span></div>`;
+      apRow.innerHTML=`<span style="font-size:12px;color:#ef4444">✕</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#ef4444">分析失敗</span>`;
     }
-  }
+  });
+  await Promise.all(tasks);
+  if(!allUp){toast("部分檔案上傳失敗，可重新操作");}
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
@@ -1072,14 +1079,60 @@ async function startAnalyzeAndCreate(){
   }
   showAiConfirm(autoNo,merged,results);
 }
+let _fileRecChain=Promise.resolve();
+function addFileRecord(no,name,path,type){
+  _fileRecChain=_fileRecChain.then(async()=>{
+    try{
+      const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return;
+      const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{headers:{Authorization:"token "+ghtok}});
+      const meta=await metaR.json();
+      const c=(meta.content||"").replace(/\n/g,"");
+      const fj=JSON.parse(decodeURIComponent(escape(atob(c))));
+      fj[no]=fj[no]||[];
+      if(!fj[no].find(x=>x.path===path))fj[no].unshift({no:no,name:name,path:path,type:type||"image"});
+      const b=JSON.stringify(fj);
+      const base64=btoa(unescape(encodeURIComponent(b)));
+      await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"add file record "+name,content:base64,sha:meta.sha})});
+    }catch(e){}
+  });
+  return _fileRecChain;
+}
 async function uploadToGithub(no,f){
-  const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return;
+  const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return false;
   try{
     const buf=await f.arrayBuffer();
     const base64=btoa(String.fromCharCode(...new Uint8Array(buf)));
-    const path="attachments/"+no+"/"+f.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+f.name,content:base64})});
-  }catch(e){}
+    const safeName=f.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const path="attachments/"+no+"/"+safeName;
+    const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+f.name,content:base64})});
+    if(r.ok||r.status===422){
+      DATA.files[no]=DATA.files[no]||[];
+      if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:f.name,path:encodeURIComponent(path),type:"image"});
+      await addFileRecord(no,f.name,encodeURIComponent(path),"image");
+      if(typeof loadStorageList==="function")setTimeout(()=>loadStorageList(no),300);
+      return true;
+    }
+    return false;
+  }catch(e){return false;}
+}
+function uploadFileToQiniu(no,f){
+  return new Promise(resolve=>{
+    if(f.size>MAX_MB*1024*1024){resolve(false);return;}
+    loadQiniuToken().then(token=>{
+      if(!token){resolve(false);return;}
+      const safeName=(f.name||"file").replace(/[\\/:*?"<>|\s]/g,"_");
+      const key="docs/"+no+"/"+Date.now()+"_"+safeName;
+      const fd=new FormData();fd.append("token",token);fd.append("key",key);fd.append("file",f);
+      fetch("https://upload-z2.qiniup.com/",{method:"POST",body:fd}).then(r=>r.json()).then(j=>{
+        if(j.key===key){
+          addAudit("上傳文件",f.name);
+          const meta=JSON.stringify({no:no,name:f.name,key:key});
+          fetch("https://api.github.com/repos/uscrm26/bcd/issues",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({title:"SIGN:"+key,body:meta})}).catch(()=>{});
+          resolve(true);
+        }else resolve(false);
+      }).catch(()=>resolve(false));
+    }).catch(()=>resolve(false));
+  });
 }
 function showAiConfirm(no,m,results){
   const left=results.map((r,i)=>`<div style="padding:8px 10px;background:var(--card);border-radius:8px;margin-bottom:6px;font-size:12px">
@@ -1087,8 +1140,8 @@ function showAiConfirm(no,m,results){
     <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px">${esc(r.file)}</div>
     <div style="color:var(--mut);font-size:11px;margin-top:2px">${esc((r.data&&r.data.doc_type)||"已辨識")}</div>
   </div>`).join("");
-  openModal(`<h3>AI 識別結果確認</h3>
-    <div style="font-size:12px;color:var(--mut);margin-bottom:12px">AI 已依序分析 ${results.length} 個檔案並辨識以下資料，可手動修改後建立</div>
+  openModal(`<h3>第三通道 確認建立客戶</h3>
+    <div style="font-size:12px;color:var(--mut);margin-bottom:12px">AI 已依序分析 ${results.length} 個檔案並辨識以下資料，所有檔案已分流上傳完成，可手動修改後建立</div>
     <div style="display:flex;gap:14px">
       <div style="flex:0 0 190px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px;max-height:320px;overflow-y:auto">
         <div style="font-size:11px;color:var(--mut);margin-bottom:8px">分析順序</div>
@@ -1122,7 +1175,7 @@ function finalizeCreate(no){
   addAudit("新增客戶",cust.name);
   window._pickedFiles=[];
   closeModal();render();toast("客戶已建立，資料已保存");
-}
+  setTimeout(()=>openCust(no),400);
 
 // ===== 客戶管理 =====
 let custTab="info";let curCust="93";
@@ -1427,6 +1480,7 @@ function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
   if(IMGMAP[dec])return FILEBASE+IMGMAP[dec];
+  if(dec.startsWith("attachments/"))return FILEBASE+dec;
   if(QMAP[dec])return QMAP[dec];
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
   if(QMAP[jpg])return QMAP[jpg];
@@ -1434,7 +1488,7 @@ function resolveFile(p){
 }
 function fileThumb(f){
   const url=resolveFile(f.path);
-  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy" onerror="this.remove()"><div class="fcap">${esc(f.name)}</div></div>`;
+  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" data-path="${encodeURIComponent(f.path)}" loading="lazy" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}"><div class="fcap">${esc(f.name)}</div></div>`;
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
   return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
 }
@@ -1446,7 +1500,7 @@ function docList(no){
     const url=resolveFile(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
     const inner=isImg
-      ? `<img src="${url}" style="width:100%;height:110px;object-fit:cover;border-radius:8px 8px 0 0;background:#222">`
+      ? `<img src="${url}" data-path="${encodeURIComponent(f.path||'')}" style="width:100%;height:110px;object-fit:cover;border-radius:8px 8px 0 0;background:#222" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}">`
       : `<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg2);border-radius:8px 8px 0 0">${/\.pdf$/i.test(nm)?"📄":"📎"}</div>`;
     return `<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
       ${inner}
@@ -2474,7 +2528,7 @@ function fileThumbDel(f,no,isAdmin){
   const url=resolveFile(f.path);
   const isImg=f.type==="image";
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
-  const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" loading="lazy" onerror="this.remove()"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
+  const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" data-path="${encodeURIComponent(f.path)}" loading="lazy" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
   const dt=CUST_CREATED[no]||"—";
   const cell=`${pv}<div class="fn">${esc(f.name)}</div><div class="meta">${dt} · 系統管理員上傳</div>`;
   if(!isAdmin)return `<div class="file-cell">${cell}</div>`;
