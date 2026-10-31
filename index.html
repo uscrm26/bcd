@@ -1419,11 +1419,14 @@ function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 let QMAP={};
+let IMGMAP={};
 fetch("qiniu_map.json").then(r=>r.json()).then(j=>{QMAP=j;if(typeof render==="function")render();}).catch(()=>{});
+fetch("img_map.json").then(r=>r.json()).then(j=>{IMGMAP=j;if(typeof render==="function")render();}).catch(()=>{});
 function phSrc(no){const p=PHOTO[no]||"";return p?resolveFile(p):"";}
 function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
+  if(IMGMAP[dec])return FILEBASE+IMGMAP[dec];
   if(QMAP[dec])return QMAP[dec];
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
   if(QMAP[jpg])return QMAP[jpg];
