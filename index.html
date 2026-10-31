@@ -630,7 +630,7 @@ function applyLangText(){
 }
 const empty=()=>`<div class="empty">頁面載入中</div>`;
 // clock
-let CURRENT_LANG="zh";
+var CURRENT_LANG="zh";
 const TZS=[["🇨🇳","北京","Beijing","北京",8],["🇺🇸","西雅圖","Seattle","西雅图",-8],["🏔️","丹佛","Denver","丹佛",-7],["🌆","芝加哥","Chicago","芝加哥",-6],["🗽","紐約","New York","纽约",-5]];
 let PREF={theme:"dark",h24:true,lang:"zh"};try{Object.assign(PREF,JSON.parse(localStorage.getItem("bcd_pref")||"{}"));}catch(e){}
 function savePref(){try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}}
