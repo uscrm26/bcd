@@ -313,6 +313,7 @@ tr:hover td{background:#1a2130}
     <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
     <a data-v="commission"><span class="ic">$</span>佣金記錄</a>
     <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
+    <a data-v="polling"><span class="ic">◷</span>巡查排程</a>
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
   </nav>
   <div class="foot">
@@ -413,7 +414,7 @@ const USERS=[
 {id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",aiMail:true,aiBatch:true,aiFollow:true,perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
 ];
 const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
-const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",github:"備份",system:"系統管理"};
+const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",worklog:"工作通知",worklog_admin:"系統工作記錄",commission:"佣金記錄",github:"GitHub 備份",system:"系統管理",polling:"巡查排程"};
 let CURRENT_USER=USERS[0];
 const ownerMap={"93":"kevinyama","89":"kevinyama","90":"kevinyama","98":"kevinyama","2":"kevinyama","3":"kevinyama","5":"kevinyama","7":"kevinyama","8":"kevinyama","61":"kevinyama","64":"kevinyama","66":"kevinyama","69":"kevinyama","71":"kevinyama","73":"kevinyama","75":"kevinyama"};
 const clientAudit={};
@@ -723,10 +724,12 @@ function enMap(s){if(!s)return s;if(EN[s.trim()])return EN[s.trim()];let out=s;O
 function applyLangText(){if(CURRENT_LANG!=="en")return;[document.getElementById("view"),document.getElementById("modal")].forEach(root=>{if(!root)return;root.querySelectorAll("*").forEach(el=>{if(el.children.length===0){const t=el.textContent;if(t&&t.trim()){const tr=enMap(t);if(tr!==t)el.textContent=tr;}}if(el.placeholder){const p=enMap(el.placeholder);if(p!==el.placeholder)el.placeholder=p;}});});}
 // ===== 角色權限：系統級入口僅超管 =====
 const ADMIN_ONLY=["github","system","mailbox"];
-function permsOf(u){if(u.role==="super_admin")return Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));return u.perms||{};}
+function permsOf(u){if(u.role==="super_admin")return Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));const d=Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));return Object.assign(d,u.perms||{});}
 function applyPerm(){const role=CURRENT_USER.role;const pm=permsOf(CURRENT_USER);
-document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;if(v==="mailbox"&&role!=="super_admin")ok=false;if(v==="github"&&role!=="super_admin")ok=false;if(v==="system"&&!(role==="super_admin"||role==="supervisor"))ok=false;if(v==="worklog_admin"&&role!=="super_admin")ok=false;a.style.display=ok?"":"none";});
-if(view==="mailbox"&&role!=="super_admin")goto("dashboard");if(view==="github"&&role!=="super_admin")goto("dashboard");if(view==="system"&&!(role==="super_admin"||role==="supervisor"))goto("dashboard");if(view==="worklog_admin"&&role!=="super_admin")goto("dashboard");}
+document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;a.style.display=ok?"":"none";});
+document.querySelectorAll(".nav .grp").forEach(g=>{const nxt=g.nextElementSibling;let any=false;while(nxt&&!nxt.classList.contains("grp")){if(nxt.tagName==="A"&&nxt.style.display!=="none"){any=true;break;}nxt=nxt.nextElementSibling;}g.style.display=any?"":"none";});
+if(view&&!document.querySelector(`.nav a[data-v="${view}"]`)||document.querySelector(`.nav a[data-v="${view}"]`)?.style.display==="none"){if(role!=="super_admin"&&pm[view]===false)goto("dashboard");}
+}
 function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
 function canEditKey(no){return canManage();}
 function canViewCust(no){if(CURRENT_USER.role==="super_admin")return true;return myTeamIds().has(ownerMap[no]);}
@@ -1514,6 +1517,20 @@ sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.
 addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
+R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
+ return `<h1>巡查排程</h1>
+<div class="row r2">
+<div class="panel"><div class="sec-title">自動巡查現況</div>
+<div class="field"><div class="k">執行引擎</div><div class="v">GitHub Actions 免費自動跑，不再依賴豆包定時喚醒。</div></div>
+<div class="field"><div class="k">巡查頻率</div><div class="v">每小時整點跑一次，15 個信箱逐戶連線 IMAP，新信寫入看板、AI 解讀、外發佇列真寄出、留痕後自動推回倉庫。</div></div>
+<div class="field"><div class="k">觸發方式</div><div class="v">排程 cron 整點 + 可在 Actions 頁手動 Run workflow。</div></div>
+<div class="field"><div class="k">信箱密碼</div><div class="v">目前全體共用，以加密方式存進 GitHub Secrets，倉庫公開但不外露。個別信箱密碼日後可分開。</div></div>
+</div>
+<div class="panel"><div class="sec-title">故障與接手</div>
+<div class="field"><div class="k">額度燒完</div><div class="v">AI 模型輪轉從啟用清單由上到下依序嘗試，某個模型免費額度用完自動跳下一個，全部失敗該輪跳過不炸流程。</div></div>
+<div class="field"><div class="k">推回失敗</div><div class="v">push 用內部 PAT 憑證，不受預設唯讀限制，已實測全步驟成功。</div></div>
+<div class="field"><div class="k">查看記錄</div><div class="v">倉庫 Actions 分頁看每小時 run 歷史與日誌；每日工作記錄頁有每輪巡查留痕。</div></div>
+</div></div>`;};
 R.mailbox=()=>{
   if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||""}));}
   const list=window._mbDraft;
@@ -1531,13 +1548,7 @@ R.mailbox=()=>{
 <button class="btn" onclick="addMbRow()">加入</button></div>
 <button class="btn primary" style="margin-top:12px" onclick="saveMailboxes()">儲存信箱清單到 GitHub</button>
 <div id="mb_msg" style="font-size:12px;margin-top:6px"></div>
-</div>
-<div class="panel"><div class="sec-title">定時輪詢排程（對齊美東工作時段）</div>
-<div class="field"><div class="k">美東白天密查</div><div class="v">北京 21:00 至次日 06:00，每小時巡查一次</div></div>
-<div class="field"><div class="k">非美國時段兜底</div><div class="v">北京 12:10、16:10 各查一次，不漏隔夜郵件</div></div>
-<div class="field"><div class="k">其餘時間</div><div class="v">不主動巡查，避免空轉</div></div>
-<div class="field"><div class="k">時節說明</div><div class="v">美東冬令時與北京相差 13 小時，屆時密查窗口順延一小時</div></div>
-<div class="field"><div class="k">郵箱密碼</div><div class="v">目前全體共用 123456，要改個別密碼在後台輸入後告訴我，我用加密方式存進 GitHub Secrets，不外露。</div></div></div></div>`;}
+</div></div>`;}
 function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:""});render();}
 async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||""})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok"}));}catch(e){msg.textContent="儲存失敗："+e;}}
 R.queue=()=>`<h1>電子郵件信箱</h1>
@@ -2638,12 +2649,20 @@ else{if(USERS.some(x=>x.id===id)){toast("帳號已存在");return;}const row={id
   addAudit("新增帳戶",nm);}
 closeModal();render();toast("帳戶已儲存");}
 function toggleUserActive(id){const u=USERS.find(x=>x.id===id);u.active=!u.active;syncUserToDB(u);addAudit(u.active?"啟用帳戶":"停用帳戶",u.nm);render();toast(u.active?"帳戶已啟用":"帳戶已停用");}
+function togglePerm(uid,key){if(CURRENT_USER.role!=="super_admin")return;const u=USERS.find(x=>x.id===uid);if(u.role==="super_admin"){toast("超級管理員全開，不可關閉");return;}u.perms=permsOf(u);u.perms[key]=!u.perms[key];closeModal();openUserDetail(uid);toast((u.perms[key]?"開啟":"關閉")+" "+(PERM_LABELS[key]||key));}
 function openUserDetail(id){const u=USERS.find(x=>x.id===id);const mine=Object.keys(ownerMap).filter(no=>ownerMap[no]===id).map(no=>DATA.customers.find(c=>c.no===no)).filter(Boolean);
 const mineAudit=auditLog.filter(a=>a.user===u.nm);
+const pm=permsOf(u);
+const permBox=(CURRENT_USER.role==="super_admin"&&u.role!=="super_admin")?`<div class="sec-title">功能開關</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px">
+${Object.keys(PERM_LABELS).map(k=>`<label style="display:flex;align-items:center;gap:8px;padding:8px;background:var(--bg2);border-radius:8px;font-size:13px;cursor:pointer" onclick="togglePerm('${id}','${k}')">
+<input type="checkbox" ${pm[k]!==false?"checked":""} onclick="event.stopPropagation();togglePerm('${id}','${k}')" style="width:16px;height:16px">${PERM_LABELS[k]}</label>`).join("")}
+</div>`:"";
 openModal(`<h3>${esc(u.nm)} 帳戶詳情</h3>
 <div class="field"><div class="k">登入帳號</div><div class="v">${esc(u.id)}</div></div>
 <div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div>
 <div class="field"><div class="k">最近登入</div><div class="v">${u.lastLogin||"尚無記錄"}</div></div>
+${permBox}
 <div class="sec-title">名下客戶（${mine.length}）</div>
 ${mine.length?mine.map(c=>`<div class="logrow"><span class="c">#${c.no} ${esc(c.name)}</span><span class="o">${esc(st(c.status).lb)}</span></div>`).join(""):"<div class='empty'>尚無歸屬客戶</div>"}
 <div class="sec-title">本人操作記錄（${mineAudit.length}）</div>
