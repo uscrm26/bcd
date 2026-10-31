@@ -332,6 +332,7 @@ tr:hover td{background:#1a2130}
         <button onclick="setLang('en')">English (UK)</button>
       </div>
     </div>
+    <div id="topUser" style="font-size:12px;color:var(--mut);display:flex;align-items:center;gap:6px;margin-right:4px"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:600">K</span><span id="topUserName">Kevin W</span></div>
     <button class="bell" id="bellBtn">🔔<span class="n">3</span></button>
     <button class="btn small" onclick="doLogout()">登出</button>
   </div>
@@ -1176,17 +1177,15 @@ list.forEach((e,idx)=>{
  const tags=(hasZH?"<span class='tag t-blue' style='margin-left:6px'>已翻譯</span>":"")+(hasIP?"<span class='tag t-green' style='margin-left:6px'>已解讀</span>":"");
  html+=`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${e.t.replace(/'/g,"\\'")}')">${esc(e.sub)}${tags}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
  if(open){
-  const autoText=e.auto_interp||"";
- html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
+  const done=!!(hasZH||hasIP);
+  html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
  <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow:auto">${esc(e.body||"(此郵件暫無正文)")}</div>
  <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-  <button class="btn small" onclick="aiTranslate(${idx})">${hasZH?"隱藏中文翻譯":"翻譯"}</button>
-  <button class="btn small" onclick="aiInterpret(${idx})">${(INTERP_CACHE[e.t]||autoText)?"隱藏 AI 解讀":"AI 解讀"}</button>
+  <button class="btn small" style="background:${done?"rgba(59,130,246,.15)":"rgba(59,130,246,.9)"};color:${done?"#60a5fa":"#fff"};border-color:transparent" onclick="aiRun(${idx})">${done?"🔄 重新解讀":"🤖 AI 解讀"}</button>
   <button class="btn small" style="${e.done?"background:var(--green,#2ecc71);color:#fff;border-color:transparent":""}" onclick="markProcessed('${e.t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
- <div id="zh_${idx}" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto;margin-bottom:10px">${esc(ZH_CACHE[e.t]||"")}</div>
- <div id="ip_${idx}" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.1);border:1px solid rgba(80,200,140,.3);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(INTERP_CACHE[e.t]||autoText||"")}</div>
+ <div id="aibox_${idx}" data-done="${done?1:0}" style="${done?"":"display:none"};background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:500px;overflow:auto">${done?renderAICard(ZH_CACHE[e.t],INTERP_CACHE[e.t]||e.auto_interp||""):""}</div>
  </div></td></tr>`;}
 });
 tb.innerHTML=html||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
@@ -1276,54 +1275,70 @@ function fmtUSfromBJ(t){
 function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
  const hasZH=!!ZH_CACHE[t];
  const hasIP=!!INTERP_CACHE[t]||!!e.auto_interp;
- const autoText=e.auto_interp||"";
+ const done=hasZH||hasIP;
  openModal(`<h3>${esc(e.sub)}</h3>
  <div style="font-size:12px;color:var(--mut);margin-bottom:4px">寄件人：${esc(e.from)}</div>
  <div style="font-size:12px;color:var(--mut);margin-bottom:10px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:34vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
  <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-  <button class="btn small" onclick="aiTranslateKey('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button>
-  <button class="btn small" onclick="aiInterpretKey('${t.replace(/'/g,"\\'")}')">${(INTERP_CACHE[t]||autoText)?"隱藏 AI 解讀":"AI 解讀"}</button>
+  <button class="btn small" style="background:${done?"rgba(59,130,246,.15)":"rgba(59,130,246,.9)"};color:${done?"#60a5fa":"#fff"};border-color:transparent" onclick="aiRunKey('${t.replace(/'/g,"\\'")}')">${done?"🔄 重新解讀":"🤖 AI 解讀"}</button>
   <button class="btn small" style="${e.done?"background:#2ecc71;color:#fff;border-color:transparent":""}" onclick="markProcessedKey('${t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
- <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto;margin-bottom:10px">${esc(ZH_CACHE[t]||"")}</div>
- <div id="ipBox" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.1);border:1px solid rgba(80,200,140,.3);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(INTERP_CACHE[t]||autoText||"")}</div>
+ <div id="aiBox" data-done="${done?1:0}" style="${done?"":"display:none"};background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:40vh;overflow:auto">${done?renderAICard(ZH_CACHE[t],INTERP_CACHE[t]||e.auto_interp||""):""}</div>
  <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
 function markProcessedKey(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e.done=true;e.unread=false;saveMailDone(t,true);addAudit("已處理來信",e.sub);closeModal();render();toast("已標記為已處理，紅點已清除");}
-async function doTranslate(e,box){
-  const src=(e.body||"").trim();
-  if(!src){box.style.display="block";box.textContent="（本信無正文可翻譯）";return;}
-  if(ZH_CACHE[e.t]){box.style.display="block";box.textContent=ZH_CACHE[e.t];return;}
-  box.style.display="block";box.textContent="翻譯中…";
-  try{
-    const out=await callAI("你是專業翻譯。把以下英文郵件正文直接翻成繁體中文，保留專有名詞、金額、電話、網址。只輸出譯文本身，不要解釋、不要總結、不要加客套話。",src);
-    ZH_CACHE[e.t]=out;saveZH(e.t,out);box.textContent=out;
-  }catch(err){box.textContent="翻譯失敗：AI 服務繁忙，請稍後重試。";}
+function renderAICard(zh,interp){
+  const card=(icon,title,color,content)=>content?`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:600;color:${color};margin-bottom:4px">${icon} ${title}</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(content)}</div></div>`:"";
+  const seg=(re,s)=>{const m=(s||"").match(re);return m?m[1].trim():"";};
+  return card("📝","中文翻譯","#60a5fa",zh)+`<div style="height:1px;background:var(--line);margin:12px 0"></div>`+card("🧭","前後文定位","#34d399",seg(/【前後文定位】([\s\S]*?)(?=【|$)/,interp))+card("🎯","對方來意與訴求","#fbbf24",seg(/【對方來意與訴求】([\s\S]*?)(?=【|$)/,interp))+card("✅","建議下一步","#f87171",seg(/【建議下一步】([\s\S]*?)(?=【|$)/,interp));
 }
-async function doInterpret(e,box){
+
+async function doAI(e,box){
   const src=(e.body||"").trim();
-  if(INTERP_CACHE[e.t]){box.style.display="block";box.textContent=INTERP_CACHE[e.t];return;}
-  if(e.auto_interp){box.style.display="block";box.textContent=e.auto_interp;return;}
-  if(!src){box.style.display="block";box.textContent="（本信無正文可解讀）";return;}
-  box.style.display="block";box.textContent="AI 綜合分析中（調取客戶檔案與往來歷史）…";
-  const ctx=buildMailContext(e);
-  const sys="你是美國海關 continuous Customs Bond 業務的資深顧問，熟悉報關行(broker)流程、CBP 規定、bond 申請與補件。請基於提供的客戶檔案與完整往來郵件歷史，對這封「本次新收到的郵件」做綜合分析。用繁體中文，分三段輸出，每段開頭加標題：\n【前後文定位】把這封新郵件放回整條往來線，說明現在進展到哪一步、雙方已交換過什麼、卡在哪裡。\n【對方來意與訴求】這封信具體要什麼、拒絕什麼、要求我們補什麼材料或答覆。\n【建議下一步】結合客戶檔案與已掌握資料，告訴我們該怎麼回、要準備什麼附件、找谁、時間上要注意什麼。只給實際可執行的建議，不用客套。";
-  const userMsg=ctx+"\n\n【本次新收到的郵件】\n寄件人："+(e.from||"")+"\n主旨："+(e.sub||"")+"\n時間："+(e.t||"")+"\n\n正文：\n"+src;
+  if(!src){box.style.display="block";box.innerHTML="<div style='color:var(--mut)'>（本信無正文可解讀）</div>";return;}
+  box.style.display="block";
+  box.innerHTML="<div style='color:var(--mut)'>🤖 AI 正在調取客戶檔案、翻譯正文並比對往來歷史…</div>";
   try{
-    const out=await callAI(sys,userMsg);
-    INTERP_CACHE[e.t]=out;saveInterp(e.t,out);box.textContent=out;
-  }catch(err){box.textContent="解讀失敗：AI 服務繁忙，請稍後重試。";}
+    // 1. 翻譯
+    const zh=await callAI("你是專業翻譯。把以下英文郵件正文直接翻成繁體中文，保留專有名詞、金額、電話、網址、連結。只輸出譯文本身，不要解釋、不要總結、不要加客套話。",src);
+    ZH_CACHE[e.t]=zh;saveZH(e.t,zh);
+    // 2. 前後文解讀
+    const ctx=buildMailContext(e);
+    const sys="你是美國海關 continuous Customs Bond 業務的資深顧問，熟悉報關行(broker)流程、CBP 規定、bond 申請與補件。請基於提供的客戶檔案與完整往來郵件歷史，對這封「本次新收到的郵件」做綜合分析。用繁體中文，嚴格分三段輸出，每段開頭必須是【前後文定位】【對方來意與訴求】【建議下一步】，不要加其他標題。";
+    const userMsg=ctx+"\n\n【本次新收到的郵件】\n寄件人："+(e.from||"")+"\n主旨："+(e.sub||"")+"\n時間："+(e.t||"")+"\n\n正文：\n"+src;
+    const interp=await callAI(sys,userMsg);
+    INTERP_CACHE[e.t]=interp;saveInterp(e.t,interp);
+    // 3. 卡片渲染
+    const card=(icon,title,color,content)=>`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:600;color:${color};margin-bottom:4px">${icon} ${title}</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(content)}</div></div>`;
+    box.innerHTML=
+      card("📝","中文翻譯","#60a5fa",zh)+
+      `<div style="height:1px;background:var(--line);margin:12px 0"></div>`+
+      card("🧭","前後文定位","#34d399",(interp.match(/【前後文定位】([\s\S]*?)(?=【|$)/)||[])[1]?.trim()||interp)+
+      card("🎯","對方來意與訴求","#fbbf24",(interp.match(/【對方來意與訴求】([\s\S]*?)(?=【|$)/)||[])[1]?.trim()||"")+
+      card("✅","建議下一步","#f87171",(interp.match(/【建議下一步】([\s\S]*?)(?=【|$)/)||[])[1]?.trim()||"");
+    // 4. 寫回客戶時間線
+    writeMailTimeline(e,zh,interp);
+  }catch(err){
+    box.innerHTML="<div style='color:#f87171'>AI 服務繁忙，請稍後重試。</div>";
+  }
 }
-// 隊列展開行（按索引）
-function aiTranslate(idx){const e=window._qlist[idx];const box=document.getElementById("zh_"+idx);if(!e||!box)return;
- if(box.style.display!=="none"){box.style.display="none";return;}doTranslate(e,box);}
-function aiInterpret(idx){const e=window._qlist[idx];const box=document.getElementById("ip_"+idx);if(!e||!box)return;
- if(box.style.display!=="none"){box.style.display="none";return;}doInterpret(e,box);}
-// 郵件詳情彈窗（按時間鍵）
-function aiTranslateKey(t){const e=DATA.emails.find(x=>x.t===t);const box=document.getElementById("zhBox");if(!e||!box)return;
- if(box.style.display!=="none"){box.style.display="none";return;}doTranslate(e,box);}
-function aiInterpretKey(t){const e=DATA.emails.find(x=>x.t===t);const box=document.getElementById("ipBox");if(!e||!box)return;
- if(box.style.display!=="none"){box.style.display="none";return;}doInterpret(e,box);}
+function writeMailTimeline(e,zh,interp){
+  const cust=mailOwnerClient(e);if(!cust)return;
+  const key="tl_"+e.t;
+  const summary=((interp.match(/【對方來意與訴求】([\s\S]*?)(?=【|$)/)||[])[1]||interp).slice(0,120);
+  DATA.timeline[cust.no]=DATA.timeline[cust.no]||[];
+  if(DATA.timeline[cust.no].some(x=>x.key===key))return;
+  DATA.timeline[cust.no].unshift({t:e.t,who:"AI 解讀",txt:"📧 "+(e.from||"").split("<")[0].trim()+"｜"+(e.sub||"")+"："+summary,key:key});
+  addAudit("AI 解讀完成","郵件 "+e.sub+" 已翻譯並寫入客戶時間線");
+  toast("AI 解讀已寫入客戶時間線");
+}
+// 隊列展開行
+function aiRun(idx){const e=window._qlist[idx];const box=document.getElementById("aibox_"+idx);if(!e||!box)return;
+ if(box.style.display!=="none"&&box.dataset.done==="1"){box.style.display="none";return;}
+ box.dataset.done="1";doAI(e,box);}
+function aiRunKey(t){const e=DATA.emails.find(x=>x.t===t);const box=document.getElementById("aiBox");if(!e||!box)return;
+ if(box.style.display!=="none"&&box.dataset.done==="1"){box.style.display="none";return;}
+ box.dataset.done="1";doAI(e,box);}
 function openReply(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;REPLY_EMAIL=e;
  const row=(k,v)=>`<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">${k}</div><div style="font-size:13px">${v}</div></div>`;
  openModal(`<h3>回覆郵件</h3>
@@ -1608,7 +1623,7 @@ ${CURRENT_USER.role==="super_admin"?`<div class="panel"><div class="sec-title">�
 <div class="search"><input placeholder="篩選動作" oninput="filterAudit(this.value)"><button class="btn primary" onclick="exportAuditXlsx()">⬇ 匯出 Excel</button></div>
 <div id="auditArea">${auditLog.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>尚無審計記錄</div>"}</div></div>`:""}</div>`;
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;}const ak=document.getElementById("set_ark");if(ak)localStorage.setItem("bcd_ark_key",ak.value.trim());addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}
-function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);}
+function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
 function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
 function openPref(){
