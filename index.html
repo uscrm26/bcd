@@ -2219,8 +2219,14 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
  let cleanN=b.n||"";let tagNote="";const m=cleanN.match(/[（(]([^）)]*轉介[^）)]*)[）)]/);if(m){tagNote=m[1]+"；";cleanN=cleanN.replace(m[0],"").trim();}
  const fullReason=tagNote+(b.reason||"");
  const short=fullReason.slice(0,40);const longr=fullReason.length>40;
- const domain=(b.c||"").split("@")[1]||"";
- const list=(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(domain)||(e.sub||"").toLowerCase().includes((cleanN||"").toLowerCase().slice(0,8)));
+ const domain=(b.c||"").includes("@")?((b.c||"").split("@")[1]||""):"";
+ const nmKey=(cleanN||"").toLowerCase().trim();
+ const list=(DATA.emails||[]).filter(e=>{
+   const f=(e.from||"").toLowerCase();const s=(e.sub||"").toLowerCase();
+   if(domain&&f.includes(domain))return true;
+   if(nmKey.length>=3&&s.includes(nmKey))return true;
+   return false;
+ });
  return `<tr style="cursor:pointer" onclick="const t=document.getElementById('bk_thread_${i}');const show=t.style.display==='none';t.style.display=show?'table-row':'none'"><td style="max-width:280px"><div style="font-weight:700;font-size:13px">${esc(cleanN)}</div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(b.a)}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${maskEmail(b.c,lock)}</div></td>
  <td><span class="tag ${s[1]}">${s[0]}</span></td>
  <td style="max-width:340px;font-size:12px;color:var(--mut)"><span class="brk-short">${esc(short)}${longr?"…":""}</span>${longr?`<a style="color:var(--acc);cursor:pointer;margin-left:6px" onclick="event.stopPropagation();const f=this.parentElement.querySelector('.brk-full');const show=f.style.display==='none';f.style.display=show?'block':'none';this.textContent=show?'收起':'展開'">展開</a>`:""}<div class="brk-full" style="display:none;margin-top:4px;color:var(--tx)">${esc(fullReason)}</div></td>
@@ -2231,8 +2237,9 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
  ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--card)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}
  </td></tr>`;}
 function editBrokerNote(i){const b=BROKERS[i];openModal(`<h3>編輯備註 ｜ ${esc(b.n)}</h3><div class="fg"><label>備註內容</label><textarea id="bn_txt" style="width:100%;min-height:120px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px">${esc(b.reason||"")}</textarea></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="BROKERS[${i}].reason=document.getElementById('bn_txt').value;closeModal();render();toast('備註已保存')">儲存</button></div>`);}
-function openBrokerMails(mail,name){const domain=(mail||"").split("@")[1]||"";
- const list=(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(domain)||(e.sub||"").toLowerCase().includes((name||"").toLowerCase().slice(0,8)));
+function openBrokerMails(mail,name){const domain=(mail||"").includes("@")?((mail||"").split("@")[1]||""):"";
+ const nmKey=(name||"").toLowerCase().trim();
+ const list=(DATA.emails||[]).filter(e=>{const f=(e.from||"").toLowerCase();const s=(e.sub||"").toLowerCase();if(domain&&f.includes(domain))return true;if(nmKey.length>=3&&s.includes(nmKey))return true;return false;});
  openModal(`<h3>與 ${esc(name)} 的往來郵件</h3><div style="font-size:12px;color:var(--mut);margin-bottom:10px">共 ${list.length} 封，發信與回覆會自動累積在此</div>
  ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}`);}
 function brokerPool(){const cols=canManage()?7:6;return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerXlsx()">⬇ 匯出 Excel</button>${canManage()?`<button class="btn" onclick="openAddBroker()">＋ 新增資源</button>`:""}</div>
