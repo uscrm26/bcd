@@ -854,7 +854,7 @@ function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canVi
   <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span></div>
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
   </div></div>`;}).join("")+`</div>`;}
-function openModalImg(src){openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
+function openModalImg(src){if(!src)return;if(src.indexOf("https://")!==0&&src.indexOf("http://")===0){window.open(src,"_blank");return;}openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
 function openCustList(statusId){const list=DATA.customers.filter(c=>canViewCust(c.no)&&(!statusId||c.status===statusId));const s=statusId?st(statusId).lb:"全部客戶";
 openModal(`<h3>${s}（${list.length}）</h3><table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>負責人</th><th>狀態</th><th></th></tr></thead><tbody>
@@ -1431,7 +1431,7 @@ function resolveFile(p){
 }
 function fileThumb(f){
   const url=resolveFile(f.path);
-  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy"><div class="fcap">${esc(f.name)}</div></div>`;
+  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy" onerror="this.remove()"><div class="fcap">${esc(f.name)}</div></div>`;
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
   return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
 }
@@ -2448,7 +2448,7 @@ function renderDoc(){
     const ph=phSrc(g.c.no);
     const own=ownerName(g.c.no);
     return `<div class="doc-card" onclick="openDocFolder('${g.c.no}')">
-      <div class="doc-ava">${ph?`<img src="${ph}">`:`<span>${esc((g.c.member||g.c.name||"?").charAt(0).toUpperCase())}</span>`}</div>
+      <div class="doc-ava">${ph?`<img src="${ph}" onerror="this.remove()">`:`<span>${esc((g.c.member||g.c.name||"?").charAt(0).toUpperCase())}</span>`}</div>
       <div class="doc-nm">${esc(g.c.member||g.c.name)}</div>
       <div class="doc-mb">${esc(g.c.name)} · #${g.c.no}</div>
       <div class="doc-mb">建檔 ${CUST_CREATED[g.c.no]||"—"}</div>
@@ -2465,7 +2465,7 @@ function openDocFolder(no){
   const isAdmin=CURRENT_USER.role==="super_admin";
   const canUp=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
   const head=`<div class="login-brand" style="justify-content:center;margin-bottom:14px">
-    <div class="doc-ava" style="width:64px;height:64px">${phSrc(no)?`<img src="${phSrc(no)}">`:`<span style="font-size:24px">${esc((c.member||"?").charAt(0).toUpperCase())}</span>`}</div>
+    <div class="doc-ava" style="width:64px;height:64px">${phSrc(no)?`<img src="${phSrc(no)}" onerror="this.remove()">`:`<span style="font-size:24px">${esc((c.member||"?").charAt(0).toUpperCase())}</span>`}</div>
     <div><div style="font-weight:800;font-size:16px">${esc(c.name)}</div><div style="font-size:12px;color:var(--mut)">法人 ${esc(c.member)} ｜ ${list.length} 份</div></div></div>`;
   const body=list.length?`<div style="max-height:55vh;overflow:auto;padding:4px"><div class="file-grid">${list.map((f,i)=>fileThumbDel(f,no,isAdmin)).join("")}</div></div>`:`<div class="empty" style="padding:30px">這個資料夾還沒有檔案</div>`;
   const foot=`<div class="mrow" style="margin-top:14px;justify-content:flex-end">
@@ -2477,7 +2477,7 @@ function fileThumbDel(f,no,isAdmin){
   const url=resolveFile(f.path);
   const isImg=f.type==="image";
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
-  const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" loading="lazy"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
+  const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" loading="lazy" onerror="this.remove()"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
   const dt=CUST_CREATED[no]||"—";
   const cell=`${pv}<div class="fn">${esc(f.name)}</div><div class="meta">${dt} · 系統管理員上傳</div>`;
   if(!isAdmin)return `<div class="file-cell">${cell}</div>`;
