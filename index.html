@@ -1204,9 +1204,18 @@ function todoList(no){const c=DATA.customers.find(x=>x.no===no);
 function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_add",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ts:Date.now()})});render();toast("已加入待辦清單");}
 function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:true})});render();}
 function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=false;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:false})});render();}
-function openAiHistory(no){
-  const rows=(DATA.timeline[no]||[]).filter(x=>x.key&&String(x.key).startsWith("ai_"));
-  const h=rows.map(r=>`<div style="padding:12px;border-left:2px solid #8b5cf6;margin-left:6px;margin-bottom:12px"><div style="font-size:11px;color:var(--mut);margin-bottom:6px">${esc(r.t)}</div><div style="font-size:13px;line-height:1.7">${esc(r.txt||"")}</div></div>`).join("")||"<div style='color:var(--dim);padding:20px'>尚無 AI 分析記錄</div>";
+async function openAiHistory(no){
+  let rows=(DATA.timeline[no]||[]).filter(x=>x.key&&(String(x.key).startsWith("ai_")||String(x.key).startsWith("batch_")));
+  try{
+    const cloud=await sbReq("audit_logs","GET",null,"?select=*&target_client=eq."+encodeURIComponent(String(no))+"&action=in.(timeline,ai_last_at)&order=created_at.desc&limit=50");
+    if(Array.isArray(cloud)){
+      cloud.forEach(a=>{
+        if(a.action==="timeline"){try{const r=JSON.parse(a.detail);if(r&&r.txt&&(String(r.key||"").startsWith("ai_")||String(r.key||"").startsWith("batch_"))&&!rows.some(x=>x.key===r.key))rows.push(r);}catch(e){}}
+      });
+      rows.sort((a,b)=>String(b.t||"").localeCompare(String(a.t||"")));
+    }
+  }catch(e){}
+  const h=rows.map(r=>`<div style="padding:12px;border-left:2px solid #8b5cf6;margin-left:6px;margin-bottom:12px"><div style="font-size:11px;color:var(--mut);margin-bottom:6px">${esc(r.t||"")} · ${esc(r.who||"AI")}</div><div style="font-size:13px;line-height:1.7">${esc(r.txt||"")}</div></div>`).join("")||"<div style='color:var(--dim);padding:20px'>尚無 AI 分析記錄</div>";
   openModal(`<h3>🤖 AI 分析歷史</h3><div style="max-height:500px;overflow-y:auto;padding-right:6px">${h}</div>`);
 }
 function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].done=true;addClientAudit(no,"待辦完成","",c.aiTodos[i].t,"AI 待辦");persistCust(no);render();toast("待辦已完成");}
@@ -1686,7 +1695,7 @@ function batchResetCountdown(){
 }
 function batchAIAnalyze(){
   const isAdmin=CURRENT_USER.role==="super_admin";
-  const limit=isAdmin?10:1;
+  const limit=isAdmin?20:1;
   const dayKey=batchDayKey();
   const used=JSON.parse(localStorage.getItem("bcd_batch_ai_used")||"{}");
   used[CURRENT_USER.id]=used[CURRENT_USER.id]||{};
