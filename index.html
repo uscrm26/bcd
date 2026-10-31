@@ -1878,7 +1878,7 @@ R.system=()=>{
        <div style="font-size:12px;color:var(--mut);margin-bottom:6px">營業日切換時間</div>
        <div style="font-size:24px;font-weight:700;margin-bottom:8px">凌晨 ${SETTINGS.cutoff_hour}:00</div>
        <div style="font-size:11px;color:var(--mut);line-height:1.6">按北京時間切日，每日統計與郵件歸日均依此時間區分</div>
-       <div class="fg" style="margin-top:10px"><input id="set_cutoff" type="number" min="0" max="23" value="${SETTINGS.cutoff_hour}" style="width:100%"></div>
+       <div class="fg" style="margin-top:10px"><select id="set_cutoff" style="width:100%">${[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map(h=>`<option value="${h}" ${SETTINGS.cutoff_hour===h?"selected":""}>凌晨 ${h}:00</option>`).join("")}</select></div>
      </div>
      <div style="padding:16px;background:var(--bg2);border-radius:12px">
        <div style="font-size:12px;color:var(--mut);margin-bottom:6px">火山方舟 API Key</div>
@@ -1909,13 +1909,13 @@ R.system=()=>{
      </div>
      <div style="display:flex;flex-direction:column;gap:8px">
        <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer">郵件 AI 解讀
-         <button class="btn small" style="${u.aiMail!==false?'background:#34d39922;color:#34d399;border-color:#34d39955':'background:var(--card);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiMail')">${u.aiMail!==false?'開啟':'關閉'}</button>
+         <button class="btn small" style="${u.aiMail!==false?'background:#34d399;color:#fff;border-color:#34d399':'background:var(--card);color:var(--mut);border-color:var(--line)'}" onclick="toggleAiPerm('${u.id}','aiMail')">${u.aiMail!==false?'✓ 已開啟':'已關閉'}</button>
        </label>
        <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer">批量 AI 解讀所有客戶
-         <button class="btn small" style="${u.aiBatch!==false?'background:#8b5cf622;color:#8b5cf6;border-color:#8b5cf655':'background:var(--card);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiBatch')">${u.aiBatch!==false?'開啟':'關閉'}</button>
+         <button class="btn small" style="${u.aiBatch!==false?'background:#8b5cf6;color:#fff;border-color:#8b5cf6':'background:var(--card);color:var(--mut);border-color:var(--line)'}" onclick="toggleAiPerm('${u.id}','aiBatch')">${u.aiBatch!==false?'✓ 已開啟':'已關閉'}</button>
        </label>
        <label style="display:flex;justify-content:space-between;align-items:center;font-size:13px;cursor:pointer">客戶 AI 跟進分析
-         <button class="btn small" style="${u.aiFollow!==false?'background:#6366f122;color:#6366f1;border-color:#6366f155':'background:var(--card);color:var(--mut)'}" onclick="toggleAiPerm('${u.id}','aiFollow')">${u.aiFollow!==false?'開啟':'關閉'}</button>
+         <button class="btn small" style="${u.aiFollow!==false?'background:#6366f1;color:#fff;border-color:#6366f1':'background:var(--card);color:var(--mut);border-color:var(--line)'}" onclick="toggleAiPerm('${u.id}','aiFollow')">${u.aiFollow!==false?'✓ 已開啟':'已關閉'}</button>
        </label>
      </div>
    </div>`).join("")}
@@ -1939,7 +1939,11 @@ R.system=()=>{
  <div class="tabs" style="margin-bottom:16px">${visibleTabs.map(x=>`<button class="${t===x[0]?'on':''}" onclick="window._sysTab='${x[0]}';render()">${x[1]}</button>`).join("")}</div>
  ${body}`;
 };
-function toggleAiPerm(uid,key){const u=USERS.find(x=>x.id===uid);if(!u)return;u[key]=!(u[key]!==false);addAudit("AI 權限變更",u.nm+" "+key+" → "+(u[key]?"啟用":"關閉"));render();toast(u.nm+" 的 "+key+(u[key]?"已啟用":"已關閉"));}
+function toggleAiPerm(uid,key){const u=USERS.find(x=>x.id===uid);if(!u)return;u[key]=!(u[key]!==false);
+ const map={aiMail:["AI 電子郵件解讀功能","郵件 AI 解讀"],aiBatch:["批量 AI 解讀所有客戶功能","批量 AI 分析"],aiFollow:["客戶 AI 跟進分析功能","客戶 AI 跟進"]};
+ const m=map[key]||[key,key];
+ addAudit("變更 AI 權限","為 "+u.nm+" "+(u[key]?"開啟":"關閉")+"了"+m[0]);
+ render();toast(u.nm+" 的"+m[1]+(u[key]?"已開啟":"已關閉"));}
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;}const ak=document.getElementById("set_ark");if(ak)localStorage.setItem("bcd_ark_key",ak.value.trim());addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
@@ -1972,7 +1976,11 @@ function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}
 if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
 })();
-function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
+function auditRow(a){return `<div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;font-size:13px">
+ <span style="color:var(--mut);font-size:11px;min-width:90px;font-variant-numeric:tabular-nums">${a.t}</span>
+ <span style="flex:1;line-height:1.6"><span style="font-weight:600">${esc(a.user)}</span> ${esc(a.detail||a.action)}</span></div>`;}
+function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.slice(0,100).map(a=>auditRow(a)).join("")||"<div class='empty'>無符合記錄</div>";}
+function filterAuditByUser(u){const list=u?auditLog.filter(a=>a.user===u):auditLog;document.getElementById("auditArea").innerHTML=list.slice(0,100).map(a=>auditRow(a)).join("")||"<div class='empty'>無符合記錄</div>";}
 function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
 const head=["時間","操作人","動作","詳情"];const rows=auditLog.map(a=>[a.t,a.user,a.action,a.detail||""]);
 if(typeof XLSX!=="undefined"){const ws=XLSX.utils.aoa_to_sheet([head,...rows]);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"審計日誌");XLSX.writeFile(wb,"審計日誌_"+new Date().toISOString().slice(0,10)+".xlsx");toast("審計日誌已匯出 Excel");}
@@ -1990,8 +1998,11 @@ openModal(`<h3>${u?"編輯帳戶":"新增帳戶"}</h3><div class="form-grid">
 <div class="fg"><label>角色</label><select id="au_role">${roleOpts.map(r=>`<option value="${r[0]}" ${u&&u.role===r[0]?"selected":""}>${r[1]}</option>`).join("")}</select></div>
 <div class="fg"><label>上級</label><select id="au_parent">${parentOpts.map(p=>`<option value="${p[0]}" ${u&&u.parent===p[0]?"selected":""}>${p[1]}</option>`).join("")}</select></div>
 </div>
-<div class="sec-title" style="margin-top:12px">頁面權限</div>
-<div class="form-grid">${Object.entries(PERM_LABELS).map(([k,lb])=>{const cur=u?(u.perms&&u.perms[k]!==false):(k!=="github"&&k!=="system");return `<div class="fg" style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="au_p_${k}" ${cur?"checked":""} ${(k==="github"||k==="system")&&!canSuper?"disabled":""}><label for="au_p_${k}">${lb}</label></div>`;}).join("")}</div>
+<div class="sec-title" style="margin-top:16px">頁面權限</div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px">
+${Object.entries(PERM_LABELS).map(([k,lb])=>{const cur=u?(u.perms&&u.perms[k]!==false):(k!=="github"&&k!=="system");return `<label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:13px">
+<input type="checkbox" id="au_p_${k}" ${cur?"checked":""} ${(k==="github"||k==="system")&&!canSuper?"disabled":""} style="width:16px;height:16px;accent-color:#6366f1"> ${lb}</label>`;}).join("")}
+</div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="saveUser()">${u?"儲存":"建立"}</button></div>`);}
 async function saveUser(){const id=document.getElementById("au_user").value.trim();const nm=document.getElementById("au_name").value.trim();if(!id||!nm){toast("請填登入帳號與真實姓名");return;}
 const role=document.getElementById("au_role").value;const parent=document.getElementById("au_parent").value||null;const pwd=document.getElementById("au_pwd").value;const avatar=document.getElementById("au_avatar").value.trim()||nm.charAt(0);
