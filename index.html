@@ -2099,7 +2099,7 @@ function fileThumbDel(f,no,isAdmin){
   const acts=`<div style="display:flex;gap:4px;padding:0 6px 8px">
     <a class="btn small" style="text-decoration:none;flex:1;text-align:center" href="${url}" download>下載</a>
     <button class="btn small" style="flex:1" onclick="moveFile('${no}','${esc(f.name)}')">轉存</button>
-    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')"title="刪除">🗑</button></div>`;
+    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')"title="刪除" style="flex:1">刪除</button></div>`;
   return `<div class="file-cell">${cell}${acts}</div>`;
 }
 function moveFile(no,name){
