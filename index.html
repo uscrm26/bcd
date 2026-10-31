@@ -304,6 +304,7 @@ tr:hover td{background:#1a2130}
     <a data-v="ai"><span class="ic">✦</span>AI 表單助手</a>
     <div class="grp">郵件</div>
     <a data-v="mailbox"><span class="ic">✉</span>信箱配置</a>
+    <a data-v="webmail"><span class="ic">🌐</span>信箱登入</a>
     <a data-v="queue"><span class="ic">⇆</span>電子郵件<span class="dot" id="qdot">0</span></a>
     <div class="grp">檔案</div>
     <a data-v="doc"><span class="ic">▤</span>文件中心</a>
@@ -414,7 +415,7 @@ const USERS=[
 {id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",aiMail:true,aiBatch:true,aiFollow:true,perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
 ];
 const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
-const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",worklog:"工作通知",worklog_admin:"系統工作記錄",commission:"佣金記錄",github:"GitHub 備份",system:"系統管理",polling:"巡查排程"};
+const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",worklog:"工作通知",worklog_admin:"系統工作記錄",commission:"佣金記錄",github:"GitHub 備份",system:"系統管理",polling:"巡查排程",webmail:"信箱登入"};
 let CURRENT_USER=USERS[0];
 const ownerMap={"93":"kevinyama","89":"kevinyama","90":"kevinyama","98":"kevinyama","2":"kevinyama","3":"kevinyama","5":"kevinyama","7":"kevinyama","8":"kevinyama","61":"kevinyama","64":"kevinyama","66":"kevinyama","69":"kevinyama","71":"kevinyama","73":"kevinyama","75":"kevinyama"};
 const clientAudit={};
@@ -1517,6 +1518,10 @@ sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.
 addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
+R.webmail=()=>{
+ return `<h1>信箱登入</h1>
+ <div style="font-size:12px;color:var(--mut);margin-bottom:8px">下方為 Pony Webmail 內嵌視窗，用各信箱位址與密碼登入即可讀信寄信。若內嵌被原站擋住，可點右上角另開。<a href="https://mail.pony-it.com/" target="_blank" style="color:var(--acc);margin-left:6px">另開新分頁 ↗</a></div>
+ <iframe src="https://mail.pony-it.com/" style="width:100%;height:calc(100vh - 150px);border:1px solid var(--line);border-radius:12px;background:#fff"></iframe>`;};
 R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
  return `<h1>巡查排程</h1>
 <div class="row r2">
@@ -1532,14 +1537,15 @@ R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">�
 <div class="field"><div class="k">查看記錄</div><div class="v">倉庫 Actions 分頁看每小時 run 歷史與日誌；每日工作記錄頁有每輪巡查留痕。</div></div>
 </div></div>`;};
 R.mailbox=()=>{
-  if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||""}));}
+  if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||"",pwd:b.pwd||"123456"}));}
   const list=window._mbDraft;
   return `<h1>信箱配置</h1>
 <div class="row r2"><div class="panel"><div class="sec-title">信箱帳戶清單</div>
-<div style="font-size:12px;color:var(--mut);margin-bottom:10px">在客戶頁填好 email 後，可在此新增到巡查清單。儲存後下一次自動巡查生效。</div>
+<div style="font-size:12px;color:var(--mut);margin-bottom:10px">在客戶頁填好 email 後，可在此新增到巡查清單。預設密碼 123456，可逐個修改。儲存後下一次自動巡查生效。</div>
 <div id="mb_list">${list.map((b,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)">
 <span class="st ok"></span>
 <div style="flex:1"><div style="font-size:13px">${esc(b.client)}</div><div style="font-size:11px;color:var(--mut)">${esc(b.email)}</div></div>
+<input value="${esc(b.pwd||'123456')}" style="width:110px;padding:4px 6px;font-size:12px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:6px" onchange="window._mbDraft[${i}].pwd=this.value" title="信箱密碼">
 <span class="tag t-green">已連線</span>
 <button class="btn small" onclick="window._mbDraft.splice(${i},1);render()">刪除</button></div>`).join("")}</div>
 <div style="display:flex;gap:6px;margin-top:10px">
@@ -1549,8 +1555,8 @@ R.mailbox=()=>{
 <button class="btn primary" style="margin-top:12px" onclick="saveMailboxes()">儲存信箱清單到 GitHub</button>
 <div id="mb_msg" style="font-size:12px;margin-top:6px"></div>
 </div></div>`;}
-function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:""});render();}
-async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||""})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok"}));}catch(e){msg.textContent="儲存失敗："+e;}}
+function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:"",pwd:"123456"});render();}
+async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||"",pwd:b.pwd||"123456"})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok",pwd:b.pwd||"123456"}));}catch(e){msg.textContent="儲存失敗："+e;}}
 R.queue=()=>`<h1>電子郵件信箱</h1>
 <div style="display:flex;gap:6px;margin:10px 0" id="mailTabs">
   <button class="btn small" data-mt="inbox" onclick="setMailTab(this)">收件箱</button>
