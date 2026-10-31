@@ -549,7 +549,7 @@ async function loadSB(){
         try{const item=JSON.parse(a.detail);DATA.timeline[a.target_client]=DATA.timeline[a.target_client]||[];if(!DATA.timeline[a.target_client].some(x=>x.key===item.key))DATA.timeline[a.target_client].push(item);}catch(e){}
       }else if(a.action==="client_audit"&&a.target_client){
         try{const rec=JSON.parse(a.detail);clientAudit[a.target_client]=clientAudit[a.target_client]||[];clientAudit[a.target_client].unshift(rec);}catch(e){}
-      }else if(a.action==="cust_state"&&a.target_client){const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const st=JSON.parse(a.detail);if(st.aiTodos)c.aiTodos=st.aiTodos;if(st.aiSuggestions)c.aiSuggestions=st.aiSuggestions;if(st.aiLastAt)c.aiLastAt=st.aiLastAt;}catch(e){}}
+      }else if(a.action==="cust_state"&&a.target_client){const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c&&!c._custStateLoaded){try{const st=JSON.parse(a.detail);if(st.aiTodos)c.aiTodos=st.aiTodos;if(st.aiSuggestions)c.aiSuggestions=st.aiSuggestions;if(st.aiLastAt)c.aiLastAt=st.aiLastAt;c._custStateLoaded=true;}catch(e){}}
       }else if(a.action==="ai_todo_add"&&a.target_client){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const rec=JSON.parse(a.detail);c.aiTodos=c.aiTodos||[];if(!c.aiTodos.some(t=>t.t===rec.t))c.aiTodos.unshift(rec);}catch(e){}}
       }else if(a.action==="ai_todo_ignore"&&a.target_client){
