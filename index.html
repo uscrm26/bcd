@@ -969,28 +969,33 @@ function createCust(){
   ownerMap[no]=owner;
   closeModal();render();toast("客戶已建立，請上傳檔案讓 AI 分析");
 }
-function onNewCustFiles(input){
+async function onNewCustFiles(input){
   const files=input.files;if(!files.length)return;
-  toast("已選擇 "+files.length+" 個檔案，開始上傳並 AI 分析...");
-  Array.from(files).forEach(f=>{
-    const fr=new FileReader();
-    fr.onload=function(e){
-      // 上传到 GitHub Pages 是静态的，这里先存到 localStorage 并交 AI 分析文件名
-      const reader=new FileReader();
-      reader.onload=function(ev){
-        const base64=ev.target.result;
-        // 交 AI 分析文件名和类型
-        callAI("你是美國海關bond業務助理。根據上傳檔案名稱，判斷這是什麼文件，提取公司名、法人名、EIN等關鍵信息，輸出JSON：{company,member,ein,doc_type,notes}",f.name).then(out=>{
-          try{
-            const j=JSON.parse(out.replace(/```json|```/g,"").trim());
-            toast("AI 分析完成："+(j.company||f.name));
-          }catch(e){}
-        });
-      };
-      reader.readAsDataURL(f);
-    };
-    fr.readAsArrayBuffer(f);
-  });
+  const no=(document.getElementById("nc_no")||{}).value||"new";
+  toast("上傳 "+files.length+" 個檔案到 GitHub...");
+  for(const f of Array.from(files)){
+    try{
+      const buf=await f.arrayBuffer();
+      const base64=btoa(String.fromCharCode(...new Uint8Array(buf)));
+      const path="attachments/"+no+"/"+f.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+      const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{
+        method:"PUT",
+        headers:{Authorization:"token "+(localStorage.getItem("bcd_ghtok")||""),"Content-Type":"application/json"},
+        body:JSON.stringify({message:"upload "+f.name,content:base64})
+      });
+      if(r.ok)toast("已上傳："+f.name);
+      else toast("上傳失敗："+f.name);
+      // 交 AI 分析
+      const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，判斷文件類別，提取公司名、法人名、EIN、地址等信息，輸出JSON：{company,member,ein,address,doc_type,notes}",f.name);
+      try{
+        const j=JSON.parse(out.replace(/```json|```/g,"").trim());
+        if(j.company&&!document.getElementById("nc_name").value)document.getElementById("nc_name").value=j.company;
+        if(j.member)document.getElementById("nc_member").value=j.member;
+        if(j.ein)document.getElementById("nc_ein").value=j.ein;
+      }catch(e){}
+    }catch(e){toast("錯誤："+f.name);}
+  }
+  toast("全部完成，AI 已自動填入客戶資料");
 }
 
 // ===== 客戶管理 =====
