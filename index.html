@@ -880,11 +880,29 @@ function custGridHTML(){
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=custGridHTML();}
 function myTeamIds(){const me=CURRENT_USER.id;const ids=new Set([me]);USERS.forEach(u=>{if(u.parent===me)ids.add(u.id);});return ids;}
+function aiStatusCard(ts){
+  const d=new Date(ts);
+  const bj=new Date(ts+8*3600e3);
+  const pad=n=>String(n).padStart(2,"0");
+  const timeStr=bj.getFullYear()+"-"+pad(bj.getMonth()+1)+"-"+pad(bj.getDate())+" "+pad(bj.getHours())+":"+pad(bj.getMinutes())+":"+pad(bj.getSeconds());
+  const diff=Date.now()-ts;
+  const mins=Math.floor(diff/60000);
+  let ago;
+  if(mins<1)ago="剛才";else if(mins<60)ago=mins+" 分鐘前";else if(mins<1440)ago=Math.floor(mins/60)+" 小時前";else ago=Math.floor(mins/1440)+" 天前";
+  if(LANG==='en'){return "Last AI analysis: "+timeStr+" (CST)<br>"+ago+" ago.";}
+  if(LANG==='zhcn'){return "最后一次 AI 分析时间："+timeStr+"（北京时间）<br>距今已过"+ago+"。";}
+  return "最後一次 AI 分析時間："+timeStr+"（北京時間）<br>距今已過"+ago+"。";
+}
 function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `<div class="empty">請選擇左側客戶以查看詳細資料</div>`;const s=st(c.status);
 const ph=PHOTO[no]||"";const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap">
   <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;flex:0 0 200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
     ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">法人照片<br>未上傳</div>`}
+  </div>
+  <div style="flex:0 0 200px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
+    <div style="font-size:28px;margin-bottom:6px">🤖</div>
+    <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:6px">${LANG==='en'?'AI Status':LANG==='zhcn'?'AI 分析状态':'AI 分析狀態'}</div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.6">${c.aiLastAt?aiStatusCard(c.aiLastAt):(LANG==='en'?'No AI analysis yet. Click the button below to start.':LANG==='zhcn'?'从未为该客户进行 AI 分析，点击下方按钮开始。':'從未為該客戶進行 AI 分析，點擊下方按鈕開始。')}</div>
   </div>
   <div style="flex:1;min-width:260px">
   <div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
@@ -1459,6 +1477,7 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
     // 同時寫一條時間線
     DATA.timeline[no]=DATA.timeline[no]||[];
     DATA.timeline[no].unshift({t:nowBJ(),who:"AI 跟進",txt:"🤖 "+(j.summary||"AI 已分析客戶檔案"),key:"ai_"+Date.now()});
+  const _c=DATA.customers.find(x=>x.no===no);if(_c)_c.aiLastAt=Date.now();
     addClientAudit(no,"AI 跟進分析","","","AI 自動分析完成");
   }catch(err){
     if(prog)prog.innerHTML="<div style='color:#f87171;font-size:13px'>AI 分析失敗，請稍後重試。</div>";
