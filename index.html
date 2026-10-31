@@ -1463,32 +1463,63 @@ function applyAiAnalysis(no){
   render();toast("AI 分析結果已採用並寫入");
 }
 // ===== 批量 AI 分析 =====
+function batchDayKey(){
+  const bj=new Date(Date.now()+8*3600e3);
+  const cutHour=5;
+  let dk;
+  if(bj.getUTCHours()<cutHour){const y=new Date(bj.getTime()-86400e3);dk=y.getUTCFullYear()+"-"+(y.getUTCMonth()+1)+"-"+y.getUTCDate();}
+  else dk=bj.getUTCFullYear()+"-"+(bj.getUTCMonth()+1)+"-"+bj.getUTCDate();
+  return dk;
+}
+function batchResetCountdown(){
+  const bj=new Date(Date.now()+8*3600e3);
+  const cutHour=5;
+  let nextReset=new Date(bj);
+  nextReset.setUTCHours(cutHour,0,0,0);
+  if(bj.getUTCHours()>=cutHour) nextReset=new Date(nextReset.getTime()+86400e3);
+  let diff=nextReset.getTime()-bj.getTime();
+  if(diff<0) diff=0;
+  const h=Math.floor(diff/3600e3),m=Math.floor((diff%3600e3)/60e3),s=Math.floor((diff%60e3)/1000);
+  return h+" 小時 "+m+" 分 "+s+" 秒";
+}
 function batchAIAnalyze(){
   const isAdmin=CURRENT_USER.role==="super_admin";
   const limit=isAdmin?3:1;
-  const today=new Date();
-  const bj=new Date(today.getTime()+8*3600e3);
-  const cutHour=5;
-  let dayKey;
-  if(bj.getUTCHours()<cutHour){const y=new Date(bj.getTime()-86400e3);dayKey=y.getUTCFullYear()+"-"+(y.getUTCMonth()+1)+"-"+y.getUTCDate();}
-  else dayKey=bj.getUTCFullYear()+"-"+(bj.getUTCMonth()+1)+"-"+bj.getUTCDate();
+  const dayKey=batchDayKey();
   const used=JSON.parse(localStorage.getItem("bcd_batch_ai_used")||"{}");
   used[CURRENT_USER.id]=used[CURRENT_USER.id]||{};
   const count=used[CURRENT_USER.id][dayKey]||0;
-  if(count>=limit){toast("今日批量分析次數已用完（"+limit+" 次/天），請明天下午 5 點後再試");return;}
-  // 收集待分析客戶：跳過已出單
+  const lastRun=localStorage.getItem("bcd_batch_ai_last")||"";
+  if(count>=limit){
+    openModal(`<h3>🤖 AI 解讀所有客戶</h3>
+    <div style="text-align:center;padding:30px 10px">
+      <div style="font-size:40px;margin-bottom:10px">⏰</div>
+      <div style="font-size:15px;margin-bottom:8px">今日次數已用完</div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:14px">下次可用時間倒計時</div>
+      <div id="batchCountdown" style="font-size:22px;font-weight:700;color:#8b5cf6;font-variant-numeric:tabular-nums">${batchResetCountdown()}</div>
+      ${lastRun?`<div style="font-size:11px;color:var(--mut);margin-top:14px">上次分析：${lastRun}</div>`:""}
+    </div>
+    <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);
+    setInterval(()=>{const el=document.getElementById("batchCountdown");if(el)el.textContent=batchResetCountdown();},1000);
+    return;
+  }
   const targets=DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
   if(!targets.length){toast("所有客戶都已出單，無需分析");return;}
+  window._batchTotal=targets.length;
   openModal(`<h3>🤖 AI 解讀所有客戶</h3>
-  <div style="font-size:13px;line-height:1.8;color:var(--mut);margin-bottom:12px">
-    即將分析 ${targets.length} 位未出單客戶，每位會調取最近 7 天郵件與檔案。此過程需要幾分鐘，請保持本視窗開啟。
-    <br>今日已用 ${count}/${limit} 次。
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.15);color:#a78bfa;font-weight:600">今日已用 ${count} / ${limit} 次</div>
+    ${lastRun?`<div style="font-size:11px;color:var(--mut)">上次分析：${lastRun}</div>`:""}
   </div>
-  <div id="batchList" style="max-height:360px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg2)"></div>
+  <div style="font-size:13px;line-height:1.7;color:var(--mut);margin-bottom:12px">即將分析 ${targets.length} 位未出單客戶，每位調取最近 7 天郵件與檔案。</div>
+  <div style="margin-bottom:12px">
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:4px"><span>進度</span><span id="batchPct">0 / ${targets.length}（0%）</span></div>
+    <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden"><div id="batchBar" style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .3s"></div></div>
+  </div>
+  <div id="batchList" style="max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg2)"></div>
   <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" id="batchStartBtn" onclick="runBatchAI(${targets.map(c=>"'"+c.no+"'").join(",")})">開始分析</button></div>`);
   const bl=document.getElementById("batchList");
-  bl.innerHTML=targets.map((c,i)=>`<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line)"><span style="color:var(--mut)">⏳</span> ${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></div>`).join("");
-  // 記錄使用次數
+  bl.innerHTML=targets.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span style="color:var(--mut);width:20px">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
   used[CURRENT_USER.id][dayKey]=count+1;
   localStorage.setItem("bcd_batch_ai_used",JSON.stringify(used));
 }
@@ -1498,6 +1529,7 @@ async function runBatchAI(){
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span> 分析中…';
   window._batchResults=[];
+  const total=nos.length;
   for(let i=0;i<nos.length;i++){
     const no=nos[i];
     const row=document.getElementById("batch_"+no);
@@ -1511,26 +1543,33 @@ async function runBatchAI(){
       const out=await callAI(sys,ctx);
       let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,100),next_actions:[]};}
       window._batchResults.push({no,cust,j});
-      if(row){row.firstChild.textContent="✅";row.style.opacity=.6;row.style.background="";}
+      if(row){row.firstChild.textContent="✅";row.style.opacity=.55;row.style.background="";}
       DATA.timeline[no]=DATA.timeline[no]||[];
       DATA.timeline[no].unshift({t:nowBJ(),who:"AI 批量分析",txt:"🤖 "+(j.summary||""),key:"batch_"+Date.now()+"_"+no});
     }catch(e){
       if(row){row.firstChild.textContent="❌";row.style.background="rgba(248,113,113,.08)";}
     }
+    const done=i+1;
+    const pct=Math.round(done/total*100);
+    const bar=document.getElementById("batchBar");const pctEl=document.getElementById("batchPct");
+    if(bar)bar.style.width=pct+"%";
+    if(pctEl)pctEl.textContent=done+" / "+total+"（"+pct+"%）";
   }
+  btn.disabled=false;
   btn.innerHTML="✓ 確認寫入";
   btn.onclick=applyBatchResults;
-  const bl=document.getElementById("batchList");
-  bl.innerHTML+=`<div style="padding:12px;font-size:13px;color:#34d399;text-align:center">✅ 分析完成，共 ${window._batchResults.length} 位客戶</div>`;
+  localStorage.setItem("bcd_batch_ai_last",nowBJ()+" 完成 "+window._batchResults.length+" 位客戶");
 }
 function applyBatchResults(){
+  let n=0;
   (window._batchResults||[]).forEach(r=>{
     const cust=DATA.customers.find(x=>x.no===r.no);if(!cust)return;
     cust.aiTodos=cust.aiTodos||[];
     (r.j.next_actions||[]).forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a))cust.aiTodos.unshift({t:a,done:false,t:Date.now()});});
     addClientAudit(r.no,"AI 批量分析","","","AI 自動分析");
+    n++;
   });
-  closeModal();render();toast("批量分析結果已寫入客戶檔案");
+  closeModal();render();toast("✅ 已寫入 "+n+" 位客戶的 AI 分析結果");
 }
 
 // 隊列展開行
