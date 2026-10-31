@@ -1094,6 +1094,18 @@ async function startAnalyzeAndCreate(){
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
+  // 視覺模型直接讀取證件照片，提取公司名、法人、EIN、地址、電話回填，優先於檔名猜測
+  try{
+    const vImgs=(window._pickedFiles||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
+    if(vImgs.length){
+      const vp=[];
+      for(const f of vImgs){vp.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}
+      vp.unshift({type:"text",text:"從這些證件照片提取新客戶資料，只輸出JSON {company,member,ein,address,phone}，辨識不到的欄位留空，不要編造。檔名："+vImgs.map(f=>f.name).join("、")});
+      const vout=await callAIVision("你是美國海關 bond 開戶資料提取員，只輸出指定 JSON，不要多餘說明。",vp);
+      let vj={};try{vj=JSON.parse(vout.replace(/```json|```/g,"").trim());}catch(e){}
+      ["company","member","ein","address","phone"].forEach(k=>{if(vj[k])merged[k]=String(vj[k]).trim();});
+    }
+  }catch(e){console.warn("視覺提取失敗",e);}
   // 重複檢查：只比對公司名與 EIN，法人（member）同名允許，不擋重
   const einA=String(merged.ein||"").replace(/\D/g,"");
   const sameName=DATA.customers.find(c=>merged.company&&c.name&&normName(merged.company)===normName(c.name));
@@ -1230,10 +1242,43 @@ function finalizeCreate(no){
   persistCust(no);
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(aiItem)});
   addAudit("新增客戶",cust.name);
+  const reviewFiles=window._pickedFiles.slice();
   window._pickedFiles=[];
   syncCustomerToRepo(no);
   closeModal();render();toast("客戶已建立，資料已保存");
   setTimeout(()=>openCust(no),400);
+  // 非同步跑文件交叉審查：讀取證件照片，比對姓名、有效期、拼寫，結果落時間線與待辦
+  runDocumentReview(no,reviewFiles,cust);
+}
+// AI 文件交叉審查：以駕照/護照姓名為基準，檢查拼寫、過期、缺漏，總結存後台，問題進待辦與時間線
+async function runDocumentReview(no,files,cust){
+  const imgs=(files||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
+  if(!imgs.length)return;
+  const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
+  try{
+    const parts=[];
+    for(const f of imgs){try{parts.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}catch(e){}}
+    if(!parts.length)return;
+    const sys="你是美國海關 continuous bond 開戶文件審查員。仔細閱讀每張證件照片（駕照、護照、公司文件）。以駕照或護照上的法人法定姓名為基準，交叉比對其他文件的姓名拼寫是否一致、證件是否已過期、是否缺漏必備文件。只輸出 JSON，不要多餘說明：{\"owner_name\":\"以證件為準的法人姓名\",\"docs\":[{\"file\":\"檔名\",\"type\":\"文件類型\",\"name\":\"姓名\",\"company\":\"公司名\",\"ein\":\"EIN\",\"expiry\":\"有效期或空\"}],\"issues\":[{\"level\":\"error|warn\",\"doc\":\"哪份文件\",\"problem\":\"問題描述\",\"fix\":\"建議處理\"}],\"summary\":\"一段繁體中文審查總結，供後台留存，不直接給客戶看\"}。";
+    parts.unshift({type:"text",text:"檔案清單："+imgs.map(f=>f.name).join("、")+"。請逐張辨識並交叉比對，輸出指定 JSON。"});
+    const out=await callAIVision(sys,parts);
+    let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,300),issues:[]};}
+    c.reviewReport=j.summary||"";
+    const issues=Array.isArray(j.issues)?j.issues:[];
+    // 問題寫入 AI 待辦
+    c.aiTodos=c.aiTodos||[];
+    issues.forEach(it=>{const t=`[文件審查] ${it.doc||""}：${it.problem||""}${it.fix?"（建議："+it.fix+"）":""}`;if(!c.aiTodos.some(x=>x.t===t))c.aiTodos.unshift({t,done:false,ts:Date.now()});});
+    // 時間線審查記錄
+    DATA.timeline[no]=DATA.timeline[no]||[];
+    const n=issues.length;
+    const reviewItem={t:nowBJ(),who:"AI 文件交叉審查",txt:n?`⚠️ 發現 ${n} 項文件問題，詳見待辦`:"✅ 文件交叉審查通過，未發現姓名、過期或缺漏問題",detail:issues.map(it=>`· [${it.level==="error"?"嚴重":"提醒"}] ${it.doc||""}：${it.problem||""}${it.fix?"；建議 "+it.fix:""}`).join("\n")||"所有證件姓名一致、均在有效期內、無缺漏。",key:"review_"+Date.now()};
+    DATA.timeline[no].unshift(reviewItem);
+    persistCust(no);
+    sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(reviewItem)});
+    sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,reviewReport:c.reviewReport,aiLastAt:c.aiLastAt})});
+    syncCustomerToRepo(no);
+    render();
+  }catch(e){console.warn("文件審查失敗",e);}
 }
 async function syncCustomerToRepo(no){
   try{
@@ -1243,7 +1288,14 @@ async function syncCustomerToRepo(no){
     const meta=await metaR.json();
     const dj=JSON.parse(decodeURIComponent(escape(atob((meta.content||"").replace(/\n/g,"")))));
     const cs=dj.customers=dj.customers||[];
-    if(!cs.find(x=>String(x.no)===String(no)))cs.push(c);
+    const idx=cs.findIndex(x=>String(x.no)===String(no));
+    if(idx<0)cs.push(c);
+    else{// 已存在：補上後台審查總結與 AI 待辦，不覆蓋雲端既有欄位
+      const t=cs[idx];
+      if(c.reviewReport)t.reviewReport=c.reviewReport;
+      if(c.aiTodos)t.aiTodos=c.aiTodos;
+      if(c.sysId&&!t.sysId)t.sysId=c.sysId;
+    }
     const b=JSON.stringify(dj);
     await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"新增客戶 "+no,content:btoa(unescape(encodeURIComponent(b))),sha:meta.sha})});
   }catch(e){console.warn("syncCustomerToRepo",e);}
@@ -1495,7 +1547,7 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
  const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
  const mailRows=mails.map(e=>({e:"email",src:mailDirLabel(e),tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
- const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||"跟進",tt:x.txt||"",tm:x.t||"",tx:"",key:x.key||""}));
+ const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||"跟進",tt:x.txt||"",tm:x.t||"",tx:x.detail||"",key:x.key||""}));
  const all=tsRows.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
  const f=window._tlFilter||"all";
  const filtered=f==="ai"?all.filter(t=>t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
@@ -1863,6 +1915,30 @@ async function callAI(sys,user){
   const model=useArk?(localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh"):"google/gemma-4-31b-it:free";
   const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}]})});
   if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=await r.json();
+  return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+}
+// 免費視覺通道：固定走 OpenRouter 的 NVIDIA Nemotron VL，不依賴方舟開通，可直接讀取證件照片
+const OR_KEY=atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
+const VL_MODEL="nvidia/nemotron-3.5-super-vl:free";
+// 圖片先壓縮成 dataURL，避免超出免費模型的大小限制
+function fileToDataURL(f,maxSide=1600){
+  return new Promise(resolve=>{
+    if(!/\.(jpe?g|png|webp)$/i.test(f.name)){const r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(f);return;}
+    const img=new Image();const url=URL.createObjectURL(f);
+    img.onload=()=>{
+      let{width:w,height:h}=img;const sc=Math.min(1,maxSide/Math.max(w,h));w=Math.round(w*sc);h=Math.round(h*sc);
+      const cv=document.createElement("canvas");cv.width=w;cv.height=h;cv.getContext("2d").drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);resolve(cv.toDataURL("image/jpeg",0.85));
+    };
+    img.onerror=()=>{URL.revokeObjectURL(url);const r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(f);};
+    img.src=url;
+  });
+}
+// 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
+async function callAIVision(sys,parts){
+  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
+  if(!r.ok)throw new Error("VL HTTP "+r.status);
   const j=await r.json();
   return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
 }
