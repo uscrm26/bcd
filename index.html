@@ -444,7 +444,7 @@ async function loadRepoData(){
       DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
     }
     render();fillLoginStats();
-  }catch(e){/* 離線或檔案缺失時保留內置兜底資料 */}
+  }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
 }
 function fillLoginStats(){const a=document.getElementById("lv_active");const d=document.getElementById("lv_done");const m=document.getElementById("lv_mail");if(!a)return;const st=DATA.statuses||{};const on=[...new Set(Object.values(st))].filter(s=>s&&s!=="done"&&s!=="reject"&&s!=="hold").length;const dn=Object.values(st).filter(s=>s==="done").length;a.textContent=on||"0";d.textContent=dn||"0";m.textContent=Array.isArray(DATA.emails)?DATA.emails.length:"0";}
 // ===== Supabase 直連動態保存（publishable key 公開可曝，寫入走現有表）=====
@@ -1583,7 +1583,7 @@ CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
-const LLANG={zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入",badge:"US CUSTOMS RELATIONSHIP MANAGER",h1:"進口<b>客戶關係</b>管理<br>一站式業務中樞",p:"統一管理客戶檔案、海關擔保申請、經紀資源池與往來郵件，全流程進度一目了然。"},cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录",badge:"US CUSTOMS RELATIONSHIP MANAGER",h1:"进口<b>客户关系</b>管理<br>一站式业务中枢",p:"统一管理客户档案、海关担保申请、经纪资源池与往来邮件，全流程进度一目了然。"},en:{t:"US Customs Relationship Manager",s:"American Import Client Management System",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In",badge:"US CUSTOMS RELATIONSHIP MANAGER",h1:"<b>Client</b> Relationship<br>Management Hub",p:"Manage client profiles, customs bond filings, broker resources and correspondence in one place."}};
+const LLANG={zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入"},cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录"},en:{t:"US Customs Relationship Manager",s:"American Import Client Management System",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In"}};
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();
