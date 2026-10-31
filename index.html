@@ -560,6 +560,7 @@ async function loadSB(){
       auditLog.push({t:a.created_at,user:a.display_name,action:a.action,detail:a.detail,target:a.target_client||""});
     });
   }
+  Object.values(DATA.timeline).forEach(arr=>arr.sort((a,b)=>String(b.t||"").localeCompare(String(a.t||""))));
   render();
 }
 const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
@@ -1271,9 +1272,9 @@ function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  ${aiTodos.length?`<div style="font-size:11px;color:#8b5cf6;margin:14px 0 6px">🤖 AI 建議待辦</div>`:""}
  ${aiTodos.map((t,i)=>`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">🤖 ${esc(t.t)}</span><span class="o" style="color:#8b5cf6">AI</span><button class="btn small" onclick="completeAiTodo('${no}',${i})">完成</button></div>`).join("")}
  ${(c.aiSuggestions||[]).map((sug,i)=>sug.ignored?`<div class="logrow" style="opacity:.4;text-decoration:line-through"><span class="c">🚫 ${esc(sug.t)}</span><button class="btn small" onclick="unignoreAiTodo('${no}',${i})">撤銷忽略</button></div>`:sug.added?"":`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">💡 ${esc(sug.t)}</span><button class="btn small primary" style="margin-right:6px" onclick="addAiTodo('${no}',${i})">新增待辦</button><button class="btn small" onclick="ignoreAiTodo('${no}',${i})">忽略</button></div>`).join("")}`;}
-function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_add",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ts:Date.now()})});render();toast("已加入待辦清單");}
-function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiSuggestions[i].ignored=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:true})});render();}
-function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=false;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:false})});render();}
+function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_add",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ts:Date.now()})});sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已加入待辦清單並保存");}
+function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiSuggestions[i].ignored=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:true})});sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();}
+function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiSuggestions[i].ignored=false;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:false})});sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已撤銷忽略並保存");}
 async function openAiHistory(no){
   let rows=(DATA.timeline[String(no)]||DATA.timeline[no]||[]).filter(x=>x.key&&(String(x.key).startsWith("ai_")||String(x.key).startsWith("batch_")||String(x.key||"").includes("AI")));
   try{
@@ -1710,9 +1711,11 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
       ${j.status_suggest?`<div style="font-size:12px;margin-bottom:8px">建議狀態：<span class="tag t-blue">${esc(j.status_suggest)}</span></div>`:""}
       ${j.next_actions&&j.next_actions.length?`<div style="font-size:12px;color:var(--mut);margin-bottom:4px">建議待辦：</div><ul style="margin:0 0 8px 18px;padding:0;font-size:13px;line-height:1.9">${j.next_actions.map(a=>`<li>${esc(a)}</li>`).join("")}</ul>`:""}
       ${j.risk?`<div style="font-size:12px;color:#f87171">⚠️ ${esc(j.risk)}</div>`:""}
-      <div style="margin-top:12px;display:flex;gap:8px"><button class="btn primary small" onclick="applyAiAnalysis('${no}')">✓ 採用並寫入</button><button class="btn small" onclick="document.getElementById('aiResult_${no}').style.display='none'">忽略</button></div>`;
+      <div style="margin-top:12px;font-size:12px;color:#8b5cf6">✓ 狀態與待辦已自動寫入，無需手動確認</div>`;
       res.dataset.json=JSON.stringify(j);
     }
+    // 自动应用分析结果
+    setTimeout(()=>applyAiAnalysis(no),100);
     // 同時寫一條時間線
     DATA.timeline[no]=DATA.timeline[no]||[];
     const aiItem={t:nowBJ(),who:"AI 跟進 · "+CURRENT_USER.nm,txt:"🤖 "+(j.summary||"AI 已分析客戶檔案"),summary:j.summary||"",nextActions:j.next_actions||[],key:"ai_"+Date.now()};
@@ -1905,11 +1908,15 @@ function applyBatchResults(){
   (window._batchResults||[]).forEach(r=>{
     const cust=DATA.customers.find(x=>x.no===r.no);if(!cust)return;
     cust.aiTodos=cust.aiTodos||[];
+    cust.aiSuggestions=(r.j.next_actions||[]).map(a=>({t:a,added:false,ignored:false}));
     (r.j.next_actions||[]).forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a))cust.aiTodos.unshift({t:a,done:false,ts:Date.now()});});
+    cust.aiLastAt=Date.now();
+    persistCust(r.no);
+    sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(r.no),detail:JSON.stringify({aiTodos:cust.aiTodos,aiSuggestions:cust.aiSuggestions,aiLastAt:cust.aiLastAt})});
     addClientAudit(r.no,"AI 批量分析","","","AI 自動分析");
     n++;
   });
-  closeModal();render();toast("✅ 已寫入 "+n+" 位客戶的 AI 分析結果");
+  closeModal();render();toast("✅ 已寫入並保存 "+n+" 位客戶的 AI 分析結果");
 }
 
 // 隊列展開行
