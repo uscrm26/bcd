@@ -73,30 +73,42 @@ for box in MB["mailboxes"]:
         print(f"[FAIL] {client} {addr}: {rec['err']}")
     report.append(rec)
 
-# ===== AI 自動分析新信，寫入時間線 =====
+# ===== AI 自動三點解讀新信，寫回 emails.json 並寫入時間線 =====
 import urllib.request
 AI_KEY = os.environ.get("OPENROUTER_KEY","")
 DATA_PATH = os.path.join(ROOT,"dbboard","data.json")
+AI_SYS = "你是美國海關 bond 業務的資深客服。用繁體中文簡潔分三點解讀這封來信：1 對方是誰、來意是什麼；2 對方的具體訴求或問題；3 建議我們下一步怎麼回、要準備什麼。只給要點，不用客套，每點一行開頭加「①②③」。"
 if AI_KEY and os.path.exists(DATA_PATH):
     try:
         data = json.load(open(DATA_PATH,encoding="utf-8"))
         tls = data.get("timeline",{})
         for nm in new_here:
-            prompt = "Summarize this email in one short Chinese sentence and what action is needed.\nFrom: "+nm["from"]+"\nSubject: "+nm["subject"]+"\nBody: "+nm["body"][:600]
+            prompt = f"寄件人：{nm['from']}\n主旨：{nm['subject']}\n\n{nm['body'][:1500]}"
             try:
                 req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions",
-                    data=json.dumps({"model":"google/gemma-4-31b-it:free","messages":[{"role":"user","content":prompt}]}).encode(),
+                    data=json.dumps({"model":"google/gemma-4-31b-it:free","messages":[{"role":"system","content":AI_SYS},{"role":"user","content":prompt}]}).encode(),
                     headers={"Authorization":"Bearer "+AI_KEY,"Content-Type":"application/json"})
-                r = json.loads(urllib.request.urlopen(req,timeout=20).read())
-                summary = r["choices"][0]["message"]["content"].strip()
+                r = json.loads(urllib.request.urlopen(req,timeout=30).read())
+                interp = r["choices"][0]["message"]["content"].strip()
             except Exception as e:
-                summary = nm["subject"]
-            tls.setdefault(nm["client"],[]).append({"e":"email","src":nm["from"],"tt":nm["subject"],"tm":datetime.datetime.now().strftime("%m/%d %H:%M"),"tx":summary})
-            print(f"[AI] {nm['client']}: {summary[:80]}")
+                interp = ""
+                print(f"[AI FAIL] {nm['client']}: {e}")
+            # 完整三點解讀寫回 emails.json 對象，前端直接展示
+            if interp:
+                nm["auto_interp"] = interp
+                # 時間線只取精簡版（第一行或前80字）
+                tl_tx = interp.split("\n")[0].strip("①②③ ")
+                if len(tl_tx) > 80: tl_tx = tl_tx[:80] + "…"
+            else:
+                tl_tx = nm["subject"]
+            tls.setdefault(nm["client"],[]).append({"e":"email","src":nm["from"],"tt":nm["subject"],"tm":datetime.datetime.now().strftime("%m/%d %H:%M"),"tx":tl_tx})
+            print(f"[AI] {nm['client']}: {tl_tx[:80]}")
         data["timeline"] = tls
         json.dump(data,open(DATA_PATH,"w",encoding="utf-8"),ensure_ascii=False,indent=2)
     except Exception as e:
         print(f"[AI SKIP] {e}")
+elif not AI_KEY:
+    print("[AI SKIP] 未設定 OPENROUTER_KEY，新信僅入檔未解讀")
 
 json.dump(emails, open(EMAILS_PATH, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
 ok = sum(1 for r in report if r["ok"])

@@ -477,7 +477,11 @@ async function loadRepoData(){
     DATA.files=DATA.files||{};
     if(fi&&typeof fi==="object")DATA.files=fi;
     if(Array.isArray(em)&&em.length){
-      DATA.emails=em.map(x=>({c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:fmtMailDate(x.date),unread:!x.read,type:guessMailType(x),body:x.body||""}));
+      const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
+      DATA.emails=em.map(x=>{
+        const t=fmtMailDate(x.date);
+        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||""};
+      });
     }
     if(mb&&Array.isArray(mb.mailboxes)){
       const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
@@ -1217,16 +1221,18 @@ let html="";
 list.forEach((e,idx)=>{
  const open=window._openMail===e.t;
  html+=`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${e.t.replace(/'/g,"\\'")}')">${esc(e.sub)}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
- if(open){const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t];
+ if(open){const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t]||!!e.auto_interp;
+  const autoText=e.auto_interp||"";
  html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
  <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow:auto">${esc(e.body||"(此郵件暫無正文)")}</div>
- <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap">
+ <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
   <button class="btn small" onclick="aiTranslate(${idx})">${hasZH?"隱藏中文翻譯":"翻譯"}</button>
-  <button class="btn small" onclick="aiInterpret(${idx})">${hasIP?"隱藏 AI 解讀":"AI 解讀"}</button>
+  <button class="btn small" onclick="aiInterpret(${idx})">${(INTERP_CACHE[e.t]||autoText)?"隱藏 AI 解讀":"AI 解讀"}</button>
+  <button class="btn small" style="${e.done?"background:var(--green,#2ecc71);color:#fff;border-color:transparent":""}" onclick="markProcessed('${e.t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
  <div id="zh_${idx}" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(ZH_CACHE[e.t]||"")}</div>
- <div id="ip_${idx}" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(INTERP_CACHE[e.t]||"")}</div>
+ <div id="ip_${idx}" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.1);border:1px solid rgba(80,200,140,.3);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(INTERP_CACHE[e.t]||autoText||"")}</div>
  </div></td></tr>`;}
 });
 tb.innerHTML=html||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
@@ -1246,7 +1252,9 @@ function canViewMail(e){
   if(!cust)return false;
   return canViewCust(cust.no);
 }
-function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
+function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;saveMailDone(e.t,e.done);addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
+function saveMailDone(t,done){const s=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");if(done)s[t]=true;else delete s[t];localStorage.setItem("bcd_mail_done",JSON.stringify(s));}
+function markProcessed(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e.done=true;e.unread=false;saveMailDone(t,true);addAudit("已處理來信",e.sub);render();toast("已標記為已處理，紅點已清除");}
 let REPLY_EMAIL=null;
 const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
 const INTERP_CACHE=JSON.parse(localStorage.getItem("bcd_interp")||"{}");
@@ -1271,17 +1279,21 @@ function fmtUSfromBJ(t){
 }
 function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
  const hasZH=!!ZH_CACHE[t];
+ const hasIP=!!INTERP_CACHE[t]||!!e.auto_interp;
+ const autoText=e.auto_interp||"";
  openModal(`<h3>${esc(e.sub)}</h3>
  <div style="font-size:12px;color:var(--mut);margin-bottom:4px">寄件人：${esc(e.from)}</div>
  <div style="font-size:12px;color:var(--mut);margin-bottom:10px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:34vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
- <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap">
+ <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
   <button class="btn small" onclick="aiTranslateKey('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button>
-  <button class="btn small" onclick="aiInterpretKey('${t.replace(/'/g,"\\'")}')">${INTERP_CACHE[t]?"隱藏 AI 解讀":"AI 解讀"}</button>
+  <button class="btn small" onclick="aiInterpretKey('${t.replace(/'/g,"\\'")}')">${(INTERP_CACHE[t]||autoText)?"隱藏 AI 解讀":"AI 解讀"}</button>
+  <button class="btn small" style="${e.done?"background:#2ecc71;color:#fff;border-color:transparent":""}" onclick="markProcessedKey('${t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
  <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(ZH_CACHE[t]||"")}</div>
- <div id="ipBox" style="${INTERP_CACHE[t]?"":"display:none"};background:rgba(80,200,140,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(INTERP_CACHE[t]||"")}</div>
+ <div id="ipBox" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.1);border:1px solid rgba(80,200,140,.3);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(INTERP_CACHE[t]||autoText||"")}</div>
  <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
+function markProcessedKey(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e.done=true;e.unread=false;saveMailDone(t,true);addAudit("已處理來信",e.sub);closeModal();render();toast("已標記為已處理，紅點已清除");}
 async function doTranslate(e,box){
   const src=(e.body||"").trim();
   if(!src){box.style.display="block";box.textContent="（本信無正文可翻譯）";return;}
@@ -1296,6 +1308,7 @@ async function doInterpret(e,box){
   const src=(e.body||"").trim();
   if(!src){box.style.display="block";box.textContent="（本信無正文可解讀）";return;}
   if(INTERP_CACHE[e.t]){box.style.display="block";box.textContent=INTERP_CACHE[e.t];return;}
+  if(e.auto_interp){box.style.display="block";box.textContent=e.auto_interp;return;}
   box.style.display="block";box.textContent="AI 解讀中…";
   const sys="你是美國海關 bond 業務的資深客服。用繁體中文簡潔分三點解讀這封來信：1 對方是誰、來意是什麼；2 對方的具體訴求或問題；3 建議我們下一步怎麼回、要準備什麼。只給要點，不用客套。";
   try{
