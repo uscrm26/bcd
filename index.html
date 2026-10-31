@@ -907,13 +907,15 @@ function aiStatusCard(ts){
 function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `<div class="empty">請選擇左側客戶以查看詳細資料</div>`;const s=st(c.status);
 const ph=PHOTO[no]||"";const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap">
-  <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;flex:0 0 200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
+  <div style="flex:0 0 200px;width:200px">
+  <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
     ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">法人照片<br>未上傳</div>`}
   </div>
-  <div style="flex:0 0 200px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
+  <div style="margin-top:10px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
     <div style="font-size:28px;margin-bottom:6px">🤖</div>
     <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:6px">${CURRENT_LANG==='en'?'AI Status':CURRENT_LANG==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
     <div style="font-size:11px;color:var(--mut);line-height:1.6">${c.aiLastAt?aiStatusCard(c.aiLastAt):(CURRENT_LANG==='en'?'No AI analysis yet. Click the button below to start.':CURRENT_LANG==='cn'?'从未为该客户进行 AI 分析，点击下方按钮开始。':'從未為該客戶進行 AI 分析，點擊下方按鈕開始。')}</div>
+  </div>
   </div>
   <div style="flex:1;min-width:260px">
   <div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
@@ -1522,8 +1524,11 @@ function applyAiAnalysis(no){
     cust.aiTodos=cust.aiTodos||[];
     j.next_actions.forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a&&!t.done))cust.aiTodos.unshift({t:a,done:false,ts:Date.now()});});
   }
+  // 自动写入，不用手动确认
+  const cust2=DATA.customers.find(x=>x.no===no);
+  if(cust2){cust2.aiLastAt=Date.now();}
   res.style.display="none";
-  render();toast("AI 分析結果已採用並寫入");
+  render();toast("AI 分析完成，狀態已自動更新");
 }
 // ===== 批量 AI 分析 =====
 function batchDayKey(){
