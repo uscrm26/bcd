@@ -280,6 +280,7 @@ tr:hover td{background:#1a2130}
 .file-cell .meta{font-size:10px;color:var(--dim);padding:0 8px 6px}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
 </head>
 <body>
 <div class="mtop">
@@ -608,7 +609,9 @@ if(key==="cn")simplifyPage();
 applyPerm();
 toast("語言已切換為 "+L.label);}
 document.addEventListener("click",e=>{const m=document.getElementById("langMenu");if(m&&!e.target.closest(".lang"))m.classList.remove("show");});
-function simplifyPage(){const el=document.querySelectorAll("#view h1,#view .sub,#view .sec-title,#view .tt,#view .tx,#view .nm,#view .lb,#view .fl,#view .c,#view .o,#view .k,#view .v,#view th,#view td,#view .btn,#view .tabs button,#view .field .v");el.forEach(e=>{if(!e.dataset.zh)e.dataset.zh=e.textContent;e.textContent=t2s(e.dataset.zh);});}
+let _oc=null;
+async function getOC(){if(_oc)return _oc;_oc=await OpenCC.Converter({from:'tw',to:'cn'});return _oc;}
+async function simplifyPage(){const oc=await getOC();const el=document.querySelectorAll("#view *");el.forEach(e=>{if(e.children.length===0&&e.textContent&&e.textContent.trim()){if(!e.dataset.zh)e.dataset.zh=e.textContent;e.textContent=oc(e.dataset.zh);}});}
 const T2S={"總":"总","覽":"览","看":"看","板":"板","智":"智","檔":"档","案":"案","儲":"储","時":"时","間":"间","郵":"邮","件":"件","隊":"队","佇":"伫","列":"列","號":"号","編":"编","資":"资","訊":"讯","補":"补","償":"偿","務":"务","狀":"状","態":"态","東":"东","歷":"历","史":"史","匯":"汇","導":"导","聯":"联","結":"结","構":"构","語":"语","言":"言","簡":"简","體":"体","轉":"转","換":"换","實":"实","際":"际","檢":"检","視":"视","產":"产","歸":"归","檔":"档","備":"备","份":"份","驗":"验","證":"证","課":"课","請":"请","籤":"签","標":"标","畫":"画","環":"环","統":"统","計":"计","鈦":"钛","頻":"频","繁":"繁","預":"预","覽":"览","存":"存","取":"取","填":"填","寫":"写","營":"营","運":"运","權":"权","限":"限","記":"记","錄":"录","結":"结","束":"束","項":"项","開":"开","啟":"启","關":"关","閉":"闭","較":"较","頻":"频"};
 function t2s(s){return s.split("").map(ch=>T2S[ch]||ch).join("");}
 // ===== 英文 UI 字典：繁中 → 英文（英式商務） =====
