@@ -5,7 +5,7 @@ const SB = {
   url: 'https://xlcyumbyqcwedqwpspzs.supabase.co',
   key: 'sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5'
 };
-const SMTP = { host: 'mail.pony-it.com', port: 587, secure: false, pass: '123456' };
+const SMTP = { host: 'mail.pony-it.com', port: 587, secure: false, pass: process.env.MAIL_PWD || '123456' };
 
 async function api(path, opts = {}) {
   const r = await fetch(SB.url + '/rest/v1/' + path, {

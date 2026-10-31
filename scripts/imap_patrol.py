@@ -8,7 +8,7 @@ socket.setdefaulttimeout(20)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MB = json.load(open(os.path.join(ROOT, "mailboxes.json"), encoding="utf-8"))
-HOST = MB["server"]["host"]; PORT = MB["server"]["imap_port"]; PWD = "123456"
+HOST = MB["server"]["host"]; PORT = MB["server"]["imap_port"]; PWD = os.environ.get("MAIL_PWD", "123456")
 EMAILS_PATH = os.path.join(ROOT, "emails.json")
 emails = json.load(open(EMAILS_PATH, encoding="utf-8"))
 

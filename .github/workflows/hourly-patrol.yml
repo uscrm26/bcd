@@ -30,9 +30,12 @@ jobs:
       - name: 跑 IMAP 巡查
         env:
           ARK_KEY: ${{ secrets.ARK_KEY }}
+          MAIL_PWD: ${{ secrets.MAIL_PWD }}
         run: python3 scripts/imap_patrol.py
 
       - name: 跑外發佇列
+        env:
+          MAIL_PWD: ${{ secrets.MAIL_PWD }}
         run: node send_pending.js
 
       - name: 寫巡查留痕
