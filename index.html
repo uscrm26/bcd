@@ -404,7 +404,29 @@ const auditLog=[];
 function nowBJ(){const d=new Date();const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}
 function ownerName(no){const u=USERS.find(x=>x.id===ownerMap[no]);return u?u.nm:"未分配";}
 function addAudit(action,detail){auditLog.unshift({t:nowBJ(),user:CURRENT_USER.nm,action,detail});
+  try{const saved=JSON.parse(localStorage.getItem("bcd_audit")||"[]");saved.unshift({t:nowBJ(),user:CURRENT_USER.nm,action,detail});localStorage.setItem("bcd_audit",JSON.stringify(saved.slice(0,500)));}catch(e){}
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action,target_client:"",detail:detail||""});
+}
+function persistCust(no){
+  try{
+    const c=DATA.customers.find(x=>x.no===no);if(!c)return;
+    const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
+    saved[no]={aiTodos:c.aiTodos||[],aiLastAt:c.aiLastAt||null,status:c.status};
+    localStorage.setItem("bcd_cust_override",JSON.stringify(saved));
+    if(DATA.timeline&&DATA.timeline[no])localStorage.setItem("bcd_tl_"+no,JSON.stringify(DATA.timeline[no]));
+    if(clientAudit[no])localStorage.setItem("bcd_client_audit_"+no,JSON.stringify(clientAudit[no]));
+  }catch(e){}
+}
+function loadPersisted(){
+  try{
+    const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
+    Object.keys(saved).forEach(no=>{const c=DATA.customers.find(x=>String(x.no)===String(no));if(c){Object.assign(c,saved[no]);}});
+    DATA.timeline=DATA.timeline||{};
+    DATA.customers.forEach(c=>{const t=localStorage.getItem("bcd_tl_"+c.no);if(t){try{DATA.timeline[c.no]=JSON.parse(t);}catch(e){}}});
+    clientAudit=clientAudit||{};
+    DATA.customers.forEach(c=>{const a=localStorage.getItem("bcd_client_audit_"+c.no);if(a){try{clientAudit[c.no]=JSON.parse(a);}catch(e){}}});
+    const a=JSON.parse(localStorage.getItem("bcd_audit")||"[]");if(a.length)auditLog=a;
+  }catch(e){}
 }
 function addClientAudit(no,action,oldv,newv,reason){const rec={t:nowBJ(),user:CURRENT_USER.nm,action,old:oldv,new:newv,reason:reason||""};clientAudit[no]=clientAudit[no]||[];clientAudit[no].unshift(rec);addAudit(action,`客戶 ${no} ${oldv||""} → ${newv||""}`);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"client_audit",target_client:String(no),detail:JSON.stringify(rec)});persistCust(no);}
 // 佣金：成功單記錄，超管手動標記
