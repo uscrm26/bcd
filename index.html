@@ -624,7 +624,14 @@ const EN={
 "在 Supabase 後台管理檔案":"Manage files in Supabase","倉庫資訊":"Repository info","倉庫位址":"Repository","工作副本":"Working copy","最後同步":"Last sync","立即全量備份":"Back up now","自動備份設定":"Auto backup settings","儲存設定":"Save settings","同步任務日誌":"Sync log",
 "帳戶管理":"Accounts","真實姓名":"Full name","登入帳號":"Login","角色":"Role","上級":"Manager","名下客戶":"Customers","最近登入":"Last login","狀態":"Status","新增下屬":"Add report","新增帳戶":"Add account","超級管理員":"Super admin","主管":"Supervisor","業務員":"Agent",
 "修改密碼":"Change password","輸入新密碼":"Enter new password","主題 Theme":"Theme","深色 Dark":"Dark","淺色 Light":"Light","時鐘格式 Clock":"Clock format","12 小時制":"12-hour","24 小時制":"24-hour","語言 Language":"Language","個人設定":"Preferences",
-"搜索收件人 / 主題":"Search recipient / subject","搜尋經紀 / 聯絡人 / 信箱":"Search broker / contact / email","篩選動作":"Filter action","搜尋文件名、公司名、法人":"Search file, company, owner"
+"搜索收件人 / 主題":"Search recipient / subject","搜尋經紀 / 聯絡人 / 信箱":"Search broker / contact / email","篩選動作":"Filter action","搜尋文件名、公司名、法人":"Search file, company, owner",
+"變更狀態":"Change status","以該客戶名義發信":"Send as this customer","跟進備註":"Follow-up note","AI 跟進分析":"AI follow-up analysis","編輯客戶資料":"Edit customer","超級管理員":"Super admin",
+"護照狀態":"Passport status","License status":"License status","護照 Status":"Passport","變更 Status":"Change status","Edit客戶資料":"Edit customer","跟進Notes":"Follow-up notes",
+"北京":"Beijing","西雅圖":"Seattle","丹佛":"Denver","芝加哥":"Chicago","紐約":"New York",
+"尚未為該客戶進行 AI 分析":"No AI analysis yet for this customer","點擊下方按鈕開始":"Click the button below to start",
+"AI 分析狀態":"AI Status","從未為該客戶進行 AI 分析，點擊下方按鈕開始。":"No AI analysis yet. Click the button below to start.",
+"僅我名下":"My customers","全部客戶":"All customers","統計範圍":"Scope","照片":"Photos","文件":"Docs",
+"選擇經紀人":"Select broker","隨機選擇":"Random pick","暫停分析":"Pause analysis","開始分析":"Start analysis","確認寫入":"Confirm save"
 };
 function enMap(s){if(!s)return s;if(EN[s.trim()])return EN[s.trim()];let out=s;Object.keys(EN).sort((a,b)=>b.length-a.length).forEach(k=>{if(out.includes(k))out=out.split(k).join(EN[k]);});return out;}
 function applyLangText(){if(CURRENT_LANG!=="en")return;[document.getElementById("view"),document.getElementById("modal")].forEach(root=>{if(!root)return;root.querySelectorAll("*").forEach(el=>{if(el.children.length===0){const t=el.textContent;if(t&&t.trim()){const tr=enMap(t);if(tr!==t)el.textContent=tr;}}if(el.placeholder){const p=enMap(el.placeholder);if(p!==el.placeholder)el.placeholder=p;}});});}
