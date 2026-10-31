@@ -109,6 +109,26 @@ def build_ctx(nm, data, all_emails, sent):
             lines.append(f"- to: {s.get('to','')}｜{s.get('subject','')}｜{(s.get('body','') or '')[:150]}")
     return "\n".join(lines)
 
+def call_ai(prompt):
+    ep="https://ark.cn-beijing.volces.com/api/v3/chat/completions"
+    models=[]
+    try:
+        for m in json.load(open(os.path.join(ROOT,"dbboard","ai_models.json"),encoding="utf-8")):
+            if m.get("enabled",True): models.append(m.get("endpoint"))
+    except Exception: pass
+    if not models: models=[os.environ.get("ARK_MODEL","ep-20261031163615-7dhwh")]
+    for mdl in models:
+        try:
+            req=urllib.request.Request(ep,data=json.dumps({"model":mdl,"messages":[{"role":"system","content":AI_SYS},{"role":"user","content":prompt}]}).encode(),headers={"Authorization":"Bearer "+AI_KEY,"Content-Type":"application/json"})
+            r=json.loads(urllib.request.urlopen(req,timeout=40).read())
+            out=r["choices"][0]["message"]["content"].strip()
+            if out:
+                print(f"[AI OK] 用 {mdl}")
+                return out
+        except Exception as e:
+            print(f"[AI 換台] {mdl} 失敗，跳下一個：{e}")
+    return ""
+
 if AI_KEY and os.path.exists(DATA_PATH):
     try:
         data = json.load(open(DATA_PATH,encoding="utf-8"))
@@ -118,15 +138,7 @@ if AI_KEY and os.path.exists(DATA_PATH):
             ctx = build_ctx(nm, data, emails, sent)
             prompt = ctx + "\n\n【本次新郵件】\n寄件人："+nm["from"]+"\n主旨："+nm["subject"]+"\n正文：\n"+nm["body"][:1800]
             try:
-                if USE_ARK:
-                    ep="https://ark.cn-beijing.volces.com/api/v3/chat/completions"; mdl=os.environ.get("ARK_MODEL","ep-20261031163615-7dhwh")
-                else:
-                    ep="https://openrouter.ai/api/v1/chat/completions"; mdl="google/gemma-4-31b-it:free"
-                req = urllib.request.Request(ep,
-                    data=json.dumps({"model":mdl,"messages":[{"role":"system","content":AI_SYS},{"role":"user","content":prompt}]}).encode(),
-                    headers={"Authorization":"Bearer "+AI_KEY,"Content-Type":"application/json"})
-                r = json.loads(urllib.request.urlopen(req,timeout=40).read())
-                interp = r["choices"][0]["message"]["content"].strip()
+                interp = call_ai(prompt)
             except Exception as e:
                 interp = ""
                 print(f"[AI FAIL] {nm['client']}: {e}")
