@@ -582,7 +582,7 @@ function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref
 const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});
 const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};
 document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[key][i])g.textContent=grpMap[key][i];});
-document.querySelector(".brand .bs").textContent=L.sub;
+const bsEl=document.querySelector(".brand .bs");if(bsEl)bsEl.textContent=L.sub;
 document.getElementById("langBtn").textContent=L.label+" ▾";
 const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;
 document.querySelectorAll("#view [data-zh]").forEach(e=>delete e.dataset.zh);
