@@ -645,7 +645,28 @@ const EN={
 "尚未為該客戶進行 AI 分析":"No AI analysis yet for this customer","點擊下方按鈕開始":"Click the button below to start",
 "AI 分析狀態":"AI Status","從未為該客戶進行 AI 分析，點擊下方按鈕開始。":"No AI analysis yet. Click the button below to start.",
 "僅我名下":"My customers","全部客戶":"All customers","統計範圍":"Scope","照片":"Photos","文件":"Docs",
-"選擇經紀人":"Select broker","隨機選擇":"Random pick","暫停分析":"Pause analysis","開始分析":"Start analysis","確認寫入":"Confirm save"
+"選擇經紀人":"Select broker","隨機選擇":"Random pick","暫停分析":"Pause analysis","開始分析":"Start analysis","確認寫入":"Confirm save",
+"北京":"Beijing","西雅圖":"Seattle","丹佛":"Denver","芝加哥":"Chicago","紐約":"New York",
+"新線索":"New Lead","收集中":"Collecting","待填表":"Form Pending","待提交":"Broker Submission Pending","已Quote":"Quoted","Bond Issued":"Bond Issued",
+"處理中":"In Progress","已出單":"Bond Issued","待補件":"Docs Needed","已收報價":"Quoted","擱置":"On Hold","總客戶":"Total",
+"尚無更新":"No activity yet","依AddTime起算":"based on creation time",
+"新增客戶":"Add customer","匯出 CSV":"Export CSV","AI 解讀所有客戶":"AI analyze all customers",
+"卡片View":"Card view","表格View":"Table view","搜尋No. / 公司名 / Owner / EIN":"Search No. / company / owner / EIN",
+"License正常":"License valid","License過期":"License expired","等待客戶Confirm":"Awaiting client confirmation","Broker要求補件":"Broker requested docs",
+"共 436 筆，預覽前 100 筆，輸入關鍵字或Status篩選查看All":"436 records, showing 100. Type keyword or filter by status",
+"Notes（人工 / AI 參考）":"Notes (manual / AI)","2 優先新":"2 new priority","展開":"Expand",
+"收件箱":"Inbox","發件箱":"Outbox","搜尋To / Subject":"Search To / Subject",
+"已翻譯":"Translated","已解讀":"Analyzed","未處理":"Unprocessed","回覆":"Reply","無需處理":"No action needed",
+"北京時間":"Beijing time","美國東岸":"US East Coast","重新解讀":"Re-analyze","標記已處理":"Mark processed",
+"中文翻譯":"Chinese translation","AI 翻譯":"AI translation",
+"搜尋公司名、Owner、檔名":"Search company / owner / filename","歸屬":"Owner","建檔":"Created","份檔案":"files",
+"完整Archives":"Full archive","內含：":"Includes:","客戶資訊摘要":"Customer summary","基礎數據 JSON":"Base data JSON","檔案索引清單":"File index","產生 / 下載":"Generate / Download","同步 GitHub":"Sync to GitHub",
+"收到":"received email from","的來信":"",
+"新增跟進":"Added follow-up","狀態變更":"Status changed","歸屬變更":"Owner changed","AI 解讀完成":"AI analysis done",
+"業務狀態":"Status","公司名稱":"Company","法人":"Owner","EIN":"EIN","內部參考編號":"Internal ref","綁定信箱":"Linked mailbox","護照狀態":"Passport status",
+"資料收集中":"Collecting info","等待客戶確認":"Awaiting client confirmation",
+"Add客戶":"Add customer","超級管理員":"Super admin"
+
 };
 function enMap(s){if(!s)return s;if(EN[s.trim()])return EN[s.trim()];let out=s;Object.keys(EN).sort((a,b)=>b.length-a.length).forEach(k=>{if(out.includes(k))out=out.split(k).join(EN[k]);});return out;}
 function applyLangText(){if(CURRENT_LANG!=="en")return;[document.getElementById("view"),document.getElementById("modal")].forEach(root=>{if(!root)return;root.querySelectorAll("*").forEach(el=>{if(el.children.length===0){const t=el.textContent;if(t&&t.trim()){const tr=enMap(t);if(tr!==t)el.textContent=tr;}}if(el.placeholder){const p=enMap(el.placeholder);if(p!==el.placeholder)el.placeholder=p;}});});}
@@ -799,9 +820,19 @@ function addLog(){const i=document.getElementById("manualLog");if(!i.value)retur
 R.worklog=()=>`<h1>工作通知</h1>
 <div class="panel">${NOTIFS.map(n=>`<div class="logrow" style="cursor:pointer" onclick="openNotif('${n.goto}')"><span class="t">${n.t}</span><span class="c"><span class="who" style="display:inline-block;background:var(--ind);color:#fff;border-radius:6px;padding:1px 7px;font-size:11px;margin-right:6px">${esc(n.who)}</span>${n.unread?"<b style='color:var(--err)'>● </b>":""}${esc(n.txt)}</span></div>`).join("")||"<div class='empty'>尚無通知</div>"}</div>`;
 R.worklog_admin=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
-return `<h1>系統工作記錄</h1>
-<div class="panel"><div class="search"><input id="manualLog" placeholder="手動新增今日工作筆記"><button class="btn primary" onclick="addLog()">新增記錄</button></div>
-${DATA.logs.map(l=>`<div class="logrow"><span class="t">${l.t}</span><span class="c">${l.c}</span><span class="o">${l.o}</span></div>`).join("")}
+return `<h1>System Log</h1>
+<div class="panel" style="padding:18px">
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+    <input id="manualLog" placeholder="手動新增今日工作筆記 / Add a work note for today" style="flex:1;padding:10px 14px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;color:var(--text);font-size:13px">
+    <button class="btn primary" onclick="addLog()">新增記錄</button>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:2px">
+  ${DATA.logs.map(l=>`<div style="display:flex;gap:12px;padding:12px;border-radius:10px;background:var(--bg2);margin-bottom:6px;align-items:flex-start">
+    <span style="flex:0 0 140px;font-size:11px;color:var(--mut);font-family:monospace;padding-top:2px">${l.t}</span>
+    <span style="flex:1;font-size:13px;line-height:1.7;color:var(--text)">${l.c}</span>
+    ${l.o?`<span style="flex:0 0 auto;font-size:11px;color:var(--ok);background:rgba(34,197,94,.1);padding:2px 8px;border-radius:6px">${l.o}</span>`:""}
+  </div>`).join("")}
+  </div>
 </div>`;}
 R.commission=()=>{
   const me=CURRENT_USER.id;
@@ -1484,7 +1515,7 @@ function writeMailTimeline(e,zh,interp){
   DATA.timeline[cust.no]=DATA.timeline[cust.no]||[];
   if(DATA.timeline[cust.no].some(x=>x.key===key))return;
   DATA.timeline[cust.no].unshift({t:e.t,who:"AI 解讀",txt:"📧 "+(e.from||"").split("<")[0].trim()+"｜"+(e.sub||"")+"："+summary,key:key});persistCust(cust.no);
-  addAudit("AI 解讀完成","郵件 "+e.sub+" 已翻譯並寫入客戶時間線");
+  addAudit("AI 解讀完成","郵件 "+e.sub+" 已翻譯並寫入客戶時間線");DATA.logs.unshift({t:nowBJ(),c:"🤖 AI 自動解讀 "+cust.name+" 收到的郵件："+e.sub,o:"AI"});
   toast("AI 解讀已寫入客戶時間線");
 }
 
