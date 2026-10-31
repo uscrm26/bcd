@@ -1171,8 +1171,10 @@ const tb=document.getElementById("qtbody");if(!tb)return;
 let html="";
 list.forEach((e,idx)=>{
  const open=window._openMail===e.t;
- html+=`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${e.t.replace(/'/g,"\\'")}')">${esc(e.sub)}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
- if(open){const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t]||!!e.auto_interp;
+ const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t]||!!e.auto_interp;
+ const tags=(hasZH?"<span class='tag t-blue' style='margin-left:6px'>已翻譯</span>":"")+(hasIP?"<span class='tag t-green' style='margin-left:6px'>已解讀</span>":"");
+ html+=`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${e.t.replace(/'/g,"\\'")}')">${esc(e.sub)}${tags}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
+ if(open){
   const autoText=e.auto_interp||"";
  html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
  <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
@@ -1182,7 +1184,7 @@ list.forEach((e,idx)=>{
   <button class="btn small" onclick="aiInterpret(${idx})">${(INTERP_CACHE[e.t]||autoText)?"隱藏 AI 解讀":"AI 解讀"}</button>
   <button class="btn small" style="${e.done?"background:var(--green,#2ecc71);color:#fff;border-color:transparent":""}" onclick="markProcessed('${e.t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
- <div id="zh_${idx}" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(ZH_CACHE[e.t]||"")}</div>
+ <div id="zh_${idx}" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto;margin-bottom:10px">${esc(ZH_CACHE[e.t]||"")}</div>
  <div id="ip_${idx}" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.1);border:1px solid rgba(80,200,140,.3);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(INTERP_CACHE[e.t]||autoText||"")}</div>
  </div></td></tr>`;}
 });
@@ -1241,7 +1243,7 @@ function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
   <button class="btn small" onclick="aiInterpretKey('${t.replace(/'/g,"\\'")}')">${(INTERP_CACHE[t]||autoText)?"隱藏 AI 解讀":"AI 解讀"}</button>
   <button class="btn small" style="${e.done?"background:#2ecc71;color:#fff;border-color:transparent":""}" onclick="markProcessedKey('${t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
  </div>
- <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(ZH_CACHE[t]||"")}</div>
+ <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto;margin-bottom:10px">${esc(ZH_CACHE[t]||"")}</div>
  <div id="ipBox" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.1);border:1px solid rgba(80,200,140,.3);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(INTERP_CACHE[t]||autoText||"")}</div>
  <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
 function markProcessedKey(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e.done=true;e.unread=false;saveMailDone(t,true);addAudit("已處理來信",e.sub);closeModal();render();toast("已標記為已處理，紅點已清除");}
