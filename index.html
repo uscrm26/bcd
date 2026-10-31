@@ -1792,7 +1792,7 @@ async function runBatchAI(){
       DATA.timeline[no]=DATA.timeline[no]||[];
       const batchItem={t:nowBJ(),who:"AI 批量分析 · "+CURRENT_USER.nm,txt:"🤖 "+(j.summary||""),key:"batch_"+Date.now()+"_"+no};
       DATA.timeline[no].unshift(batchItem);
-      sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(batchItem)});
+      cust.aiLastAt=Date.now();persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(batchItem)});sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_last_at",target_client:String(no),detail:String(Date.now())});
     }catch(e){
       if(row){row.firstChild.textContent="❌";row.style.background="rgba(248,113,113,.08)";}
     }
