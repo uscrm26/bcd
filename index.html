@@ -382,7 +382,7 @@ const PHOTO={
 "73":"docs/clients/Leidos/Leidos%20Holdings%20LLC——法人照片.jpg",
 "75":"docs/clients/Lennar/Lennar%20LLC——法人照片.png"
 };
-const DATA={};
+const DATA={customers:[],statuses:[],timeline:[],finance:{},policy:{},companyDocs:{},todos:[],archive:{},emails:[],daily:[],notes:[],files:{},logs:[],mailboxes:[]};
 // 系統自動 4 位不重複編號，放最左邊搜索用；原 no 保留為內部序號
 (function(){let seq=1000;(DATA.customers||[]).forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
