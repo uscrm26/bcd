@@ -889,8 +889,8 @@ function aiStatusCard(ts){
   const mins=Math.floor(diff/60000);
   let ago;
   if(mins<1)ago="剛才";else if(mins<60)ago=mins+" 分鐘前";else if(mins<1440)ago=Math.floor(mins/60)+" 小時前";else ago=Math.floor(mins/1440)+" 天前";
-  if(LANG==='en'){return "Last AI analysis: "+timeStr+" (CST)<br>"+ago+" ago.";}
-  if(LANG==='zhcn'){return "最后一次 AI 分析时间："+timeStr+"（北京时间）<br>距今已过"+ago+"。";}
+  if(CURRENT_LANG==='en'){return "Last AI analysis: "+timeStr+" (CST)<br>"+ago+" ago.";}
+  if(CURRENT_LANG==='cn'){return "最后一次 AI 分析时间："+timeStr+"（北京时间）<br>距今已过"+ago+"。";}
   return "最後一次 AI 分析時間："+timeStr+"（北京時間）<br>距今已過"+ago+"。";
 }
 function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `<div class="empty">請選擇左側客戶以查看詳細資料</div>`;const s=st(c.status);
@@ -901,8 +901,8 @@ return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6
   </div>
   <div style="flex:0 0 200px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
     <div style="font-size:28px;margin-bottom:6px">🤖</div>
-    <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:6px">${LANG==='en'?'AI Status':LANG==='zhcn'?'AI 分析状态':'AI 分析狀態'}</div>
-    <div style="font-size:11px;color:var(--mut);line-height:1.6">${c.aiLastAt?aiStatusCard(c.aiLastAt):(LANG==='en'?'No AI analysis yet. Click the button below to start.':LANG==='zhcn'?'从未为该客户进行 AI 分析，点击下方按钮开始。':'從未為該客戶進行 AI 分析，點擊下方按鈕開始。')}</div>
+    <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:6px">${CURRENT_LANG==='en'?'AI Status':CURRENT_LANG==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.6">${c.aiLastAt?aiStatusCard(c.aiLastAt):(CURRENT_LANG==='en'?'No AI analysis yet. Click the button below to start.':CURRENT_LANG==='cn'?'从未为该客户进行 AI 分析，点击下方按钮开始。':'從未為該客戶進行 AI 分析，點擊下方按鈕開始。')}</div>
   </div>
   <div style="flex:1;min-width:260px">
   <div class="field"><div class="k">公司名稱</div><div class="v">${esc(c.name)}</div></div>
@@ -1574,7 +1574,7 @@ function batchAIAnalyze(){
         en:"The system will analyze "+t.length+" customers' application status, submitting their recent emails and documents to AI.",
         zhcn:"系统将为您分析以下 "+t.length+" 位客户的申请状态，并向 AI 提交其最近往来邮件及档案等基础信息。"
       };
-      d.textContent=txt[LANG]||txt.zh;
+      d.textContent=txt[CURRENT_LANG]||txt.zh;
     }
     const bl=document.getElementById("batchList");
     bl.innerHTML=t.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
