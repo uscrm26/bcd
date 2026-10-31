@@ -572,7 +572,7 @@ function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-function render(){syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
+function render(){syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
@@ -2461,6 +2461,15 @@ R.system=()=>{
        <div class="fg"><input id="set_ark" type="password" placeholder="粘贴你的火山方舟 API Key" value="${esc(localStorage.getItem('bcd_ark_key')||'')}" style="width:100%"></div><div class="fg"><label>GitHub Token（用於上傳客戶附件）</label><input id="set_ghtok" type="password" placeholder="ghp_開頭的 Personal Access Token" value="${esc(localStorage.getItem('bcd_ghtok')||'')}" style="width:100%"></div>
      </div>
      <div style="padding:16px;background:var(--bg2);border-radius:12px">
+       <div style="font-size:12px;color:var(--mut);margin-bottom:6px">AI 模型輪轉（185 手機方舟帳號）</div>
+       <div style="font-size:13px;margin-bottom:10px">每個模型免費額度獨立。勾選啟用的模型，AI 解讀會由上到下依序嘗試，某個額度燒完自動跳下一個。新增模型後貼入 endpoint（ep-開頭）即可。</div>
+       <div id="aimodels_list" style="margin-bottom:10px"></div>
+       <div class="fg"><input id="aim_name" placeholder="模型名稱，如 DeepSeek-V4.1" style="width:100%;margin-bottom:6px"></div>
+       <div class="fg"><input id="aim_ep" placeholder="endpoint，如 ep-20261031163615-7dhwh" style="width:100%;margin-bottom:8px"></div>
+       <button class="btn" onclick="saveAiModels()">儲存模型清單到 GitHub</button>
+       <div id="aimodels_msg" style="font-size:12px;margin-top:6px"></div>
+     </div>
+     <div style="padding:16px;background:var(--bg2);border-radius:12px">
        <div style="font-size:12px;color:var(--mut);margin-bottom:6px">批量 AI 使用次數</div>
        <div style="font-size:14px;font-weight:600;margin-bottom:4px">超級管理員 3 次 / 24 小時</div>
        <div style="font-size:12px;color:var(--mut)">其他帳戶 1 次 / 24 小時，凌晨 5 點重置</div>
@@ -2525,6 +2534,16 @@ function toggleAiPerm(uid,key){const u=USERS.find(x=>x.id===uid);if(!u)return;u[
  addAudit("變更 AI 權限","為 "+u.nm+" "+(u[key]?"開啟":"關閉")+"了"+m[0]);
  render();toast(u.nm+" 的"+m[1]+(u[key]?"已開啟":"已關閉"));}
 function saveSettings(){const v=Number(document.getElementById("set_cutoff").value);if(v>=0&&v<=23){SETTINGS.cutoff_hour=v;}const ak=document.getElementById("set_ark");if(ak)localStorage.setItem("bcd_ark_key",ak.value.trim());addAudit("修改系統設定","切日時間改為 "+v);render();toast("設定已儲存，全系統統計邏輯更新");}
+let AIMODELS=[];
+async function loadAiModels(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/ai_models.json");AIMODELS=await r.json();}catch(e){AIMODELS=[];}const box=document.getElementById("aimodels_list");if(!box)return;box.innerHTML=AIMODELS.map((m,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)">
+<input type="checkbox" data-i="${i}" ${m.enabled!==false?"checked":""} onchange="AIMODELS[${i}].enabled=this.checked">
+<span style="flex:1;font-size:13px">${esc(m.name||m.endpoint)}<br><span style="font-size:11px;color:var(--mut)">${esc(m.endpoint)}｜${esc(m.account||'')}</span></span>
+<button class="btn" style="padding:2px 8px;font-size:12px" onclick="if(confirm('刪除這個模型？')){AIMODELS.splice(${i},1);renderAiModelsList();}">刪</button></div>`).join("");}
+function renderAiModelsList(){const box=document.getElementById("aimodels_list");if(!box)return;box.innerHTML=AIMODELS.map((m,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)">
+<input type="checkbox" data-i="${i}" ${m.enabled!==false?"checked":""} onchange="AIMODELS[${i}].enabled=this.checked">
+<span style="flex:1;font-size:13px">${esc(m.name||m.endpoint)}<br><span style="font-size:11px;color:var(--mut)">${esc(m.endpoint)}｜${esc(m.account||'')}</span></span>
+<button class="btn" style="padding:2px 8px;font-size:12px" onclick="if(confirm('刪除這個模型？')){AIMODELS.splice(${i},1);renderAiModelsList();}">刪</button></div>`).join("");}
+async function saveAiModels(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("aimodels_msg");if(!tok){msg.textContent="請先填上面的 GitHub Token";return;}const n=document.getElementById("aim_name").value.trim();const ep=document.getElementById("aim_ep").value.trim();if(ep){AIMODELS.push({name:n||ep,endpoint:ep,account:"185 手機方舟帳號",enabled:true,note:"手動新增"});document.getElementById("aim_name").value="";document.getElementById("aim_ep").value="";}const body=JSON.stringify(AIMODELS,null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新 AI 模型清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存到 GitHub，下次巡查生效";toast("模型清單已更新");loadAiModels();}catch(e){msg.textContent="儲存失敗："+e;}}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
 function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
