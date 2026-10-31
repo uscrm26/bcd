@@ -1121,6 +1121,11 @@
     {
       "id": "new",
       "lb": "新線索",
+      "cl": "t-gray"
+    },
+    {
+      "id": "waiting",
+      "lb": "等待啟動",
       "cl": "t-blue"
     },
     {
@@ -1129,44 +1134,49 @@
       "cl": "t-blue"
     },
     {
+      "id": "pending_client",
+      "lb": "等待客戶補交資料",
+      "cl": "t-amber"
+    },
+    {
       "id": "form",
       "lb": "待填申請表",
       "cl": "t-amber"
     },
     {
-      "id": "submit",
-      "lb": "待提交Broker",
+      "id": "reply",
+      "lb": "待回覆郵件",
       "cl": "t-amber"
     },
     {
-      "id": "supply",
-      "lb": "Broker要求補件",
-      "cl": "t-red"
-    },
-    {
-      "id": "quote",
-      "lb": "報價已收到",
-      "cl": "t-amber"
-    },
-    {
-      "id": "confirm",
-      "lb": "等待客戶確認",
+      "id": "broker",
+      "lb": "等待報關行審核",
       "cl": "t-blue"
     },
     {
-      "id": "done",
-      "lb": "Bond已出單",
-      "cl": "t-green"
+      "id": "quote",
+      "lb": "收到報價",
+      "cl": "t-amber"
     },
     {
-      "id": "reject",
-      "lb": "申請被拒",
-      "cl": "t-gray"
+      "id": "paid",
+      "lb": "財務已付款",
+      "cl": "t-amber"
+    },
+    {
+      "id": "done",
+      "lb": "已獲擔保文件",
+      "cl": "t-green"
     },
     {
       "id": "hold",
       "lb": "擱置暫停",
       "cl": "t-gray"
+    },
+    {
+      "id": "reject",
+      "lb": "申請被拒",
+      "cl": "t-red"
     }
   ],
   "customers": [
