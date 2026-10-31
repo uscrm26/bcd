@@ -123,7 +123,24 @@ def call_ai(prompt):
             r=json.loads(urllib.request.urlopen(req,timeout=40).read())
             out=r["choices"][0]["message"]["content"].strip()
             if out:
-                print(f"[AI OK] 用 {mdl}")
+                try:
+                    u=r.get("usage",{})
+                    upath=os.path.join(ROOT,"dbboard","token_usage.json")
+                    usage={}
+                    if os.path.exists(upath):
+                        try: usage=json.load(open(upath,encoding="utf-8"))
+                        except Exception: usage={}
+                    rec=usage.get(mdl,{"total":0,"calls":0,"prompt":0,"completion":0})
+                    rec["total"]+=u.get("total_tokens",0)
+                    rec["calls"]+=1
+                    rec["prompt"]+=u.get("prompt_tokens",0)
+                    rec["completion"]+=u.get("completion_tokens",0)
+                    rec["last"]=datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+                    usage[mdl]=rec
+                    json.dump(usage,open(upath,"w",encoding="utf-8"),ensure_ascii=False,indent=2)
+                except Exception as ue:
+                    print(f"[usage 記錄失敗] {ue}")
+                print(f"[AI OK] 用 {mdl}，本次 {u.get('total_tokens','?')} tokens")
                 return out
         except Exception as e:
             print(f"[AI 換台] {mdl} 失敗，跳下一個：{e}")
