@@ -1517,23 +1517,33 @@ function batchAIAnalyze(){
     <div style="height:8px;background:var(--bg2);border-radius:4px;overflow:hidden"><div id="batchBar" style="height:100%;width:0%;background:linear-gradient(90deg,#6366f1,#8b5cf6);transition:width .3s"></div></div>
   </div>
   <div id="batchList" style="max-height:320px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:10px;background:var(--bg2)"></div>
-  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" id="batchStartBtn" onclick="runBatchAI(${targets.map(c=>"'"+c.no+"'").join(",")})">開始分析</button></div>`);
+  <div class="mrow" style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="closeModal()">取消</button><button class="btn" id="batchPauseBtn" style="display:none" onclick="pauseBatchAI()">⏸ 暫停分析</button><button class="btn primary" id="batchStartBtn" onclick="runBatchAI(${targets.map(c=>"'"+c.no+"'").join(",")})">開始分析</button></div>`);
   const bl=document.getElementById("batchList");
-  bl.innerHTML=targets.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span style="color:var(--mut);width:20px">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
+  bl.innerHTML=targets.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
   used[CURRENT_USER.id][dayKey]=count+1;
   localStorage.setItem("bcd_batch_ai_used",JSON.stringify(used));
 }
 async function runBatchAI(){
   const nos=[...arguments];
   const btn=document.getElementById("batchStartBtn");
+  const pauseBtn=document.getElementById("batchPauseBtn");
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span> 分析中…';
-  window._batchResults=[];
+  if(pauseBtn){pauseBtn.style.display="inline-block";pauseBtn.textContent="⏸ 暫停分析";}
+  window._batchPaused=false;
+  window._batchResults=window._batchResults||[];
+  const doneNos=window._batchResults.map(r=>r.no);
+  const todoNos=nos.filter(n=>!doneNos.includes(n));
   const total=nos.length;
-  for(let i=0;i<nos.length;i++){
-    const no=nos[i];
+  for(let i=0;i<todoNos.length;i++){
+    if(window._batchPaused){
+      if(pauseBtn)pauseBtn.textContent="▶ 繼續分析";
+      btn.innerHTML="已暫停";
+      break;
+    }
+    const no=todoNos[i];
     const row=document.getElementById("batch_"+no);
-    if(row){row.firstChild.innerHTML='<span class="spinner"></span>';row.style.background="rgba(139,92,246,.08)";}
+    if(row){row.firstChild.innerHTML='<span class="spinner" style="width:14px;height:14px;border:2px solid rgba(139,92,246,.3);border-top-color:#8b5cf6;border-radius:50%;animation:spin .8s linear infinite;display:inline-block"></span>';row.style.background="rgba(139,92,246,.08)";}
     try{
       const cust=DATA.customers.find(x=>x.no===no);
       const mails=recentMailsForCustomer(cust,7);
@@ -1549,17 +1559,24 @@ async function runBatchAI(){
     }catch(e){
       if(row){row.firstChild.textContent="❌";row.style.background="rgba(248,113,113,.08)";}
     }
-    const done=i+1;
+    const done=window._batchResults.length;
     const pct=Math.round(done/total*100);
     const bar=document.getElementById("batchBar");const pctEl=document.getElementById("batchPct");
     if(bar)bar.style.width=pct+"%";
     if(pctEl)pctEl.textContent=done+" / "+total+"（"+pct+"%）";
   }
   btn.disabled=false;
-  btn.innerHTML="✓ 確認寫入";
-  btn.onclick=applyBatchResults;
+  if(pauseBtn)pauseBtn.style.display="none";
+  if(window._batchPaused){
+    btn.innerHTML="▶ 繼續分析剩餘 "+(total-window._batchResults.length)+" 位";
+    btn.onclick=function(){window._batchPaused=false;if(pauseBtn)pauseBtn.textContent="⏸ 暫停分析";runBatchAI(...nos);};
+  } else {
+    btn.innerHTML="✓ 確認寫入";
+    btn.onclick=applyBatchResults;
+  }
   localStorage.setItem("bcd_batch_ai_last",nowBJ()+" 完成 "+window._batchResults.length+" 位客戶");
 }
+function pauseBatchAI(){window._batchPaused=true;}
 function applyBatchResults(){
   let n=0;
   (window._batchResults||[]).forEach(r=>{
