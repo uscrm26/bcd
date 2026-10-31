@@ -12,7 +12,7 @@ jobs:
       - name:  checkout 程式碼
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
 
       - name: 設定 Python
         uses: actions/setup-python@v5
@@ -64,6 +64,7 @@ jobs:
         run: |
           git config user.name "Kevin W"
           git config user.email "kevinyama@local"
+          git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/uscrm26/bcd.git
           git add -A
           if ! git diff --staged --quiet; then
             git commit -m "auto: 每小時巡查留痕"
