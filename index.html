@@ -877,7 +877,7 @@ function custGridHTML(){
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=custGridHTML();}
 function myTeamIds(){const me=CURRENT_USER.id;const ids=new Set([me]);USERS.forEach(u=>{if(u.parent===me)ids.add(u.id);});return ids;}
-function custDetail(no){const c=DATA.customers.find(x=>x.no===no);const s=st(c.status);
+function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `<div class="empty">請選擇左側客戶以查看詳細資料</div>`;const s=st(c.status);
 const ph=PHOTO[no]||"";const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap">
   <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;flex:0 0 200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
@@ -1590,7 +1590,7 @@ const LLANG={zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relation
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}
-if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();render();}
+if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
 })();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
 function exportAuditXlsx(){if(CURRENT_USER.role!=="super_admin"){toast("僅超管可匯出審計");return;}
