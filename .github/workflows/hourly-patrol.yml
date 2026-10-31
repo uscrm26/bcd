@@ -1,0 +1,70 @@
+name: 每小時郵件巡查與看板更新
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  patrol:
+    runs-on: ubuntu-latest
+    steps:
+      - name:  checkout 程式碼
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 設定 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 設定 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 安裝 nodemailer
+        run: npm install nodemailer
+
+      - name: 跑 IMAP 巡查
+        env:
+          ARK_KEY: ${{ secrets.ARK_KEY }}
+        run: python3 scripts/imap_patrol.py
+
+      - name: 跑外發佇列
+        run: node send_pending.js
+
+      - name: 寫巡查留痕
+        run: |
+          python3 -c "
+          import json, datetime
+          d = json.load(open('dbboard/data.json', encoding='utf-8'))
+          bj = datetime.datetime.utcnow() + datetime.timedelta(hours=8)
+          ts = f'{bj.month:02d}/{bj.day:02d} {bj.hour:02d}:{bj.minute:02d}'
+          daily = d.get('daily', [])
+          entry = {
+            'date': ts,
+            'work': f'GitHub Actions 自動巡查 {bj.hour:02d}:{bj.minute:02d}，15 個信箱連線完成',
+            'output': 'auto'
+          }
+          if daily and isinstance(daily[0], dict) and daily[0].get('date', '').startswith(ts[:6]):
+            daily[0] = entry
+          else:
+            daily.insert(0, entry)
+          d['daily'] = daily
+          json.dump(d, open('dbboard/data.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+          print('巡查留痕已寫入:', ts)
+          "
+
+      - name: 自動 commit 與 push
+        run: |
+          git config user.name "Kevin W"
+          git config user.email "kevinyama@local"
+          git add -A
+          if ! git diff --staged --quiet; then
+            git commit -m "auto: 每小時巡查留痕"
+            git push
+          else
+            echo "沒有變更，不需 push"
+          fi
