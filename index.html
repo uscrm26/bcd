@@ -1144,12 +1144,33 @@ function docList(no){
       ${inner}
       <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
       <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div></div></div>`;}
-  return `<div class="sec-title">全部附件</div>
-  ${imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">照片 ${imgs.length} 張</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px">${imgs.map(card).join("")}</div>`:""}
-  ${docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">文件 ${docs.length} 份</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${docs.map(card).join("")}</div>`:""}
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+  <div class="sec-title" style="margin:0">全部附件</div>
+  <div style="display:flex;gap:6px">
+    <button class="btn small att-f" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">全部</button>
+    <button class="btn small att-f" data-f="img" onclick="setAttFilter('img')">照片</button>
+    <button class="btn small att-f" data-f="doc" onclick="setAttFilter('doc')">文件</button>
+  </div></div>
+  <div id="attGrid" style="max-height:380px;overflow-y:auto;padding-right:4px">
+  ${imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">照片 ${imgs.length} 張</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(card).join("")}</div>`:""}
+  ${docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">文件 ${docs.length} 份</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(card).join("")}</div>`:""}
+  </div>
   ${!localList.length?"<div class='empty'>尚無附件</div>":""}
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份，點檔案可直接預覽。</div>
   <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">管理資料夾</button><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件</button></div>`;
+}
+function setAttFilter(f){
+  document.querySelectorAll(".att-f").forEach(b=>{const on=b.dataset.f===f;b.style.background=on?"var(--acc)":"var(--bg2)";b.style.color=on?"#fff":"var(--text)";});
+  document.querySelectorAll("#attGrid [data-group]").forEach(g=>{
+    if(f==="all")g.style.display="grid";
+    else g.style.display=g.dataset.group===f?"grid":"none";
+  });
+  document.querySelectorAll("#attGrid > div").forEach((d,i)=>{
+    if(d.tagName==="DIV"&&!d.dataset.group){
+      if(f==="all")d.style.display="block";
+      else{const next=d.nextElementSibling;if(next)d.style.display=next.style.display;else d.style.display="none";}
+    }
+  });
 }
 function goDocCenter(no){CURRENT_V="doc";render();setTimeout(()=>{try{openDocFolder(no);}catch(e){}},100);}
 async function loadStorageUsage(){
