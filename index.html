@@ -1144,30 +1144,54 @@ function uploadFileToQiniu(no,f){
   });
 }
 function showAiConfirm(no,m,results){
-  const left=results.map((r,i)=>`<div style="padding:8px 10px;background:var(--card);border-radius:8px;margin-bottom:6px;font-size:12px">
-    <div style="color:var(--acc);font-weight:600">第 ${i+1} 個</div>
-    <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px">${esc(r.file)}</div>
-    <div style="color:var(--mut);font-size:11px;margin-top:2px">${esc((r.data&&r.data.doc_type)||"已辨識")}</div>
-  </div>`).join("");
-  openModal(`<h3>第三通道 確認建立客戶</h3>
-    <div style="font-size:12px;color:var(--mut);margin-bottom:12px">AI 已依序分析 ${results.length} 個檔案並辨識以下資料，所有檔案已分流上傳完成，可手動修改後建立</div>
-    <div style="display:flex;gap:14px">
-      <div style="flex:0 0 190px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px;max-height:320px;overflow-y:auto">
-        <div style="font-size:11px;color:var(--mut);margin-bottom:8px">分析順序</div>
-        ${left}
+  const L=CURRENT_LANG;
+  const T={
+    title:L==='en'?"Confirm New Customer":(L==='cn'?"确认建立客户":"確認建立客戶"),
+    owner:L==='en'?"Owner":(L==='cn'?"归属人":"歸屬人"),
+    date:L==='en'?"Created":(L==='cn'?"新增日期":"新增日期"),
+    step1:L==='en'?"AI data extracted":(L==='cn'?"AI 分析资料":"AI 分析資料"),
+    step2:L==='en'?"Images uploaded":(L==='cn'?"图片已上传云端":"圖片已上傳雲端"),
+    step3:L==='en'?"Documents uploaded":(L==='cn'?"其他文档已上传云端":"其他文檔已上傳雲端"),
+    done:L==='en'?"done":(L==='cn'?"完成":"完成"),
+    cancel:L==='en'?"Cancel":(L==='cn'?"取消":"取消"),
+    confirm:L==='en'?"Create Customer":(L==='cn'?"确认建立客户":"確認建立客戶")
+  };
+  const files=window._pickedFiles||[];
+  const imgN=files.filter(f=>/\.(jpe?g|png|gif|webp)$/i.test(f.name)).length;
+  const docN=files.length-imgN;
+  const today=new Date().toISOString().slice(0,10);
+  const step=(label,n)=>`<div style="display:flex;align-items:center;gap:8px;font-size:12px"><span style="color:#10b981;font-weight:700">✓</span><span style="flex:1">${label}${n?` <span style="color:var(--mut)">（${n}）</span>`:""}</span><span style="color:#10b981">${T.done}</span></div>`;
+  openModal(`<h3>${T.title}</h3>
+    <div style="background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-size:13px;font-weight:600">100%</span>
+        <span style="font-size:11px;color:#10b981">${L==='en'?"All steps completed":(L==='cn'?"全部步骤已完成":"全部步驟已完成")}</span>
       </div>
-      <div style="flex:1;min-width:280px">
-        <div class="form-grid">
-          <div class="fg"><label>公司全名</label><input id="cf_company" value="${esc(m.company||"")}"></div>
-          <div class="fg"><label>法人全名</label><input id="cf_member" value="${esc(m.member||"")}"></div>
-          <div class="fg"><label>EIN</label><input id="cf_ein" value="${esc(m.ein||"")}"></div>
-          <div class="fg"><label>電話</label><input id="cf_phone" value="${esc(m.phone||"")}"></div>
-          <div class="fg full"><label>地址</label><input id="cf_address" value="${esc(m.address||"")}"></div>
-          <div class="fg full"><label>備註</label><textarea id="cf_notes" style="min-height:60px">${esc(m.notes||"")}</textarea></div>
-        </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${step(T.step1,results.length)}
+        ${step(T.step2,imgN)}
+        ${step(T.step3,docN)}
       </div>
     </div>
-    <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="finalizeCreate('${no}')">確認建立客戶</button></div>`);
+    <div style="display:flex;gap:14px;margin-bottom:14px">
+      <div style="flex:1;background:var(--bg2);border-radius:10px;padding:12px;border:1px solid var(--line)">
+        <div style="font-size:11px;color:var(--mut);margin-bottom:4px">${T.owner}</div>
+        <div style="font-size:15px;font-weight:600">${esc(CURRENT_USER.nm||"—")}</div>
+      </div>
+      <div style="flex:1;background:var(--bg2);border-radius:10px;padding:12px;border:1px solid var(--line)">
+        <div style="font-size:11px;color:var(--mut);margin-bottom:4px">${T.date}</div>
+        <div style="font-size:15px;font-weight:600">${today}</div>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="fg"><label>${L==='en'?"Company name":(L==='cn'?"公司全名":"公司全名")}</label><input id="cf_company" value="${esc(m.company||"")}"></div>
+      <div class="fg"><label>${L==='en'?"Owner name":(L==='cn'?"法人全名":"法人全名")}</label><input id="cf_member" value="${esc(m.member||"")}"></div>
+      <div class="fg"><label>EIN</label><input id="cf_ein" value="${esc(m.ein||"")}"></div>
+      <div class="fg"><label>${L==='en'?"Phone":(L==='cn'?"电话":"電話")}</label><input id="cf_phone" value="${esc(m.phone||"")}"></div>
+      <div class="fg full"><label>${L==='en'?"Address":(L==='cn'?"地址":"地址")}</label><input id="cf_address" value="${esc(m.address||"")}"></div>
+      <div class="fg full"><label>${L==='en'?"Notes":(L==='cn'?"备注":"備註")}</label><textarea id="cf_notes" style="min-height:60px">${esc(m.notes||"")}</textarea></div>
+    </div>
+    <div class="mrow"><button class="btn" onclick="closeModal()">${T.cancel}</button><button class="btn primary" onclick="finalizeCreate('${no}')">${T.confirm}</button></div>`);
 }
 function finalizeCreate(no){
   const owner=document.getElementById("nc_owner")?document.getElementById("nc_owner").value:CURRENT_USER.id;
