@@ -1067,7 +1067,11 @@ async function startAnalyzeAndCreate(){
     }
   });
   await Promise.all(tasks);
-  if(!allUp){toast("部分檔案上傳失敗，可重新操作");}
+  if(!allUp){
+    closeModal();
+    toast("⚠️ 有檔案上傳失敗，未建立客戶，請檢查後重新操作");
+    return;
+  }
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
@@ -1097,11 +1101,16 @@ function addFileRecord(no,name,path,type){
   });
   return _fileRecChain;
 }
+function bufToB64(buf){
+  const bytes=new Uint8Array(buf);let bin="";const CH=0x8000;
+  for(let i=0;i<bytes.length;i+=CH)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH));
+  return btoa(bin);
+}
 async function uploadToGithub(no,f){
   const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return false;
   try{
     const buf=await f.arrayBuffer();
-    const base64=btoa(String.fromCharCode(...new Uint8Array(buf)));
+    const base64=bufToB64(buf);
     const safeName=f.name.replace(/[^a-zA-Z0-9._-]/g,"_");
     const path="attachments/"+no+"/"+safeName;
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+f.name,content:base64})});
