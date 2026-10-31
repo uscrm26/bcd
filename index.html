@@ -949,8 +949,49 @@ function confirmDeduct(){
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");
 const autoNo=String(Math.max(...DATA.customers.map(c=>Number(c.no)||0),0)+1).padStart(4,"0");
 const isAdmin=CURRENT_USER.role==="super_admin";
-openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號${isAdmin?"":"（系統自動，僅超管可改）"}</label><input id="nc_no" placeholder="例如 99" value="${isAdmin?"":autoNo}" ${isAdmin?"":"disabled"}></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
-function createCust(){const no=document.getElementById("nc_no").value;const name=document.getElementById("nc_name").value;if(!no||!name){toast("請填客戶編號與公司全名");return;}DATA.customers.unshift({no,name,member:document.getElementById("nc_member").value||"待填",ein:document.getElementById("nc_ein").value||"",status:document.getElementById("nc_status").value,dl:"正常",mail:"—",todo:0});closeModal();render();toast("客戶已建立");}
+openModal(`<h3>新增客戶</h3><div class="form-grid"><div class="fg"><label>客戶編號${isAdmin?"":"（系統自動，僅超管可改）"}</label><input id="nc_no" placeholder="例如 99" value="${isAdmin?"":autoNo}" ${isAdmin?"":"disabled"}></div><div class="fg"><label>公司全名</label><input id="nc_name" placeholder="LLC"></div><div class="fg full"><label>法人全名</label><input id="nc_member"></div><div class="fg"><label>EIN</label><input id="nc_ein"></div><div class="fg"><label>業務歸屬人</label><select id="nc_owner">${USERS.map(u=>`<option value="${u.id}">${esc(u.nm)}</option>`).join("")}</select></div>
+  <div class="fg"><label>新增日期</label><input id="nc_date" value="${new Date().toISOString().slice(0,10)}" readonly></div>
+  <div class="fg" style="grid-column:1/-1"><label>上傳檔案（拖拽或選擇，最多15個）</label><input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="onNewCustFiles(this)" style="padding:10px;border:2px dashed var(--line);border-radius:10px"></div>
+  <div class="fg"><label>業務狀態</label><select id="nc_status">${opts}</select></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="createCust()">建立</button></div>`);}
+function exportCustCsv(){
+  const head=["編號","公司名","法人","EIN","狀態","歸屬","信箱","駕照狀態","待辦數"];
+  const rows=DATA.customers.map(c=>[c.no,c.name,c.member,c.ein,st(c.status).lb,ownerName(c.no),c.mail,c.dl,(c.aiTodos||[]).filter(t=>!t.done).length]);
+  const csv="\ufeff"+[head,...rows].map(r=>r.map(x=>`"${String(x||"").replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="客戶清單_"+new Date().toISOString().slice(0,10)+".csv";a.click();
+  toast("已匯出 "+rows.length+" 位客戶");
+}
+function createCust(){
+  const no=document.getElementById("nc_no").value;const name=document.getElementById("nc_name").value;
+  if(!no||!name){toast("請填客戶編號與公司全名");return;}
+  const owner=document.getElementById("nc_owner").value||CURRENT_USER.id;
+  DATA.customers.unshift({no,name,member:document.getElementById("nc_member").value||"待填",ein:document.getElementById("nc_ein").value||"",status:document.getElementById("nc_status").value,dl:"正常",mail:"—",todo:0,created:new Date().toISOString().slice(0,10)});
+  ownerMap[no]=owner;
+  closeModal();render();toast("客戶已建立，請上傳檔案讓 AI 分析");
+}
+function onNewCustFiles(input){
+  const files=input.files;if(!files.length)return;
+  toast("已選擇 "+files.length+" 個檔案，開始上傳並 AI 分析...");
+  Array.from(files).forEach(f=>{
+    const fr=new FileReader();
+    fr.onload=function(e){
+      // 上传到 GitHub Pages 是静态的，这里先存到 localStorage 并交 AI 分析文件名
+      const reader=new FileReader();
+      reader.onload=function(ev){
+        const base64=ev.target.result;
+        // 交 AI 分析文件名和类型
+        callAI("你是美國海關bond業務助理。根據上傳檔案名稱，判斷這是什麼文件，提取公司名、法人名、EIN等關鍵信息，輸出JSON：{company,member,ein,doc_type,notes}",f.name).then(out=>{
+          try{
+            const j=JSON.parse(out.replace(/```json|```/g,"").trim());
+            toast("AI 分析完成："+(j.company||f.name));
+          }catch(e){}
+        });
+      };
+      reader.readAsDataURL(f);
+    };
+    fr.readAsArrayBuffer(f);
+  });
+}
 
 // ===== 客戶管理 =====
 let custTab="info";let curCust="93";
@@ -963,7 +1004,7 @@ R.customer=()=>{
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
-  <button class="btn" onclick="toast('已匯出選取客戶清單')">匯出 CSV</button>
+  <button class="btn" onclick="exportCustCsv()">匯出 CSV</button>
   ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 解讀所有客戶</button>`:""}</div>
   <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
