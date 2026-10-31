@@ -244,52 +244,22 @@ tr:hover td{background:#1a2130}
 ::-webkit-scrollbar-track{background:transparent}
 @media(max-width:900px){.side{transform:translateX(-100%);transition:transform .25s;width:248px;z-index:70}.main{margin-left:0}.r4{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.ccard .foots .tag,.ccard .foots .badge{font-size:10px}.ccard .cphoto{width:60px;height:60px}.ccard .quick button{font-size:10px}}
 /* ===== 登入頁 ===== */
-#loginScreen{position:fixed;inset:0;z-index:200;overflow:hidden;background:radial-gradient(1100px 700px at 15% -10%,rgba(74,158,255,.20),transparent 60%),radial-gradient(900px 600px at 95% 110%,rgba(124,192,255,.14),transparent 60%),linear-gradient(135deg,#0a0e15 0%,#0e1624 55%,#0b121e 100%);padding:0}
+#loginScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 70% -10%,rgba(74,158,255,.18),transparent),var(--bg);padding:20px}
 #loginScreen.hide{display:none}
-.login-wrap{position:relative;width:100%;min-height:100vh;display:flex;align-items:stretch;z-index:2}
-/* 左侧业务视觉区 */
-.login-visual{flex:1 1 auto;display:flex;align-items:center;justify-content:center;padding:60px 40px;position:relative;overflow:hidden}
-.login-visual::before{content:"";position:absolute;inset:0;background:
-  linear-gradient(rgba(74,158,255,.05) 1px,transparent 1px),
-  linear-gradient(90deg,rgba(74,158,255,.05) 1px,transparent 1px);
-  background-size:44px 44px;mask-image:radial-gradient(700px 500px at 50% 40%,#000 40%,transparent 80%)}
-.login-hero{position:relative;width:100%;max-width:560px;z-index:1}
-.login-hero .lh-badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--acc2);letter-spacing:2px;text-transform:uppercase;background:rgba(74,158,255,.12);border:1px solid rgba(74,158,255,.28);border-radius:999px;padding:6px 14px;margin-bottom:22px}
-.login-hero h1{font-size:34px;font-weight:800;line-height:1.25;color:#eef4ff;letter-spacing:.5px;margin:0 0 14px}
-.login-hero h1 b{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.login-hero p{font-size:14px;line-height:1.8;color:#8fa2bf;max-width:480px;margin:0 0 30px}
-/* 业务数据面板组 */
-.hero-panels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
-.hero-panel{background:linear-gradient(160deg,rgba(23,29,40,.92),rgba(17,22,32,.92));border:1px solid rgba(74,158,255,.18);border-radius:14px;padding:16px;backdrop-filter:blur(4px)}
-.hero-panel .hp-k{font-size:11px;color:var(--mut);letter-spacing:.5px;margin-bottom:8px}
-.hero-panel .hp-v{font-size:22px;font-weight:800;color:#eef4ff;font-variant-numeric:tabular-nums}
-.hero-panel .hp-v small{font-size:12px;color:var(--acc2);font-weight:600}
-.hero-panel .hp-bar{height:4px;border-radius:2px;background:rgba(74,158,255,.15);margin-top:10px;overflow:hidden}
-.hero-panel .hp-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:2px}
-/* 底部工具条 */
-.hero-tools{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-.hero-tool{display:flex;align-items:center;gap:10px;background:rgba(23,29,40,.7);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--txt);font-size:13px}
-.hero-tool .ht-ic{width:30px;height:30px;flex:0 0 auto;border-radius:8px;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff}
-.hero-tool .ht-t{font-size:11px;color:var(--mut);line-height:1.4}
-.hero-tool .ht-t b{display:block;color:var(--txt);font-size:13px;font-weight:700}
-/* 右侧登录框区 */
-.login-side{width:420px;flex:0 0 420px;background:linear-gradient(180deg,#121824cc,#0d131ecc);backdrop-filter:blur(10px);border-left:1px solid rgba(74,158,255,.16);display:flex;align-items:center;justify-content:center;padding:40px 42px}
-.login-card{width:100%;background:transparent;border:none;border-radius:0;padding:0;box-shadow:none}
-.login-brand{display:flex;align-items:center;gap:14px;margin-bottom:34px;padding-bottom:26px;border-bottom:1px solid rgba(255,255,255,.07)}
-.login-brand img{width:52px;height:52px;border-radius:13px;object-fit:cover}
-.login-brand .bt{font-size:19px;font-weight:800;color:#eef4ff;line-height:1.2}
-.login-brand .bs{font-size:12px;color:var(--mut);margin-top:3px}
-.login-card label{display:block;font-size:12px;color:var(--mut);margin:16px 0 7px}
-.login-card input{width:100%;box-sizing:border-box;background:rgba(255,255,255,.05);border:1px solid rgba(74,158,255,.2);color:var(--txt);border-radius:11px;padding:13px 15px;font-size:14px;outline:none;transition:border-color .2s,background .2s}
-.login-card input:focus{border-color:var(--acc);background:rgba(74,158,255,.08)}
-.login-btn{width:100%;margin-top:26px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:11px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 10px 26px rgba(74,158,255,.3);transition:transform .15s,box-shadow .15s}
-.login-btn:hover{transform:translateY(-1px);box-shadow:0 14px 32px rgba(74,158,255,.4)}
-.login-err{color:var(--err);font-size:12px;min-height:18px;margin-top:12px;text-align:center}
-.login-foot{text-align:center;color:var(--dim);font-size:11px;margin-top:22px}
-.login-lang{position:absolute;top:20px;right:22px;display:flex;gap:6px;z-index:5}
-.login-lang button{background:rgba(255,255,255,.06);border:1px solid rgba(74,158,255,.25);color:var(--mut);border-radius:8px;padding:6px 13px;font-size:12px;cursor:pointer}
-.login-lang button.on{color:#fff;border-color:var(--acc);background:rgba(74,158,255,.18)}
-@media(max-width:960px){.login-visual{display:none}.login-side{width:100%;flex:1 1 auto;border-left:none;padding:34px 26px}}
+.login-card{width:380px;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:34px 30px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.login-card label{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px}
+.login-card input{width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 13px;font-size:14px;outline:none}
+.login-card input:focus{border-color:var(--acc)}
+.login-btn{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
+.login-err{color:var(--err);font-size:12px;min-height:16px;margin-top:10px;text-align:center}
+.login-foot{text-align:center;color:var(--dim);font-size:11px;margin-top:18px}
+.login-head{text-align:center;margin-bottom:8px}
+.login-head .logo-ico{width:58px;height:58px;border-radius:14px;margin:0 auto 10px;object-fit:cover;display:block}
+.login-head .lt{font-size:20px;font-weight:800;letter-spacing:1px}
+.login-head .ls{font-size:13px;color:var(--mut);margin-top:4px}
+.login-lang{position:absolute;top:18px;right:18px;display:flex;gap:6px}
+.login-lang button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
+.login-lang button.on{color:var(--acc);border-color:var(--acc)}
 .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
 .doc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;cursor:pointer;transition:transform .15s,border-color .15s}
 .doc-card:hover{transform:translateY(-3px);border-color:var(--acc)}
@@ -382,36 +352,15 @@ tr:hover td{background:#1a2130}
   <div class="login-lang" id="loginLang">
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
   </div>
-  <div class="login-wrap">
-    <div class="login-visual">
-      <div class="login-hero">
-        <div class="lh-badge" id="lh_badge">US CUSTOMS RELATIONSHIP MANAGER</div>
-        <h1 id="lh_h1">進口<b>客戶關係</b>管理<br>一站式業務中樞</h1>
-        <p id="lh_p">統一管理客戶檔案、海關擔保申請、經紀資源池與往來郵件，全流程進度一目了然。</p>
-        <div class="hero-panels">
-          <div class="hero-panel"><div class="hp-k">處理中客戶</div><div class="hp-v" id="lv_active">—</div><div class="hp-bar"><i style="width:68%"></i></div></div>
-          <div class="hero-panel"><div class="hp-k">成功簽發 Bond</div><div class="hp-v" id="lv_done">—</div><div class="hp-bar"><i style="width:42%"></i></div></div>
-          <div class="hero-panel"><div class="hp-k">往來郵件</div><div class="hp-v" id="lv_mail">—</div><div class="hp-bar"><i style="width:55%"></i></div></div>
-        </div>
-        <div class="hero-tools">
-          <div class="hero-tool"><div class="ht-ic">◧</div><div class="ht-t"><b>客戶檔案</b>資料一站式歸檔</div></div>
-          <div class="hero-tool"><div class="ht-ic">✉</div><div class="ht-t"><b>郵件同步</b>IMAP 自動收信</div></div>
-          <div class="hero-tool"><div class="ht-ic">✦</div><div class="ht-t"><b>AI 助手</b>翻譯與解讀</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="login-side">
-      <div class="login-card">
-        <div class="login-brand"><img src="assets/ucrm_nav.png" alt="UCRM"><div><div class="bt" id="lh_title">美國進口客戶關係管理系統</div><div class="bs" id="lh_sub">US Customs Relationship Manager</div></div></div>
-        <label id="ll_user">登入帳號</label>
-        <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
-        <label id="ll_pwd">密碼</label>
-        <input id="li_pwd" type="password" autocomplete="current-password" placeholder="請輸入賬戶密碼">
-        <div class="login-err" id="li_err"></div>
-        <button class="login-btn" onclick="doLogin()" id="li_btn">登 入</button>
-        <div class="login-foot">本系統僅供授權人士使用</div>
-      </div>
-    </div>
+  <div class="login-card">
+    <div class="login-head"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">美國進口客戶關係管理系統</div><div class="ls" id="lh_sub">US Customs Relationship Manager</div></div>
+    <label id="ll_user">登入帳號</label>
+    <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
+    <label id="ll_pwd">密碼</label>
+    <input id="li_pwd" type="password" autocomplete="current-password" placeholder="請輸入賬戶密碼">
+    <div class="login-err" id="li_err"></div>
+    <button class="login-btn" onclick="doLogin()" id="li_btn">登 入</button>
+    <div class="login-foot">本系統僅供授權人士使用</div>
   </div>
 </div>
 <!-- ===== 資料 ===== -->
@@ -1636,7 +1585,7 @@ try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()})
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
 const LLANG={zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入",badge:"US CUSTOMS RELATIONSHIP MANAGER",h1:"進口<b>客戶關係</b>管理<br>一站式業務中樞",p:"統一管理客戶檔案、海關擔保申請、經紀資源池與往來郵件，全流程進度一目了然。"},cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录",badge:"US CUSTOMS RELATIONSHIP MANAGER",h1:"进口<b>客户关系</b>管理<br>一站式业务中枢",p:"统一管理客户档案、海关担保申请、经纪资源池与往来邮件，全流程进度一目了然。"},en:{t:"US Customs Relationship Manager",s:"American Import Client Management System",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In",badge:"US CUSTOMS RELATIONSHIP MANAGER",h1:"<b>Client</b> Relationship<br>Management Hub",p:"Manage client profiles, customs bond filings, broker resources and correspondence in one place."}};
-function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.getElementById("lh_badge").textContent=L.badge;document.getElementById("lh_h1").innerHTML=L.h1;document.getElementById("lh_p").textContent=L.p;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
+function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}})();
 function filterAudit(f){const list=auditLog.filter(a=>!f||(a.action+a.detail).includes(f));document.getElementById("auditArea").innerHTML=list.map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.user)} ${esc(a.action)} ${esc(a.detail)}</span></div>`).join("")||"<div class='empty'>無符合記錄</div>";}
