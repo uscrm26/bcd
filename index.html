@@ -525,7 +525,7 @@ async function loadSB(){
   }
   const dl=await sbReq("deals","GET",null,"?select=*&order=closed_at.desc");
   if(Array.isArray(dl)){commissions.splice(0,commissions.length);dl.forEach(d=>commissions.push({cust:"",user:d.owner,amount:d.amount,mode:d.note,t:d.closed_at}));}
-  const al=await sbReq("audit_logs","GET",null,"?select=*&order=created_at.desc.desc&limit=500");
+  const al=await sbReq("audit_logs","GET",null,"?select=*&order=created_at.desc&limit=500");
   if(Array.isArray(al)){
     auditLog.splice(0,auditLog.length);
     DATA.timeline=DATA.timeline||{};clientAudit=clientAudit||{};
@@ -538,9 +538,8 @@ async function loadSB(){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const rec=JSON.parse(a.detail);c.aiTodos=c.aiTodos||[];if(!c.aiTodos.some(t=>t.t===rec.t))c.aiTodos.unshift(rec);}catch(e){}}
       }else if(a.action==="ai_last_at"&&a.target_client){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c)c.aiLastAt=parseInt(a.detail);
-      }else{
-        auditLog.push({t:a.created_at,user:a.display_name,action:a.action,detail:a.detail});
       }
+      auditLog.push({t:a.created_at,user:a.display_name,action:a.action,detail:a.detail,target:a.target_client||""});
     });
   }
   render();
@@ -1701,7 +1700,7 @@ function batchResetCountdown(){
 }
 function batchAIAnalyze(){
   const isAdmin=CURRENT_USER.role==="super_admin";
-  const limit=isAdmin?20:1;
+  const limit=isAdmin?(parseInt(localStorage.getItem("bcd_admin_limit"))||20):(parseInt(localStorage.getItem("bcd_agent_limit"))||1);
   const dayKey=batchDayKey();
   const used=JSON.parse(localStorage.getItem("bcd_batch_ai_used")||"{}");
   used[CURRENT_USER.id]=used[CURRENT_USER.id]||{};
@@ -2172,7 +2171,7 @@ R.system=()=>{
        <div style="font-size:12px;color:var(--mut)">每段 2 到 3 句，直接給結論</div>
      </div>
    </div>
-   <div style="margin-top:16px"><button class="btn primary" onclick="saveSettings()">儲存設定</button></div>
+   <div style="margin-top:16px"><button class="btn primary" onclick="saveSettings();try{localStorage.setItem('bcd_admin_limit',document.getElementById('set_admin_limit').value);localStorage.setItem('bcd_agent_limit',document.getElementById('set_agent_limit').value);}catch(e){}">儲存設定</button></div>
    </div>`;
  } else if(t==="ai" && isAdmin){
    body=`<div class="panel">
