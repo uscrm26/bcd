@@ -1253,7 +1253,7 @@ async function doTranslate(e,box){
   try{
     const out=await callAI("你是專業翻譯，把這封美國海關報關往來郵件準確翻成繁體中文，保留專有名詞與金額電話，直接給譯文不要解釋。",src);
     ZH_CACHE[e.t]=out;saveZH(e.t,out);box.textContent=out;
-  }catch(err){box.textContent="翻譯失敗："+(err.message||err)+"，免費模型可能繁忙，稍後重試。";}
+  }catch(err){box.textContent="翻譯失敗：AI 服務繁忙，請稍後重試。";}
 }
 async function doInterpret(e,box){
   const src=(e.body||"").trim();
@@ -1265,7 +1265,7 @@ async function doInterpret(e,box){
   try{
     const out=await callAI(sys,`寄件人：${e.from}\n主旨：${e.sub}\n\n${src}`);
     INTERP_CACHE[e.t]=out;saveInterp(e.t,out);box.textContent=out;
-  }catch(err){box.textContent="解讀失敗："+(err.message||err)+"，免費模型可能繁忙，稍後重試。";}
+  }catch(err){box.textContent="解讀失敗：AI 服務繁忙，請稍後重試。";}
 }
 // 隊列展開行（按索引）
 function aiTranslate(idx){const e=window._qlist[idx];const box=document.getElementById("zh_"+idx);if(!e||!box)return;
