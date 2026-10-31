@@ -1061,7 +1061,7 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
   <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
  </div>
- <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map(t=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''}" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)} ${t.e==='ai'?'<span class="tag t-blue" style="margin-left:4px">AI</span>':''}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map(t=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''}" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)} </span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
 function convET(bj){if(!bj||typeof bj!=="string")return "--";const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
 function autoTodos(c){const t=[];
@@ -1090,16 +1090,22 @@ function fileThumb(f){
 }
 function docList(no){
   const localList=(DATA.files||{})[no]||[];
-  const rows=localList.map(f=>{const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
+  const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
+  const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
+  function card(f){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
     const url=FILEBASE+(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
-      <span style="font-size:16px">${isImg?"🖼":/\.pdf$/i.test(nm)?"📄":"📎"}</span>
-      <div style="flex:1;min-width:0"><div style="font-size:13px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(nm)}</div>
-      <div style="font-size:11px;color:var(--mut)">${esc(dt)} ｜ ${esc(up)}</div></div>
-      <span style="font-size:11px;color:var(--mut)">預覽</span></div>`;}).join("");
+    const inner=isImg
+      ? `<img src="${url}" style="width:100%;height:110px;object-fit:cover;border-radius:8px 8px 0 0;background:#222">`
+      : `<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg2);border-radius:8px 8px 0 0">${/\.pdf$/i.test(nm)?"📄":"📎"}</div>`;
+    return `<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
+      ${inner}
+      <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div></div></div>`;}
   return `<div class="sec-title">全部附件</div>
-  <div>${rows||"<div class='empty'>尚無附件</div>"}</div>
+  ${imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">照片 ${imgs.length} 張</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px">${imgs.map(card).join("")}</div>`:""}
+  ${docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">文件 ${docs.length} 份</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${docs.map(card).join("")}</div>`:""}
+  ${!localList.length?"<div class='empty'>尚無附件</div>":""}
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份，點檔案可直接預覽。</div>
   <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">管理資料夾</button><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件</button></div>`;
 }
@@ -1457,7 +1463,7 @@ function applyAiAnalysis(no){
   }
   if(j.next_actions&&j.next_actions.length){
     cust.aiTodos=cust.aiTodos||[];
-    j.next_actions.forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a&&!t.done))cust.aiTodos.unshift({t:a,done:false,t:Date.now()});});
+    j.next_actions.forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a&&!t.done))cust.aiTodos.unshift({t:a,done:false,ts:Date.now()});});
   }
   res.style.display="none";
   render();toast("AI 分析結果已採用並寫入");
