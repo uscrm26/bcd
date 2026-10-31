@@ -1425,7 +1425,7 @@ list.forEach((e,idx)=>{
   const done=!!(hasZH||hasIP);
   html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
  <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
- <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow:auto">${esc(e.body||"(此郵件暫無正文)")}</div>
+ <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:500px;overflow:auto;background:var(--bg);padding:12px;border-radius:8px;margin:8px 0">${esc(e.body||"(此郵件暫無正文，完整內容由後台 IMAP 同步)")}</div>
  <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
   <button class="btn small" style="background:${done?"rgba(59,130,246,.15)":"rgba(59,130,246,.9)"};color:${done?"#60a5fa":"#fff"};border-color:transparent" onclick="aiRun(${idx})">${done?"🔄 重新解讀":"🤖 AI 解讀"}</button>
   <button class="btn small" style="${e.done?"background:var(--green,#2ecc71);color:#fff;border-color:transparent":""}" onclick="markProcessed('${e.t.replace(/'/g,"\\'")}')">${e.done?"✓ 已處理":"標記已處理"}</button>
