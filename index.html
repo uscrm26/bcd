@@ -642,7 +642,7 @@ if(sc)sc.innerHTML=TZS.map(([ic,nm,off])=>{const t=new Date(d.getTime()+off*3600
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","佣金記錄","GitHub 備份","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Email","Documents","Archives","Notifications","System Log","Commission","GitHub Backup","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","电子邮件","文件中心","归档包","工作通知","系统工作记录","佣金记录","GitHub 备份","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 表單助手","信箱配置","手動登錄信箱","電子郵件","文件中心","歸檔包","工作通知","系統工作記錄","佣金記錄","GitHub 備份","巡查排程","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Assistant","Mailboxes","Webmail Login","Email","Documents","Archives","Notifications","System Log","Commission","GitHub Backup","Polling Schedule","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 表单助手","信箱配置","手动登录信箱","电子邮件","文件中心","归档包","工作通知","系统工作记录","佣金记录","GitHub 备份","巡查排程","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 let CURRENT_LANG="zh";
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
@@ -1519,13 +1519,17 @@ addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toa
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
 R.webmail=()=>{
- setTimeout(()=>openModal(`<h3>手動登錄信箱</h3>
- <p style="font-size:13px;line-height:1.8;color:var(--tx)">系統正爲您打開外置的郵件伺服器登錄網站。由於系統的限制原因，無法在本系統中運行這個郵件伺服器，需要另開新分頁。按確認將會打開瀏覽器新分頁。</p>
- <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();window.open('https://mail.pony-it.com/','_blank')">確認前往</button></div>`),50);
- return `<h1>手動登錄信箱</h1>
- <div style="font-size:13px;color:var(--mut);margin-top:10px">本功能將另開新分頁前往外置郵件伺服器。<a href="javascript:void(0)" onclick="window.open('https://mail.pony-it.com/','_blank')" style="color:var(--acc)">重新打開郵件登錄 ↗</a></div>`;};
+ const T={zh:{h:"手動登錄信箱",m:"系統正爲您打開外置的郵件伺服器登錄網站。由於系統的限制原因，無法在本系統中運行這個郵件伺服器，需要另開新分頁。按確認將會打開瀏覽器新分頁。",ok:"確認前往",cancel:"取消",again:"重新打開郵件登錄 ↗"},
+ en:{h:"Webmail Login",m:"The system is about to open the external mail server login site. Due to system limitations it cannot run inside this app, so a new browser tab is required. Click Confirm to open it.",ok:"Confirm",cancel:"Cancel",again:"Reopen webmail ↗"},
+ cn:{h:"手动登录信箱",m:"系统将为您打开外置的邮件服务器登录网站。由于系统限制，无法在本系统内运行该邮件服务器，需要另开新分页。按确认将打开浏览器新分页。",ok:"确认前往",cancel:"取消",again:"重新打开邮件登录 ↗"}}[CURRENT_LANG]||{zh:{h:"手動登錄信箱",m:"系統正爲您打開外置的郵件伺服器登錄網站。由於系統的限制原因，無法在本系統中運行這個郵件伺服器，需要另開新分頁。按確認將會打開瀏覽器新分頁。",ok:"確認前往",cancel:"取消",again:"重新打開郵件登錄 ↗"}};
+ setTimeout(()=>openModal(`<h3>${T.h}</h3>
+ <p style="font-size:13px;line-height:1.8;color:var(--tx)">${T.m}</p>
+ <div class="mrow"><button class="btn" onclick="closeModal()">${T.cancel}</button><button class="btn primary" onclick="closeModal();window.open('https://mail.pony-it.com/','_blank')">${T.ok}</button></div>`),50);
+ return `<h1>${T.h}</h1>
+ <div style="font-size:13px;color:var(--mut);margin-top:10px"><a href="javascript:void(0)" onclick="window.open('https://mail.pony-it.com/','_blank')" style="color:var(--acc)">${T.again}</a></div>`;};
 R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
- return `<h1>巡查排程</h1>
+ const T={zh:{h:"巡查排程",na:"僅超級管理員可查看"},en:{h:"Polling Schedule",na:"Super admin only"},cn:{h:"巡查排程",na:"仅超级管理员可查看"}}[CURRENT_LANG]||{zh:{h:"巡查排程",na:"僅超級管理員可查看"}};
+ return `<h1>${T.h}</h1>
 <div class="row r2">
 <div class="panel"><div class="sec-title">自動巡查現況</div>
 <div class="field"><div class="k">執行引擎</div><div class="v">GitHub Actions 免費自動跑，不再依賴豆包定時喚醒。</div></div>
