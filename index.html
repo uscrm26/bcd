@@ -1250,7 +1250,16 @@ function setMailCustFilter(no){window._mailCust=(window._mailCust===no?"":no);re
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";const cf=window._mailCust||"";
 let custDom="";
  if(cf){const c=DATA.customers.find(x=>x.no===cf);if(c&&c.mail)custDom=c.mail.split("@")[1].toLowerCase();}
- let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread))&&(!cf||(custDom&&(e.from||"").toLowerCase().includes(custDom)||e.c===(DATA.customers.find(x=>x.no===cf)||{}).name)));
+ let list=DATA.emails.filter(e=>{
+   if(!canViewMail(e))return false;
+   const cust=(DATA.customers||[]).find(x=>x.name===e.c);
+   if(cust&&cust.mail&&(e.from||"").toLowerCase().includes(cust.mail.toLowerCase()))return false;
+   if(/Personal Address Book|Personal Calendar|has been created/i.test(e.sub||""))return false;
+   if(f&&!(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))return false;
+   if(fl==="unread"&&!e.unread)return false;
+   if(fl==="read"&&e.unread)return false;
+   if(cf){const cc=DATA.customers.find(x=>x.no===cf);const dom=cc&&cc.mail?cc.mail.split("@")[1].toLowerCase():"";if(!((e.from||"").toLowerCase().includes(dom)||e.c===cc.name))return false;}
+   return true;});
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
 window._qlist=list;
 const tb=document.getElementById("qtbody");if(!tb)return;
