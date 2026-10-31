@@ -899,10 +899,10 @@ return `<div style="display:flex;gap:18px;align-items:flex-start;margin-bottom:6
 <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button>${CURRENT_USER.aiFollow!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button>`:""}</div>
 <div id="aiProgress_${no}" style="display:none;margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px"></div>
 <div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div>`;}
-function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
+function sendAsCustomer(no,presetTo){const c=DATA.customers.find(x=>x.no===no);if(!c)return;window._sendNo=no;
  openModal(`<h3>以 ${esc(c.name)} 名義發信</h3>
  <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">寄件人</div><div style="font-size:13px">${esc(c.mail||"—")}</div></div>
- <div class="fg" style="margin-bottom:8px"><label>收件人</label><div style="display:flex;gap:8px"><input id="sc_to" placeholder="recipient@example.com" oninput="matchBroker()"><button class="btn small" onclick="openBrokerPicker()">選擇 Broker</button></div><div id="sc_broker_match" style="font-size:11px;color:var(--mut);margin-top:4px"></div></div>
+ <div class="fg" style="margin-bottom:8px"><label>收件人</label><div style="display:flex;gap:8px"><input id="sc_to" value="${presetTo?esc(presetTo):''}" placeholder="recipient@example.com" oninput="matchBroker()"><button class="btn small" onclick="openBrokerPicker()">選擇經紀人</button></div><div id="sc_broker_match" style="font-size:11px;color:var(--mut);margin-top:4px"></div></div>
  <div class="fg" style="margin-bottom:8px"><label>主題</label><input id="sc_sub" placeholder="信件主旨"></div>
  <div style="margin:12px 0 8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span style="font-size:12px;color:var(--mut)">正文內容：</span><button class="btn small" onclick="aiPolish('${no}')">AI 潤色</button><button class="btn small" onclick="aiWrite('${no}')">AI 撰寫</button></div>
  <textarea id="sc_body" style="width:100%;min-height:160px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px;line-height:1.6;box-sizing:border-box" placeholder="輸入信件正文"></textarea>
@@ -910,7 +910,12 @@ function sendAsCustomer(no){const c=DATA.customers.find(x=>x.no===no);if(!c)retu
  <div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="submitCustomerMail('${no}')">發送</button></div>`);}
 function openBrokerPicker(){
  const list=BROKERS;
- const html=`<h3>選擇 Broker</h3>
+ const html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+  <h3 style="margin:0">選擇經紀人</h3>
+  <div style="display:flex;gap:6px">
+    <button class="btn small" onclick="randomBroker()">🎲 隨機選擇</button>
+    <button class="btn small" onclick="closeModal()">✕ 取消</button>
+  </div></div>
  <input id="bp_q" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:8px;margin-bottom:10px" placeholder="搜尋公司名、聯絡人、信箱" oninput="renderBrokerList(this.value)">
  <div id="bp_list" style="max-height:400px;overflow-y:auto">${list.map((b,i)=>brokerRow(b,i)).join("")}</div>`;
  openModal(html);
@@ -930,7 +935,13 @@ function renderBrokerList(q){
 }
 function pickBroker(i){
  const b=BROKERS[i];
- const email=b.c||b.m;if(email&&email!=="—"){document.getElementById("sc_to").value=email;closeModal();toast("已填入："+b.n);}
+ const email=b.c||b.m;if(email&&email!=="—"){closeModal();const no=window._sendNo;if(no)sendAsCustomer(no,email);toast("已選："+b.n+" <"+email+">");}
+}
+function randomBroker(){
+ const avail=BROKERS.map((b,i)=>({b,i})).filter(x=>{const e=x.b.c||x.b.m;return e&&e!=="—";});
+ if(!avail.length){toast("沒有可用經紀人");return;}
+ const pick=avail[Math.floor(Math.random()*avail.length)];
+ pickBroker(pick.i);
 }
 function matchBroker(){
  const v=(document.getElementById("sc_to")||{}).value||"";
