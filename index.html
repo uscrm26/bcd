@@ -818,7 +818,7 @@ function followUpAlerts(){
   rows.sort((a,b)=>b.h-a.h);
   const top=rows.slice(0,10);
   return `<div style="font-size:11px;color:var(--mut);margin:6px 0 10px">最久未跟進前 10 名</div>`+top.map((r,i)=>{
-    const ph=PHOTO[r.c.no]||"";
+    const ph=phSrc(r.c.no);
     const lastTxt=r.last?((r.last.e==="email"?"📧 ":"")+esc(r.last.tt||"")):"尚無更新（依新增時間起算）";
     return `<div onclick="openCust('${r.c.no}')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg2)">
       <span style="font-size:11px;color:var(--dim);width:16px">${i+1}</span>
@@ -847,7 +847,7 @@ function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
 function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canViewCust(c.no)).map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
-  <img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')">
+  <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}')">
   <div class="cbody">
   <div class="top"><div><span class="no" title="內部序號，非客戶代號">#${c.no}<small class="noref">序號</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}<br><b>負責人</b> ${esc(ownerName(c.no))}</div>
@@ -878,7 +878,7 @@ R.dashboard=()=>{
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 ¥${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 ¥${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 R.worklog=()=>`<h1>工作通知</h1>
@@ -1147,7 +1147,7 @@ let listMode="card";
 function custTableHTML(){
   const list=custFiltered().filter(c=>canViewCust(c.no));
   return `<table><thead><tr><th>系統編號</th><th>內部序號</th><th>公司</th><th>法人</th><th>EIN</th><th>狀態</th><th>負責人</th><th>操作</th></tr></thead><tbody>
-  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td><div style="display:flex;align-items:center;gap:8px"><img src="${PHOTO[c.no]||''}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--line)"><span>${esc(c.member)}</span></div></td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
+  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td><div style="display:flex;align-items:center;gap:8px"><img src="${phSrc(c.no)}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--line)"><span>${esc(c.member)}</span></div></td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
   </tbody></table>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
@@ -1159,7 +1159,7 @@ function custGridHTML(){
   const list=custFiltered();
   return `<div class="row r3">${list.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
-  <img class="cphoto" src="${PHOTO[c.no]||''}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${PHOTO[c.no]||''}')">
+  <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}')">
   <div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
   <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
@@ -1180,7 +1180,7 @@ function aiStatusCard(ts){
   return "最後一次 AI 分析時間："+timeStr+"（北京時間）<br>距今已過"+ago+"。";
 }
 function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `<div class="empty">請選擇左側客戶以查看詳細資料</div>`;const s=st(c.status);
-const ph=PHOTO[no]||"";const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
+const ph=phSrc(no);const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 return `<div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap;padding-left:4px">
   <div style="flex:0 0 200px;width:200px">
   <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
@@ -1420,6 +1420,7 @@ function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)retu
 const FILEBASE="https://uscrm26.github.io/bcd/";
 let QMAP={};
 fetch("qiniu_map.json").then(r=>r.json()).then(j=>{QMAP=j;}).catch(()=>{});
+function phSrc(no){const p=PHOTO[no]||"";return p?resolveFile(p):"";}
 function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
@@ -1627,7 +1628,7 @@ function renderCustAvatarBar(){
    <div style="width:44px;height:44px;border-radius:50%;background:${cur?"var(--bg2)":"var(--acc)"};color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;border:2px solid ${cur?"var(--line)":"transparent"}">全部</div>
    <div style="font-size:9px;color:var(--mut);margin-top:3px">全部</div></div>`;
  list.forEach(c=>{
-   const ph=PHOTO[c.no]||"";
+   const ph=phSrc(c.no);
    const ow=ownerName(c.no);
    const active=cur===c.no;
    const short=(c.name||"").replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"");
@@ -1664,7 +1665,7 @@ list.forEach((e,idx)=>{
  const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t]||!!e.auto_interp;
  const tags=(hasZH?"<span class='tag t-blue' style='margin-left:6px'>已翻譯</span>":"")+(hasIP?"<span class='tag t-green' style='margin-left:6px'>已解讀</span>":"");
  const _cust=(DATA.customers||[]).find(x=>x.name&&e.c&&x.name.startsWith(e.c.split(" ")[0]));
- const _ph=_cust?(PHOTO[_cust.no]||""):"";
+ const _ph=_cust?phSrc(_cust.no):"";
  const _t=e.t.replace(/'/g,"\\'");
  html+=`<tr style="${open?"background:rgba(99,102,241,.08)":e.unread?"background:rgba(255,93,108,.06)":""}"><td style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleMailRow('${_t}')"><img src="${_ph}" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover"><span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.c)}</span></td><td style="font-size:11px;cursor:pointer" onclick="toggleMailRow('${_t}')">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')">${esc(e.sub)}${tags}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')"><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')">${e.t}</td><td><button class="btn small" onclick="event.stopPropagation();openReply('${e.t}')">回覆</button><button class="btn small" onclick="event.stopPropagation();toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
  if(open){
@@ -2444,7 +2445,7 @@ function renderDoc(){
     .filter(g=>!owv||ownerMap[g.c.no]===owv)
     .filter(g=>!q||(g.c.no+g.c.name+g.c.member+g.list.map(f=>f.name).join(" ")).toLowerCase().includes(q));
   const card=g=>{
-    const ph=PHOTO[g.c.no]||"";
+    const ph=phSrc(g.c.no);
     const own=ownerName(g.c.no);
     return `<div class="doc-card" onclick="openDocFolder('${g.c.no}')">
       <div class="doc-ava">${ph?`<img src="${ph}">`:`<span>${esc((g.c.member||g.c.name||"?").charAt(0).toUpperCase())}</span>`}</div>
@@ -2464,7 +2465,7 @@ function openDocFolder(no){
   const isAdmin=CURRENT_USER.role==="super_admin";
   const canUp=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
   const head=`<div class="login-brand" style="justify-content:center;margin-bottom:14px">
-    <div class="doc-ava" style="width:64px;height:64px">${PHOTO[no]?`<img src="${PHOTO[no]}">`:`<span style="font-size:24px">${esc((c.member||"?").charAt(0).toUpperCase())}</span>`}</div>
+    <div class="doc-ava" style="width:64px;height:64px">${phSrc(no)?`<img src="${phSrc(no)}">`:`<span style="font-size:24px">${esc((c.member||"?").charAt(0).toUpperCase())}</span>`}</div>
     <div><div style="font-weight:800;font-size:16px">${esc(c.name)}</div><div style="font-size:12px;color:var(--mut)">法人 ${esc(c.member)} ｜ ${list.length} 份</div></div></div>`;
   const body=list.length?`<div style="max-height:55vh;overflow:auto;padding:4px"><div class="file-grid">${list.map((f,i)=>fileThumbDel(f,no,isAdmin)).join("")}</div></div>`:`<div class="empty" style="padding:30px">這個資料夾還沒有檔案</div>`;
   const foot=`<div class="mrow" style="margin-top:14px;justify-content:flex-end">
