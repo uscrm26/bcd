@@ -415,12 +415,13 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   try{
-    const [emRes,mbRes,dbRes,fiRes,bkRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json"),fetch("files.json"),fetch("brokers.json")]);
+    const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"),fetch("mailboxes.json"),fetch("dbboard/data.json"),fetch("files.json"),fetch("brokers.json"),fetch("sent_log.json")]);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
     const fi=fiRes.ok?await fiRes.json():null;
     const bk=bkRes.ok?await bkRes.json():null;
+    DATA.sent=slRes.ok?await slRes.json():[];
     if(Array.isArray(bk)&&bk.length){
       BROKERS.length=0;
       bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
@@ -1216,10 +1217,52 @@ function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSO
 function getAIKey(){return localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");}
 async function callAI(sys,user){
   const key=getAIKey();
-  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"google/gemma-4-31b-it:free",messages:[{role:"system",content:sys},{role:"user",content:user}]})});
+  const useArk=!!localStorage.getItem("bcd_ark_key");
+  const endpoint=useArk?"https://ark.cn-beijing.volces.com/api/v3/chat/completions":"https://openrouter.ai/api/v1/chat/completions";
+  const model=useArk?(localStorage.getItem("bcd_ark_model")||"doubao-pro-32k"):"google/gemma-4-31b-it:free";
+  const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}]})});
   if(!r.ok)throw new Error("HTTP "+r.status);
   const j=await r.json();
   return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+}
+// 組裝客戶檔案＋往來歷史，供 AI 前後文分析
+function buildMailContext(e){
+  const lines=[];
+  // 1. 客戶檔案
+  const cname=(e.c||"").trim();
+  const cust=DATA.customers.find(x=>x.name&&(x.name===cname||x.name.startsWith(cname)||(cname&&x.name.includes(cname))));
+  if(cust){
+    lines.push("【客戶檔案】");
+    lines.push("公司："+(cust.name||"")+"｜法人："+(cust.member||"")+"｜EIN："+(cust.ein||"—")+"｜目前狀態："+(cust.status_lb||cust.status||"")+"｜內部編號：#"+cust.no);
+    if(cust.mail)lines.push("客戶對外信箱："+cust.mail);
+  }else{
+    lines.push("【客戶檔案】系統中尚未建立該公司檔案，客戶名稱："+cname);
+  }
+  // 2. 本客戶歷史收件（依時間排序）
+  const recv=(DATA.emails||[]).filter(x=>x.c===cname).sort((a,b)=>a.t.localeCompare(b.t));
+  if(recv.length){
+    lines.push("");
+    lines.push("【與本客戶相關的歷史收件（依時間排序）】");
+    recv.forEach(x=>{
+      if(x.t===e.t)return; // 跳過本次新郵件
+      lines.push("- ["+x.t+"] "+(x.from||"").split("<")[0].trim()+" 來信｜主旨："+(x.sub||"")+(x.auto_interp?("｜已有解讀："+x.auto_interp.slice(0,120)):""));
+    });
+  }
+  // 3. 歷史外發：sent_log 中 to 是本次發件人域名，或 from 是本客戶信箱
+  const custMail=cust?cust.mail:"";
+  const brokerDomain=((e.from||"").split("@")[1]||"").toLowerCase();
+  const sent=(DATA.sent||[]).filter(s=>{
+    const toDom=((s.to||"").split("@")[1]||"").toLowerCase();
+    return (brokerDomain&&toDom===brokerDomain)||(custMail&&(s.from||"").toLowerCase()===custMail.toLowerCase());
+  });
+  if(sent.length){
+    lines.push("");
+    lines.push("【我方過去寄出的相關郵件】");
+    sent.slice(-12).forEach(s=>{
+      lines.push("- [我方寄出] to: "+(s.to||"")+"｜主旨："+(s.subject||"")+"｜摘："+(s.body||"").slice(0,150).replace(/\s+/g," "));
+    });
+  }
+  return lines.join("\n");
 }
 function fmtUSfromBJ(t){
   const m=t.match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return t;
@@ -1253,19 +1296,21 @@ async function doTranslate(e,box){
   if(ZH_CACHE[e.t]){box.style.display="block";box.textContent=ZH_CACHE[e.t];return;}
   box.style.display="block";box.textContent="翻譯中…";
   try{
-    const out=await callAI("你是專業翻譯，把這封美國海關報關往來郵件準確翻成繁體中文，保留專有名詞與金額電話，直接給譯文不要解釋。",src);
+    const out=await callAI("你是專業翻譯。把以下英文郵件正文直接翻成繁體中文，保留專有名詞、金額、電話、網址。只輸出譯文本身，不要解釋、不要總結、不要加客套話。",src);
     ZH_CACHE[e.t]=out;saveZH(e.t,out);box.textContent=out;
   }catch(err){box.textContent="翻譯失敗：AI 服務繁忙，請稍後重試。";}
 }
 async function doInterpret(e,box){
   const src=(e.body||"").trim();
-  if(!src){box.style.display="block";box.textContent="（本信無正文可解讀）";return;}
   if(INTERP_CACHE[e.t]){box.style.display="block";box.textContent=INTERP_CACHE[e.t];return;}
   if(e.auto_interp){box.style.display="block";box.textContent=e.auto_interp;return;}
-  box.style.display="block";box.textContent="AI 解讀中…";
-  const sys="你是美國海關 bond 業務的資深客服。用繁體中文簡潔分三點解讀這封來信：1 對方是誰、來意是什麼；2 對方的具體訴求或問題；3 建議我們下一步怎麼回、要準備什麼。只給要點，不用客套。";
+  if(!src){box.style.display="block";box.textContent="（本信無正文可解讀）";return;}
+  box.style.display="block";box.textContent="AI 綜合分析中（調取客戶檔案與往來歷史）…";
+  const ctx=buildMailContext(e);
+  const sys="你是美國海關 continuous Customs Bond 業務的資深顧問，熟悉報關行(broker)流程、CBP 規定、bond 申請與補件。請基於提供的客戶檔案與完整往來郵件歷史，對這封「本次新收到的郵件」做綜合分析。用繁體中文，分三段輸出，每段開頭加標題：\n【前後文定位】把這封新郵件放回整條往來線，說明現在進展到哪一步、雙方已交換過什麼、卡在哪裡。\n【對方來意與訴求】這封信具體要什麼、拒絕什麼、要求我們補什麼材料或答覆。\n【建議下一步】結合客戶檔案與已掌握資料，告訴我們該怎麼回、要準備什麼附件、找谁、時間上要注意什麼。只給實際可執行的建議，不用客套。";
+  const userMsg=ctx+"\n\n【本次新收到的郵件】\n寄件人："+(e.from||"")+"\n主旨："+(e.sub||"")+"\n時間："+(e.t||"")+"\n\n正文：\n"+src;
   try{
-    const out=await callAI(sys,`寄件人：${e.from}\n主旨：${e.sub}\n\n${src}`);
+    const out=await callAI(sys,userMsg);
     INTERP_CACHE[e.t]=out;saveInterp(e.t,out);box.textContent=out;
   }catch(err){box.textContent="解讀失敗：AI 服務繁忙，請稍後重試。";}
 }
