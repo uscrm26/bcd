@@ -407,8 +407,25 @@ function setBatchFilter(m,sub){window._batchFilter={mode:m,sub:sub==="__first"?"
  if(sel)sel.style.display=(m==="sub")?"inline-block":"none";
  const t=window._batchFilter.sub?DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單"&&ownerMap[c.no]===window._batchFilter.sub):DATA.customers.filter(c=>c.status!=="done"&&st(c.status).lb!=="已出單");
  renderBatchList();}
-// 系統自動 4 位不重複編號，放最左邊搜索用；原 no 保留為內部序號
-(function(){let seq=1000;(DATA.customers||[]).forEach(c=>{if(!c.sysId)c.sysId=String(seq++);});})();
+// 4 位參考編號 sysId：雲端已有則原樣保留，缺號才從 1000 補；新建客戶由 nextSysId 分配並持久化進 data.json，原 no 保留為內部序號
+function normalizeSysId(){
+  const used=new Set((DATA.customers||[]).map(c=>String(c.sysId||"")));
+  let n=1000;
+  (DATA.customers||[]).forEach(c=>{
+    if(!c.sysId){while(used.has(String(n)))n++;c.sysId=String(n);used.add(c.sysId);n++;}
+  });
+}
+function nextSysId(){
+  let mx=999;
+  (DATA.customers||[]).forEach(c=>{const v=parseInt(c.sysId);if(v>=1000&&v<=9999&&v>mx)mx=v;});
+  let n=mx+1;while((DATA.customers||[]).some(c=>String(c.sysId)===String(n)))n++;
+  return String(n);
+}
+// 內部序號 no 安全最大值，空資料時從 2 開始，避免 -Infinity
+function maxNo(){let m=1;(DATA.customers||[]).forEach(c=>{const v=parseInt(c.no);if(v>m)m=v;});return m+1;}
+// 公司名標準化：忽略大小寫、多餘空白與全半角差異，供重名比對
+function normName(s){return String(s||"").toLowerCase().replace(/[\s\u3000]+/g," ").replace(/[.,]/g,"").trim();}
+normalizeSysId();
 const SETTINGS={cutoff_hour:5,auto_backup:true,backup_interval:240};
 const USERS=[
 {id:"kevinyama",nm:"Kevin W",pwd:"0521",role:"super_admin",parent:null,active:true,lastLogin:"",avatar:"K",aiMail:true,aiBatch:true,aiFollow:true,perms:{dashboard:true,customer:true,broker:true,ai:true,mail:true,doc:true,archive:true,github:true,system:true}},
@@ -489,6 +506,8 @@ async function loadRepoData(){
       ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
       // 恢复 AI 状态
       (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
+      // 雲端載入後補齊缺漏的 4 位 sysId，已有編號原樣保留
+      normalizeSysId();
     }
     if(db&&Array.isArray(db.daily)&&db.daily.length){
       const remoteLogs=db.daily.map(x=>({t:x.date||"",c:x.work||"",o:x.output||""}));
@@ -972,7 +991,7 @@ function exportCustCsv(){
 }
 function openNewCust(){const opts=DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("");
 const isAdmin=CURRENT_USER.role==="super_admin";
-const autoNo=Math.max(...DATA.customers.map(c=>parseInt(c.no)||0))+1;
+const autoNo=maxNo();
 openModal(`<h3>新增客戶</h3>
 <div style="font-size:12px;color:var(--mut);line-height:1.6;margin-bottom:12px;padding:10px 12px;background:var(--bg2);border:1px dashed var(--line);border-radius:10px">只需填 3 項基本資料。公司名稱與其他欄位會由 AI 從上傳的檔案自動辨識，建立後可再手動修改。</div>
 <div class="form-grid">
@@ -1020,7 +1039,7 @@ function renderFileList(){
 function removePicked(i){window._pickedFiles.splice(i,1);renderFileList();}
 async function startAnalyzeAndCreate(){
   if(!window._pickedFiles.length){toast("請至少上傳一個檔案");return;}
-  const autoNo=Math.max(...DATA.customers.map(c=>parseInt(c.no)||0))+1;
+  const autoNo=maxNo();
   openModal(`<h3>AI 分析與檔案分流上傳</h3>
   <div style="font-size:12px;color:var(--mut);margin-bottom:12px">第一通道 AI 分析，第二通道上傳分流，圖片進 GitHub 圖片雲端，文件進七牛文件雲端。全部完成後才確認建立客戶</div>
   <div style="display:flex;gap:12px;min-height:240px">
@@ -1075,10 +1094,15 @@ async function startAnalyzeAndCreate(){
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
-  const dup=DATA.customers.find(c=>(merged.company&&c.name&&merged.company.toLowerCase()===c.name.toLowerCase())||(merged.ein&&c.ein&&merged.ein===c.ein));
+  // 重複檢查：只比對公司名與 EIN，法人（member）同名允許，不擋重
+  const einA=String(merged.ein||"").replace(/\D/g,"");
+  const sameName=DATA.customers.find(c=>merged.company&&c.name&&normName(merged.company)===normName(c.name));
+  const sameEin=!sameName&&einA&&DATA.customers.find(c=>c.ein&&einA===String(c.ein).replace(/\D/g,""));
+  const dup=sameName||sameEin;
   if(dup){
+    const why=sameName?"公司名稱":"EIN";
     closeModal();
-    toast("⚠️ 偵測到重複客戶：「"+merged.company+"」已存在（編號 "+dup.no+"），不建立以避免重複");
+    toast("⚠️ 偵測到重複客戶：「"+(dup.name||merged.company)+"」已存在（編號 "+dup.no+"），"+why+"重複，不建立以避免重複");
     return;
   }
   showAiConfirm(autoNo,merged,results);
@@ -1197,7 +1221,7 @@ function finalizeCreate(no){
   const owner=document.getElementById("nc_owner")?document.getElementById("nc_owner").value:CURRENT_USER.id;
   const status=document.getElementById("nc_status")?document.getElementById("nc_status").value:"new";
   const date=document.getElementById("nc_date")?document.getElementById("nc_date").value:new Date().toISOString().slice(0,10);
-  const cust={no,name:document.getElementById("cf_company").value,member:document.getElementById("cf_member").value||"待填",ein:document.getElementById("cf_ein").value||"",phone:document.getElementById("cf_phone").value||"",address:document.getElementById("cf_address").value||"",notes:document.getElementById("cf_notes").value||"",status,dl:"正常",mail:"—",todo:0,created:date};
+  const cust={no,name:document.getElementById("cf_company").value,member:document.getElementById("cf_member").value||"待填",ein:document.getElementById("cf_ein").value||"",phone:document.getElementById("cf_phone").value||"",address:document.getElementById("cf_address").value||"",notes:document.getElementById("cf_notes").value||"",status,dl:"正常",mail:"—",todo:0,sysId:nextSysId(),created:date};
   DATA.customers.unshift(cust);
   ownerMap[no]=owner;
   DATA.timeline[no]=DATA.timeline[no]||[];
