@@ -1418,8 +1418,18 @@ async function openAiHistory(no){
 function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;toast("保存中...");c.aiTodos[i].done=true;addClientAudit(no,"待辦完成","",c.aiTodos[i].t,"AI 待辦");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("待辦已完成並保存");}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
+let QMAP={};
+fetch("qiniu_map.json").then(r=>r.json()).then(j=>{QMAP=j;}).catch(()=>{});
+function resolveFile(p){
+  if(!p)return "#";
+  try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
+  if(QMAP[dec])return QMAP[dec];
+  var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
+  if(QMAP[jpg])return QMAP[jpg];
+  return FILEBASE+p;
+}
 function fileThumb(f){
-  const url=FILEBASE+f.path;
+  const url=resolveFile(f.path);
   if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy"><div class="fcap">${esc(f.name)}</div></div>`;
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
   return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
@@ -1429,7 +1439,7 @@ function docList(no){
   const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   function card(f){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
-    const url=FILEBASE+(f.path||"");
+    const url=resolveFile(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
     const inner=isImg
       ? `<img src="${url}" style="width:100%;height:110px;object-fit:cover;border-radius:8px 8px 0 0;background:#222">`
@@ -2454,7 +2464,7 @@ function openDocFolder(no){
   openModal(head+body+foot);
 }
 function fileThumbDel(f,no,isAdmin){
-  const url=FILEBASE+f.path;
+  const url=resolveFile(f.path);
   const isImg=f.type==="image";
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
   const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" loading="lazy"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
