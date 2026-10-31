@@ -475,7 +475,7 @@ async function loadRepoData(){
       const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
       DATA.emails=em.map(x=>{
         const t=fmtMailDate(x.date);
-        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||""};
+        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[]};
       });
     }
     if(mb&&Array.isArray(mb.mailboxes)){
@@ -860,9 +860,17 @@ function openCustList(statusId){const list=DATA.customers.filter(c=>canViewCust(
 openModal(`<h3>${s}（${list.length}）</h3><table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>負責人</th><th>狀態</th><th></th></tr></thead><tbody>
 ${list.map(c=>`<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td>${esc(ownerName(c.no))}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td><button class="btn small" onclick="closeModal();openCust('${c.no}')">打開</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無客戶</td></tr>"}
 </tbody></table><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
-R.dashboard=()=>`<h1>總覽看板</h1>
+R.dashboard=()=>{
+  const T={zh:{a:["未讀郵件","待查看"],b:["新進附件","帶文件"],c:["有新信客戶","需跟進"],d:["待回覆郵件","等回覆"]},
+   en:{a:["Unread Mail","To view"],b:["New Attachments","With files"],c:["Clients w/ New Mail","Follow up"],d:["Awaiting Reply","Need reply"]},
+   cn:{a:["未读邮件","待查看"],b:["新进附件","带文件"],c:["有新信客户","需跟进"],d:["待回复邮件","等回复"]}}[CURRENT_LANG]||{zh:{a:["未讀郵件","待查看"],b:["新進附件","帶文件"],c:["有新信客戶","需跟進"],d:["待回覆郵件","等回覆"]}};
+  const unread=(DATA.emails||[]).filter(e=>e.unread);
+  const att=unread.filter(e=>e.atts&&e.atts.length);
+  const custs=new Set(unread.map(e=>e.c).filter(Boolean)).size;
+  const cards=[[unread.length,T.a],[att.length,T.b],[custs,T.c],[unread.filter(e=>!e.done).length,T.d]];
+  return `<h1>總覽看板</h1>
   <div class="row r4">
-    ${[["quote","已收報價",countBy("quote"),"待回覆"],["supply","待補件",countBy("supply"),"需動作"],["done","已出單",countBy("done"),"完成"],["hold","擱置",countBy("hold"),"暫停"]].map(x=>`<div class="stat" style="cursor:pointer" onclick="openCustList('${x[0]}')"><div class="lb">${x[1]}</div><div class="vl">${x[2]}</div><div class="tg">${x[3]}</div></div>`).join("")}
+    ${cards.map(x=>`<div class="stat" style="cursor:pointer" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
