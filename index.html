@@ -528,6 +528,8 @@ async function loadSB(){
         try{const item=JSON.parse(a.detail);DATA.timeline[a.target_client]=DATA.timeline[a.target_client]||[];if(!DATA.timeline[a.target_client].some(x=>x.key===item.key))DATA.timeline[a.target_client].unshift(item);}catch(e){}
       }else if(a.action==="client_audit"&&a.target_client){
         try{const rec=JSON.parse(a.detail);clientAudit[a.target_client]=clientAudit[a.target_client]||[];clientAudit[a.target_client].unshift(rec);}catch(e){}
+      }else if(a.action==="ai_todo_add"&&a.target_client){
+        const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const rec=JSON.parse(a.detail);c.aiTodos=c.aiTodos||[];if(!c.aiTodos.some(t=>t.t===rec.t))c.aiTodos.unshift(rec);}catch(e){}}
       }else if(a.action==="ai_last_at"&&a.target_client){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c)c.aiLastAt=parseInt(a.detail);
       }else{
@@ -1199,9 +1201,9 @@ function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
  ${aiTodos.length?`<div style="font-size:11px;color:#8b5cf6;margin:14px 0 6px">🤖 AI 建議待辦</div>`:""}
  ${aiTodos.map((t,i)=>`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">🤖 ${esc(t.t)}</span><span class="o" style="color:#8b5cf6">AI</span><button class="btn small" onclick="completeAiTodo('${no}',${i})">完成</button></div>`).join("")}`;}
-function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);render();toast("已加入待辦清單");}
-function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=true;persistCust(no);render();}
-function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=false;persistCust(no);render();}
+function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_add",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ts:Date.now()})});render();toast("已加入待辦清單");}
+function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:true})});render();}
+function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=false;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:false})});render();}
 function openAiHistory(no){
   const rows=(DATA.timeline[no]||[]).filter(x=>x.key&&String(x.key).startsWith("ai_"));
   const h=rows.map(r=>`<div style="padding:12px;border-left:2px solid #8b5cf6;margin-left:6px;margin-bottom:12px"><div style="font-size:11px;color:var(--mut);margin-bottom:6px">${esc(r.t)}</div><div style="font-size:13px;line-height:1.7">${esc(r.txt||"")}</div></div>`).join("")||"<div style='color:var(--dim);padding:20px'>尚無 AI 分析記錄</div>";
