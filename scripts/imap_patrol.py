@@ -76,8 +76,12 @@ for box in MB["mailboxes"]:
 # ===== AI 自動三點解讀新信，寫回 emails.json 並寫入時間線 =====
 import urllib.request
 ARK_KEY = os.environ.get("ARK_KEY","")
+if not ARK_KEY:
+    _kf = os.path.join(os.path.dirname(os.path.abspath(__file__)),"ark_key.txt")
+    if os.path.exists(_kf):
+        ARK_KEY = open(_kf,encoding="utf-8").read().strip()
 AI_KEY = ARK_KEY or os.environ.get("OPENROUTER_KEY","")
-USE_ARK = bool(ARK_KEY)
+USE_ARK = True
 DATA_PATH = os.path.join(ROOT,"dbboard","data.json")
 SENT_PATH = os.path.join(ROOT,"sent_log.json")
 AI_SYS = "你是美國海關 continuous Customs Bond 業務的資深顧問。基於提供的客戶檔案與完整往來郵件歷史，對本次新收到的郵件做綜合分析。用繁體中文，分三段：\n【前後文定位】把新郵件放回整條往來線，說明進展到哪、雙方交換過什麼、卡在哪。\n【對方來意與訴求】這封信具體要什麼、拒絕什麼、要補什麼。\n【建議下一步】結合客戶檔案，給出具體可執行的回覆與準備事項。不用客套。"
@@ -115,7 +119,7 @@ if AI_KEY and os.path.exists(DATA_PATH):
             prompt = ctx + "\n\n【本次新郵件】\n寄件人："+nm["from"]+"\n主旨："+nm["subject"]+"\n正文：\n"+nm["body"][:1800]
             try:
                 if USE_ARK:
-                    ep="https://ark.cn-beijing.volces.com/api/v3/chat/completions"; mdl=os.environ.get("ARK_MODEL","doubao-pro-32k")
+                    ep="https://ark.cn-beijing.volces.com/api/v3/chat/completions"; mdl=os.environ.get("ARK_MODEL","ep-20261031163615-7dhwh")
                 else:
                     ep="https://openrouter.ai/api/v1/chat/completions"; mdl="google/gemma-4-31b-it:free"
                 req = urllib.request.Request(ep,

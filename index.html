@@ -1214,12 +1214,12 @@ const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
 const INTERP_CACHE=JSON.parse(localStorage.getItem("bcd_interp")||"{}");
 function saveZH(k,v){ZH_CACHE[k]=v;localStorage.setItem("bcd_zh",JSON.stringify(ZH_CACHE));}
 function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSON.stringify(INTERP_CACHE));}
-function getAIKey(){return localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");}
+function getAIKey(){return localStorage.getItem("bcd_ark_key")||atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");}
 async function callAI(sys,user){
   const key=getAIKey();
-  const useArk=!!localStorage.getItem("bcd_ark_key");
+  const useArk=key.startsWith("ark-");
   const endpoint=useArk?"https://ark.cn-beijing.volces.com/api/v3/chat/completions":"https://openrouter.ai/api/v1/chat/completions";
-  const model=useArk?(localStorage.getItem("bcd_ark_model")||"doubao-pro-32k"):"google/gemma-4-31b-it:free";
+  const model=useArk?(localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh"):"google/gemma-4-31b-it:free";
   const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}]})});
   if(!r.ok)throw new Error("HTTP "+r.status);
   const j=await r.json();
