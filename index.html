@@ -405,7 +405,7 @@ function ownerName(no){const u=USERS.find(x=>x.id===ownerMap[no]);return u?u.nm:
 function addAudit(action,detail){auditLog.unshift({t:nowBJ(),user:CURRENT_USER.nm,action,detail});
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action,target_client:"",detail:detail||""});
 }
-function addClientAudit(no,action,oldv,newv,reason){clientAudit[no]=clientAudit[no]||[];clientAudit[no].unshift({t:nowBJ(),user:CURRENT_USER.nm,action,old:oldv,new:newv,reason:reason||""});addAudit(action,`客戶 ${no} ${oldv||""} → ${newv||""}`);persistCust(no);}
+function addClientAudit(no,action,oldv,newv,reason){const rec={t:nowBJ(),user:CURRENT_USER.nm,action,old:oldv,new:newv,reason:reason||""};clientAudit[no]=clientAudit[no]||[];clientAudit[no].unshift(rec);addAudit(action,`客戶 ${no} ${oldv||""} → ${newv||""}`);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"client_audit",target_client:String(no),detail:JSON.stringify(rec)});persistCust(no);}
 // 佣金：成功單記錄，超管手動標記
 const commissions=[];
 let deductions=JSON.parse(localStorage.getItem("bcd_deductions")||"[]");
@@ -496,8 +496,22 @@ async function loadSB(){
   }
   const dl=await sbReq("deals","GET",null,"?select=*&order=closed_at.desc");
   if(Array.isArray(dl)){commissions.splice(0,commissions.length);dl.forEach(d=>commissions.push({cust:"",user:d.owner,amount:d.amount,mode:d.note,t:d.closed_at}));}
-  const al=await sbReq("audit_logs","GET",null,"?select=*&order=created_at.desc&limit=100");
-  if(Array.isArray(al)){auditLog.splice(0,auditLog.length);al.forEach(a=>auditLog.push({t:a.created_at,user:a.display_name,action:a.action,detail:a.detail}));}
+  const al=await sbReq("audit_logs","GET",null,"?select=*&order=created_at.desc.desc&limit=500");
+  if(Array.isArray(al)){
+    auditLog.splice(0,auditLog.length);
+    DATA.timeline=DATA.timeline||{};clientAudit=clientAudit||{};
+    al.forEach(a=>{
+      if(a.action==="timeline"&&a.target_client){
+        try{const item=JSON.parse(a.detail);DATA.timeline[a.target_client]=DATA.timeline[a.target_client]||[];if(!DATA.timeline[a.target_client].some(x=>x.key===item.key))DATA.timeline[a.target_client].unshift(item);}catch(e){}
+      }else if(a.action==="client_audit"&&a.target_client){
+        try{const rec=JSON.parse(a.detail);clientAudit[a.target_client]=clientAudit[a.target_client]||[];clientAudit[a.target_client].unshift(rec);}catch(e){}
+      }else if(a.action==="ai_last_at"&&a.target_client){
+        const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c)c.aiLastAt=parseInt(a.detail);
+      }else{
+        auditLog.push({t:a.created_at,user:a.display_name,action:a.action,detail:a.detail});
+      }
+    });
+  }
   render();
 }
 const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
@@ -1534,7 +1548,7 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
     // 同時寫一條時間線
     DATA.timeline[no]=DATA.timeline[no]||[];
     DATA.timeline[no].unshift({t:nowBJ(),who:"AI 跟進",txt:"🤖 "+(j.summary||"AI 已分析客戶檔案"),key:"ai_"+Date.now()});
-  const _c=DATA.customers.find(x=>x.no===no);if(_c){_c.aiLastAt=Date.now();persistCust(no);}
+  const _c=DATA.customers.find(x=>x.no===no);if(_c){_c.aiLastAt=Date.now();persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_last_at",target_client:String(no),detail:String(Date.now())});}
     addClientAudit(no,"AI 跟進分析","","","AI 自動分析完成");
   }catch(err){
     if(prog)prog.innerHTML="<div style='color:#f87171;font-size:13px'>AI 分析失敗，請稍後重試。</div>";
