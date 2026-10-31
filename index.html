@@ -991,7 +991,8 @@ return `<div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6
   <div style="margin-top:10px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
     <div style="font-size:28px;margin-bottom:6px">🤖</div>
     <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:6px">${CURRENT_LANG==='en'?'AI Status':CURRENT_LANG==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
-    <div style="font-size:11px;color:var(--mut);line-height:1.6">${c.aiLastAt?aiStatusCard(c.aiLastAt):(CURRENT_LANG==='en'?'No AI analysis yet. Click the button below to start.':CURRENT_LANG==='cn'?'从未为该客户进行 AI 分析，点击下方按钮开始。':'從未為該客戶進行 AI 分析，點擊下方按鈕開始。')}</div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-bottom:8px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(CURRENT_LANG==='en'?'No AI analysis yet.':CURRENT_LANG==='cn'?'从未为该客户进行 AI 分析。':'從未為該客戶進行 AI 分析。')}</div>
+    <button class="btn small" style="font-size:11px;padding:4px 10px" onclick="openAiHistory('${no}')">查看歷史記錄</button>
   </div>
   </div>
   <div style="flex:1;min-width:260px">
@@ -1198,7 +1199,15 @@ function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
  ${aiTodos.length?`<div style="font-size:11px;color:#8b5cf6;margin:14px 0 6px">🤖 AI 建議待辦</div>`:""}
  ${aiTodos.map((t,i)=>`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">🤖 ${esc(t.t)}</span><span class="o" style="color:#8b5cf6">AI</span><button class="btn small" onclick="completeAiTodo('${no}',${i})">完成</button></div>`).join("")}`;}
-function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].done=true;addClientAudit(no,"待辦完成","",c.aiTodos[i].t,"AI 待辦");render();toast("待辦已完成");}
+function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);render();toast("已加入待辦清單");}
+function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=true;persistCust(no);render();}
+function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;c.aiSuggestions[i].ignored=false;persistCust(no);render();}
+function openAiHistory(no){
+  const rows=(DATA.timeline[no]||[]).filter(x=>x.key&&String(x.key).startsWith("ai_"));
+  const h=rows.map(r=>`<div style="padding:12px;border-left:2px solid #8b5cf6;margin-left:6px;margin-bottom:12px"><div style="font-size:11px;color:var(--mut);margin-bottom:6px">${esc(r.t)}</div><div style="font-size:13px;line-height:1.7">${esc(r.txt||"")}</div></div>`).join("")||"<div style='color:var(--dim);padding:20px'>尚無 AI 分析記錄</div>";
+  openModal(`<h3>🤖 AI 分析歷史</h3><div style="max-height:500px;overflow-y:auto;padding-right:6px">${h}</div>`);
+}
+function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].done=true;addClientAudit(no,"待辦完成","",c.aiTodos[i].t,"AI 待辦");persistCust(no);render();toast("待辦已完成");}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 function fileThumb(f){
@@ -1642,7 +1651,7 @@ function applyAiAnalysis(no){
   }
   if(j.next_actions&&j.next_actions.length){
     cust.aiTodos=cust.aiTodos||[];
-    j.next_actions.forEach(a=>{if(!cust.aiTodos.some(t=>t.t===a&&!t.done))cust.aiTodos.unshift({t:a,done:false,ts:Date.now()});});
+    cust.aiSuggestions=j.next_actions.map(a=>({t:a,added:false,ignored:false}));
   }
   // 自动写入，不用手动确认
   const cust2=DATA.customers.find(x=>x.no===no);
