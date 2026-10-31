@@ -1514,7 +1514,7 @@ function writeMailTimeline(e,zh,interp){
   const summary=((interp.match(/【對方來意與訴求】([\s\S]*?)(?=【|$)/)||[])[1]||interp).slice(0,120);
   DATA.timeline[cust.no]=DATA.timeline[cust.no]||[];
   if(DATA.timeline[cust.no].some(x=>x.key===key))return;
-  DATA.timeline[cust.no].unshift({t:e.t,who:"AI 解讀",txt:"📧 "+(e.from||"").split("<")[0].trim()+"｜"+(e.sub||"")+"："+summary,key:key});persistCust(cust.no);
+  DATA.timeline[cust.no].unshift({t:e.t,who:"AI 解讀 · "+CURRENT_USER.nm,txt:"📧 "+(e.from||"").split("<")[0].trim()+"｜"+(e.sub||"")+"："+summary,key:key});persistCust(cust.no);
   addAudit("AI 解讀完成","郵件 "+e.sub+" 已翻譯並寫入客戶時間線");DATA.logs.unshift({t:nowBJ(),c:"🤖 AI 自動解讀 "+cust.name+" 收到的郵件："+e.sub,o:"AI"});
   toast("AI 解讀已寫入客戶時間線");
 }
