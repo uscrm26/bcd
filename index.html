@@ -1376,7 +1376,11 @@ function markProcessedKey(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e
 function renderAICard(zh,interp){
   const card=(icon,title,color,content)=>content?`<div style="margin-bottom:10px"><div style="font-size:12px;font-weight:600;color:${color};margin-bottom:4px">${icon} ${title}</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap">${esc(content)}</div></div>`:"";
   const seg=(re,s)=>{const m=(s||"").match(re);return m?m[1].trim():"";};
-  return card("📝","中文翻譯","#60a5fa",zh)+`<div style="height:1px;background:var(--line);margin:12px 0"></div>`+card("🧭","前後文定位","#34d399",seg(/【前後文定位】([\s\S]*?)(?=【|$)/,interp))+card("🎯","對方來意與訴求","#fbbf24",seg(/【對方來意與訴求】([\s\S]*?)(?=【|$)/,interp))+card("✅","建議下一步","#f87171",seg(/【建議下一步】([\s\S]*?)(?=【|$)/,interp));
+  const left=card("📝","中文翻譯","#60a5fa",zh);
+  const right=card("🧭","前後文定位","#34d399",seg(/【前後文定位】([\s\S]*?)(?=【|$)/,interp))+card("🎯","對方來意與訴求","#fbbf24",seg(/【對方來意與訴求】([\s\S]*?)(?=【|$)/,interp))+card("✅","建議下一步","#f87171",seg(/【建議下一步】([\s\S]*?)(?=【|$)/,interp));
+  return `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+   <div style="padding:12px;background:var(--bg2);border-radius:10px">${left||"<div style='color:var(--mut);font-size:12px'>尚無翻譯</div>"}</div>
+   <div style="padding:12px;background:var(--bg2);border-radius:10px">${right||"<div style='color:var(--mut);font-size:12px'>尚無分析</div>"}</div></div>`;
 }
 
 async function doAI(e,box){
