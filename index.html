@@ -1166,17 +1166,22 @@ function setMailTab(btn){window._mailTab=btn.dataset.mt;document.querySelectorAl
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";
 let list=DATA.emails.filter(e=>canViewMail(e)&&(!f||(e.from+e.sub).toLowerCase().includes(f.toLowerCase()))&&(!fl||(fl==="unread"?e.unread:!e.unread)));
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
+window._qlist=list;
 const tb=document.getElementById("qtbody");if(!tb)return;
 let html="";
 list.forEach((e,idx)=>{
  const open=window._openMail===e.t;
  html+=`<tr style="${e.unread?"background:rgba(255,93,108,.06)":""}"><td>${esc(e.c)}</td><td style="font-size:11px">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${e.t.replace(/'/g,"\\'")}')">${esc(e.sub)}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td>${e.t}</td><td><button class="btn small" onclick="openReply('${e.t}')">回覆</button><button class="btn small" onclick="toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
- if(open){const hasZH=!!ZH_CACHE[e.t];
+ if(open){const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t];
  html+=`<tr><td colspan="6" style="background:var(--bg2)"><div style="padding:14px 16px">
  <div style="font-size:11px;color:var(--mut);margin-bottom:8px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:300px;overflow:auto">${esc(e.body||"(此郵件暫無正文)")}</div>
- <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${e.t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button></div>
- <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(ZH_CACHE[e.t]||"")}</div>
+ <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap">
+  <button class="btn small" onclick="aiTranslate(${idx})">${hasZH?"隱藏中文翻譯":"翻譯"}</button>
+  <button class="btn small" onclick="aiInterpret(${idx})">${hasIP?"隱藏 AI 解讀":"AI 解讀"}</button>
+ </div>
+ <div id="zh_${idx}" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(ZH_CACHE[e.t]||"")}</div>
+ <div id="ip_${idx}" style="${hasIP?"":"display:none"};background:rgba(80,200,140,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:260px;overflow:auto">${esc(INTERP_CACHE[e.t]||"")}</div>
  </div></td></tr>`;}
 });
 tb.innerHTML=html||"<tr><td colspan='6' class='empty'>無符合郵件</td></tr>";}
@@ -1199,7 +1204,17 @@ function canViewMail(e){
 function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
 let REPLY_EMAIL=null;
 const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
+const INTERP_CACHE=JSON.parse(localStorage.getItem("bcd_interp")||"{}");
 function saveZH(k,v){ZH_CACHE[k]=v;localStorage.setItem("bcd_zh",JSON.stringify(ZH_CACHE));}
+function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSON.stringify(INTERP_CACHE));}
+function getAIKey(){return localStorage.getItem("bcd_ark_key")||atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");}
+async function callAI(sys,user){
+  const key=getAIKey();
+  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:"google/gemma-4-31b-it:free",messages:[{role:"system",content:sys},{role:"user",content:user}]})});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=await r.json();
+  return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+}
 function fmtUSfromBJ(t){
   const m=t.match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return t;
   let mo=+m[1],da=+m[2],h=+m[3],mi=+m[4];
@@ -1215,19 +1230,44 @@ function openMailDetail(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
  <div style="font-size:12px;color:var(--mut);margin-bottom:4px">寄件人：${esc(e.from)}</div>
  <div style="font-size:12px;color:var(--mut);margin-bottom:10px">北京時間 ${e.t} ｜ 美國東岸 ${fmtUSfromBJ(e.t)}</div>
  <div style="background:var(--bg2);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:34vh;overflow:auto">${esc(e.body||"(此郵件暫無正文預覽，完整內容由後台 IMAP 同步)")}</div>
- <div style="margin:10px 0"><button class="btn small" onclick="toggleZH('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button></div>
- <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;max-height:30vh;overflow:auto">${esc(ZH_CACHE[t]||"")}</div>
+ <div style="margin:10px 0;display:flex;gap:8px;flex-wrap:wrap">
+  <button class="btn small" onclick="aiTranslateKey('${t.replace(/'/g,"\\'")}')">${hasZH?"隱藏中文翻譯":"翻譯"}</button>
+  <button class="btn small" onclick="aiInterpretKey('${t.replace(/'/g,"\\'")}')">${INTERP_CACHE[t]?"隱藏 AI 解讀":"AI 解讀"}</button>
+ </div>
+ <div id="zhBox" style="${hasZH?"":"display:none"};background:rgba(90,140,255,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(ZH_CACHE[t]||"")}</div>
+ <div id="ipBox" style="${INTERP_CACHE[t]?"":"display:none"};background:rgba(80,200,140,.08);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;line-height:1.8;white-space:pre-wrap;max-height:30vh;overflow:auto">${esc(INTERP_CACHE[t]||"")}</div>
  <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="closeModal();openReply('${e.t}')">回覆此信</button></div>`);}
-function toggleZH(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;
- const box=document.getElementById("zhBox");if(!box)return;
- if(box.style.display!=="none"){box.style.display="none";return;}
- if(!ZH_CACHE[t]){
-   const src=(e.body||"").trim();
-   if(!src){box.style.display="block";box.textContent="（本信無正文可翻譯）";return;}
-   // 本地暫存譯文：先放原文並標註，待接 AI 翻譯接口後自動替換
-   ZH_CACHE[t]="【AI 翻譯】"+src; saveZH(t,ZH_CACHE[t]);
- }
- box.style.display="block";box.textContent=ZH_CACHE[t];}
+async function doTranslate(e,box){
+  const src=(e.body||"").trim();
+  if(!src){box.style.display="block";box.textContent="（本信無正文可翻譯）";return;}
+  if(ZH_CACHE[e.t]){box.style.display="block";box.textContent=ZH_CACHE[e.t];return;}
+  box.style.display="block";box.textContent="翻譯中…";
+  try{
+    const out=await callAI("你是專業翻譯，把這封美國海關報關往來郵件準確翻成繁體中文，保留專有名詞與金額電話，直接給譯文不要解釋。",src);
+    ZH_CACHE[e.t]=out;saveZH(e.t,out);box.textContent=out;
+  }catch(err){box.textContent="翻譯失敗："+(err.message||err)+"，免費模型可能繁忙，稍後重試。";}
+}
+async function doInterpret(e,box){
+  const src=(e.body||"").trim();
+  if(!src){box.style.display="block";box.textContent="（本信無正文可解讀）";return;}
+  if(INTERP_CACHE[e.t]){box.style.display="block";box.textContent=INTERP_CACHE[e.t];return;}
+  box.style.display="block";box.textContent="AI 解讀中…";
+  const sys="你是美國海關 bond 業務的資深客服。用繁體中文簡潔分三點解讀這封來信：1 對方是誰、來意是什麼；2 對方的具體訴求或問題；3 建議我們下一步怎麼回、要準備什麼。只給要點，不用客套。";
+  try{
+    const out=await callAI(sys,`寄件人：${e.from}\n主旨：${e.sub}\n\n${src}`);
+    INTERP_CACHE[e.t]=out;saveInterp(e.t,out);box.textContent=out;
+  }catch(err){box.textContent="解讀失敗："+(err.message||err)+"，免費模型可能繁忙，稍後重試。";}
+}
+// 隊列展開行（按索引）
+function aiTranslate(idx){const e=window._qlist[idx];const box=document.getElementById("zh_"+idx);if(!e||!box)return;
+ if(box.style.display!=="none"){box.style.display="none";return;}doTranslate(e,box);}
+function aiInterpret(idx){const e=window._qlist[idx];const box=document.getElementById("ip_"+idx);if(!e||!box)return;
+ if(box.style.display!=="none"){box.style.display="none";return;}doInterpret(e,box);}
+// 郵件詳情彈窗（按時間鍵）
+function aiTranslateKey(t){const e=DATA.emails.find(x=>x.t===t);const box=document.getElementById("zhBox");if(!e||!box)return;
+ if(box.style.display!=="none"){box.style.display="none";return;}doTranslate(e,box);}
+function aiInterpretKey(t){const e=DATA.emails.find(x=>x.t===t);const box=document.getElementById("ipBox");if(!e||!box)return;
+ if(box.style.display!=="none"){box.style.display="none";return;}doInterpret(e,box);}
 function openReply(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;REPLY_EMAIL=e;
  const row=(k,v)=>`<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">${k}</div><div style="font-size:13px">${v}</div></div>`;
  openModal(`<h3>回覆郵件</h3>
