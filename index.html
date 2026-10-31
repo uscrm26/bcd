@@ -688,7 +688,17 @@ function updateBadges(){
 
 // ===== 總覽看板 =====
 let cardMode="card";
-const countBy=id=>DATA.customers.filter(c=>c.status===id).length;
+const countBy=id=>{
+  let list=DATA.customers.filter(c=>c.status===id);
+  if(window._dashScope==="mine"){
+    list=list.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
+  }
+  return list.length;
+};
+function dashScopeList(){
+  if(window._dashScope==="mine")return DATA.customers.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
+  return DATA.customers;
+}
 function hoursSince(tm){
   const m=String(tm).match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return 999;
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
@@ -696,6 +706,7 @@ function hoursSince(tm){
   const thatMin=(+m[1])*372+(+m[2])*1440+(+m[3])*60+(+m[4]);
   return (curMin-thatMin)/60;
 }
+function setDashScope(m){window._dashScope=m;document.getElementById("ds_all").style.background=m==="all"?"var(--acc)":"var(--bg2)";document.getElementById("ds_all").style.color=m==="all"?"#fff":"var(--text)";document.getElementById("ds_mine").style.background=m==="mine"?"var(--acc)":"var(--bg2)";document.getElementById("ds_mine").style.color=m==="mine"?"#fff":"var(--text)";render();}
 function followUpAlerts(){
   const rows=[];
   DATA.customers.forEach(c=>{
