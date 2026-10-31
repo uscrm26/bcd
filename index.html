@@ -1548,22 +1548,16 @@ addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toa
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
 R.webmail=()=>{
- const T={zh:{h:"手動登錄信箱",note:"請向系統管理員獲得客戶郵箱的密碼，透過專屬電子郵箱登錄網站登錄對應郵箱賬戶。",click:"點此登入郵件伺服器",m:"系統正爲您打開外置的郵件伺服器登錄網站。由於系統的限制原因，無法在本系統中運行這個郵件伺服器，需要另開新分頁。按確認將會打開瀏覽器新分頁。",ok:"確認前往",cancel:"取消"},
- en:{h:"Webmail Login",note:"Ask your system administrator for the mailbox password, then open the dedicated webmail site to sign in to the corresponding mailbox.",click:"Click to open the mail server",m:"The system is about to open the external mail server login site. Due to system limitations it cannot run inside this app, so a new browser tab is required. Click Confirm to open it.",ok:"Confirm",cancel:"Cancel"},
- cn:{h:"手动登录信箱",note:"请向系统管理员获得客户邮箱的密码，通过专属电子邮箱登录网站登录对应邮箱账户。",click:"点此登录邮件服务器",m:"系统将为您打开外置的邮件服务器登录网站。由于系统限制，无法在本系统内运行该邮件服务器，需要另开新分页。按确认将打开浏览器新分页。",ok:"确认前往",cancel:"取消"}}[CURRENT_LANG]||{zh:{h:"手動登錄信箱",note:"請向系統管理員獲得客戶郵箱的密碼，透過專屬電子郵箱登錄網站登錄對應郵箱賬戶。",click:"點此登入郵件伺服器",m:"系統正爲您打開外置的郵件伺服器登錄網站。由於系統的限制原因，無法在本系統中運行這個郵件伺服器，需要另開新分頁。按確認將會打開瀏覽器新分頁。",ok:"確認前往",cancel:"取消"}};
- function openWebmailModal(){const L=CURRENT_LANG;const m={zh:"系統正爲您打開外置的郵件伺服器登錄網站。由於系統的限制原因，無法在本系統中運行這個郵件伺服器，需要另開新分頁。按確認將會打開瀏覽器新分頁。",en:"The system is about to open the external mail server login site. Due to system limitations it cannot run inside this app, so a new browser tab is required. Click Confirm to open it.",cn:"系统将为您打开外置的邮件服务器登录网站。由于系统限制，无法在本系统内运行该邮件服务器，需要另开新分页。按确认将打开浏览器新分页。"}[L]||"";const ok={zh:"確認前往",en:"Confirm",cn:"确认前往"}[L];const cancel={zh:"取消",en:"Cancel",cn:"取消"}[L];const h={zh:"手動登錄信箱",en:"Webmail Login",cn:"手动登录信箱"}[L];
- openModal("<h3>"+h+"</h3><p style='font-size:13px;line-height:1.8;color:var(--tx)'>"+m+"</p><div class='mrow'><button class='btn' onclick='closeModal()'>"+cancel+"</button><button class='btn primary' onclick='closeModal();window.open(\"https://mail.pony-it.com/\",\"_blank\")'>"+ok+"</button></div>");}
+ const T={zh:{h:"手動登錄信箱",tip:"此為 mail.pony-it.com 真實郵箱登錄介面。點擊圖片前往該網站登入對應信箱。",go:"開啟郵箱登錄頁"},
+ en:{h:"Webmail Login",tip:"This is the real mail.pony-it.com login screen. Click the image to open the site and sign in to the mailbox.",go:"Open mailbox login"},
+ cn:{h:"手动登录信箱",tip:"此为 mail.pony-it.com 真实邮箱登录界面。点击图片前往该网站登录对应邮箱。",go:"打开邮箱登录页"}}[CURRENT_LANG]||{zh:{h:"手動登錄信箱",tip:"此為 mail.pony-it.com 真實郵箱登錄介面。點擊圖片前往該網站登入對應信箱。",go:"開啟郵箱登錄頁"}};
  return `<h1>${T.h}</h1>
- <div style="font-size:13px;color:var(--tx);margin:10px 0 18px">${T.note}</div>
+ <div style="font-size:13px;color:var(--mut);margin:8px 0 14px">${T.tip}</div>
  <div style="display:flex;justify-content:center">
- <div onclick="openWebmailModal()"
- style="width:380px;cursor:pointer;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#1c2230,#141822);padding:28px 24px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.35)" title="${T.click}">
- <div style="font-size:56px;line-height:1">📬</div>
- <div style="font-size:13px;color:var(--mut);margin:14px 0 18px">mail.pony-it.com</div>
- <div style="background:#0f131c;border:1px solid var(--line);border-radius:8px;color:var(--mut);font-size:13px;padding:10px 12px;text-align:left;margin-bottom:8px">Email address</div>
- <div style="background:#0f131c;border:1px solid var(--line);border-radius:8px;color:var(--mut);font-size:13px;padding:10px 12px;text-align:left;margin-bottom:14px">Password</div>
- <div style="background:var(--ok);color:#fff;font-weight:700;border-radius:8px;padding:10px">Login</div>
- <div style="font-size:12px;color:var(--acc);margin-top:14px">${T.click} ↗</div>
+ <div onclick="window.open('https://mail.pony-it.com/','_blank')" title="${T.go}"
+ style="cursor:pointer;max-width:600px;width:100%;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.45);background:#20242e">
+ <img src="webmail-login.jpg" style="width:100%;display:block" alt="mail.pony-it.com 登入介面">
+ <div style="text-align:center;padding:10px;font-size:13px;color:var(--acc)">${T.go} ↗</div>
  </div></div>`;};
 R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">僅超級管理員可查看</div>`;
  const T={zh:{h:"巡查排程",na:"僅超級管理員可查看"},en:{h:"Polling Schedule",na:"Super admin only"},cn:{h:"巡查排程",na:"仅超级管理员可查看"}}[CURRENT_LANG]||{zh:{h:"巡查排程",na:"僅超級管理員可查看"}};
