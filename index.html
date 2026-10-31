@@ -1052,17 +1052,18 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
  const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
  const mailRows=mails.map(e=>({e:"email",src:e.from,tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
- const all=ts.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
+ const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||"跟進",tt:x.txt||"",tm:x.t||"",tx:"",key:x.key||""}));
+ const all=tsRows.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
  const f=window._tlFilter||"all";
- const filtered=f==="ai"?all.filter(t=>t.who&&t.who.indexOf("AI")>=0||t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
+ const filtered=f==="ai"?all.filter(t=>t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
  return `<div style="margin-bottom:10px;display:flex;gap:6px">
-  <button class="btn small ${f==='all'?'':'btn'}" style="${f==='all'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='all';render()">全部</button>
+  <button class="btn small" style="${f==='all'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='all';render()">全部</button>
   <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
  </div>
- <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map(t=>`<div class="tli e-${t.e}" style="cursor:pointer" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src||t.who||"")}</span><div class="tt">${esc(t.tt)}</div><div class="tm">${t.tm} ｜ 美東 ${convET(t.tm)}</div><div class="tx">${esc(t.tx)}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map(t=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''}" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)} ${t.e==='ai'?'<span class="tag t-blue" style="margin-left:4px">AI</span>':''}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
-function convET(bj){const d=new Date();const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
+function convET(bj){if(!bj||typeof bj!=="string")return "--";const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
 function autoTodos(c){const t=[];
  const unread=(DATA.emails||[]).some(e=>e.c===c.name&&e.unread);
  if(unread)t.push({lv:"high",t:"有新郵件待回覆"});
@@ -1395,19 +1396,37 @@ async function aiAnalyzeCustomer(no){
   const cust=DATA.customers.find(x=>x.no===no);if(!cust)return;
   const prog=document.getElementById("aiProgress_"+no);
   const res=document.getElementById("aiResult_"+no);
-  if(prog){prog.style.display="block";prog.innerHTML="<div style='color:#8b5cf6;font-size:13px'>🤖 AI 正在調取客戶檔案、最近 7 天郵件與附件清單，請稍候…</div>";}
+  if(prog){prog.style.display="block";prog.innerHTML="<div style='color:#8b5cf6;font-size:13px'>🤖 AI 正在統計跟進數據、調取郵件與檔案，請稍候…</div>";}
   if(res)res.style.display="none";
   try{
-    const mails=recentMailsForCustomer(cust,7);
+    const dom=cust.mail?cust.mail.split("@")[1].toLowerCase():"";
+    const allMails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
+    const recentMails=allMails.slice(0,10);
+    const unreadCount=allMails.filter(e=>e.unread).length;
+    const totalReceived=allMails.length;
+    const sentCount=(DATA.sent_log||[]).filter(s=>dom&&(s.to||"").toLowerCase().includes(dom)).length;
+    const brokerReplied=allMails.some(e=>/broker|bond|quota|premium|approval|issued|審批|報價|出單/i.test((e.sub||"")+(e.body||"")));
     const files=((DATA.files||{})[no]||[]).map(f=>f.name||f.nm).slice(0,15);
     const status=st(cust.status);
+    let progressNote="";
+    if(totalReceived===0&&sentCount===0)progressNote="此客戶尚未有任何來往郵件，屬全新線索，需主動開發。";
+    else if(unreadCount>0)progressNote="有 "+unreadCount+" 封未處理郵件，需立即回覆。";
+    else if(sentCount>=15&&totalReceived===0)progressNote="已發出 "+sentCount+" 封郵件但客戶從未回覆，需考慮電話跟進或放棄。";
     const ctx=`客戶檔案：公司=${cust.name}，法人=${cust.member}，EIN=${cust.ein}，狀態=${status.lb}，負責人=${ownerName(no)}，信箱=${cust.mail}，駕照=${cust.dl}，護照=${cust.pp||"未有提供"}
+
+跟進數據統計：
+- 我們已發出郵件：${sentCount} 封（標準 15 到 20 封）
+- 客戶已回覆郵件：${totalReceived} 封
+- 未處理郵件：${unreadCount} 封
+- Broker 是否已回覆相關進度：${brokerReplied?"是":"否"}
+- 自動判斷：${progressNote}
+
 已收到附件：${files.length?files.join("、"):"無"}
-最近 7 天來往郵件：
-${mails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body||"").slice(0,400)).join("\n\n")||"（最近 7 天無新郵件）"}`;
-    const sys=`你是美國海關 continuous Customs Bond 業務的資深顧問。請對這個客戶做整體跟進分析，用繁體中文，嚴格輸出 JSON，不要加 markdown 標記或說明文字，JSON schema 如下：
-{"summary":"一句話總結客戶目前處境","status_suggest":"建議的業務狀態（用「資料收集中」「等待客戶確認」「已提交」「等待報價」「已出單」之一）","next_actions":["待辦事項1","待辦事項2"],"risk":"風險點或需要注意的事，沒有就填空字符串"}
-每個欄位精簡，summary 不超過 50 字，next_actions 最多 3 條，每條不超過 30 字。`;
+最近來往郵件：
+${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body||"").slice(0,400)).join("\n\n")||"（無郵件記錄）"}`;
+    const sys=`你是美國海關 continuous Customs Bond 業務的資深顧問。請基於以上跟進數據統計和郵件內容，對這個客戶做整體跟進分析，用繁體中文，嚴格輸出 JSON，不要加 markdown 標記或說明文字，JSON schema 如下：
+{"summary":"一句話總結客戶目前處境和跟進狀態","status_suggest":"建議的業務狀態（用「新線索」「資料收集中」「等待客戶確認」「已提交」「等待報價」「已出單」之一）","next_actions":["待辦事項1","待辦事項2"],"risk":"風險點或需要注意的事，沒有就填空字符串"}
+重點判斷：1. 是否已發夠開發信 2. 有無未處理郵件 3. Broker 進度 4. 是否需電話跟進。每個欄位精簡，summary 不超過 60 字，next_actions 最多 3 條，每條不超過 30 字。`;
     const out=await callAI(sys,ctx);
     let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,200),next_actions:[]};}
     if(prog)prog.style.display="none";
