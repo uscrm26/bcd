@@ -13,9 +13,13 @@ keys = []
 marker = ""
 while True:
     res = bm.list(BUCKET, limit=1000, marker=marker)
-    items = res[0].get("items", [])
+    data = res[0] if isinstance(res, tuple) else res
+    if not data:
+        print("list 返回空:", res)
+        break
+    items = data.get("items", [])
     keys.extend([it["key"] for it in items])
-    marker = res[0].get("marker")
+    marker = data.get("marker")
     if not marker:
         break
 
