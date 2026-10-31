@@ -1494,11 +1494,14 @@ function batchAIAnalyze(){
 }
 async function runBatchAI(){
   const nos=[...arguments];
-  document.getElementById("batchStartBtn").disabled=true;
+  const btn=document.getElementById("batchStartBtn");
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> 分析中…';
   window._batchResults=[];
-  for(const no of nos){
+  for(let i=0;i<nos.length;i++){
+    const no=nos[i];
     const row=document.getElementById("batch_"+no);
-    if(row)row.firstChild.textContent="⏳ ";
+    if(row){row.firstChild.innerHTML='<span class="spinner"></span>';row.style.background="rgba(139,92,246,.08)";}
     try{
       const cust=DATA.customers.find(x=>x.no===no);
       const mails=recentMailsForCustomer(cust,7);
@@ -1508,19 +1511,17 @@ async function runBatchAI(){
       const out=await callAI(sys,ctx);
       let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,100),next_actions:[]};}
       window._batchResults.push({no,cust,j});
-      if(row){row.firstChild.textContent="✅ ";row.style.opacity=.7;}
-      // 寫時間線
+      if(row){row.firstChild.textContent="✅";row.style.opacity=.6;row.style.background="";}
       DATA.timeline[no]=DATA.timeline[no]||[];
       DATA.timeline[no].unshift({t:nowBJ(),who:"AI 批量分析",txt:"🤖 "+(j.summary||""),key:"batch_"+Date.now()+"_"+no});
     }catch(e){
-      if(row)row.firstChild.textContent="❌ ";
+      if(row){row.firstChild.textContent="❌";row.style.background="rgba(248,113,113,.08)";}
     }
   }
-  // 完成
+  btn.innerHTML="✓ 確認寫入";
+  btn.onclick=applyBatchResults;
   const bl=document.getElementById("batchList");
   bl.innerHTML+=`<div style="padding:12px;font-size:13px;color:#34d399;text-align:center">✅ 分析完成，共 ${window._batchResults.length} 位客戶</div>`;
-  document.querySelector("#batchList").nextElementSibling.querySelector(".btn.primary").textContent="✓ 確認寫入";
-  document.querySelector("#batchList").nextElementSibling.querySelector(".btn.primary").onclick=applyBatchResults;
 }
 function applyBatchResults(){
   (window._batchResults||[]).forEach(r=>{
