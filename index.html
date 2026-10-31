@@ -377,6 +377,7 @@ window.setBatchFilter=function(m,sub){
   if(window.renderBatchList)window.renderBatchList();
 };
 window.renderBatchList=window.renderBatchList||function(){};
+window._batchFilter={mode:"all",sub:""};
 </script>
 <script>
 const PHOTO={
@@ -1733,13 +1734,13 @@ function batchAIAnalyze(){
   if(!allTargets.length){toast("所有客戶都已出單，無需分析");return;}
   window._batchFilter={mode:"all",sub:""};
   const subs=USERS.filter(u=>u.parent===CURRENT_USER.id);
-  function filterTargets(){const f=window._batchFilter;
+  window.filterTargets=function(){const f=window._batchFilter;
     return allTargets.filter(c=>{const owner=ownerMap[c.no];
       if(f.mode==="mine")return owner===CURRENT_USER.id;
       if(f.mode==="subs")return USERS.find(u=>u.parent===CURRENT_USER.id&&u.id===owner);
       if(f.mode==="sub")return owner===f.sub;
-      return true;});}
-  function renderBatchList(){
+      return true;});};
+  window.renderBatchList=function(){
     const t=filterTargets();
     const d=document.getElementById("batchDesc");
     if(d){
@@ -1755,7 +1756,7 @@ function batchAIAnalyze(){
     document.getElementById("batchPct").textContent="0 / "+t.length+"（0%）";
     document.getElementById("batchBar").style.width="0%";
     window._batchTargets=t.map(c=>c.no);
-  }
+  };
   openModal(`<h3>🤖 AI 解讀所有客戶</h3>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <div style="font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.15);color:#a78bfa;font-weight:600">今日已用 ${count} / ${limit} 次</div>
