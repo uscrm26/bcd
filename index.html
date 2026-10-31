@@ -364,6 +364,9 @@ tr:hover td{background:#1a2130}
 </div>
 <!-- ===== 資料 ===== -->
 <script>
+window.onerror=function(msg,src,line,col,err){const d=document.getElementById("view");if(d)d.innerHTML='<div style="color:#ff6b6b;padding:20px;font-size:13px;white-space:pre-wrap">JS錯誤 '+msg+' (行'+line+')\n'+(err&&err.stack?err.stack:'')+'</div>';return false;};
+</script>
+<script>
 const PHOTO={
 "93":"docs/clients/Interface/Interface%20LLC——法人人像.jpg",
 "89":"docs/clients/Home%20Depot/Home%20Depot%20LLC——法人照片.jpeg",
