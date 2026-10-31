@@ -1537,15 +1537,15 @@ R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">�
 <div class="field"><div class="k">查看記錄</div><div class="v">倉庫 Actions 分頁看每小時 run 歷史與日誌；每日工作記錄頁有每輪巡查留痕。</div></div>
 </div></div>`;};
 R.mailbox=()=>{
-  if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||"",pwd:b.pwd||"123456"}));}
+  if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||""}));}
   const list=window._mbDraft;
   return `<h1>信箱配置</h1>
 <div class="row r2"><div class="panel"><div class="sec-title">信箱帳戶清單</div>
-<div style="font-size:12px;color:var(--mut);margin-bottom:10px">在客戶頁填好 email 後，可在此新增到巡查清單。預設密碼 123456，可逐個修改。儲存後下一次自動巡查生效。</div>
+<div style="font-size:12px;color:var(--mut);margin-bottom:10px">在客戶頁填好 email 後，可在此新增到巡查清單。密碼統一由 GitHub Secrets 加密管理，不在此頁顯示明文。儲存後下一次自動巡查生效。</div>
 <div id="mb_list">${list.map((b,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)">
 <span class="st ok"></span>
 <div style="flex:1"><div style="font-size:13px">${esc(b.client)}</div><div style="font-size:11px;color:var(--mut)">${esc(b.email)}</div></div>
-<input value="${esc(b.pwd||'123456')}" style="width:110px;padding:4px 6px;font-size:12px;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:6px" onchange="window._mbDraft[${i}].pwd=this.value" title="信箱密碼">
+<span class="tag t-gray">密碼·Secrets</span>
 <span class="tag t-green">已連線</span>
 <button class="btn small" onclick="window._mbDraft.splice(${i},1);render()">刪除</button></div>`).join("")}</div>
 <div style="display:flex;gap:6px;margin-top:10px">
@@ -1554,9 +1554,11 @@ R.mailbox=()=>{
 <button class="btn" onclick="addMbRow()">加入</button></div>
 <button class="btn primary" style="margin-top:12px" onclick="saveMailboxes()">儲存信箱清單到 GitHub</button>
 <div id="mb_msg" style="font-size:12px;margin-top:6px"></div>
+<div class="sec-title" style="margin-top:18px">信箱密碼（GitHub Secrets 加密管理）</div>
+<div style="font-size:12px;color:var(--mut);line-height:1.7">密碼不寫入公開倉庫、不在此頁顯示明文。需要變更共用信箱密碼時，把新密碼告訴我，我用加密方式寫入 GitHub Secrets，下一輪巡查自動生效。</div>
 </div></div>`;}
-function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:"",pwd:"123456"});render();}
-async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||"",pwd:b.pwd||"123456"})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok",pwd:b.pwd||"123456"}));}catch(e){msg.textContent="儲存失敗："+e;}}
+function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:""});render();}
+async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握，不写入本文件"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||""})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok"}));}catch(e){msg.textContent="儲存失敗："+e;}}
 R.queue=()=>`<h1>電子郵件信箱</h1>
 <div style="display:flex;gap:6px;margin:10px 0" id="mailTabs">
   <button class="btn small" data-mt="inbox" onclick="setMailTab(this)">收件箱</button>
