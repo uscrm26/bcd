@@ -281,6 +281,7 @@ tr:hover td{background:#1a2130}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
 </head>
 <body>
 <div class="mtop">
@@ -1075,7 +1076,10 @@ async function startAnalyzeAndCreate(){
     apRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">分析中</span>`;
     if(apEl)apEl.appendChild(apRow);
     try{
-      const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
+      let pdfText="";
+      if(/\.pdf$/i.test(f.name))pdfText=await extractPdfText(f);
+      const userIn=f.name+" 大小:"+f.size+" bytes"+(pdfText?("\n文件內容："+pdfText):"");
+      const out=await callAI("你是美國海關bond業務助理。根據檔案名稱、類型與PDF內容，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",userIn);
       let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       results.push({file:f.name,data:j});
       apRow.innerHTML=`<span style="font-size:12px;color:#10b981">✓</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#10b981">完成</span>`;
@@ -1253,25 +1257,45 @@ function finalizeCreate(no){
 // AI 文件交叉審查：以駕照/護照姓名為基準，檢查拼寫、過期、缺漏，總結存後台，問題進待辦與時間線
 async function runDocumentReview(no,files,cust){
   const imgs=(files||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
-  if(!imgs.length)return;
+  const pdfs=(files||[]).filter(f=>/\.pdf$/i.test(f.name));
+  if(!imgs.length&&!pdfs.length)return;
   const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
   try{
-    const parts=[];
-    for(const f of imgs){try{parts.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}catch(e){}}
-    if(!parts.length)return;
-    const sys="你是美國海關 continuous bond 開戶文件審查員。仔細閱讀每張證件照片（駕照、護照、公司文件）。以駕照或護照上的法人法定姓名為基準，交叉比對其他文件的姓名拼寫是否一致、證件是否已過期、是否缺漏必備文件。只輸出 JSON，不要多餘說明：{\"owner_name\":\"以證件為準的法人姓名\",\"docs\":[{\"file\":\"檔名\",\"type\":\"文件類型\",\"name\":\"姓名\",\"company\":\"公司名\",\"ein\":\"EIN\",\"expiry\":\"有效期或空\"}],\"issues\":[{\"level\":\"error|warn\",\"doc\":\"哪份文件\",\"problem\":\"問題描述\",\"fix\":\"建議處理\"}],\"summary\":\"一段繁體中文審查總結，供後台留存，不直接給客戶看\"}。";
-    parts.unshift({type:"text",text:"檔案清單："+imgs.map(f=>f.name).join("、")+"。請逐張辨識並交叉比對，輸出指定 JSON。"});
-    const out=await callAIVision(sys,parts);
-    let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,300),issues:[]};}
-    c.reviewReport=j.summary||"";
-    const issues=Array.isArray(j.issues)?j.issues:[];
+    const issues=[];const summaryParts=[];
+    // 圖片走視覺模型：以駕照/護照姓名為基準交叉比對
+    if(imgs.length){
+      const parts=[];
+      for(const f of imgs){try{parts.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}catch(e){}}
+      if(parts.length){
+        const sys="你是美國海關 continuous bond 開戶文件審查員。仔細閱讀每張證件照片（駕照、護照、公司文件）。以駕照或護照上的法人法定姓名為基準，交叉比對其他文件的姓名拼寫是否一致、證件是否已過期、是否缺漏必備文件。只輸出 JSON，不要多餘說明：{\"owner_name\":\"以證件為準的法人姓名\",\"docs\":[{\"file\":\"檔名\",\"type\":\"文件類型\",\"name\":\"姓名\",\"company\":\"公司名\",\"ein\":\"EIN\",\"expiry\":\"有效期或空\"}],\"issues\":[{\"level\":\"error|warn\",\"doc\":\"哪份文件\",\"problem\":\"問題描述\",\"fix\":\"建議處理\"}],\"summary\":\"一段繁體中文審查總結，供後台留存，不直接給客戶看\"}。";
+        parts.unshift({type:"text",text:"檔案清單："+imgs.map(f=>f.name).join("、")+"。請逐張辨識並交叉比對，輸出指定 JSON。"});
+        try{
+          const out=await callAIVision(sys,parts);
+          let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,300),issues:[]};}
+          if(j.summary)summaryParts.push("照片："+j.summary);
+          (Array.isArray(j.issues)?j.issues:[]).forEach(it=>issues.push(it));
+        }catch(e){console.warn("視覺審查失敗",e);}
+      }
+    }
+    // PDF 抽文字走綜合文字 AI：比對姓名、有效期、拼寫
+    for(const f of pdfs){
+      const txt=await extractPdfText(f);
+      if(!txt)continue;
+      try{
+        const out=await callAI("你是美國海關 bond 開戶文件審查員。以下是一份PDF文件文字，對照法人基準姓名（若無基準則自行判斷）檢查姓名拼寫、證件有效期、是否缺漏。只輸出JSON：{\"issues\":[{\"level\":\"error|warn\",\"doc\":\"檔名\",\"problem\":\"問題\",\"fix\":\"建議\"}],\"summary\":\"繁體中文一句總結\"}，無問題則issues為空。","檔名："+f.name+"\n內容："+txt);
+        let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){continue;}
+        if(j.summary)summaryParts.push("PDF "+f.name+"："+j.summary);
+        (Array.isArray(j.issues)?j.issues:[]).forEach(it=>issues.push(it));
+      }catch(e){console.warn("PDF審查失敗",e);}
+    }
+    c.reviewReport=summaryParts.join("\n");
     // 問題寫入 AI 待辦
     c.aiTodos=c.aiTodos||[];
     issues.forEach(it=>{const t=`[文件審查] ${it.doc||""}：${it.problem||""}${it.fix?"（建議："+it.fix+"）":""}`;if(!c.aiTodos.some(x=>x.t===t))c.aiTodos.unshift({t,done:false,ts:Date.now()});});
     // 時間線審查記錄
     DATA.timeline[no]=DATA.timeline[no]||[];
     const n=issues.length;
-    const reviewItem={t:nowBJ(),who:"AI 文件交叉審查",txt:n?`⚠️ 發現 ${n} 項文件問題，詳見待辦`:"✅ 文件交叉審查通過，未發現姓名、過期或缺漏問題",detail:issues.map(it=>`· [${it.level==="error"?"嚴重":"提醒"}] ${it.doc||""}：${it.problem||""}${it.fix?"；建議 "+it.fix:""}`).join("\n")||"所有證件姓名一致、均在有效期內、無缺漏。",key:"review_"+Date.now()};
+    const reviewItem={t:nowBJ(),who:"AI 文件交叉審查",txt:n?`⚠️ 發現 ${n} 項文件問題，詳見待辦`:"✅ 文件交叉審查通過，未發現姓名、過期或缺漏問題",detail:issues.map(it=>`· [${it.level==="error"?"嚴重":"提醒"}] ${it.doc||""}：${it.problem||""}${it.fix?"；建議 "+it.fix:""}`).join("\n")||"所有文件姓名一致、均在有效期內、無缺漏。",key:"review_"+Date.now()};
     DATA.timeline[no].unshift(reviewItem);
     persistCust(no);
     sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(reviewItem)});
@@ -1934,6 +1958,18 @@ function fileToDataURL(f,maxSide=1600){
     img.onerror=()=>{URL.revokeObjectURL(url);const r=new FileReader();r.onload=()=>resolve(r.result);r.readAsDataURL(f);};
     img.src=url;
   });
+}
+// PDF 抽文字：用 pdf.js，失敗或無庫時回空字串，安靜降級不影響流程
+async function extractPdfText(file){
+  try{
+    if(!window.pdfjsLib)return "";
+    pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf,useWorkerFetch:false,isEvalSupported:false}).promise;
+    let out="";const max=Math.min(pdf.numPages,6);
+    for(let i=1;i<=max;i++){const p=await pdf.getPage(i);const tc=await p.getTextContent();out+=tc.items.map(it=>it.str).join(" ")+"\n";}
+    return out.replace(/\s+/g," ").trim().slice(0,3500);
+  }catch(e){return "";}
 }
 // 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
 async function callAIVision(sys,parts){
