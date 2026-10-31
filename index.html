@@ -369,7 +369,14 @@ tr:hover td{background:#1a2130}
 window.onerror=function(msg,src,line,col,err){const d=document.getElementById("view");if(d)d.innerHTML='<div style="color:#ff6b6b;padding:20px;font-size:13px;white-space:pre-wrap">JS錯誤 '+msg+' (行'+line+')\n'+(err&&err.stack?err.stack:'')+'</div>';return false;};
 </script>
 <script>
-window.setBatchFilter=function(m,sub){if(window._setBatchFilter)return window._setBatchFilter(m,sub);window._pendingBatchFilter={m:m,sub:sub};};
+window.setBatchFilter=function(m,sub){
+  window._batchFilter={mode:m,sub:sub==="__first"?"":sub};
+  document.querySelectorAll(".batch-f").forEach(b=>{const on=b.dataset.m===m;b.style.background=on?"var(--acc)":"var(--bg2)";b.style.color=on?"#fff":"var(--text)";});
+  const sel=document.getElementById("batchSubSel");
+  if(sel)sel.style.display=(m==="sub")?"inline-block":"none";
+  if(window.renderBatchList)window.renderBatchList();
+};
+window.renderBatchList=window.renderBatchList||function(){};
 </script>
 <script>
 const PHOTO={
@@ -1215,7 +1222,7 @@ function unignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!
 async function openAiHistory(no){
   let rows=(DATA.timeline[no]||[]).filter(x=>x.key&&(String(x.key).startsWith("ai_")||String(x.key).startsWith("batch_")));
   try{
-    const cloud=await sbReq("audit_logs","GET",null,"?select=*&target_client=eq."+encodeURIComponent(String(no))+"&action=in.(timeline,ai_last_at)&order=created_at.desc&limit=50");
+    const cloud=await sbReq("audit_logs","GET",null,"?select=*&target_client=eq."+encodeURIComponent(String(no))+"&order=created_at.desc&limit=100");
     if(Array.isArray(cloud)){
       cloud.forEach(a=>{
         if(a.action==="timeline"){try{const r=JSON.parse(a.detail);if(r&&r.txt&&(String(r.key||"").startsWith("ai_")||String(r.key||"").startsWith("batch_"))&&!rows.some(x=>x.key===r.key))rows.push(r);}catch(e){}}
