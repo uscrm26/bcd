@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l7";
+  var V="v20261102l8";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2478,20 +2478,76 @@ function waitForSign(key,sec){return new Promise(res=>{const t0=Date.now();const
 // ===== 更新單個客戶郵箱 =====
 async function refreshOneMailbox(no){
   const c=DATA.customers.find(x=>x.no===no);if(!c||!c.mail||c.mail==="-"||c.mail==="—"){toast("此客戶未綁定信箱，無法同步");return;}
-  // 右下角小窗顯示，不用大彈窗
+  const tok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
   let win=document.getElementById("mailSyncWin");if(win)win.remove();
   win=document.createElement("div");win.id="mailSyncWin";
-  win.style.cssText="position:fixed;bottom:20px;right:20px;width:340px;max-height:400px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden";
-  win.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">📧 郵箱同步中</span><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;max-height:300px;overflow-y:auto">正在聯線 ${esc(c.mail)} …</div>`;
+  win.style.cssText="position:fixed;bottom:20px;right:20px;width:360px;max-height:450px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
+  win.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">郵箱同步</span><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
   document.body.appendChild(win);
+  const log=document.getElementById("mbProgress");
+  const say=(t,cl)=>{const d=document.createElement("div");d.style.cssText="margin-bottom:4px;color:"+(cl||"var(--text)");d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;};
+
+  // 記錄同步前的郵件數
+  const beforeEmails=(DATA.emails||[]).length;
+  const beforeFiles=Object.values(DATA.files||{}).reduce((a,f)=>a+f.length,0);
+
+  say("正在觸發後台巡查…");
   try{
-    const tok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/actions/workflows/hourly-patrol.yml/dispatches",{method:"POST",headers:{Authorization:"token "+tok,"Content-Type":"application/json"},body:JSON.stringify({ref:"main",inputs:{target_mailbox:c.mail}})});
-    document.getElementById("mbProgress").innerHTML="已觸發後台巡查。<br>正在連線郵箱、檢查新郵件、下載附件。<br>完成後自動更新到看板。";
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    say("已觸發，等待 GitHub Runner 啟動…");
+    // 輪詢最新 run 狀態
+    let runId=null;
+    for(let i=0;i<15;i++){
+      await new Promise(r=>setTimeout(r,3000));
+      try{
+        const rr=await fetch("https://api.github.com/repos/uscrm26/bcd/actions/workflows/hourly-patrol.yml/runs?per_page=3",{headers:{Authorization:"token "+tok}});
+        const j=await rr.json();
+        if(j.workflow_runs&&j.workflow_runs.length){
+          runId=j.workflow_runs[0].id;
+          const st=j.workflow_runs[0].status;
+          if(st==="queued")say("巡查排隊中…");
+          else if(st==="in_progress"){say("巡查進行中：連線郵箱、讀取新郵件…");break;}
+        }
+      }catch(e){}
+    }
+    if(!runId){say("找不到巡查記錄，請稍後手動刷新頁面查看結果");return;}
+    // 繼續輪詢直到完成
+    for(let i=0;i<40;i++){
+      await new Promise(r=>setTimeout(r,5000));
+      try{
+        const rr=await fetch("https://api.github.com/repos/uscrm26/bcd/actions/runs/"+runId,{headers:{Authorization:"token "+tok}});
+        const j=await rr.json();
+        if(j.status==="completed"){
+          if(j.conclusion==="success"){
+            say("巡查完成，正在載入最新數據…","#22c55e");
+          }else{
+            say("巡查結束："+(j.conclusion||"未知結果"),"#ef4444");
+          }
+          // 重新拉 data.json
+          try{
+            const dr=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/data.json?cb="+Date.now(),{cache:"no-store"});
+            const newData=await dr.json();
+            const afterEmails=(newData.emails||[]).length;
+            const afterFiles=Object.values(newData.files||{}).reduce((a,f)=>a+f.length,0);
+            const newEmails=afterEmails-beforeEmails;
+            const newFiles=afterFiles-beforeFiles;
+            say("新增郵件 "+Math.max(0,newEmails)+" 封");
+            say("新增附件 "+Math.max(0,newFiles)+" 個");
+            say("完成！你可以關閉此視窗。","#22c55e");
+            // 重新渲染
+            setTimeout(()=>{loadData().then(()=>render());},500);
+          }catch(e){say("數據重載失敗，請手動刷新");}
+          return;
+        }else{
+          say("巡查進行中…（已等待 "+((i+1)*5)+" 秒）");
+        }
+      }catch(e){}
+    }
+    say("巡查時間較長，仍在背景運行中，完成後刷新頁面即可看到結果。");
   }catch(e){
-    document.getElementById("mbProgress").innerHTML="觸發失敗："+e.message;
+    say("觸發失敗："+e.message,"#ef4444");
   }
-  setTimeout(()=>{const w=document.getElementById("mailSyncWin");if(w)w.remove();},15000);
 }
 
 // ===== 跟進備註 =====
