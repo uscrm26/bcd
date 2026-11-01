@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l29";
+  var V="v20261102l30";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -582,7 +582,7 @@ async function loadRepoData(){
       // 自動修復雙重編碼亂碼
       const fixMoj=function(s){if(typeof s!=="string"||!s)return s;try{const f=decodeURIComponent(escape(s));if(/[\u4e00-\u9fff]/.test(f))return f;}catch(e){}return s;};
       const fixDeep=function(o){if(Array.isArray(o))return o.map(fixDeep);if(o&&typeof o==="object"){for(const k in o)o[k]=fixDeep(o[k]);return o;}return fixMoj(o);};
-      fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);
+      fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);fixDeep(DATA.finance);
       // 恢复 AI 状态
       (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
       // 雲端載入後補齊缺漏的 4 位 sysId，已有編號原樣保留
@@ -2090,12 +2090,40 @@ sbReq("deals","POST",{client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_U
 addClientAudit(no,"確認成功出單",old,"已出單",`佣金 ${amt}${splitTo?`，下線分 ${splitAmt}`:""}`);closeModal();render();toast("成功已確認，佣金已歸檔");}
 function editDealAmt(i){const v=prompt("修改本單佣金總額 CNY",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
 function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
-return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">➕ 新增費用</button><button class="btn" onclick="addQuote('${no}')">➕ 新增報價</button></div>
-<table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th></tr></thead><tbody>
-${rows.map(r=>`<tr><td>${r.type==="quote"?"<span class='tag t-amber'>報價</span>":"<span class='tag t-blue'>費用</span>"}</td><td>${esc(r.desc)}</td><td style="font-weight:700">${fmt(r.amount)} ${r.currency}</td><td>${r.status==="paid"?"<span class='tag t-green'>已收款</span>":r.status==="pending"?"<span class='tag t-amber'>待定</span>":"<span class='tag t-red'>未收款</span>"}</td><td style="font-size:11px;color:var(--dim)">${r.paid_at||r.due||""}</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無財務與報價記錄</td></tr>"}
-</tbody></table>`;
-const totUnpaid=rows.filter(r=>r.status!=="paid").reduce((a,b)=>a+b.amount,0);
-return totUnpaid?`<div style="margin-top:12px;font-size:13px;color:var(--warn)">待收合計 ${fmt(totUnpaid)} CNY</div>`:``;}
+ const custFiles=(DATA.files||{})[no]||[];
+ return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">新增費用</button><button class="btn" onclick="addQuote('${no}')">新增報價</button></div>
+<table><thead><tr><th>類型</th><th>說明</th><th>金額</th><th>狀態</th><th>時間</th><th>憑證</th></tr></thead><tbody>
+${rows.map((r,ri)=>{
+  const proofs=r.proofs||[];
+  return `<tr>
+    <td>${r.type==="quote"?"<span class='tag t-amber'>報價</span>":"<span class='tag t-blue'>費用</span>"}</td>
+    <td>${esc(r.desc||"")}</td>
+    <td style="font-weight:700">${fmt(r.amount)} ${r.currency||""}</td>
+    <td>${r.status==="paid"?"<span class='tag t-green'>已收款</span>":r.status==="pending"?"<span class='tag t-amber'>待定</span>":"<span class='tag t-red'>未收款</span>"}</td>
+    <td style="font-size:11px;color:var(--dim)">${r.paid_at||r.due||""}</td>
+    <td style="min-width:120px">
+      ${proofs.length?proofs.map(p=>{const u=resolveFile(p);const isImg=/\.(png|jpg|jpeg|gif|webp)$/i.test(p);return `<div style="margin:2px 0"><a href="${u}" target="_blank" style="font-size:11px;color:var(--acc);text-decoration:underline">${isImg?"🖼️ ":"📄 "}${esc(p.split("/").pop())}</a></div>`;}).join(""):""}
+      <button class="btn small" style="font-size:11px;padding:2px 8px;margin-top:4px" onclick="openProofPicker('${no}',${ri})">${proofs.length?"更換關聯":"關聯憑證"}</button>
+    </td>
+  </tr>`;}).join("")||"<tr><td colspan='6' class='empty'>尚無財務與報價記錄</td></tr>"}
+</tbody></table>`;}
+function openProofPicker(no,ri){
+ const custFiles=(DATA.files||{})[no]||[];
+ const existing=((DATA.finance||{})[no]||[])[ri]?.proofs||[];
+ openModal(`<h3>關聯憑證 ｜ 客戶 ${no}</h3>
+ <div style="font-size:12px;color:var(--mut);margin-bottom:10px">從此客戶的文件中選擇要關聯的憑證（付款截圖、收據等）</div>
+ <div style="max-height:400px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;padding:8px">
+ ${custFiles.length?custFiles.map((f,i)=>{const checked=existing.includes(f.path)?"checked":"";const isImg=/\.(png|jpg|jpeg|gif|webp)$/i.test(f.path||f.name||"");return `<label style="display:flex;align-items:center;gap:8px;padding:6px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px"><input type="checkbox" class="proof-chk" value="${esc(f.path||"")}" ${checked}> ${isImg?"🖼️":"📄"} ${esc(f.name||f.path)}</label>`;}).join(""):"<div class='empty'>尚無文件可關聯</div>"}
+ </div>
+ <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="saveProofs('${no}',${ri})">確認關聯</button></div>`);
+}
+function saveProofs(no,ri){
+ const checked=[...document.querySelectorAll('.proof-chk:checked')].map(c=>c.value);
+ if(!DATA.finance[no]||!DATA.finance[no][ri]){closeModal();return;}
+ DATA.finance[no][ri].proofs=checked;
+ persistCust(no);
+ closeModal();render();toast("憑證已關聯");
+}
 function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class="fg"><label>說明</label><input id="fd_desc"></div><div class="fg"><label>金額 CNY</label><input id="fd_amt" type="number"></div><div class="fg"><label>狀態</label><select id="fd_st"><option value="unpaid">未收款</option><option value="paid">已收款</option></select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="const d=document.getElementById('fd_desc').value,a=Number(document.getElementById('fd_amt').value);DATA.finance=DATA.finance||{};(DATA.finance[no]=DATA.finance[no]||[]).push({type:'bond_premium',desc:d,amount:a,currency:'CNY',status:document.getElementById('fd_st').value});closeModal();render();toast('費用已新增')">儲存</button></div>`);}
 function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 CNY</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
 function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎",ai:"🤖"};
