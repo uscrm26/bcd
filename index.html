@@ -1168,7 +1168,8 @@ async function startAnalyzeAndCreate(){
       bump("analyze");bump("done");
       tick((stat.analyze+stat.upload)/(total*2)*100);
     }catch(e){
-      setAp("分析失敗","err");
+      setAp("分析失敗："+(e.message||e),"err");
+      console.warn("analyze fail",f.name,e);
     }
   });
   await Promise.all(tasks);
