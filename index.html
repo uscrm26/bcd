@@ -1218,13 +1218,13 @@ async function startAnalyzeAndCreate(){
           if(out){try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j=out?{notes:out.slice(0,200)}:{};}}
           if(!j||!j.doc_type){
             setAp("視覺模型不可用，改用檔名分析","warn");
-            const out2=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
+            const out2=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空。注意：如果檔名是隨機UUID格式（如9e162873-3d54...png），可能是手機截圖，常見類型為Google街景截圖（顯示公司地址外觀）或Smarty地址驗證截圖（顯示地址驗證結果），doc_type填「截圖-街景」或「截圖-地址驗證」。",f.name+" 大小:"+f.size+" bytes");
             try{j=JSON.parse(out2.replace(/```json|```/g,"").trim());}catch(e){j=out2?{notes:out2.slice(0,200)}:{};}
           }
         }catch(e){setAp("視覺辨識失敗："+(e.message||e),"warn");}
       }else{
         setAp("比對檔案類型","");
-        const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
+        const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空。注意：如果檔名是隨機UUID格式（如9e162873-3d54...png），可能是手機截圖，常見類型為Google街景截圖（顯示公司地址外觀）或Smarty地址驗證截圖（顯示地址驗證結果），doc_type填「截圖-街景」或「截圖-地址驗證」。",f.name+" 大小:"+f.size+" bytes");
         try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       }
       results.push({file:f.name,data:j});
