@@ -1107,6 +1107,7 @@ async function startAnalyzeAndCreate(){
   const results=[];
   let allUp=true;
   const failedFiles=[];
+  window._uploadedPaths=[];
   window._stopUpload=false;
   window.stopUploadUploadFlow=function(){window._stopUpload=true;closeModal();aiLogDone("已手動停止");toast("已停止上傳，本次未建立客戶");};
   window.stopUploadFlow=window.stopUploadUploadFlow;
@@ -1152,6 +1153,7 @@ async function startAnalyzeAndCreate(){
     aiLog("有檔案同步失敗，本次未建立客戶","err");
     aiLogDone("同步未完成");
     setStatus("以下 "+failedFiles.length+" 個檔案同步失敗，客戶未建立");
+    cleanupUploadedPaths().then(()=>aiLog("已自動清除本次已上傳的暫存檔案",""));
     const box=document.getElementById("summaryBox");
     if(box){box.innerHTML='<div style="color:#ef4444;font-weight:700;margin-bottom:10px">失敗檔案：</div>'+failedFiles.map(n=>'<div style="color:#ef4444">✕ '+esc(n)+'</div>').join("")+'<div style="color:var(--mut);font-size:11px;margin-top:10px">請點右上角「停止上傳」後重新上傳</div>';}
     const mbox=document.querySelector("#modal .mbox");
@@ -1235,6 +1237,18 @@ async function compressImgForUpload(file){
     return new File([blob],file.name.replace(/\.[^.]+$/,".jpg"),{type:"image/jpeg"});
   }catch(e){return file;}
 }
+function fileSlug(name){
+  const n=name.toLowerCase();
+  if(/駕照正面|license.*front|front.*license/.test(n))return "driver-license-front";
+  if(/駕照背面|license.*back|back.*license/.test(n))return "driver-license-back";
+  if(/人像|人頭|member.*photo|headshot/.test(n))return "member-photo";
+  if(/ein/.test(n))return "ein-letter";
+  if(/章程|articles.*organization/.test(n))return "articles-of-organization";
+  if(/申請|通知書|filing|confirmation/.test(n))return "filing-confirmation";
+  if(/w-?9/.test(n))return "w9-form";
+  if(/護照|passport/.test(n))return "passport";
+  return "doc-"+Date.now().toString(36).slice(-4);
+}
 async function uploadToGithub(no,f){
   const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
   if(!ghtok)return false;
@@ -1243,8 +1257,9 @@ async function uploadToGithub(no,f){
     const buf=await sf.arrayBuffer();
     const base64=bufToB64(buf);
     const ext=(sf.name.match(/\.([^.]+)$/)||["","bin"])[1].toLowerCase().slice(0,5);
-    const safeName=Date.now().toString(36)+Math.random().toString(36).slice(2,8)+"."+ext;
+    const safeName=fileSlug(sf.name)+"."+ext;
     const path="attachments/"+no+"/"+safeName;
+    window._uploadedPaths=window._uploadedPaths||[];
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
     if(r.ok||r.status===422||r.status===409){
       const ftype=/\.pdf$/i.test(sf.name)?"pdf":/\.(jpe?g|png|gif|webp)$/i.test(sf.name)?"image":"text";
@@ -1252,12 +1267,26 @@ async function uploadToGithub(no,f){
       if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:sf.name,path:encodeURIComponent(path),type:ftype});
       await addFileRecord(no,sf.name,encodeURIComponent(path),ftype);
       if(typeof loadStorageList==="function")setTimeout(()=>loadStorageList(no),300);
+      window._uploadedPaths.push(path);
       return true;
     }
     console.warn("uploadToGithub",r.status,await r.text().catch(()=>""));
     window._lastUpErr="HTTP "+r.status;
     return false;
   }catch(e){console.warn("uploadToGithub exc",e);window._lastUpErr=String(e).slice(0,80);return false;}
+}
+async function cleanupUploadedPaths(){
+  const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+  if(!window._uploadedPaths||!ghtok)return;
+  for(const path of window._uploadedPaths){
+    try{
+      const meta=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{headers:{Authorization:"token "+ghtok}}).then(r=>r.json());
+      if(meta&&meta.sha){
+        await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"DELETE",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"cleanup on failed customer create",sha:meta.sha})});
+      }
+    }catch(e){}
+  }
+  window._uploadedPaths=[];
 }
 function uploadFileToQiniu(no,f){
   return new Promise(resolve=>{
