@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l26";
+  var V="v20261102l27";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1929,7 +1929,7 @@ function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
   if(DATA.finance&&DATA.finance[no]){DATA.finance[newRef]=DATA.finance[no];delete DATA.finance[no];}
   if(DATA.mailbox&&DATA.mailbox[no]){DATA.mailbox[newRef]=DATA.mailbox[no];delete DATA.mailbox[no];}
  }
- const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(newRef||no);render();};fr.readAsDataURL(pf.files[0]);}
+ const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(newRef||no);syncCustomerToRepo(newRef||no);};fr.readAsDataURL(pf.files[0]);}
  addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
 
 // ===== AI 重填客戶資料 =====
@@ -2100,7 +2100,7 @@ function addFin(no){openModal(`<h3>新增費用 ｜ 客戶 ${no}</h3><div class=
 function addQuote(no){openModal(`<h3>新增報價 ｜ 客戶 ${no}</h3><div class="fg"><label>Broker 名稱</label><input id="q_br"></div><div class="fg"><label>報價金額 CNY</label><input id="q_amt" type="number"></div><div class="fg"><label>有效期</label><input id="q_until"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('報價已新增')">儲存</button></div>`);}
 function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"📝",auto:"🤖",doc:"📎",ai:"🤖"};
  const c=DATA.customers.find(x=>x.no===no);
- const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
+ const dom=c&&c.mail&&c.mail.includes("@")?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
  const mailRows=mails.map(e=>({e:"email",src:mailDirLabel(e),tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
  const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||x.src||"跟進",tt:x.txt||x.tt||"",tm:x.t||x.tm||"",tx:x.detail||x.tx||"",key:x.key||""}));
