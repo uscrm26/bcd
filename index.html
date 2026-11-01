@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l12";
+  var V="v20261102l13";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -964,14 +964,12 @@ function phSrc(no){
 }
 const APP_VER="20261101I";
 function genVersionCode(){
-  const ua=navigator.userAgent;
-  const br=/Chrome|Safari|Firefox|Edge/.test(ua)?ua.match(/(Chrome|Safari|Firefox|Edge)\//)?.[1]||"?":"?";
-  const plat=/Win|Mac|Linux|Android|iPhone/.test(ua)?(ua.match(/(Windows|Macintosh|Linux|Android|iPhone)/)?.[1]||"?"):"?";
-  const seed=APP_VER+br+plat+screen.width+"x"+screen.height+(localStorage.getItem("bcd_user")||"?");
-  let h=0;for(let i=0;i<seed.length;i++){h=((h<<5)-h+seed.charCodeAt(i))|0;}
-  h=Math.abs(h);
-  const code=APP_VER+h.toString(36).toUpperCase().padStart(24,"X").slice(0,24);
-  return code;
+  const d=new Date();
+  const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let rand="";
+  for(let i=0;i<6;i++)rand+=chars[Math.floor(Math.random()*chars.length)];
+  return "UCRM-"+ymd+"-"+rand;
 }
 function copyVersionCode(){
   const code=genVersionCode();
