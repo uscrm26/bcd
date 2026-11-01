@@ -1694,9 +1694,20 @@ function resolveFile(p){
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
   if(IMGMAP[dec])return FILEBASE+IMGMAP[dec];
   if(dec.startsWith("attachments/"))return FILEBASE+dec;
-  if(QMAP[dec])return QMAP[dec];
+  if(QMAP[dec])return QMAP[dec].replace(/^http:\/\//i,"https://");
+  // 副檔名不一致：本來記 .png 實際是 .jpg，本地 img/ 優先，避免被七牛 HTTP 混合內容擋掉
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
-  if(QMAP[jpg])return QMAP[jpg];
+  if(IMGMAP[jpg])return FILEBASE+IMGMAP[jpg];
+  if(QMAP[jpg])return QMAP[jpg].replace(/^http:\/\//i,"https://");
+  // 副檔名缺失（檔名結尾是句號）：補常見副檔名再查本地映射
+  if(/\.$/.test(dec)){
+    var base=dec.replace(/\.$/,".");
+    for(var i=0;i<3;i++){
+      var ext=[".jpg",".png",".jpeg"][i];
+      if(IMGMAP[base+ext])return FILEBASE+IMGMAP[base+ext];
+      if(QMAP[base+ext])return QMAP[base+ext].replace(/^http:\/\//i,"https://");
+    }
+  }
   return FILEBASE+p;
 }
 function fileThumb(f){
