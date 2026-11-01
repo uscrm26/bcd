@@ -1343,20 +1343,20 @@ async function compressImgForUpload(file){
 }
 function fileSlug(name){
   const n=name.toLowerCase();
-  if(/駕照正面|驾照正面|license.*front|front.*license/.test(n))return "driver-license-front";
-  if(/駕照背面|驾照背面|license.*back|back.*license/.test(n))return "driver-license-back";
-  if(/人像|人頭|人头|member.*photo|headshot/.test(n))return "member-photo";
+  if(/駕照正面|license.*front|front.*license/.test(n))return "driver-license-front";
+  if(/駕照背面|license.*back|back.*license/.test(n))return "driver-license-back";
+  if(/人像|人頭|member.*photo|headshot/.test(n))return "member-photo";
   if(/ein/.test(n))return "ein-letter";
   if(/章程|articles.*organization/.test(n))return "articles-of-organization";
-  if(/申請|申请|通知書|通知书|filing|confirmation/.test(n))return "filing-confirmation";
+  if(/申請|通知書|filing|confirmation/.test(n))return "filing-confirmation";
   if(/w-?9/.test(n))return "w9-form";
-  if(/護照|护照|passport/.test(n))return "passport";
+  if(/護照|passport/.test(n))return "passport";
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8);
   return "doc-"+Date.now().toString(36).slice(-4);
 }
 async function ghFetch(url,opts,timeoutMs){
   const ctrl=new AbortController();
-  const t=setTimeout(()=>ctrl.abort(),timeoutMs||30000);
+  const t=setTimeout(()=>ctrl.abort(),timeoutMs||60000);
   try{return await fetch(url,{...opts,signal:ctrl.signal});}
   finally{clearTimeout(t);}
 }
@@ -1373,16 +1373,16 @@ async function uploadToGithub(no,f){
     window._uploadedPaths=window._uploadedPaths||[];
     let r;
     try{
-      r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})},30000);
+      r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})},60000);
     }catch(netErr){
       window._lastUpErr="網路逾時或中斷："+(netErr.name==="AbortError"?"30秒逾時":netErr.message);
       return false;
     }
     if(r.status===409||r.status===422){
       try{
-        const exist=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{headers:{Authorization:"token "+ghtok}},20000).then(x=>x.json());
+        const exist=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{headers:{Authorization:"token "+ghtok}},30000).then(x=>x.json());
         if(exist&&exist.sha){
-          r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"update "+sf.name,content:base64,sha:exist.sha})},30000);
+          r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"update "+sf.name,content:base64,sha:exist.sha})},60000);
         }
       }catch(e){}
     }
