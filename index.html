@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101i3";
+  var V="v20261101i4";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -550,7 +550,7 @@ async function loadRepoData(){
       // 建立客户邮箱域名库，邮件按client标签和邮箱域名双重关联客户编号
       window._mailCustMap={};
       (DATA.customers||[]).forEach(c=>{
-        if(c.mail){
+        if(c.mail&&c.mail.indexOf("@")>0){
           const dom=c.mail.split("@")[1].toLowerCase();
           window._mailCustMap[dom]=c.no;
         }
@@ -1274,7 +1274,9 @@ async function startAnalyzeAndCreate(){
           const dv=await fileToDataURL(f,1200);
           const out=await callAIVision("你是美國海關bond業務證件辨識員，只輸出指定JSON，不要多餘說明。",[{type:"text",text:"檔名："+f.name+"。請辨識這張證件照，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，辨識不到留空。"},{type:"image_url",image_url:{url:dv}}]);
           if(out){try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j=out?{notes:out.slice(0,200)}:{};}}
-          if(!j||!j.doc_type){
+          if(out==="ERROR_OVERDUE"){
+            setAp("方舟帳戶欠費，請充值後重試","err");
+          }else if(!j||!j.doc_type){
             setAp("視覺模型不可用，改用檔名分析","warn");
             const out2=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空。注意：如果檔名是隨機UUID格式（如9e162873-3d54...png），可能是手機截圖，常見類型為Google街景截圖（顯示公司地址外觀）或Smarty地址驗證截圖（顯示地址驗證結果），doc_type填「截圖-街景」或「截圖-地址驗證」。",f.name+" 大小:"+f.size+" bytes");
             try{j=JSON.parse(out2.replace(/```json|```/g,"").trim());}catch(e){j=out2?{notes:out2.slice(0,200)}:{};}
@@ -1330,6 +1332,11 @@ async function startAnalyzeAndCreate(){
   setFlow("AI 正在核實客戶資訊，請稍候…");
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
+  // 自動偵測法人照片
+  for(const r of results){
+    const isPortrait=/人像|人頭|headshot|selfie|member.?photo/i.test(r.file)||/人像|人頭|headshot|selfie|portrait/i.test(r.data.doc_type||"");
+    if(isPortrait){const f=(window._pickedFiles||[]).find(x=>x.name===r.file);if(f)try{merged._memberPhoto=await fileToDataURL(f,400);break;}catch(e){}}
+  }
   // 圖片資料已在逐檔分析時提取，此處不再重複調用視覺模型，避免卡住
   // 重複檢查：只比對公司名與 EIN，法人（member）同名允許，不擋重
   const einA=String(merged.ein||"").replace(/\D/g,"");
@@ -1563,7 +1570,8 @@ function finalizeCreate(no){
   DATA.timeline[no].unshift(aiItem);
   persistCust(no);
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(aiItem)});
-  addAudit("新增客戶",cust.name);
+  addAudit("新增客戶",cust.name+"｜法人:"+cust.member+"｜EIN:"+cust.ein);
+  cust.aiStatus="已分析";cust.aiAnalyzedAt=new Date().toISOString();
   const reviewFiles=window._pickedFiles.slice();
   window._pickedFiles=[];
   syncCustomerToRepo(no);
@@ -1842,9 +1850,13 @@ function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  <div class="fg"><label>法人姓名</label><input id="cf_member" value="${esc(c.member)}" ${dis}></div>
  <div class="fg"><label>EIN</label><input id="cf_ein" value="${esc(c.ein)}" ${dis}></div>
  <div class="fg"><label>綁定信箱</label><input id="cf_mail" value="${esc(c.mail)}" ${dis} style="word-break:break-all"></div>
- <div class="fg"><label>內部參考編號</label><input value="#${c.no}" ${CURRENT_USER.role==="super_admin"?"":"disabled"}></div>
+ <div class="fg"><label>內部參考編號</label><input id="cf_sysId" value="${esc(c.sysId||c.no)}" ${dis}></div>
+ <div class="fg"><label>電話</label><input id="cf_phone" value="${esc(c.phone||"")}" ${dis}></div>
+ <div class="fg full"><label>地址</label><input id="cf_address" value="${esc(c.address||"")}" ${dis}></div>
+ <div class="fg full"><label>備註</label><textarea id="cf_notes" style="min-height:50px" ${dis}>${esc(c.notes||"")}</textarea></div>
  <div class="fg"><label>駕照狀態</label><select id="cf_dl" ${dis}>${["正常","馬上過期","過期","未有駕照"].map(o=>`<option ${c.dl===o?"selected":""}>${o}</option>`).join("")}</select></div>
  <div class="fg"><label>護照狀態</label><select id="cf_pp" ${dis}>${["正常","馬上過期","過期","未有提供護照"].map(o=>`<option ${(c.pp||"未有提供護照")===o?"selected":""}>${o}</option>`).join("")}</select></div>
+ <div class="fg"><label>法人照片</label><div style="display:flex;gap:8px;align-items:center">${c.memberPhoto?`<img src="${esc(c.memberPhoto)}" style="width:48px;height:48px;border-radius:8px;object-fit:cover">`:`<div style="width:48px;height:48px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--dim)">無</div>`}<input type="file" id="cf_memberPhoto" accept="image/*" style="font-size:11px" ${dis}></div></div>
  </div>
  ${canEdit?`<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
    ${editing?`<button class="btn" onclick="confirmRestoreEdit('${no}')">恢復資料</button><button class="btn primary" onclick="saveCustInfo('${no}')">儲存</button>`:`<button class="btn primary" onclick="enterEditCust('${no}')">編輯客戶資料</button>`}
@@ -1856,10 +1868,12 @@ function confirmRestoreEdit(no){openModal(`<h3>恢復資料</h3><div style="font
  let n=3;const t=setInterval(()=>{n--;const el=document.getElementById("cdCount");const b=document.getElementById("cdBtn");if(n<=0){clearInterval(t);if(el)el.textContent="可以確認";if(b)b.disabled=false;}else{if(el)el.textContent="確認倒數 "+n+" 秒…";}},1000);}
 function doRestoreCust(no){const idx=DATA.customers.findIndex(x=>x.no===no);const s=window._custSnapshot;if(idx>=0&&s){DATA.customers[idx]=JSON.parse(JSON.stringify(s));}window._editCust=null;closeModal();render();toast("已恢復到編輯前狀態");}
 function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return;
- const old=c.name+" / "+c.member+" / "+c.ein;
+ const old=c.name+" / "+c.member+" / "+c.ein+" / "+(c.phone||"")+" / "+(c.address||"");
  c.name=document.getElementById("cf_name").value;c.member=document.getElementById("cf_member").value;
  c.ein=document.getElementById("cf_ein").value;c.mail=document.getElementById("cf_mail").value;c.dl=document.getElementById("cf_dl").value;c.pp=document.getElementById("cf_pp").value;
- addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
+ c.phone=document.getElementById("cf_phone").value;c.address=document.getElementById("cf_address").value;c.notes=document.getElementById("cf_notes").value;c.sysId=document.getElementById("cf_sysId").value;
+ const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(no);render();};fr.readAsDataURL(pf.files[0]);}
+ addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
 function clientAuditList(no){const rs=clientAudit[no]||[];
 return `<table><thead><tr><th>時間</th><th>操作人</th><th>動作</th><th>舊值</th><th>新值</th><th>理由</th></tr></thead><tbody>
 ${rs.map(r=>`<tr><td>${r.t}</td><td>${esc(r.user)}</td><td>${esc(r.action)}</td><td>${esc(r.old)}</td><td>${esc(r.new)}</td><td>${esc(r.reason)}</td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無操作記錄</td></tr>"}
@@ -1961,7 +1975,7 @@ let QMAP={};
 let IMGMAP={};
 fetch("qiniu_map.json").then(r=>r.json()).then(j=>{QMAP=j;if(typeof render==="function")render();}).catch(()=>{});
 fetch("img_map.json").then(r=>r.json()).then(j=>{IMGMAP=j;if(typeof render==="function")render();}).catch(()=>{});
-function phSrc(no){const p=PHOTO[no]||"";return p?resolveFile(p):"";}
+function phSrc(no){const c=DATA.customers.find(x=>String(x.no)===String(no));if(c&&c.memberPhoto)return c.memberPhoto;const p=PHOTO[no]||"";return p?resolveFile(p):"";}
 function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
@@ -1990,7 +2004,9 @@ function fileThumb(f){
   return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(displayFileName(f.name))}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
 }
 function docList(no){
-  const localList=(DATA.files||{})[no]||[];
+  const rawList=(DATA.files||{})[no]||[];
+  const seen=new Set();const localList=[];
+  for(const f of rawList){const k=f.path||f.name||f.nm||"";if(seen.has(k))continue;seen.add(k);localList.push(f);}
   const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   function card(f){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
@@ -2112,7 +2128,7 @@ R.webmail=()=>{
  <div style="font-size:13px;color:var(--mut);margin:8px 0 14px">${T.tip}</div>
  <div style="display:flex;justify-content:center">
  <div onclick="window.open('https://mail.pony-it.com/','_blank')" title="${T.go}"
- style="cursor:pointer;max-width:600px;width:100%;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.45);background:#20242e">
+ style="cursor:pointer;max-width:1100px;width:96vw;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 12px 34px rgba(0,0,0,.45);background:#20242e;max-height:92vh;overflow-y:auto">
  <img src="webmail-login.jpg" style="width:100%;display:block" alt="mail.pony-it.com 登入介面">
  <div style="text-align:center;padding:10px;font-size:13px;color:var(--acc)">${T.go} ↗</div>
  </div></div>`;};
@@ -2382,7 +2398,7 @@ async function callAIVision(sys,parts){
       const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),30000);
       const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
       clearTimeout(tm);
-      if(r.status===429||r.status===402||r.status===403)continue;
+      if(r.status===402){console.warn("方舟账户欠费");return "ERROR_OVERDUE";}if(r.status===429||r.status===403)continue;
       if(!r.ok){const t=await r.text();console.warn("vision ark",model,r.status,t.slice(0,100));continue;}
       const j=await r.json();
       const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
