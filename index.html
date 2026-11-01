@@ -471,7 +471,7 @@ function persistCust(no){
     sbReq("audit_logs","POST",{account_id:CURRENT_USER?CURRENT_USER.id:0,display_name:CURRENT_USER?CURRENT_USER.nm:"",action:"cust_override",target_client:String(no),detail:JSON.stringify(saved[no])});
   }catch(e){}
 }
-function loadPersisted(){
+async function loadPersisted(){
   try{
     const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
     Object.keys(saved).forEach(no=>{const c=DATA.customers.find(x=>String(x.no)===String(no));if(c){const sv=saved[no];Object.assign(c,sv);if(!sv.reviewReport)delete c.reviewReport;if(!sv.fileInsights||!sv.fileInsights.length)delete c.fileInsights;}});
@@ -480,6 +480,17 @@ function loadPersisted(){
     clientAudit=clientAudit||{};
     DATA.customers.forEach(c=>{const a=localStorage.getItem("bcd_client_audit_"+c.no);if(a){try{clientAudit[c.no]=JSON.parse(a);}catch(e){}}});
     const a=JSON.parse(localStorage.getItem("bcd_audit")||"[]");if(a.length)auditLog=a;
+    const overrides=await sbReq("audit_logs","GET",null,"?select=*&action=eq.cust_override&order=created_at.desc&limit=200");
+    if(overrides&&overrides.length){
+      overrides.forEach(o=>{
+        let d={};try{d=JSON.parse(o.detail||"{}");}catch(e){}
+        const c=DATA.customers.find(x=>String(x.no)===String(o.target_client));
+        if(c){Object.assign(c,d);localStorage.setItem("bcd_cust_override",JSON.stringify(Object.assign(JSON.parse(localStorage.getItem("bcd_cust_override")||"{}"),{[o.target_client]:d})));}
+      });
+    }
+    const ded=await sbReq("audit_logs","GET",null,"?select=*&action=eq.deductions&order=created_at.desc&limit=1");
+    if(ded&&ded.length){try{deductions=JSON.parse(ded[0].detail||"[]");localStorage.setItem("bcd_deductions",JSON.stringify(deductions));}catch(e){}}
+    render();
   }catch(e){}
 }
 function addClientAudit(no,action,oldv,newv,reason){const rec={t:nowBJ(),user:CURRENT_USER.nm,action,old:oldv,new:newv,reason:reason||""};clientAudit[no]=clientAudit[no]||[];clientAudit[no].unshift(rec);addAudit(action,`客戶 ${no} ${oldv||""} → ${newv||""}`);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"client_audit",target_client:String(no),detail:JSON.stringify(rec)});persistCust(no);}
@@ -1264,8 +1275,16 @@ async function uploadToGithub(no,f){
     const safeName=fileSlug(sf.name)+"."+ext;
     const path="attachments/"+no+"/"+safeName;
     window._uploadedPaths=window._uploadedPaths||[];
-    const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
-    if(r.ok||r.status===422||r.status===409){
+    let r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
+    if(r.status===409||r.status===422){
+      try{
+        const exist=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{headers:{Authorization:"token "+ghtok}}).then(x=>x.json());
+        if(exist&&exist.sha){
+          r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"update "+sf.name,content:base64,sha:exist.sha})});
+        }
+      }catch(e){}
+    }
+    if(r.ok){
       const ftype=/\.pdf$/i.test(sf.name)?"pdf":/\.(jpe?g|png|gif|webp)$/i.test(sf.name)?"image":"text";
       DATA.files[no]=DATA.files[no]||[];
       if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:sf.name,path:encodeURIComponent(path),type:ftype});
