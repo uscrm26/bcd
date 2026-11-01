@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101i2";
+  var V="v20261101i3";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1309,11 +1309,13 @@ async function startAnalyzeAndCreate(){
   }
   tick(100);
   if(!allUp){
-    aiLog("有 "+failedFiles.length+" 個檔案同步失敗，跳過繼續建檔","warn");
-    aiLogDone("部分檔案同步失敗");
-    setStatus("以下 "+failedFiles.length+" 個檔案同步失敗，已跳過，繼續建立客戶");
-    const box=document.getElementById("summaryBox");
-    if(box){box.innerHTML+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:#f59e0b;font-weight:700;margin-bottom:10px">⚠️ 以下檔案同步失敗，已跳過：</div>'+failedFiles.map(o=>'<div style="margin-bottom:6px;color:#f59e0b;font-size:12px">✕ '+esc(o.name)+' <span style="color:var(--mut)">'+esc(o.err||"")+'</span></div>').join("");}
+    aiLog("有 "+failedFiles.length+" 個檔案同步失敗，整批作廢","warn");
+    aiLog("失敗檔案："+failedFiles.map(o=>o.name).join("、"),"err");
+    aiLog("正在刪除本次已上傳的暫存檔案…","warn");
+    try{await cleanupUploadedPaths();}catch(e){}
+    aiLogDone("已作廢，未建立客戶");
+    setStatus("本次有檔案同步失敗，已整批作廢並清除暫存，請點右上角「重新嘗試」重跑");
+    return;
   }
   aiLog("全部檔案已同步並分析完成","ok");
   // UUID 截圖自動重命名：更新 files.json 裡的顯示名稱
@@ -1439,6 +1441,13 @@ async function uploadToGithub(no,f){
           r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"update "+sf.name,content:base64,sha:exist.sha})},60000);
         }
       }catch(e){}
+      // 拉不到舊檔或覆蓋仍失敗：等待2秒後不帶sha重傳一次，繞過偶發git索引衝突
+      if(!r.ok){
+        await new Promise(rs=>setTimeout(rs,2000));
+        try{
+          r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload-retry "+sf.name,content:base64})},60000);
+        }catch(netErr){}
+      }
     }
     if(r.ok){
       const ftype=/\.pdf$/i.test(sf.name)?"pdf":/\.(jpe?g|png|gif|webp)$/i.test(sf.name)?"image":"text";
