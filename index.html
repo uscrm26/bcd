@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l13";
+  var V="v20261102l14";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -818,7 +818,30 @@ const EN={
 "新增跟進":"Added follow-up","狀態變更":"Status changed","歸屬變更":"Owner changed","AI 解讀完成":"AI analysis done",
 "業務狀態":"Status","公司名稱":"Company","法人":"Owner","EIN":"EIN","內部參考編號":"Internal ref","綁定信箱":"Linked mailbox","護照狀態":"Passport status",
 "資料收集中":"Collecting info","等待客戶確認":"Awaiting client confirmation",
-"Add客戶":"Add customer","超級管理員":"Super admin"
+"Add客戶":"Add customer","超級管理員":"Super admin",
+"跟進":"Follow-up","內部參考":"Internal ref","待辦":"To-do","駕照":"License","信箱":"Mailbox","法人":"Owner",
+"License正常":"License valid","License過期":"License expired","財務已付款":"Paid","財務未付款":"Unpaid",
+"資料收集中":"Collecting info","等待客戶確認":"Awaiting client","已報價":"Quoted","已出單":"Bond issued",
+"擱置":"On hold","已拒絕":"Rejected","新線索":"New lead","待補件":"Docs needed","待回覆":"Pending reply",
+"剛才":"just now","分鐘前":"min ago","小時前":"hr ago","天前":"days ago",
+"查看歷史記錄":"View history","AI 分析狀態":"AI analysis status","最後一次 AI 分析時間":"Last AI analysis",
+"距":"last ","前":"ago",
+"共":"Total ","份，照片":" files, ","張，詳見":" photos, see","「附件文件」分頁":"Attachments tab",
+"分配歸屬":"Assign owner","標記成功出單":"Mark bond issued","以該客戶名義發信":"Send as client","跟進備註":"Follow-up note",
+"補充上傳文件":"Upload files","AI 跟進分析":"AI follow-up","更新郵箱狀態":"Refresh mailbox",
+"已被設置為法人照片":"Already set as member photo","替換照片":"Replace photo","設為法人照片":"Set as member photo",
+"儲存修改":"Save changes","左旋轉":"Rotate left","右旋轉":"Rotate right","左右翻":"Flip H","上下翻":"Flip V",
+"照片預覽":"Photo preview","關閉":"Close","已複製":"Copied",
+"全部":"All","信件":"Emails","AI 記錄":"AI records","刪除":"Delete","恢復顯示":"Restore",
+"新增待辦":"Add to-do","忽略":"Dismiss","已被新內容取代":"superseded",
+"AI 建議待辦":"AI suggested to-dos","未完成":"Open",
+"檔案資訊":"Profile","時間線":"Timeline","待辦":"To-do","文件":"Documents","郵箱":"Mailbox","財務":"Finance","操作記錄":"Activity log",
+"返回客戶列表":"Back to customers","刪除客戶":"Delete customer",
+"搜尋No. / 公司名 / Owner / EIN":"Search No. / company / owner / EIN",
+"全部狀態":"All statuses","新增客戶":"Add customer","匯出 CSV":"Export CSV","AI 批量解讀客戶":"AI batch analyze",
+"卡片View":"Card view","表格View":"Table view",
+"To-do ":"To-do ","License":"License","Mailbox ":"Mailbox ",
+"繁體中文":"繁體中文","English":"English","簡體中文":"简体中文","登出":"Logout","Kevin W":"Kevin W",
 
 };
 function enMap(s){if(!s)return s;if(EN[s.trim()])return EN[s.trim()];let out=s;Object.keys(EN).sort((a,b)=>b.length-a.length).forEach(k=>{if(out.includes(k))out=out.split(k).join(EN[k]);});return out;}
