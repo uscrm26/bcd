@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l17";
+  var V="v20261102l18";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -659,7 +659,8 @@ async function loadSB(){
   Object.values(DATA.timeline).forEach(arr=>arr.sort((a,b)=>String(b.t||"").localeCompare(String(a.t||""))));
   render();
 }
-const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
+const STATUS_EN={"新線索":"New lead","資料收集中":"Collecting info","待填表":"Form pending","待提交":"Pending submission","已Quote":"Quoted","已報價":"Quoted","已出單":"Bond issued","已過期，需更新":"Expired","擱置":"On hold","待補件":"Docs needed","待回覆":"Pending reply","需動作":"Action needed","完成":"Done","財務已付款":"Paid","財務未付款":"Unpaid","License正常":"License valid","License過期":"License expired","已拒絕":"Rejected","處理中":"In progress","待確認":"To confirm","已收報價":"Quotes received","Bond Issued":"Bond issued"};
+const st=id=>{const s=DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];if(!s)return{lb:id||"",cl:""};if(CURRENT_LANG==="en"&&STATUS_EN[s.lb])return{...s,lb:STATUS_EN[s.lb]};return s;};
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let view="dashboard";
 const R={};
@@ -1728,7 +1729,7 @@ R.customer=()=>{
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
   <button class="btn" onclick="exportCustCsv()">匯出 CSV</button>
-  ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 批量解讀客戶</button>`:""}</div>
+  ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">AI 批量解讀客戶</button>`:""}</div>
   <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
@@ -1751,7 +1752,7 @@ function custGridHTML(){
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
+  <div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do "+c.todo:"待辦 "+c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">${CURRENT_LANG==="en"?"License ":"駕照"}${CURRENT_LANG==="en"?(c.dl==="過期"?"expired":c.dl==="正常"?"valid":c.dl):c.dl}</span><span class="badge">${CURRENT_LANG==="en"?"Mailbox ":"信箱 "}${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=custGridHTML();}
 function myTeamIds(){const me=CURRENT_USER.id;const ids=new Set([me]);USERS.forEach(u=>{if(u.parent===me)ids.add(u.id);});return ids;}
