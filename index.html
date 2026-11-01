@@ -1525,7 +1525,7 @@ R.customer=()=>{
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
   <button class="btn" onclick="exportCustCsv()">匯出 CSV</button>
-  ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 解讀所有客戶</button>`:""}</div>
+  ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">🤖 AI 批量解讀客戶</button>`:""}</div>
   <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
@@ -2533,13 +2533,18 @@ function batchAIAnalyze(){
       };
       d.textContent=txt[CURRENT_LANG]||txt.zh;
     }
+    if(!window._batchSelected)window._batchSelected=new Set(t.map(c=>c.no));
     const bl=document.getElementById("batchList");
-    bl.innerHTML=t.map(c=>{const ow=ownerName(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
-    document.getElementById("batchPct").textContent="0 / "+t.length+"（0%）";
+    bl.innerHTML=t.map(c=>{const ow=ownerName(c.no);const chk=window._batchSelected.has(c.no);return `<div id="batch_${c.no}" style="padding:8px 10px;font-size:13px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleBatchPick('${c.no}')"><input type="checkbox" ${chk?"checked":""} style="pointer-events:none" onclick="event.stopPropagation();toggleBatchPick('${c.no}')"><span class="batch-ic" style="width:22px;display:inline-flex;justify-content:center">⏳</span> <span style="flex:1">${esc(c.name)} <span style="font-size:11px;color:var(--mut)">${esc(st(c.status).lb)}</span></span> <span style="font-size:10px;color:#60a5fa">${esc(ow)}</span></div>`;}).join("");
+    document.getElementById("batchPct").textContent="0 / "+window._batchSelected.size+"（0%）";
     document.getElementById("batchBar").style.width="0%";
-    window._batchTargets=t.map(c=>c.no);
+    window._batchTargets=t.map(c=>c.no).filter(n=>window._batchSelected.has(n));
   };
-  openModal(`<h3>🤖 AI 解讀所有客戶</h3>
+  window.toggleBatchPick=function(no){
+    if(window._batchSelected.has(no))window._batchSelected.delete(no);else window._batchSelected.add(no);
+    renderBatchList();
+  };
+  openModal(`<h3>🤖 AI 批量解讀客戶</h3>
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
     <div style="font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(139,92,246,.15);color:#a78bfa;font-weight:600">今日已用 ${count} / ${limit} 次</div>
     ${lastRun?`<div style="font-size:11px;color:var(--mut)">上次分析：${lastRun}</div>`:""}
