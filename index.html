@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l19";
+  var V="v20261102l20";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2173,7 +2173,7 @@ function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
   if(IMGMAP[dec])return FILEBASE+IMGMAP[dec];
-  if(dec.startsWith("attachments/"))return "https://xlcyumbyqcwedqwpspzs.supabase.co/storage/v1/object/public/"+dec;
+  if(dec.startsWith("attachments/"))return "https://xlcyumbyqcwedqwpspzs.supabase.co/storage/v1/object/public/"+encodeURI(dec);
   if(QMAP[dec])return QMAP[dec].replace(/^http:\/\//i,"https://");
   // 副檔名不一致：本來記 .png 實際是 .jpg，本地 img/ 優先，避免被七牛 HTTP 混合內容擋掉
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
@@ -3672,7 +3672,7 @@ function openBrokerMails(mail,name){const domain=(mail||"").includes("@")?((mail
  ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}`);}
 function brokerPool(){const cols=canManage()?7:6;return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerXlsx()">⬇ 匯出 Excel</button>${canManage()?`<button class="btn" onclick="openAddBroker()">＋ 新增資源</button>`:""}</div>
 <div style="font-size:12px;color:var(--mut);margin:8px 0">共 ${BROKERS.length} 筆，預覽前 100 筆，輸入關鍵字或狀態篩選查看全部</div>
-<table><thead><tr><th style="min-width:240px">經紀公司／聯絡人／信箱</th><th>可用狀態</th><th>備註（人工／AI 參考）</th><th>優先級</th><th>個人備註</th>${canManage()?"<th>操作</th>":""}</tr></thead><tbody id="bk_body">
+<table><thead><tr><th style="min-width:240px">經紀公司／聯絡人／信箱</th><th>可用狀態</th><th>備註</th><th>優先級</th><th>個人備註</th>${canManage()?"<th>操作</th>":""}</tr></thead><tbody id="bk_body">
 ${BROKERS.slice(0,100).map((b,i)=>bkRow(b,i)).join("")}
 </tbody></table>`;}
 function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.map((b,i)=>({b,i})).filter(x=>{const s=bkStatus(x.b)[0];return(!f||(x.b.n+x.b.a+x.b.c).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(x=>bkRow(x.b,x.i)).join("")||`<tr><td colspan='${canManage()?6:5}' class='empty'>無符合</td></tr>`;}
