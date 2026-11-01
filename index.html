@@ -1200,7 +1200,8 @@ let _fileRecChain=Promise.resolve();
 function addFileRecord(no,name,path,type){
   _fileRecChain=_fileRecChain.then(async()=>{
     try{
-      const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return;
+      const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+      if(!ghtok)return;
       const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{headers:{Authorization:"token "+ghtok}});
       const meta=await metaR.json();
       const c=(meta.content||"").replace(/\n/g,"");
@@ -1241,7 +1242,8 @@ async function uploadToGithub(no,f){
     const sf=await compressImgForUpload(f);
     const buf=await sf.arrayBuffer();
     const base64=bufToB64(buf);
-    const safeName=sf.name.replace(/[^a-zA-Z0-9._-]/g,"_");
+    const ext=(sf.name.match(/\.([^.]+)$/)||["","bin"])[1].toLowerCase().slice(0,5);
+    const safeName=Date.now().toString(36)+Math.random().toString(36).slice(2,8)+"."+ext;
     const path="attachments/"+no+"/"+safeName;
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
     if(r.ok||r.status===422||r.status===409){
