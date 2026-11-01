@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l34";
+  var V="v20261102l35";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1095,13 +1095,22 @@ openModal(`<h3>${s}（${list.length}）</h3><table><thead><tr><th>編號</th><th
 ${list.map(c=>`<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td>${esc(ownerName(c.no))}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td><button class="btn small" onclick="closeModal();openCust('${c.no}')">打開</button></td></tr>`).join("")||"<tr><td colspan='6' class='empty'>無客戶</td></tr>"}
 </tbody></table><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 R.dashboard=()=>{
-  const T={zh:{a:["未讀郵件","待查看"],b:["新進附件","帶文件"],c:["有新信客戶","需跟進"],d:["待回覆郵件","等回覆"]},
-   en:{a:["Unread Mail","To view"],b:["New Attachments","With files"],c:["Clients w/ New Mail","Follow up"],d:["Awaiting Reply","Need reply"]},
-   cn:{a:["未读邮件","待查看"],b:["新进附件","带文件"],c:["有新信客户","需跟进"],d:["待回复邮件","等回复"]}}[CURRENT_LANG]||{zh:{a:["未讀郵件","待查看"],b:["新進附件","帶文件"],c:["有新信客戶","需跟進"],d:["待回覆郵件","等回覆"]}};
+  const T={zh:{a:["未讀郵件","待查看"],b:["有新信客戶","需跟進"],c:["待回覆郵件","等回覆"]},
+   en:{a:["Unread Mail","To view"],b:["Clients w/ New Mail","Follow up"],c:["Awaiting Reply","Need reply"]},
+   cn:{a:["未读邮件","待查看"],b:["有新信客户","需跟进"],c:["待回复邮件","等回复"]}}[CURRENT_LANG]||{zh:{a:["未讀郵件","待查看"],b:["有新信客戶","需跟進"],c:["待回覆郵件","等回覆"]}};
   const unread=(DATA.emails||[]).filter(e=>e.unread);
-  const att=unread.filter(e=>e.atts&&e.atts.length);
   const custs=new Set(unread.map(e=>e.c).filter(Boolean)).size;
-  const cards=[[unread.length,T.a],[att.length,T.b],[custs,T.c],[unread.filter(e=>!e.done).length,T.d]];
+  // 本月已獲擔保文件 = status=done 的客戶數 / 全部可見客戶數
+  const myCusts=DATA.customers.filter(c=>canViewCust(c.no));
+  const doneCount=myCusts.filter(c=>c.status==="done"||st(c.status).lb==="已出單").length;
+  const totalCount=myCusts.length;
+  const doneLabel=CURRENT_LANG==="en"?"Bonds Issued":CURRENT_LANG==="cn"?"已出单客户":"已出單客戶";
+  const cards=[
+    [doneCount+" / "+totalCount,[doneLabel,"本月已獲擔保文件"]],
+    [unread.length,T.a],
+    [custs,T.b],
+    [unread.filter(e=>!e.done).length,T.c]
+  ];
   return `<h1>總覽看板</h1>
   <div class="row r4">
     ${cards.map(x=>`<div class="stat" style="cursor:pointer" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
