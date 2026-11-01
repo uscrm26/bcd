@@ -949,7 +949,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261101F";
+const APP_VER="20261101G";
 function genVersionCode(){
   const ua=navigator.userAgent;
   const br=/Chrome|Safari|Firefox|Edge/.test(ua)?ua.match(/(Chrome|Safari|Firefox|Edge)\//)?.[1]||"?":"?";
@@ -1326,22 +1326,7 @@ async function startAnalyzeAndCreate(){
   setFlow("AI 正在核實客戶資訊，請稍候…");
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
-  // 視覺模型直接讀取證件照片，提取公司名、法人、EIN、地址、電話回填，優先於檔名猜測
-  try{
-    const vImgs=(window._pickedFiles||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
-    if(vImgs.length){
-      aiLog("正在把 "+vImgs.length+" 張證件照片轉成可辨識格式");
-      setFlow("AI 正在讀取證件照片，提取公司與法人資料…");
-      const vp=[];
-      for(const f of vImgs){vp.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}
-      vp.unshift({type:"text",text:"從這些證件照片提取新客戶資料，只輸出JSON {company,member,ein,address,phone}，辨識不到的欄位留空，不要編造。檔名："+vImgs.map(f=>f.name).join("、")});
-      aiLog("視覺模型正在讀取駕照、護照等證件，提取公司與法人資料");
-      const vout=await callAIVision("你是美國海關 bond 開戶資料提取員，只輸出指定 JSON，不要多餘說明。",vp);
-      let vj={};try{vj=JSON.parse(vout.replace(/```json|```/g,"").trim());}catch(e){}
-      ["company","member","ein","address","phone"].forEach(k=>{if(vj[k])merged[k]=String(vj[k]).trim();});
-      aiLog("證件資料提取完成，法人："+(merged.member||"辨識不到"),"ok");
-    }
-  }catch(e){console.warn("視覺提取失敗",e);aiLog("證件照片讀取失敗，改用其他來源資料","warn");}
+  // 圖片資料已在逐檔分析時提取，此處不再重複調用視覺模型，避免卡住
   // 重複檢查：只比對公司名與 EIN，法人（member）同名允許，不擋重
   const einA=String(merged.ein||"").replace(/\D/g,"");
   const sameName=DATA.customers.find(c=>merged.company&&c.name&&normName(merged.company)===normName(c.name));
@@ -2375,8 +2360,10 @@ async function extractPdfText(file){try{const r=await extractPdfFull(file);retur
 // 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
 async function callAIVision(sys,parts){
   try{
-    const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
-    if(!r.ok){const t=await r.text();throw new Error("VL HTTP "+r.status+" "+t.slice(0,200));}
+    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),8000);
+    const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
+    clearTimeout(tm);
+    if(!r.ok){const t=await r.text();throw new Error("VL HTTP "+r.status);}
     const j=await r.json();
     return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
   }catch(e){console.warn("callAIVision fail",e);return "";}
