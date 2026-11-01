@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l5";
+  var V="v20261102l6";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -999,7 +999,7 @@ function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
       :`<button class="btn small" onclick="setMemberPhotoFromViewer(${no},'${src}')">設為法人照片</button>`}
     <button class="btn small" onclick="editPhotoSave(${no})">儲存修改</button>
   </div>`;})():"";
-  openModal(`<div style="text-align:center"><h3>照片預覽</h3>${tools}<img id="editImg" src="${src}" style="max-width:100%;max-height:65vh;border-radius:10px;transition:transform .2s"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
+  openModal(`<div style="text-align:center"><h3>照片預覽</h3><img id="editImg" src="${src}" style="max-width:100%;max-height:55vh;border-radius:10px;transition:transform .2s;display:block;margin:0 auto">${tools}<div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
 }
 function editPhotoRot(d){window._editRot=(window._editRot||0)+d;applyEditTransform();}
 function editPhotoFlip(k){if(k==='h')window._editFlipH=!window._editFlipH;else window._editFlipV=!window._editFlipV;applyEditTransform();}
