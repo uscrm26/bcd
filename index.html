@@ -950,8 +950,11 @@ function genVersionCode(){
 }
 function copyVersionCode(){
   const code=genVersionCode();
-  const txt="UCRM版本："+code+"\n瀏覽器："+navigator.userAgent.slice(0,80)+"\n時間："+new Date().toISOString();
-  navigator.clipboard.writeText(txt).then(()=>toast("版本編碼已複製："+code)).catch(()=>prompt("版本編碼：",code));
+  const txt="UCRM版本："+code+"\n瀏覽器："+navigator.userAgent.slice(0,100)+"\n時間："+new Date().toISOString();
+  const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
+  try{document.execCommand("copy");toast("✅ 版本編碼已複製："+code);}
+  catch(e){prompt("複製失敗，請手動複製：",code);}
+  document.body.removeChild(ta);
 }
 function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
   if(!src)return;
