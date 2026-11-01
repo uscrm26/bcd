@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101c";
+  var V="v20261101d";
   try{
     if(localStorage.getItem("bcd_ver")!==V){
       localStorage.setItem("bcd_ver",V);
@@ -937,7 +937,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261101C";
+const APP_VER="20261101D";
 function genVersionCode(){
   const ua=navigator.userAgent;
   const br=/Chrome|Safari|Firefox|Edge/.test(ua)?ua.match(/(Chrome|Safari|Firefox|Edge)\//)?.[1]||"?":"?";
@@ -2280,16 +2280,25 @@ function saveZH(k,v){ZH_CACHE[k]=v;localStorage.setItem("bcd_zh",JSON.stringify(
 function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSON.stringify(INTERP_CACHE));}
 async function callAI(sys,user){
   const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
-  const model=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
-  for(let attempt=0;attempt<3;attempt++){
-    try{
-      const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
-      if(!r.ok){const t=await r.text();if(attempt<2){await new Promise(r=>setTimeout(r,1500*(attempt+1)));continue;}throw new Error("方舟 HTTP "+r.status+" "+t.slice(0,200));}
-      const j=await r.json();
-      return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
-    }catch(e){
-      console.warn("callAI attempt",attempt,"fail",e);
-      if(attempt<2)await new Promise(r=>setTimeout(r,1500*(attempt+1)));
+  // 先載入模型清單，按 enabled 順序輪詢，某個額度用完自動跳下一個
+  let list=[];
+  try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/ai_models.json",{cache:"no-store"});list=await r.json();}catch(e){list=[];}
+  let models=Array.isArray(list)?list.filter(m=>m.enabled!==false&&m.endpoint).map(m=>m.endpoint):[];
+  const fb=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
+  if(!models.includes(fb))models.unshift(fb);
+  for(const model of models){
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
+        if(r.status===429||r.status===402||r.status===403){console.warn("模型額度不足，切換下一個",model);break;}
+        if(!r.ok){const t=await r.text();if(attempt<1){await new Promise(r=>setTimeout(r,1500));continue;}throw new Error("方舟 HTTP "+r.status);}
+        const j=await r.json();
+        const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+        if(out)return out;
+      }catch(e){
+        console.warn("callAI fail",model,attempt,e);
+        if(attempt<1)await new Promise(r=>setTimeout(r,1500));
+      }
     }
   }
   return "";
