@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l9";
+  var V="v20261102l10";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -985,11 +985,11 @@ function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
   if(!src)return;
   if(src.indexOf("https://")!==0&&src.indexOf("http://")===0){window.open(src,"_blank");return;}
   window._editRot=0;window._editFlipH=false;window._editFlipV=false;
-  const tools=no?(()=>{const c=DATA.customers.find(x=>String(x.no)===String(no));const isCurrent=c&&c.memberPhoto===src;return `<div style="display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap">
-    <button class="btn small" onclick="editPhotoRot(-90)">左旋轉</button>
-    <button class="btn small" onclick="editPhotoRot(90)">右旋轉</button>
-    <button class="btn small" onclick="editPhotoFlip('h')">左右翻</button>
-    <button class="btn small" onclick="editPhotoFlip('v')">上下翻</button>
+  const tools=no?(()=>{const c=DATA.customers.find(x=>String(x.no)===String(no));const isCurrent=c&&c.memberPhoto===src;return `<div style="display:flex;gap:6px;justify-content:center;margin:10px 0 6px;flex-wrap:wrap">
+    <button class="btn small" onclick="editPhotoRot(-90)">⟲ 左旋轉</button>
+    <button class="btn small" onclick="editPhotoRot(90)">⟳ 右旋轉</button>
+    <button class="btn small" onclick="editPhotoFlip('h')">⇋ 左右翻</button>
+    <button class="btn small" onclick="editPhotoFlip('v')">⇵ 上下翻</button>
   </div>
   <div style="display:flex;gap:6px;justify-content:center;margin:0 0 10px;flex-wrap:wrap">
     <button class="btn small" onclick="document.getElementById('photoReplaceFile').click()">替換照片</button>
@@ -997,9 +997,9 @@ function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
     ${isCurrent
       ?`<button class="btn small" disabled style="opacity:.5;cursor:not-allowed">已被設置為法人照片</button>`
       :`<button class="btn small" onclick="setMemberPhotoFromViewer(${no},'${src}')">設為法人照片</button>`}
-    <button class="btn small" onclick="editPhotoSave(${no})">儲存修改</button>
   </div>`;})():"";
-  openModal(`<div style="text-align:center"><h3>照片預覽</h3><img id="editImg" src="${src}" style="max-width:100%;max-height:55vh;border-radius:10px;transition:transform .2s;display:block;margin:0 auto">${tools}<div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
+  const saveBtn=no?`<button class="btn primary" onclick="editPhotoSave(${no})">儲存修改</button>`:"";
+  openModal(`<div style="text-align:center"><h3>照片預覽</h3><div style="display:flex;align-items:center;justify-content:center;height:45vh;overflow:hidden;border-radius:10px;background:var(--bg2);margin:0 auto 10px"><img id="editImg" src="${src}" style="max-width:95%;max-height:95%;object-fit:contain;border-radius:8px;transition:transform .2s"></div>${tools}<div class="mrow"><button class="btn" onclick="closeModal()">關閉</button>${saveBtn}</div></div>`);
 }
 function editPhotoRot(d){window._editRot=(window._editRot||0)+d;applyEditTransform();}
 function editPhotoFlip(k){if(k==='h')window._editFlipH=!window._editFlipH;else window._editFlipV=!window._editFlipV;applyEditTransform();}
