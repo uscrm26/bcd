@@ -2197,7 +2197,7 @@ let custDom="";
    if(f&&!(e.from+e.sub+e.body).toLowerCase().includes(f.toLowerCase()))return false;
    if(fl==="unread"&&!e.unread)return false;
    if(fl==="read"&&e.unread)return false;
-   if(cf){const cc=DATA.customers.find(x=>x.no===cf);const dom=cc&&cc.mail?cc.mail.split("@")[1].toLowerCase():"";if(!((e.from||"").toLowerCase().includes(dom)||(e.to||"").toLowerCase().includes(dom)||e.c===cc.name))return false;}
+   if(cf){const cc=DATA.customers.find(x=>x.no===cf);if(cc){const nm=(cc.name||"").toLowerCase();const ec=(e.c||"").toLowerCase();const dom=cc.mail?cc.mail.split("@")[1].toLowerCase():"";const from=(e.from||"").toLowerCase();const to=(e.to||"").toLowerCase();const byClient=!!ec&&(nm.startsWith(ec)||ec===nm||ec.startsWith(nm.split(" ")[0]));const byDomain=!!dom&&(from.includes(dom)||to.includes(dom));if(!byClient&&!byDomain)return false;}}
    return true;});
 list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
 window._qlist=list;
