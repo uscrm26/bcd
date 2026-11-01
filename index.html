@@ -1066,37 +1066,48 @@ async function startAnalyzeAndCreate(){
   const autoNo=maxNo();
   const total=window._pickedFiles.length;
   openModal(`<h3>AI 分析與檔案同步</h3>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:18px">系統正在讀取證件、辨識資料並同步到加密雲端，完成後才會建立客戶</div>
-  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 0 6px">
-    <div style="position:relative;width:150px;height:150px">
-      <svg width="150" height="150" viewBox="0 0 120 120" style="transform:rotate(-90deg)">
-        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line,#333)" stroke-width="8"/>
-        <circle id="progRing" cx="60" cy="60" r="52" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset .4s ease"/>
-      </svg>
-      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
-        <div id="progPct" style="font-size:30px;font-weight:700;color:var(--tx,#fff);line-height:1">0%</div>
-        <div style="font-size:11px;color:var(--mut);margin-top:4px">已完成 <span id="progDone">0</span>/<span id="progTotal">${total}</span></div>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:16px">系統正在讀取證件、辨識資料並同步到加密雲端，完成後才會建立客戶</div>
+  <div style="display:flex;gap:20px;align-items:flex-start">
+    <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:6px">
+      <div style="position:relative;width:140px;height:140px">
+        <svg width="140" height="140" viewBox="0 0 120 120" style="transform:rotate(-90deg)">
+          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line,#333)" stroke-width="8"/>
+          <circle id="progRing" cx="60" cy="60" r="52" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset .4s ease"/>
+        </svg>
+        <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+          <div id="progPct" style="font-size:28px;font-weight:700;color:var(--tx,#fff);line-height:1">0%</div>
+          <div style="font-size:11px;color:var(--mut);margin-top:4px">已完成 <span id="progDone">0</span>/<span id="progTotal">${total}</span></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;font-size:12px;color:var(--mut)">
+        <div>分析 <b id="statAnalyze" style="color:#8b5cf6">0</b></div>
+        <div>同步 <b id="statUpload" style="color:#10b981">0</b></div>
       </div>
     </div>
-    <div id="progStatus" style="font-size:13px;color:var(--tx,#ddd);text-align:center;max-width:380px">開始讀取檔案…</div>
-    <div style="display:flex;gap:18px;font-size:12px;color:var(--mut)">
-      <div>分析 <b id="statAnalyze" style="color:#8b5cf6">0</b></div>
-      <div>同步 <b id="statUpload" style="color:#10b981">0</b></div>
-      <div>辨識 <b id="statResult" style="color:#f0a040">0</b></div>
+    <div style="flex:1;min-width:0;background:var(--bg2);border-radius:10px;padding:12px;border:1px solid var(--line);min-height:200px">
+      <div style="font-size:11px;color:var(--mut);margin-bottom:10px;letter-spacing:.5px">即時辨識結果</div>
+      <div id="progStatus" style="font-size:12px;color:#8b5cf6;margin-bottom:12px">開始讀取檔案…</div>
+      <div id="summaryBox" style="font-size:12.5px;line-height:2;color:var(--tx,#ddd)"><span style="color:var(--mut)">等待 AI 讀取證件…</span></div>
     </div>
   </div>`);
   aiLogStart("AI 正在分析上傳的 "+total+" 個檔案");
-  const stat={done:0,analyze:0,upload:0,result:0};
+  const stat={done:0,analyze:0,upload:0};
+  const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
+  function renderSummary(){
+    const box=document.getElementById("summaryBox");if(!box)return;
+    const row=(k,v)=>v?`<div style="display:flex;gap:8px"><span style="color:var(--mut);flex:0 0 62px">${k}</span><span style="flex:1;word-break:break-all">${esc(v)}</span></div>`:"";
+    box.innerHTML=row("公司",merged.company)+row("法人",merged.member)+row("EIN",merged.ein)+row("地址",merged.address)+row("電話",merged.phone)+row("文件類型",merged.doc_type)||'<span style="color:var(--mut)">等待 AI 讀取證件…</span>';
+  }
   function tick(pct){const r=document.getElementById("progRing");if(r)r.style.strokeDashoffset=326.7*(1-pct/100);const p=document.getElementById("progPct");if(p)p.textContent=Math.round(pct)+"%";const d=document.getElementById("progDone");if(d)d.textContent=stat.done;}
   function setStatus(t){const s=document.getElementById("progStatus");if(s)s.textContent=t;}
-  function bump(k){if(k==="done")stat.done++;else stat[k]++;const el=document.getElementById("stat"+(k==="analyze"?"Analyze":k==="upload"?"Upload":"Result"));if(el)el.textContent=stat[k];tick((stat.analyze+stat.upload)/(total*2)*100);}
+  function bump(k){if(k==="done")stat.done++;else stat[k]++;const el=document.getElementById("stat"+(k==="analyze"?"Analyze":"Upload"));if(el)el.textContent=stat[k];tick((stat.analyze+stat.upload)/(total*2)*100);}
   const results=[];
   let allUp=true;
   const tasks=window._pickedFiles.map(async(f,i)=>{
     const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
     setStatus("同步上傳："+f.name);
     aiLog("〔"+f.name+"〕開始同步到加密雲端");
-    const upOK=isImg?await uploadToGithub(autoNo,f):await uploadFileToQiniu(autoNo,f);
+    const upOK=await uploadToGithub(autoNo,f);
     if(!upOK){allUp=false;aiLog("〔"+f.name+"〕同步失敗","err");setStatus("同步失敗："+f.name);}
     else{aiLog("〔"+f.name+"〕已同步到加密雲端","ok");bump("upload");}
     setStatus("AI 分析："+f.name);
@@ -1117,8 +1128,10 @@ async function startAnalyzeAndCreate(){
         try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       }
       results.push({file:f.name,data:j});
+      ["company","member","ein","address","phone","doc_type"].forEach(k=>{if(j[k]&&!merged[k])merged[k]=j[k];});
+      renderSummary();
       setAp(j.doc_type||"辨識完成","ok");
-      bump("analyze");bump("result");bump("done");
+      bump("analyze");bump("done");
       tick((stat.analyze+stat.upload)/(total*2)*100);
     }catch(e){
       setAp("分析失敗","err");
@@ -1137,7 +1150,6 @@ async function startAnalyzeAndCreate(){
   aiLogDone("全部完成");
   setStatus("全部完成，正在整理資料…");
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
-  const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
   // 視覺模型直接讀取證件照片，提取公司名、法人、EIN、地址、電話回填，優先於檔名猜測
   try{
@@ -1220,9 +1232,10 @@ async function uploadToGithub(no,f){
     const path="attachments/"+no+"/"+safeName;
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
     if(r.ok||r.status===422){
+      const ftype=/\.pdf$/i.test(sf.name)?"pdf":/\.(jpe?g|png|gif|webp)$/i.test(sf.name)?"image":"text";
       DATA.files[no]=DATA.files[no]||[];
-      if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:sf.name,path:encodeURIComponent(path),type:"image"});
-      await addFileRecord(no,sf.name,encodeURIComponent(path),"image");
+      if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:sf.name,path:encodeURIComponent(path),type:ftype});
+      await addFileRecord(no,sf.name,encodeURIComponent(path),ftype);
       if(typeof loadStorageList==="function")setTimeout(()=>loadStorageList(no),300);
       return true;
     }
