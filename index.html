@@ -278,6 +278,20 @@ tr:hover td{background:#1a2130}
 .file-cell .pv img{width:100%;height:100%;object-fit:cover}
 .file-cell .fn{font-size:11px;padding:6px 8px;line-height:1.3;word-break:break-all;min-height:30px}
 .file-cell .meta{font-size:10px;color:var(--dim);padding:0 8px 6px}
+/* AI 即時進度浮動面板 */
+#aiLogPanel{position:fixed;right:14px;bottom:14px;width:320px;max-width:calc(100vw - 28px);background:var(--bg2,#1e2126);border:1px solid var(--line,#333);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.45);z-index:9000;display:none;flex-direction:column;overflow:hidden}
+#aiLogPanel.open{display:flex}
+#aiLogHead{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(139,92,246,.12);font-size:12px;font-weight:600;color:var(--tx,#eee);cursor:pointer}
+#aiLogHead .dot{width:8px;height:8px;border-radius:50%;background:#8b5cf6;animation:aiPulse 1.2s infinite}
+#aiLogHead.done .dot{background:#10b981;animation:none}
+@keyframes aiPulse{0%,100%{opacity:1}50%{opacity:.35}}
+#aiLogBody{max-height:220px;overflow-y:auto;padding:8px 12px;font-size:11.5px;line-height:1.7;color:var(--mut,#bbb)}
+#aiLogBody .lg{padding:2px 0;border-bottom:1px dashed var(--line,#2c2c2c)}
+#aiLogBody .lg b{color:var(--tx,#ddd);font-weight:600}
+#aiLogBody .lg.ok{color:#10b981}
+#aiLogBody .lg.warn{color:#f0a040}
+#aiLogBody .lg.err{color:#ef4444}
+#aiLogMin{margin-left:auto;font-size:14px;color:var(--mut,#99);line-height:1;padding:0 4px}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
@@ -352,6 +366,7 @@ tr:hover td{background:#1a2130}
 
 <div class="modal" id="modal"></div>
 <div id="toast"></div>
+<div id="aiLogPanel"><div id="aiLogHead" onclick="toggleAiLog()"><span class="dot"></span><span id="aiLogTitle">AI 正在處理文件</span><span id="aiLogMin">—</span></div><div id="aiLogBody"></div></div>
 <div id="loginScreen">
   <div class="login-lang" id="loginLang">
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
@@ -590,6 +605,11 @@ const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",
 let view="dashboard";
 const R={};
 function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
+// AI 即時進度浮動日誌：把系統正在做的動作即時講給使用者看
+function aiLogStart(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");p.classList.remove("done");const b=document.getElementById("aiLogBody");if(b)b.innerHTML="";const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"AI 正在處理文件";}
+function aiLog(msg,kind){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");const b=document.getElementById("aiLogBody");if(!b)return;const d=document.createElement("div");d.className="lg"+(kind?" "+kind:"");d.innerHTML=(kind==="ok"?"✓ ":kind==="warn"?"⚠ ":kind==="err"?"✕ ":"· ")+"<b></b>";d.querySelector("b").textContent=msg;b.appendChild(d);b.scrollTop=b.scrollHeight;}
+function aiLogDone(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("done");const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"處理完成";}
+function toggleAiLog(){const b=document.getElementById("aiLogBody");if(!b)return;const hid=b.style.display==="none";b.style.display=hid?"block":"none";document.getElementById("aiLogMin").textContent=hid?"—":"+";}
 function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
@@ -1058,6 +1078,8 @@ async function startAnalyzeAndCreate(){
       <div id="analyzeResult" style="font-size:12px;line-height:1.8;color:var(--mut)">分析完成後顯示辨識結果</div>
     </div>
   </div>`);
+  aiLogStart("AI 正在分析上傳的 "+window._pickedFiles.length+" 個檔案");
+  aiLog("開始處理，圖片進 GitHub 圖片雲端，文件進七牛文件雲端");
   const results=[];
   let allUp=true;
   const tasks=window._pickedFiles.map(async(f,i)=>{
@@ -1076,26 +1098,34 @@ async function startAnalyzeAndCreate(){
     apRow.style.cssText="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;margin-bottom:4px";
     apRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">分析中</span>`;
     if(apEl)apEl.appendChild(apRow);
+    const setAp=(msg,color,kind)=>{const c=color||"#8b5cf6";apRow.innerHTML=`<span style="font-size:12px;color:${c}">${kind==="ok"?"✓":kind==="err"?"✕":kind==="warn"?"⚠":"◌"}</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:${c}">${esc(msg)}</span>`;aiLog("〔"+f.name+"〕"+msg,kind);};
     try{
       let j={};
       if(/\.pdf$/i.test(f.name)){
-        const pa=await analyzePdfDoc(f);
+        const pa=await analyzePdfDoc(f,(m,k)=>setAp(m,"#8b5cf6",k));
         window._pdfInsightMap=window._pdfInsightMap||{};window._pdfInsightMap[f.name]=pa;
         j={company:pa.company,member:pa.member,ein:pa.ein,address:pa.address,phone:pa.phone,doc_type:pa.doc_type,notes:pa.summary};
+      }else if(isImg){
+        setAp("等待統一讀取證件照片");
+        const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
+        try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       }else{
+        setAp("依檔名與類型比對資料");
         const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
         try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       }
       results.push({file:f.name,data:j});
-      apRow.innerHTML=`<span style="font-size:12px;color:#10b981">✓</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#10b981">完成</span>`;
+      setAp(j.doc_type||"完成","#10b981","ok");
       const resEl=document.getElementById("analyzeResult");
       if(resEl)resEl.innerHTML+=`<div style="padding:2px 0"><b>${esc(j.doc_type||f.name)}</b>：${esc(j.company||j.member||j.summary||"—")}</div>`;
     }catch(e){
-      apRow.innerHTML=`<span style="font-size:12px;color:#ef4444">✕</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#ef4444">分析失敗</span>`;
+      setAp("分析失敗","#ef4444","err");
     }
   });
   await Promise.all(tasks);
   if(!allUp){
+    aiLog("有檔案上傳失敗，本次未建立客戶，請檢查後重新操作","err");
+    aiLogDone("上傳未完成");
     closeModal();
     toast("⚠️ 有檔案上傳失敗，未建立客戶，請檢查後重新操作");
     return;
@@ -1107,14 +1137,17 @@ async function startAnalyzeAndCreate(){
   try{
     const vImgs=(window._pickedFiles||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
     if(vImgs.length){
+      aiLog("正在把 "+vImgs.length+" 張證件照片轉成可辨識格式");
       const vp=[];
       for(const f of vImgs){vp.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}
       vp.unshift({type:"text",text:"從這些證件照片提取新客戶資料，只輸出JSON {company,member,ein,address,phone}，辨識不到的欄位留空，不要編造。檔名："+vImgs.map(f=>f.name).join("、")});
+      aiLog("視覺模型正在讀取駕照、護照等證件，提取公司與法人資料");
       const vout=await callAIVision("你是美國海關 bond 開戶資料提取員，只輸出指定 JSON，不要多餘說明。",vp);
       let vj={};try{vj=JSON.parse(vout.replace(/```json|```/g,"").trim());}catch(e){}
       ["company","member","ein","address","phone"].forEach(k=>{if(vj[k])merged[k]=String(vj[k]).trim();});
+      aiLog("證件資料提取完成，法人："+(merged.member||"辨識不到"),"ok");
     }
-  }catch(e){console.warn("視覺提取失敗",e);}
+  }catch(e){console.warn("視覺提取失敗",e);aiLog("證件照片讀取失敗，改用其他來源資料","warn");}
   // 重複檢查：只比對公司名與 EIN，法人（member）同名允許，不擋重
   const einA=String(merged.ein||"").replace(/\D/g,"");
   const sameName=DATA.customers.find(c=>merged.company&&c.name&&normName(merged.company)===normName(c.name));
@@ -1122,10 +1155,14 @@ async function startAnalyzeAndCreate(){
   const dup=sameName||sameEin;
   if(dup){
     const why=sameName?"公司名稱":"EIN";
+    aiLog("偵測到"+why+"重複，已存在於客戶檔案，本次不建立","warn");
+    aiLogDone("重複客戶，已中止");
     closeModal();
     toast("⚠️ 偵測到重複客戶：「"+(dup.name||merged.company)+"」已存在（編號 "+dup.no+"），"+why+"重複，不建立以避免重複");
     return;
   }
+  aiLogDone("檔案分析完成，請確認建檔資料");
+  aiLog("全部檔案分析完畢，等待你確認建立客戶","ok");
   showAiConfirm(autoNo,merged,results);
 }
 let _fileRecChain=Promise.resolve();
@@ -1260,36 +1297,41 @@ function finalizeCreate(no){
   runDocumentReview(no,reviewFiles,cust);
 }
 // AI 文件交叉審查：以駕照/護照姓名為基準，檢查拼寫、過期、缺漏，總結存後台，問題進待辦與時間線
-async function runDocumentReview(no,files,cust){
+async function runDocumentReview(no,files,cust,onProgress){
   const imgs=(files||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
   const pdfs=(files||[]).filter(f=>/\.pdf$/i.test(f.name));
   if(!imgs.length&&!pdfs.length)return;
   const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
+  const say=(m,k)=>{aiLog(m,k);if(typeof onProgress==="function")onProgress(m,k);};
+  aiLogStart("AI 正在交叉審查全部文件");
   try{
     const issues=[];const summaryParts=[];
     let baseName="";const docFacts=[];
     // 圖片走視覺模型：以駕照/護照姓名為基準交叉比對
     if(imgs.length){
+      say("讀取 "+imgs.length+" 張證件照片，準備以駕照護照姓名為基準");
       const parts=[];
-      for(const f of imgs){try{parts.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}catch(e){}}
+      for(const f of imgs){try{say("轉換照片 "+f.name);parts.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}catch(e){}}
       if(parts.length){
         const sys="你是美國海關 continuous bond 開戶文件審查員。仔細閱讀每張證件照片（駕照、護照、公司文件）。以駕照或護照上的法人法定姓名為基準，交叉比對其他文件的姓名拼寫是否一致、證件是否已過期、是否缺漏必備文件。只輸出 JSON，不要多餘說明：{\"owner_name\":\"以證件為準的法人姓名\",\"docs\":[{\"file\":\"檔名\",\"type\":\"文件類型\",\"name\":\"姓名\",\"company\":\"公司名\",\"ein\":\"EIN\",\"expiry\":\"有效期或空\"}],\"issues\":[{\"level\":\"error|warn\",\"doc\":\"哪份文件\",\"problem\":\"問題描述\",\"fix\":\"建議處理\"}],\"summary\":\"一段繁體中文審查總結，供後台留存，不直接給客戶看\"}。";
         parts.unshift({type:"text",text:"檔案清單："+imgs.map(f=>f.name).join("、")+"。請逐張辨識並交叉比對，輸出指定 JSON。"});
+        say("視覺模型正在比對照片間的姓名拼寫、有效期與缺漏");
         try{
           const out=await callAIVision(sys,parts);
           let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,300),issues:[]};}
-          if(j.owner_name)baseName=j.owner_name;
+          if(j.owner_name){baseName=j.owner_name;say("法定姓名基準："+j.owner_name,"ok");}
           if(Array.isArray(j.docs))j.docs.forEach(d=>docFacts.push(d));
           if(j.summary)summaryParts.push("照片："+j.summary);
           (Array.isArray(j.issues)?j.issues:[]).forEach(it=>issues.push(it));
-        }catch(e){console.warn("視覺審查失敗",e);}
+        }catch(e){console.warn("視覺審查失敗",e);say("照片比對失敗，已略過","warn");}
       }
     }
     // PDF：每份獨立識別內容（文字型全文分段／掃描型逐頁視覺），產生識別卡存後台
     c.fileInsights=c.fileInsights||[];
     for(const f of pdfs){
       let pa=(window._pdfInsightMap||{})[f.name];
-      if(!pa){try{pa=await analyzePdfDoc(f);}catch(e){console.warn("PDF分析失敗",f.name,e);continue;}}
+      if(pa){say("複用已完成的 "+f.name+" 識別結果");}
+      if(!pa){try{pa=await analyzePdfDoc(f,say);}catch(e){console.warn("PDF分析失敗",f.name,e);say(f.name+" 分析失敗，已略過","warn");continue;}}
       const card={file:f.name,via:pa.via,pages:pa.pages,type:pa.doc_type||"未分類",summary:pa.summary||"",key_facts:pa.key_facts||"",company:pa.company||"",member:pa.member||"",ein:pa.ein||""};
       c.fileInsights=c.fileInsights.filter(x=>x.file!==f.name);
       c.fileInsights.unshift(card);
@@ -1299,13 +1341,14 @@ async function runDocumentReview(no,files,cust){
     }
     // 整體交叉比對：以駕照/護照法人姓名為基準，檢查各文件姓名拼寫、EIN、公司是否一致
     if(docFacts.length&&(baseName||c.member)){
+      const basis=baseName||c.member;
+      say("以法人「"+basis+"」為基準，比對全部文件的姓名、公司、EIN 是否一致");
       try{
-        const basis=baseName||c.member;
         const factText=docFacts.map(d=>`${d.file}｜類型:${d.type||""}｜姓名:${d.name||""}｜公司:${d.company||""}｜EIN:${d.ein||""}`).join("\n");
         const xout=await callAI("你是文件一致性審查員。基準法人姓名："+basis+"。比對下列每份文件的姓名拼寫、公司名、EIN 是否與基準一致，是否有拼寫落差或矛盾。只輸出JSON {\"issues\":[{\"level\":\"error|warn\",\"doc\":\"檔名\",\"problem\":\"問題\",\"fix\":\"建議\"}]}，一致則issues為空，不要編造。","基準法人："+basis+"\n文件清單：\n"+factText);
         let xj={};try{xj=JSON.parse(xout.replace(/```json|```/g,"").trim());}catch(e){}
         (Array.isArray(xj.issues)?xj.issues:[]).forEach(it=>{if(!issues.some(x=>x.doc===it.doc&&x.problem===it.problem))issues.push(it);});
-      }catch(e){console.warn("整體交叉比對失敗",e);}
+      }catch(e){console.warn("整體交叉比對失敗",e);say("整體比對失敗，已保留各文件獨立結果","warn");}
     }
     c.reviewReport=summaryParts.join("\n");
     // 問題寫入 AI 待辦
@@ -1321,7 +1364,9 @@ async function runDocumentReview(no,files,cust){
     sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,reviewReport:c.reviewReport,fileInsights:c.fileInsights,aiLastAt:c.aiLastAt})});
     syncCustomerToRepo(no);
     render();
-  }catch(e){console.warn("文件審查失敗",e);}
+    aiLogDone(n?`交叉審查完成，發現 ${n} 項問題`:"交叉審查完成，全部一致");
+    say(n?`完成：發現 ${n} 項問題，已寫入待辦`:"完成：姓名、有效期、缺漏均無問題",n?"warn":"ok");
+  }catch(e){console.warn("文件審查失敗",e);aiLog("文件審查中斷："+e.message,"err");}
 }
 async function syncCustomerToRepo(no){
   try{
@@ -1990,19 +2035,24 @@ async function loadPdfDoc(file){
   return await pdfjsLib.getDocument({data:buf,useWorkerFetch:false,isEvalSupported:false}).promise;
 }
 // 抽取 PDF 全部頁面文字，偵測是否為掃描型，回傳 {text,pages,scanned}
-async function extractPdfFull(file){
+async function extractPdfFull(file,onProgress){
+  const say=typeof onProgress==="function"?onProgress:()=>{};
+  say("正在開啟檔案，讀取頁面結構");
   const pdf=await loadPdfDoc(file);
   if(!pdf)return {text:"",pages:0,scanned:false};
   let text="";const per=[];
   const n=pdf.numPages;
+  say("檔案共 "+n+" 頁，開始逐頁讀取文字");
   for(let i=1;i<=n;i++){
     const p=await pdf.getPage(i);
     const tc=await p.getTextContent();
     const pt=tc.items.map(it=>it.str).join(" ").trim();
     per.push(pt);text+=pt+"\n";
+    if(n>1)say("已讀取第 "+i+"/"+n+" 頁");
   }
   const empty=per.filter(t=>t.replace(/\s/g,"").length<15).length;
   const scanned=n>0&&empty>=Math.ceil(n/2);
+  say(scanned?("偵測到 "+empty+" 頁選不到文字，判定為掃描件，改用視覺逐頁辨識"):("偵測為可選取文字文件，進入內容提煉"));
   return {text:text.replace(/\s+/g," ").trim(),pages:n,scanned,pdf};
 }
 // 掃描型 PDF 單頁渲染成圖片，交視覺模型讀取
@@ -2034,29 +2084,36 @@ function mergePdfJson(res,out){
   if(Array.isArray(j.issues))res.issues=j.issues;
 }
 // 分析單份 PDF：文字型分段提煉，掃描型逐頁走視覺，回傳統一識別結構
-async function analyzePdfDoc(file){
+async function analyzePdfDoc(file,onProgress){
+  const say=typeof onProgress==="function"?onProgress:()=>{};
   const res={via:"text",pages:0,company:"",member:"",ein:"",address:"",phone:"",doc_type:"",summary:"",key_facts:"",issues:[]};
   let r={text:"",pages:0,scanned:false,pdf:null};
-  try{r=await extractPdfFull(file);}catch(e){return res;}
+  try{r=await extractPdfFull(file,say);}catch(e){say("讀取失敗："+e.message,"err");return res;}
   res.pages=r.pages;res.via=r.scanned?"vision":"text";
   if(r.scanned){
     const parts=[];const maxP=Math.min(r.pages,6);
-    for(let i=1;i<=maxP;i++){try{parts.push({type:"image_url",image_url:{url:await pdfPageImage(r.pdf,i)}});}catch(e){}}
-    if(!parts.length)return res;
+    say("把前 "+maxP+" 頁轉成圖片交視覺模型");
+    for(let i=1;i<=maxP;i++){try{say("渲染第 "+i+"/"+maxP+" 頁");parts.push({type:"image_url",image_url:{url:await pdfPageImage(r.pdf,i)}});}catch(e){}}
+    if(!parts.length){say("沒有可渲染的頁面","warn");return res;}
     parts.unshift({type:"text",text:"檔名："+file.name+"。這是掃描PDF，請逐頁辨識，只輸出JSON {company,member,ein,address,phone,doc_type,summary:繁體中文說明這份文件是什麼及重點,key_facts:甲乙方、金額、期限、編號等關鍵事實,issues:[{level:error|warn,doc:檔名,problem:問題,fix:建議}]}，辨識不到留空，無問題issues為空陣列。"});
-    try{const out=await callAIVision("你是美國海關 bond 文件分析員，只輸出指定 JSON，不要多餘說明。",parts);mergePdfJson(res,out);}catch(e){console.warn("掃描PDF視覺分析失敗",e);}
+    say("視覺模型正在閱讀掃描頁內容");
+    try{const out=await callAIVision("你是美國海關 bond 文件分析員，只輸出指定 JSON，不要多餘說明。",parts);mergePdfJson(res,out);say("掃描件辨識完成："+(res.doc_type||"未分類"),"ok");}catch(e){console.warn("掃描PDF視覺分析失敗",e);say("視覺辨識失敗，已略過","warn");}
     return res;
   }
-  if(!r.text)return res;
+  if(!r.text){say("檔案沒有可抽取的文字","warn");return res;}
   // 文字型：長文件分段提煉事實，再統一結構化
+  const chunks=chunkText(r.text,6000);
   const digests=[];
-  for(const ch of chunkText(r.text,6000)){
-    try{const d=await callAI("濃縮這段文件文字的事實，保留人名、公司名、EIN、金額、日期、有效期、文件編號，去除套話，200字內。",ch);if(d)digests.push(d);}catch(e){}
+  for(let ci=0;ci<chunks.length;ci++){
+    say(chunks.length>1?("提煉第 "+(ci+1)+"/"+chunks.length+" 段重點"):"提煉文件事實");
+    try{const d=await callAI("濃縮這段文件文字的事實，保留人名、公司名、EIN、金額、日期、有效期、文件編號，去除套話，200字內。",chunks[ci]);if(d)digests.push(d);}catch(e){}
   }
+  say("統整文件類型、甲乙方與關鍵事實");
   try{
     const out=await callAI("你是美國海關 bond 文件分析員。根據文件提煉結果，只輸出JSON {company,member,ein,address,phone,doc_type,summary:繁體中文說明這份文件是什麼及重點,key_facts:甲乙方、金額、期限、編號等關鍵事實,issues:[{level:error|warn,doc:檔名,problem:問題,fix:建議}]}，辨識不到留空，無問題issues為空陣列。","檔名："+file.name+"\n提煉："+digests.join("\n").slice(0,9000));
     mergePdfJson(res,out);
-  }catch(e){console.warn("PDF文字分析失敗",e);}
+    say("辨識完成："+(res.doc_type||"未分類"),"ok");
+  }catch(e){console.warn("PDF文字分析失敗",e);say("內容統整失敗，已保留原始抽取","warn");}
   return res;
 }
 // 組裝客戶檔案＋往來歷史，供 AI 前後文分析
