@@ -1239,6 +1239,16 @@ async function startAnalyzeAndCreate(){
       results.push({file:f.name,data:j});
       ["company","member","ein","address","phone","doc_type"].forEach(k=>{if(j[k]&&!merged[k])merged[k]=j[k];});
       merged.doc_type=/\.pdf$/i.test(f.name)?"PDF 文件":/\.(jpe?g|png)$/i.test(f.name)?"JPG 圖片":merged.doc_type;
+      // UUID 截圖自動重命名：根據 AI 辨識結果改成友好名稱
+      if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(f.name) && j.doc_type && merged.company){
+        const ext=f.name.split('.').pop();
+        let cnType='截圖';
+        if(/街景|street.*view|google.*maps/i.test(j.doc_type))cnType='街景截圖';
+        else if(/地址|驗證|verify|smarty|address/i.test(j.doc_type))cnType='地址驗證截圖';
+        else if(/證件|id|license/i.test(j.doc_type))cnType='證件截圖';
+        f.friendlyName=merged.company+'——'+cnType+'.'+ext;
+        results[results.length-1].file=f.friendlyName;
+      }
       renderSummary();
       setAp(j.doc_type||"辨識完成","ok");
       bump("analyze");bump("done");
@@ -1257,6 +1267,13 @@ async function startAnalyzeAndCreate(){
     if(box){box.innerHTML+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:#f59e0b;font-weight:700;margin-bottom:10px">⚠️ 以下檔案同步失敗，已跳過：</div>'+failedFiles.map(o=>'<div style="margin-bottom:6px;color:#f59e0b;font-size:12px">✕ '+esc(o.name)+' <span style="color:var(--mut)">'+esc(o.err||"")+'</span></div>').join("");}
   }
   aiLog("全部檔案已同步並分析完成","ok");
+  // UUID 截圖自動重命名：更新 files.json 裡的顯示名稱
+  try{
+    (DATA.files[autoNo]=DATA.files[autoNo]||[]).forEach(f=>{
+      const orig=(window._pickedFiles||[]).find(p=>p.name===decodeURIComponent(f.path.split('/').pop()));
+      if(orig&&orig.friendlyName){f.name=orig.friendlyName;}
+    });
+  }catch(e){console.warn("rename fail",e);}
   aiLogDone("全部完成");
   setStatus("全部完成，正在整理資料…");
   setFlow("AI 正在核實客戶資訊，請稍候…");
