@@ -8,14 +8,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101e";
+  var V="v20261101i2";
   try{
-    if(localStorage.getItem("bcd_ver")!==V){
+    var oldV=localStorage.getItem("bcd_ver");
+    if(oldV!==V){
       localStorage.setItem("bcd_ver",V);
-      if(!sessionStorage.getItem("bcd_reloaded")){
-        sessionStorage.setItem("bcd_reloaded","1");
-        location.reload(true);
-      }
+      // 版本變更：強制帶時間戳重新抓取，徹底繞過 GitHub Pages CDN 快取
+      var u=new URL(location.href);
+      u.searchParams.set("v",V);
+      if(location.href.split("#")[0]!==u.toString().split("#")[0]){location.replace(u.toString());return;}
+      location.reload(true);
     }
   }catch(e){}
 })();
