@@ -468,6 +468,7 @@ function persistCust(no){
     localStorage.setItem("bcd_cust_override",JSON.stringify(saved));
     if(DATA.timeline&&DATA.timeline[no])localStorage.setItem("bcd_tl_"+no,JSON.stringify(DATA.timeline[no]));
     if(clientAudit[no])localStorage.setItem("bcd_client_audit_"+no,JSON.stringify(clientAudit[no]));
+    sbReq("audit_logs","POST",{account_id:CURRENT_USER?CURRENT_USER.id:0,display_name:CURRENT_USER?CURRENT_USER.nm:"",action:"cust_override",target_client:String(no),detail:JSON.stringify(saved[no])});
   }catch(e){}
 }
 function loadPersisted(){
@@ -485,7 +486,10 @@ function addClientAudit(no,action,oldv,newv,reason){const rec={t:nowBJ(),user:CU
 // 佣金：成功單記錄，超管手動標記
 const commissions=[];
 let deductions=JSON.parse(localStorage.getItem("bcd_deductions")||"[]");
-function saveDeductions(){localStorage.setItem("bcd_deductions",JSON.stringify(deductions));}
+function saveDeductions(){
+  localStorage.setItem("bcd_deductions",JSON.stringify(deductions));
+  sbReq("audit_logs","POST",{account_id:CURRENT_USER?CURRENT_USER.id:0,display_name:CURRENT_USER?CURRENT_USER.nm:"",action:"deductions",target_client:"all",detail:JSON.stringify(deductions)});
+}
 function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").length;return n<30?1000:1500;}
 // ===== GitHub JSON 數據層：同倉讀取，不依賴 Supabase、不需要數據庫密碼 =====
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
@@ -605,7 +609,7 @@ const st=id=>DATA.statuses.find(s=>s.id===id)||DATA.statuses[0];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 let view="dashboard";
 const R={};
-function toast(m){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
+function toast(m,kind){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";t.style.background=kind==="err"?"#dc2626":kind==="ok"?"#10b981":"var(--bg2)";t.style.color=kind==="err"||kind==="ok"?"#fff":"var(--tx)";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
 // AI 即時進度浮動日誌：把系統正在做的動作即時講給使用者看
 function aiLogStart(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");p.classList.remove("done");const b=document.getElementById("aiLogBody");if(b)b.innerHTML="";const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"AI 正在處理文件";}
 function aiLog(msg,kind){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");const b=document.getElementById("aiLogBody");if(!b)return;const d=document.createElement("div");d.className="lg"+(kind?" "+kind:"");d.innerHTML=(kind==="ok"?"✓ ":kind==="warn"?"⚠ ":kind==="err"?"✕ ":"· ")+"<b></b>";d.querySelector("b").textContent=msg;b.appendChild(d);b.scrollTop=b.scrollHeight;}
@@ -2085,7 +2089,7 @@ function canViewMail(e){
   return canViewCust(cust.no);
 }
 function toggleDone(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;if(!e.done&&!confirm("確定標記為無需處理？"))return;e.done=!e.done;if(e.done)e.unread=false;saveMailDone(e.t,e.done);addAudit(e.done?"標記無需處理":"復原郵件",e.sub);render();toast(e.done?"已標記為無需處理":"已復原為未處理");}
-function saveMailDone(t,done){const s=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");if(done)s[t]=true;else delete s[t];localStorage.setItem("bcd_mail_done",JSON.stringify(s));}
+function saveMailDone(t,done){const s=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");if(done)s[t]=true;else delete s[t];localStorage.setItem("bcd_mail_done",JSON.stringify(s));sbReq("audit_logs","POST",{account_id:CURRENT_USER?CURRENT_USER.id:0,display_name:CURRENT_USER?CURRENT_USER.nm:"",action:"mail_done",target_client:String(t).slice(0,50),detail:JSON.stringify({done:!!done})});}
 function markProcessed(t){const e=DATA.emails.find(x=>x.t===t);if(!e)return;e.done=true;e.unread=false;saveMailDone(t,true);addAudit("已處理來信",e.sub);render();toast("已標記為已處理，紅點已清除");}
 let REPLY_EMAIL=null;
 const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
