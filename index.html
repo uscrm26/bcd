@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l21";
+  var V="v20261102l22";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1894,7 +1894,8 @@ function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  <div class="fg"><label>法人姓名</label><input id="cf_member" value="${esc(c.member)}" ${dis}></div>
  <div class="fg"><label>EIN</label><input id="cf_ein" value="${esc(c.ein)}" ${dis}></div>
  <div class="fg"><label>綁定信箱</label><input id="cf_mail" value="${esc(c.mail)}" ${dis} style="word-break:break-all"></div>
- <div class="fg"><label>客戶編號</label><input id="cf_no" value="${esc(c.no)}" ${dis}></div>
+ <div class="fg"><label>內部參考編號</label><input id="cf_refNo" value="${esc(c.no)}" ${dis}><div style="font-size:11px;color:var(--dim);margin-top:2px">此編號不可重複</div></div>
+ <div class="fg"><label>客戶編號</label><input value="${esc(c.sysId||c.no)}" disabled style="opacity:.6;cursor:not-allowed"><div style="font-size:11px;color:var(--dim);margin-top:2px">系統自動產生，不可修改</div></div>
  <div class="fg"><label>電話</label><input id="cf_phone" value="${esc(c.phone||"")}" ${dis}></div>
  <div class="fg full"><label>地址</label><input id="cf_address" value="${esc(c.address||"")}" ${dis}></div>
  <div class="fg full"><label>備註</label><textarea id="cf_notes" style="min-height:50px" ${dis}>${esc(c.notes||"")}</textarea></div>
@@ -1916,7 +1917,15 @@ function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  c.name=document.getElementById("cf_name").value;c.member=document.getElementById("cf_member").value;
  c.ein=document.getElementById("cf_ein").value;c.mail=document.getElementById("cf_mail").value;c.dl=document.getElementById("cf_dl").value;c.pp=document.getElementById("cf_pp").value;
  c.phone=document.getElementById("cf_phone").value;c.address=document.getElementById("cf_address").value;c.notes=document.getElementById("cf_notes").value;
- const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(no);render();};fr.readAsDataURL(pf.files[0]);}
+ const newRef=document.getElementById("cf_refNo").value.trim();
+ if(newRef&&newRef!==String(no)){if(DATA.customers.find(x=>String(x.no)===newRef)){toast("此內部參考編號已存在，不可重複");return;}
+  c.no=newRef;
+  if(DATA.files&&DATA.files[no]){DATA.files[newRef]=DATA.files[no];delete DATA.files[no];}
+  if(DATA.timeline&&DATA.timeline[no]){DATA.timeline[newRef]=DATA.timeline[no];delete DATA.timeline[no];}
+  if(DATA.finance&&DATA.finance[no]){DATA.finance[newRef]=DATA.finance[no];delete DATA.finance[no];}
+  if(DATA.mailbox&&DATA.mailbox[no]){DATA.mailbox[newRef]=DATA.mailbox[no];delete DATA.mailbox[no];}
+ }
+ const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(newRef||no);render();};fr.readAsDataURL(pf.files[0]);}
  addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
 
 // ===== AI 重填客戶資料 =====
