@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101k3";
+  var V="v20261101k4";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -827,11 +827,11 @@ function applyLangText(){if(CURRENT_LANG!=="en")return;[document.getElementById(
 // ===== 角色權限：系統級入口僅超管 =====
 const ADMIN_ONLY=["github","system","mailbox"];
 function permsOf(u){if(u.role==="super_admin")return Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));const d=Object.fromEntries(Object.keys(PERM_LABELS).map(k=>[k,true]));return Object.assign(d,u.perms||{});}
-function applyPerm(){const role=CURRENT_USER.role;const pm=permsOf(CURRENT_USER);
-document.querySelectorAll(".nav a").forEach(a=>{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;a.style.display=ok?"":"none";});
-document.querySelectorAll(".nav .grp").forEach(g=>{const nxt=g.nextElementSibling;let any=false;while(nxt&&!nxt.classList.contains("grp")){if(nxt.tagName==="A"&&nxt.style.display!=="none"){any=true;break;}nxt=nxt.nextElementSibling;}g.style.display=any?"":"none";});
+function applyPerm(){try{const role=CURRENT_USER.role;const pm=permsOf(CURRENT_USER);
+document.querySelectorAll(".nav a").forEach(a=>{try{const v=a.dataset.v;let ok=role==="super_admin"||pm[v]!==false;a.style.display=ok?"":"none";}catch(e2){}});
+document.querySelectorAll(".nav .grp").forEach(g=>{try{const nxt=g.nextElementSibling;let any=false;while(nxt&&!nxt.classList.contains("grp")){if(nxt.tagName==="A"&&nxt.style.display!=="none"){any=true;break;}nxt=nxt.nextElementSibling;}g.style.display=any?"":"none";}catch(e2){}});
 if(view&&!document.querySelector(`.nav a[data-v="${view}"]`)||document.querySelector(`.nav a[data-v="${view}"]`)?.style.display==="none"){if(role!=="super_admin"&&pm[view]===false)goto("dashboard");}
-}
+}catch(e){console.warn("applyPerm:",e.message);}}
 function canManage(){return CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";}
 function canEditKey(no){return canManage();}
 function canViewCust(no){if(CURRENT_USER.role==="super_admin")return true;return myTeamIds().has(ownerMap[no]);}
@@ -3667,8 +3667,36 @@ function renderAiModelsList(){const box=document.getElementById("aimodels_list")
 <button class="btn" style="padding:2px 8px;font-size:12px" onclick="if(confirm('刪除這個模型？')){AIMODELS.splice(${i},1);renderAiModelsList();}">刪</button></div>`;}).join("");}
 async function saveAiModels(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("aimodels_msg");if(!tok){msg.textContent="請先填上面的 GitHub Token";return;}const n=document.getElementById("aim_name").value.trim();const ep=document.getElementById("aim_ep").value.trim();if(ep){AIMODELS.push({name:n||ep,endpoint:ep,account:"185 手機方舟帳號",enabled:true,note:"手動新增"});document.getElementById("aim_name").value="";document.getElementById("aim_ep").value="";}const body=JSON.stringify(AIMODELS,null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新 AI 模型清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存到 GitHub，下次巡查生效";toast("模型清單已更新");loadAiModels();}catch(e){msg.textContent="儲存失敗："+e;}}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
-function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
-function openSwitchUser(){openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active?`switchUser('${u.id}');closeModal()`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);}
+function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);try{localStorage.setItem("bcd_session",JSON.stringify({id:u.id,at:Date.now()}));}catch(e){}paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
+function openSwitchUser(){
+  // 非超管不顯示切換選項，只有退出登錄
+  if(CURRENT_USER.role!=="super_admin"){
+    openModal(`<h3>帳號操作</h3><div style="padding:14px 0;font-size:13px;color:var(--mut)">目前登入：${esc(CURRENT_USER.nm)}</div>
+      <div class="mrow"><button class="btn" style="flex:1" onclick="closeModal()">取消</button>
+      <button class="btn primary" style="flex:1;background:var(--err);border-color:transparent" onclick="doLogout()">退出登錄</button></div>`);
+    return;
+  }
+  // 超管顯示切換帳號列表，點擊後要求輸入密碼
+  openModal(`<h3>切換帳號</h3><div class="row r2">${USERS.map(u=>`<div class="panel" style="cursor:${u.active?"pointer":"default"};${u.active?"":"opacity:.5"}" onclick="${u.active&&u.id!==CURRENT_USER.id?`promptPwdSwitch('${u.id}')`:""}"><div class="sec-title">${u.avatar} ${u.nm} ${u.id===CURRENT_USER.id?"（目前）":""} ${u.active?"":"（停用）"}</div><div class="field"><div class="k">角色</div><div class="v">${ROLE_LB[u.role]||u.role}</div></div></div>`).join("")}</div>`);
+}
+function promptPwdSwitch(id){
+  const u=USERS.find(x=>x.id===id);if(!u)return;
+  openModal(`<h3>切換至 ${esc(u.nm)}</h3>
+    <div style="padding:8px 0;font-size:13px;color:var(--mut)">為確保安全，請輸入「${esc(u.nm)}」的密碼以確認切換</div>
+    <label style="display:block;font-size:12px;color:var(--mut);margin:14px 0 6px">密碼</label>
+    <input type="password" id="switchPwd" placeholder="請輸入密碼" style="width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 13px;font-size:14px;outline:none">
+    <div id="switchPwdErr" style="color:var(--err);font-size:12px;min-height:16px;margin-top:8px;text-align:center"></div>
+    <div class="mrow"><button class="btn" onclick="closeModal()">取消</button>
+    <button class="btn primary" onclick="confirmPwdSwitch('${id}')">確認切換</button></div>`);
+  setTimeout(()=>{const el=document.getElementById("switchPwd");if(el){el.focus();el.addEventListener("keydown",e=>{if(e.key==="Enter")confirmPwdSwitch('${id}');});}},100);
+}
+function confirmPwdSwitch(id){
+  const u=USERS.find(x=>x.id===id);if(!u)return;
+  const pwd=document.getElementById("switchPwd").value;
+  const errEl=document.getElementById("switchPwdErr");
+  if(String(u.pwd)!==String(pwd)){errEl.textContent="密碼錯誤，請重試";document.getElementById("switchPwd").value="";document.getElementById("switchPwd").focus();return;}
+  closeModal();switchUser(id);
+}
 function openPref(){
   openModal(`<h3>個人設定</h3>
   <div class="form-grid">
