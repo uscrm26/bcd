@@ -1065,7 +1065,10 @@ async function startAnalyzeAndCreate(){
   window._pdfInsightMap={};
   const autoNo=maxNo();
   const total=window._pickedFiles.length;
-  openModal(`<h3>AI 分析與檔案同步</h3>
+  openModal(`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <h3 style="margin:0">AI 分析與檔案同步</h3>
+    <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="stopUploadFlow()">停止上傳</button>
+  </div>
   <div style="font-size:12px;color:var(--mut);margin-bottom:16px">系統正在讀取證件、辨識資料並同步到加密雲端，完成後才會建立客戶</div>
   <div style="display:flex;gap:20px;align-items:flex-start">
     <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding-top:6px">
@@ -1103,7 +1106,11 @@ async function startAnalyzeAndCreate(){
   function bump(k){if(k==="done")stat.done++;else stat[k]++;const el=document.getElementById("stat"+(k==="analyze"?"Analyze":"Upload"));if(el)el.textContent=stat[k];tick((stat.analyze+stat.upload)/(total*2)*100);}
   const results=[];
   let allUp=true;
+  window._stopUpload=false;
+  window.stopUploadUploadFlow=function(){window._stopUpload=true;closeModal();aiLogDone("已手動停止");toast("已停止上傳，本次未建立客戶");};
+  window.stopUploadFlow=window.stopUploadUploadFlow;
   const tasks=window._pickedFiles.map(async(f,i)=>{
+    if(window._stopUpload)return;
     const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
     setStatus("同步上傳："+f.name);
     aiLog("〔"+f.name+"〕開始同步到加密雲端");
@@ -1233,7 +1240,7 @@ async function uploadToGithub(no,f){
     const safeName=sf.name.replace(/[^a-zA-Z0-9._-]/g,"_");
     const path="attachments/"+no+"/"+safeName;
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
-    if(r.ok||r.status===422){
+    if(r.ok||r.status===422||r.status===409){
       const ftype=/\.pdf$/i.test(sf.name)?"pdf":/\.(jpe?g|png|gif|webp)$/i.test(sf.name)?"image":"text";
       DATA.files[no]=DATA.files[no]||[];
       if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:sf.name,path:encodeURIComponent(path),type:ftype});
@@ -2683,6 +2690,23 @@ function doDeleteCust(no){
   render();
   toast("客戶已移入回收站，30 天內可恢復");
 }
+async function syncRecycleFromCloud(){
+  try{
+    const dels=await sbReq("audit_logs","GET",null,"?select=*&action=eq.cust_delete&order=created_at.desc&limit=200");
+    const restores=await sbReq("audit_logs","GET",null,"?select=*&action=eq.cust_restore&order=created_at.desc&limit=200");
+    const restoredNos=new Set((restores||[]).map(r=>String(r.target_client)));
+    const now=Date.now();
+    (dels||[]).forEach(d=>{
+      if(restoredNos.has(String(d.target_client)))return;
+      let detail={};try{detail=JSON.parse(d.detail||"{}");}catch(e){}
+      if(!detail.cust)return;
+      if(detail.expiresAt&&detail.expiresAt<now)return;
+      if(RECYCLE_BIN.find(r=>String(r.cust.no)===String(detail.cust.no)))return;
+      RECYCLE_BIN.push({cust:detail.cust,timeline:detail.timeline||[],clientAudit:detail.clientAudit||[],deletedAt:detail.deletedAt||Date.now(),expiresAt:detail.expiresAt||now+30*86400e3});
+    });
+    saveRecycleBin();
+  }catch(e){}
+}
 function renderRecycleBin(){
   const now=Date.now();
   RECYCLE_BIN=RECYCLE_BIN.filter(r=>{
@@ -2690,15 +2714,16 @@ function renderRecycleBin(){
     return true;
   });
   saveRecycleBin();
-  if(!RECYCLE_BIN.length)return '<div class="empty">回收站為空</div>';
-  return RECYCLE_BIN.map((r,i)=>{
+  syncRecycleFromCloud().then(()=>{const el=document.getElementById("recycleBinList");if(el)el.outerHTML=renderRecycleBin();});
+  if(!RECYCLE_BIN.length)return '<div id="recycleBinList" class="empty">回收站為空</div>';
+  return '<div id="recycleBinList">'+RECYCLE_BIN.map((r,i)=>{
     const days=Math.ceil((r.expiresAt-now)/86400e3);
     return `<div class="logrow" style="margin-bottom:8px">
       <span class="c">${esc(r.cust.name)}（編號 ${esc(r.cust.no)}）</span>
       <span style="font-size:11px;color:var(--mut)">剩餘 ${days} 天</span>
       <button class="btn small primary" onclick="restoreCust(${i})">恢復</button>
     </div>`;
-  }).join("");
+  }).join("")+'</div>';
 }
 function restoreCust(i){
   const r=RECYCLE_BIN[i];if(!r)return;
@@ -2709,6 +2734,7 @@ function restoreCust(i){
   RECYCLE_BIN.splice(i,1);
   saveRecycleBin();
   addAudit("恢復客戶",r.cust.name);
+  sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_restore",target_client:String(r.cust.no),detail:JSON.stringify({name:r.cust.name,restoredAt:Date.now()})});
   render();
   toast("客戶已恢復");
 }
