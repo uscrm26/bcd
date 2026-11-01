@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l15";
+  var V="v20261102l16";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2169,7 +2169,7 @@ function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
   if(IMGMAP[dec])return FILEBASE+IMGMAP[dec];
-  if(dec.startsWith("attachments/"))return FILEBASE+dec;
+  if(dec.startsWith("attachments/"))return "https://xlcyumbyqcwedqwpspzs.supabase.co/storage/v1/object/public/"+dec;
   if(QMAP[dec])return QMAP[dec].replace(/^http:\/\//i,"https://");
   // 副檔名不一致：本來記 .png 實際是 .jpg，本地 img/ 優先，避免被七牛 HTTP 混合內容擋掉
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
