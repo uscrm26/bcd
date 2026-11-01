@@ -1133,8 +1133,8 @@ async function startAnalyzeAndCreate(){
   window._stopUpload=false;
   window.stopUploadUploadFlow=function(){window._stopUpload=true;closeModal();aiLogDone("已手動停止");toast("已停止上傳，本次未建立客戶");};
   window.stopUploadFlow=window.stopUploadUploadFlow;
-  const tasks=window._pickedFiles.map(async(f,i)=>{
-    if(window._stopUpload)return;
+  for(const f of window._pickedFiles){
+    if(window._stopUpload)break;
     const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
     setStatus("同步上傳："+f.name);
     aiLog("〔"+f.name+"〕開始同步到加密雲端");
@@ -1171,8 +1171,7 @@ async function startAnalyzeAndCreate(){
       setAp("分析失敗："+(e.message||e),"err");
       console.warn("analyze fail",f.name,e);
     }
-  });
-  await Promise.all(tasks);
+  }
   tick(100);
   if(!allUp){
     aiLog("有檔案同步失敗，本次未建立客戶","err");
