@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l4";
+  var V="v20261102l5";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -985,16 +985,20 @@ function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
   if(!src)return;
   if(src.indexOf("https://")!==0&&src.indexOf("http://")===0){window.open(src,"_blank");return;}
   window._editRot=0;window._editFlipH=false;window._editFlipV=false;
-  const tools=no?`<div style="display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap">
-    <button class="btn small" onclick="editPhotoRot(-90)">⟲ 左旋轉</button>
-    <button class="btn small" onclick="editPhotoRot(90)">⟳ 右旋轉</button>
-    <button class="btn small" onclick="editPhotoFlip('h')">⇋ 左右翻</button>
-    <button class="btn small" onclick="editPhotoFlip('v')">⇵ 上下翻</button>
-    <button class="btn small" onclick="document.getElementById('photoReplaceFile').click()">📁 更換照片</button>
+  const tools=no?(()=>{const c=DATA.customers.find(x=>String(x.no)===String(no));const isCurrent=c&&c.memberPhoto===src;return `<div style="display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap">
+    <button class="btn small" onclick="editPhotoRot(-90)">左旋轉</button>
+    <button class="btn small" onclick="editPhotoRot(90)">右旋轉</button>
+    <button class="btn small" onclick="editPhotoFlip('h')">左右翻</button>
+    <button class="btn small" onclick="editPhotoFlip('v')">上下翻</button>
+  </div>
+  <div style="display:flex;gap:6px;justify-content:center;margin:0 0 10px;flex-wrap:wrap">
+    <button class="btn small" onclick="document.getElementById('photoReplaceFile').click()">替換照片</button>
     <input type="file" id="photoReplaceFile" accept="image/*" style="display:none" onchange="editPhotoReplace(this)">
-    <button class="btn small" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-color:transparent" onclick="setMemberPhotoFromViewer(${no},'${src}')">📷 設為法人照片</button>
-    <button class="btn small" style="background:var(--acc);color:#fff" onclick="editPhotoSave(${no})">💾 儲存修改</button>
-  </div>`:"";
+    ${isCurrent
+      ?`<button class="btn small" disabled style="opacity:.5;cursor:not-allowed">已被設置為法人照片</button>`
+      :`<button class="btn small" onclick="setMemberPhotoFromViewer(${no},'${src}')">設為法人照片</button>`}
+    <button class="btn small" onclick="editPhotoSave(${no})">儲存修改</button>
+  </div>`;})():"";
   openModal(`<div style="text-align:center"><h3>照片預覽</h3>${tools}<img id="editImg" src="${src}" style="max-width:100%;max-height:65vh;border-radius:10px;transition:transform .2s"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
 }
 function editPhotoRot(d){window._editRot=(window._editRot||0)+d;applyEditTransform();}
@@ -1027,14 +1031,14 @@ async function editPhotoSave(no){
     if(r.ok){
       PHOTO_OVERRIDE[no]=path;
       localStorage.setItem("bcd_photo_override",JSON.stringify(PHOTO_OVERRIDE));
-      toast("✅ 照片已儲存");
+      toast("照片已儲存");
       closeModal();
       if(typeof render==="function")render();
     }else{
       toast("⚠️ 儲存失敗 HTTP "+r.status);
-      btn.disabled=false;btn.textContent="💾 儲存修改";
+      btn.disabled=false;btn.textContent="儲存修改";
     }
-  }catch(e){console.warn(e);toast("⚠️ 儲存失敗："+e.message);btn.disabled=false;btn.textContent="💾 儲存修改";}
+  }catch(e){console.warn(e);toast("儲存失敗："+e.message);btn.disabled=false;btn.textContent="儲存修改";}
 }
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
 function openCustList(statusId){const list=DATA.customers.filter(c=>canViewCust(c.no)&&(!statusId||c.status===statusId));const s=statusId?st(statusId).lb:"全部客戶";
