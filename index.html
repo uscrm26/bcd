@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l27";
+  var V="v20261102l28";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2102,8 +2102,8 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
  const c=DATA.customers.find(x=>x.no===no);
  const dom=c&&c.mail&&c.mail.includes("@")?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
- const mailRows=mails.map(e=>({e:"email",src:mailDirLabel(e),tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
- const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||x.src||"跟進",tt:x.txt||x.tt||"",tm:x.t||x.tm||"",tx:x.detail||x.tx||"",key:x.key||""}));
+ const mailRows=mails.map(e=>({e:"email",who:mailDirLabel(e),act:"",tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
+ const tsRows=ts.map(x=>{let w=x.who||x.src||"";w=w.replace(/^[📩📝🤖📎]\s*/,"").trim();return{e:(w.indexOf("AI")>=0)||x.e==="ai"?"ai":"note",who:w,act:x.act||(x.e==="note"?"note":""),tt:x.txt||x.tt||"",tm:x.t||x.tm||"",tx:x.detail||x.tx||"",key:x.key||""};});
  const all=tsRows.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
  const f=window._tlFilter||"all";
  const filtered=f==="ai"?all.filter(t=>t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
@@ -2112,7 +2112,7 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
   <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
  </div>
- <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.src)} </span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.who||t.src||"")}${t.act==="note"?(CURRENT_LANG==="en"?" manually added note":CURRENT_LANG==="cn"?" 手动添加备注":" 手動添加備註"):""}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 `;}
 function confirmDeleteTl(no,key){
   openModal(`<h3>刪除時間線記錄</h3><div style="padding:16px 0;font-size:14px;color:var(--mut)">確定要刪除這條時間線記錄嗎？此操作無法撤銷。</div>
@@ -2618,7 +2618,7 @@ async function confirmNote(no){
     txZh=tr.zh||tx;txCn=tr.cn||tx;txEn=tr.en||tx;
   }catch(e){console.warn("translate:",e);}
   DATA.timeline[no]=DATA.timeline[no]||[];
-  const noteItem={e:"note",tt,tm:nowBJ(),who:"📝 "+CURRENT_USER.nm,src:"📝 "+CURRENT_USER.nm,tx:txZh,txCn,txEn,key:"note_"+Date.now()};
+  const noteItem={e:"note",tt,tm:nowBJ(),who:CURRENT_USER.nm,act:"note",tx:txZh,txCn,txEn,key:"note_"+Date.now()};
   DATA.timeline[no].unshift(noteItem);
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(noteItem)});
   addClientAudit(no,"新增跟進","",tt,txZh.slice(0,40));
