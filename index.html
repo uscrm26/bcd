@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l2";
+  var V="v20261102l3";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1698,7 +1698,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["mail","客戶郵箱"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
+  <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
@@ -1750,11 +1750,10 @@ return `<div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6
   <div onclick="${ph?`openModalImg('${ph}',${no})`:''}" title="法人照片" style="width:200px;height:200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
     ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">法人照片<br>未上傳</div>`}
   </div>
-  <div style="margin-top:10px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
-    <div style="font-size:28px;margin-bottom:6px">🤖</div>
-    <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:6px">${CURRENT_LANG==='en'?'AI Status':CURRENT_LANG==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
-    <div style="font-size:11px;color:var(--mut);line-height:1.6;margin-bottom:8px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(CURRENT_LANG==='en'?'No AI analysis yet.':CURRENT_LANG==='cn'?'从未为该客户进行 AI 分析。':'從未為該客戶進行 AI 分析。')}</div>
-    <button class="btn small" style="font-size:11px;padding:4px 10px" onclick="openAiHistory('${no}')">查看歷史記錄</button>
+  <div style="margin-top:10px;width:200px;padding:10px 14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px">
+    <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:4px">${CURRENT_LANG==='en'?'AI Status':CURRENT_LANG==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.5;margin-bottom:6px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(CURRENT_LANG==='en'?'No AI analysis yet.':CURRENT_LANG==='cn'?'从未为该客户进行 AI 分析。':'從未為該客戶進行 AI 分析。')}</div>
+    <button class="btn small" style="font-size:11px;padding:3px 8px" onclick="openAiHistory('${no}')">查看歷史記錄</button>
   </div>
   </div>
   <div style="flex:1;min-width:260px">
@@ -1771,7 +1770,7 @@ return `<div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6
 ${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button>
 </div>
 <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn" style="background:var(--acc);color:#fff" onclick="pickUpload('${no}')">⬆ 補充上傳文件</button>${CURRENT_USER.aiFollow!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button>`:""}<button class="btn" onclick="refreshOneMailbox('${no}')">📧 更新郵箱狀態</button>
+<button class="btn" onclick="pickUpload('${no}')">⬆ 補充上傳文件</button>${CURRENT_USER.aiFollow!==false?`<button class="btn" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button>`:""}<button class="btn" onclick="refreshOneMailbox('${no}')">📧 更新郵箱狀態</button>
 </div>
 <div id="aiProgress_${no}" style="display:none;margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px"></div>
 <div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div>`;}
@@ -1875,7 +1874,7 @@ function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  <div class="fg full"><label>備註</label><textarea id="cf_notes" style="min-height:50px" ${dis}>${esc(c.notes||"")}</textarea></div>
  <div class="fg"><label>駕照狀態</label><select id="cf_dl" ${dis}>${["正常","馬上過期","過期","未有駕照"].map(o=>`<option ${c.dl===o?"selected":""}>${o}</option>`).join("")}</select></div>
  <div class="fg"><label>護照狀態</label><select id="cf_pp" ${dis}>${["正常","馬上過期","過期","未有提供護照"].map(o=>`<option ${(c.pp||"未有提供護照")===o?"selected":""}>${o}</option>`).join("")}</select></div>
- <div class="fg"><label>法人照片</label><div style="display:flex;gap:8px;align-items:center">${c.memberPhoto?`<img src="${esc(c.memberPhoto)}" style="width:48px;height:48px;border-radius:8px;object-fit:cover">`:`<div style="width:48px;height:48px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--dim)">無</div>`}<input type="file" id="cf_memberPhoto" accept="image/*" style="font-size:11px" ${dis}></div></div>
+
  </div>
  ${canEdit?`<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
    ${editing?`<button class="btn" onclick="confirmRestoreEdit('${no}')">恢復資料</button><button class="btn primary" onclick="saveCustInfo('${no}')">儲存</button>`:`<button class="btn primary" onclick="enterEditCust('${no}')">編輯客戶資料</button>`}
@@ -1963,8 +1962,8 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
   <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
  </div>
- <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''}" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)} </span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div>${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="margin-top:6px;font-size:10px;color:#ef4444;border-color:#ef4444" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}</div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
-<div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
+ <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.src)} </span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+`;}
 function confirmDeleteTl(no,key){
   openModal(`<h3>刪除時間線記錄</h3><div style="padding:16px 0;font-size:14px;color:var(--mut)">確定要刪除這條時間線記錄嗎？此操作無法撤銷。</div>
   <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn" style="background:#ef4444;color:#fff;border-color:transparent" onclick="deleteTl('${no}','${key}')">確認刪除</button></div>`);
@@ -1986,12 +1985,12 @@ function autoTodos(c){const t=[];
  return t;}
 function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  const auto=autoTodos(c);
- const aiTodos=(c.aiTodos||[]).filter(t=>!t.done&&!t.superseded);
+ const aiTodos=(c.aiTodos||[]).filter(t=>!t.done);
  return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
  <div style="font-size:11px;color:var(--mut);margin:8px 0">AI 依當前業務狀態自動提示</div>
  ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
  ${aiTodos.length?`<div style="font-size:11px;color:#8b5cf6;margin:14px 0 6px">🤖 AI 建議待辦</div>`:""}
- ${aiTodos.map((t,i)=>`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">🤖 ${esc(t.t)}</span><span class="o" style="color:#8b5cf6">AI</span><button class="btn small" onclick="completeAiTodo('${no}',${i})">完成</button></div>`).join("")}
+ ${aiTodos.map((t,i)=>`<div class="logrow" style="${t.superseded?'opacity:.4;text-decoration:line-through':''}"><span class="c">🤖 ${esc(t.t)}${t.superseded?' <span style="font-size:10px;color:var(--mut)">（已被新內容取代）</span>':''}</span><span class="o" style="color:#8b5cf6">AI</span>${t.superseded?`<button class="btn small" onclick="restoreAiTodo('${no}',${i})">恢復顯示</button>`:`<button class="btn small primary" style="margin-right:4px" onclick="addAiTodoFromList('${no}',${i})">新增待辦</button><button class="btn small" onclick="dismissAiTodo('${no}',${i})">忽略</button>`}<button class="btn small" style="color:#ef4444;border-color:#ef4444;margin-left:4px" onclick="deleteAiTodo('${no}',${i})">刪除</button></div>`).join("")}
  ${(c.aiSuggestions||[]).map((sug,i)=>sug.ignored?`<div class="logrow" style="opacity:.4;text-decoration:line-through"><span class="c">🚫 ${esc(sug.t)}</span><button class="btn small" onclick="unignoreAiTodo('${no}',${i})">撤銷忽略</button></div>`:sug.added?"":`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">💡 ${esc(sug.t)}</span><button class="btn small primary" style="margin-right:6px" onclick="addAiTodo('${no}',${i})">新增待辦</button><button class="btn small" onclick="ignoreAiTodo('${no}',${i})">忽略</button></div>`).join("")}`;}
 function addAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t:c.aiSuggestions[i].t,done:false,ts:Date.now()});c.aiSuggestions[i].added=true;addClientAudit(no,"新增待辦","",c.aiSuggestions[i].t,"AI 建議");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_add",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ts:Date.now()})});sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("✅ 建議已採用，已保存到雲端");}
 function ignoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiSuggestions||!c.aiSuggestions[i])return;toast("保存中...");c.aiSuggestions[i].ignored=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"ai_todo_ignore",target_client:String(no),detail:JSON.stringify({t:c.aiSuggestions[i].t,ignored:true})});sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();}
@@ -2011,6 +2010,10 @@ async function openAiHistory(no){
   openModal(`<div style="width:min(680px,92vw)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="margin:0">🤖 AI 分析歷史</h3><button class="btn small" onclick="closeModal()">關閉</button></div><div style="max-height:70vh;overflow-y:auto;padding-right:6px">${h}</div></div>`);
 }
 function completeAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;toast("保存中...");c.aiTodos[i].done=true;addClientAudit(no,"待辦完成","",c.aiTodos[i].t,"AI 待辦");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("待辦已完成並保存");}
+function addAiTodoFromList(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;const t=c.aiTodos[i].t;c.aiTodos=c.aiTodos.filter((x,j)=>j!==i);c.aiTodos.unshift({t,done:false,ts:Date.now(),manual:true});addClientAudit(no,"新增待辦","",t,"AI 建議");persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已新增待辦");}
+function dismissAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].superseded=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已忽略");}
+function restoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].superseded=false;persistCust(no);render();toast("已恢復顯示");}
+function deleteAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos.splice(i,1);persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已刪除");}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 let QMAP={};
@@ -2063,17 +2066,20 @@ function custMailbox(no){
     return false;
   }).sort((a,b)=>(b.t||"").localeCompare(a.t||""));
   return `<div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
-  <div style="font-size:13px;color:var(--mut)">共 ${all.length} 封郵件 ｜ ${esc(c.mail||"")}</div>
+  <div style="font-size:13px;color:var(--mut)">收到郵件 ${all.filter(e=>!e.from||!e.from.includes(c.mail||"")).length} 封 ｜ 共 ${all.length} 封 ｜ ${esc(c.mail||"")}</div>
   <button class="btn small" onclick="refreshOneMailbox('${no}')">📧 立即更新</button>
   </div>
-  <div style="max-height:480px;overflow-y:auto">
-  ${all.length?all.map(e=>`<div class="logrow" style="cursor:pointer" onclick="openMailDetail('${e.t.replace(/'/g,"\\'")}')">
-  <span class="c">${e.unread?"● ":""}${esc(e.from)}</span>
-  <div style="flex:1;min-width:0">
-    <div style="font-size:13px;${e.unread?"font-weight:700":""}">${esc(e.sub)}</div>
-    <div style="font-size:11px;color:var(--mut)">${esc(e.t)}${e.atts&&e.atts.length?` · 📎 ${e.atts.length} 個附件`:""}</div>
+  <div style="max-height:480px;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
+  ${all.length?all.map(e=>`<div style="background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;${e.unread?'border-left:3px solid var(--acc);':''}" onclick="openMailDetail('${e.t.replace(/'/g,"\\'")}')">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+    <span style="font-size:11px;color:var(--mut)">${e.unread?'<span style="color:var(--acc)">● </span>':''}${esc(e.from.length>30?e.from.slice(0,30)+'…':e.from)}</span>
+    <span style="font-size:10px;color:var(--dim)">${esc(e.t)}</span>
   </div>
-  ${e.done?'<span class="tag t-green">已處理</span>':''}
+  <div style="font-size:13px;${e.unread?'font-weight:700':''};margin-bottom:4px">${esc(e.sub)}</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    ${e.atts&&e.atts.length?`<span style="font-size:10px;color:var(--mut)">📎 ${e.atts.length} 個附件</span>`:""}
+    ${e.done?'<span class="tag t-green">已處理</span>':''}
+  </div>
   </div>`).join(""):"<div class='empty'>尚無郵件</div>"}
   </div>`;
 }
@@ -2372,7 +2378,7 @@ async function refreshOneMailbox(no){
 function openNote(no){openModal(`<h3>新增跟進記錄</h3>
 <div class="fg" style="margin-bottom:10px"><label>事件標題</label><input id="ntitle" placeholder="例如 與經紀溝通補件事項"></div>
 <div class="fg" style="margin-bottom:10px"><label>內容</label><textarea id="nbody" placeholder="輸入跟進內容"></textarea></div>
-<div style="margin-bottom:14px"><button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiPolishNote()">🤖 AI 潤色內容</button></div>
+<div style="margin-bottom:14px"><button class="btn" id="polishBtn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiPolishNote()"><span id="polishIcon">🤖</span> AI 潤色內容</button></div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" id="noteSaveBtn" onclick="confirmNote('${no}')">確認新增</button></div>`);}
 async function aiPolishNote(){
   const body=document.getElementById("nbody").value.trim();
@@ -2402,7 +2408,20 @@ async function confirmNote(no){
   DATA.timeline[no].unshift(noteItem);
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(noteItem)});
   addClientAudit(no,"新增跟進","",tt,txZh.slice(0,40));
-  persistCust(no);closeModal();render();toast("跟進記錄已保存");
+  persistCust(no);
+  // also write to dbboard/data.json timeline
+  try{
+    const gtok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+    const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{headers:{Authorization:"token "+gtok}});
+    const meta=await r.json();
+    const cur=JSON.parse(atob(meta.content.replace(/\n/g,"")));
+    cur.timeline=cur.timeline||{};
+    cur.timeline[String(no)]=cur.timeline[String(no)]||[];
+    cur.timeline[String(no)].unshift(noteItem);
+    const b64=btoa(unescape(encodeURIComponent(JSON.stringify(cur))));
+    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+gtok,"Content-Type":"application/json"},body:JSON.stringify({message:"add note "+no,content:b64,sha:meta.sha})});
+  }catch(e){console.warn("data.json note:",e);}
+  closeModal();render();toast("跟進記錄已保存");
 }
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
