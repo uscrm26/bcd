@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l16";
+  var V="v20261102l17";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -312,6 +312,7 @@ tr:hover td{background:#1a2130}
 #aiLogBody .lg.err{color:#ef4444}
 #aiLogMin{margin-left:auto;font-size:13px;color:var(--mut,#99);line-height:1;padding:2px 8px;border-radius:6px;cursor:pointer;user-select:none}
 #aiLogMin:hover{background:rgba(255,255,255,.08);color:#fff}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:4px}@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
@@ -329,7 +330,7 @@ tr:hover td{background:#1a2130}
 <div class="app">
 <aside class="side">
   <div class="brand" style="justify-content:center;flex-direction:column;gap:4px;cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼">
-    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM" style="height:52px">
+    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM" style="height:64px;object-fit:cover;object-position:center top">
   </div>
   <div class="sideclock" id="sideClock"></div>
   <nav class="nav">
@@ -2124,7 +2125,7 @@ function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  const aiTodos=(c.aiTodos||[]).filter(t=>!t.done);
  return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
  <div style="font-size:11px;color:var(--mut);margin:8px 0">AI 依當前業務狀態自動提示</div>
- ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
+ ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${esc(t.t)}</span><span class="o">未完成</span><span style="display:flex;gap:4px"><button class="btn small primary" onclick="addAutoTodo('${no}',${i})">新增待辦</button><button class="btn small" onclick="dismissAutoTodo('${no}',${i})">忽略</button></span></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
  ${aiTodos.length?`<div style="font-size:11px;color:#8b5cf6;margin:14px 0 6px">🤖 AI 建議待辦</div>`:""}
  ${aiTodos.map((t,i)=>`<div class="logrow" style="${t.superseded?'opacity:.4;text-decoration:line-through':''}"><span class="c">🤖 ${esc(t.t)}${t.superseded?' <span style="font-size:10px;color:var(--mut)">（已被新內容取代）</span>':''}</span><span class="o" style="color:#8b5cf6">AI</span>${t.superseded?`<button class="btn small" onclick="restoreAiTodo('${no}',${i})">恢復顯示</button>`:`<span style="display:flex;gap:4px"><button class="btn small primary" onclick="addAiTodoFromList('${no}',${i})">新增待辦</button><button class="btn small" onclick="dismissAiTodo('${no}',${i})">忽略</button><button class="btn small" style="color:#ef4444;border-color:#ef4444" onclick="deleteAiTodo('${no}',${i})">刪除</button></span>`}</div>`).join("")}
  ${(c.aiSuggestions||[]).map((sug,i)=>sug.ignored?`<div class="logrow" style="opacity:.4;text-decoration:line-through"><span class="c">🚫 ${esc(sug.t)}</span><button class="btn small" onclick="unignoreAiTodo('${no}',${i})">撤銷忽略</button></div>`:sug.added?"":`<div class="logrow" style="background:rgba(139,92,246,.08)"><span class="c">💡 ${esc(sug.t)}</span><button class="btn small primary" style="margin-right:6px" onclick="addAiTodo('${no}',${i})">新增待辦</button><button class="btn small" onclick="ignoreAiTodo('${no}',${i})">忽略</button></div>`).join("")}`;}
@@ -2150,6 +2151,8 @@ function addAiTodoFromList(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c
 function dismissAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].superseded=true;persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已忽略");}
 function restoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos[i].superseded=false;persistCust(no);render();toast("已恢復顯示");}
 function deleteAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos.splice(i,1);persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已刪除");}
+function addAutoTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.autoTodos||!c.autoTodos[i])return;const t=c.autoTodos[i].t;c.autoTodos=c.autoTodos.filter((x,j)=>j!==i);c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t,done:false,ts:Date.now(),manual:true});addClientAudit(no,"新增待辦","",t,"AI 建議");persistCust(no);render();toast("已新增待辦");}
+function dismissAutoTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.autoTodos||!c.autoTodos[i])return;c.autoTodos=c.autoTodos.filter((x,j)=>j!==i);persistCust(no);render();toast("已忽略");}
 function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 let QMAP={};
@@ -2581,7 +2584,7 @@ function openNote(no){openModal(`<h3>新增跟進記錄</h3>
 async function aiPolishNote(){
   const body=document.getElementById("nbody").value.trim();
   if(!body){toast("請先輸入內容");return;}
-  const btn=event.target;btn.disabled=true;btn.textContent="潤色中…";
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spin"></span>潤色中…';
   try{
     const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"你是商務文書潤色助手。根據用戶輸入的語言進行潤色：英文輸入就英文潤色，繁體中文輸入就繁體中文潤色。保持原意，讓表達更專業流暢。只返回潤色後的文本。"},{role:"user",content:body}],max_tokens:500})});
     const j=await r.json();
