@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101j1";
+  var V="v20261101j2";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2084,7 +2084,144 @@ async function loadStorageList(no){
     box.innerHTML=(imgs.length?`<div class="fgrid">${imgs.map(thumb).join("")}</div>`:"")+`<div class="row r2">${docs.map(thumb).join("")||""}</div>`;
   }catch(e){box.innerHTML="<div class='empty'>雲端附件讀取失敗</div>";}
 }
-function pickUpload(no){const i=document.createElement("input");i.type="file";i.multiple=true;i.onchange=e=>{Array.from(e.target.files).forEach((f,idx)=>setTimeout(()=>uploadToStorage(no,f),idx*300));};i.click();}
+async function pickUpload(no){
+  const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c){toast("找不到客戶");return;}
+  const i=document.createElement("input");i.type="file";i.multiple=true;i.onchange=async e=>{
+    const files=Array.from(e.target.files);if(!files.length)return;
+    await enhancedUploadAnalyze(no,c,files);
+  };i.click();
+}
+async function enhancedUploadAnalyze(no,c,files){
+  aiLogStart("AI 正在分析補充上傳的 "+files.length+" 個檔案");
+  const results=[];
+  let okCount=0,failCount=0;
+  for(const f of files){
+    aiLog("〔"+f.name+"〕開始同步到加密雲端");
+    const upOK=await uploadToGithub(no,f);
+    if(!upOK){aiLog("〔"+f.name+"〕同步失敗 "+(window._lastUpErr||""),"err");failCount++;continue;}
+    aiLog("〔"+f.name+"〕已同步","ok");okCount++;
+    // AI 分析
+    const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
+    let j={doc_type:"",notes:""};
+    try{
+      if(/\.pdf$/i.test(f.name)){
+        const pa=await analyzePdfDoc(f,(m,k)=>aiLog("〔"+f.name+"〕"+m,k));
+        j={company:pa.company,member:pa.member,ein:pa.ein,address:pa.address,phone:pa.phone,doc_type:pa.doc_type,notes:pa.summary};
+      }else if(isImg){
+        aiLog("〔"+f.name+"〕讀取證件照片");
+        const dv=await fileToDataURL(f,1200);
+        const out=await callAIVision("你是美國海關bond業務證件辨識員，只輸出指定JSON。",[{type:"text",text:"檔名："+f.name+"。輸出JSON：{company,member,ein,address,phone,doc_type,notes}"},{type:"image_url",image_url:{url:dv}}]);
+        if(out==="ERROR_OVERDUE"){aiLog("〔"+f.name+"〕方舟欠費","err");j={doc_type:"",notes:"方舟欠費未分析"};}
+        else if(out){try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,200)};}}
+        if(!j.doc_type){
+          const out2=await callAI("根據檔名判斷文件類型，輸出JSON{doc_type,notes}："+f.name);
+          try{j=Object.assign(j,JSON.parse(out2.replace(/```json|```/g,"").trim()));}catch(e){}
+        }
+      }else{
+        const out=await callAI("根據檔名判斷文件類型，輸出JSON{doc_type,notes}："+f.name);
+        try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){}
+      }
+    }catch(e){aiLog("〔"+f.name+"〕分析失敗："+e.message,"warn");}
+    results.push({file:f.name,data:j});
+    aiLog("〔"+f.name+"〕"+(j.doc_type||"已辨識")+(j.member?"｜法人:"+j.member:""),"ok");
+  }
+  // === 衝突性分析 ===
+  aiLog("正在比對新文件與客戶既有資料…");
+  const conflicts=[];
+  for(const r of results){
+    const d=r.data;
+    if(d.ein){const einA=String(d.ein).replace(/\D/g,"");if(einA&&c.ein&&einA!==String(c.ein).replace(/\D/g,""))conflicts.push({doc:r.file,problem:"EIN不一致：新文件"+d.ein+" vs 系統"+c.ein});}
+    if(d.member&&c.member){const nmA=d.member.toUpperCase().replace(/\s+/g,"");const nmB=c.member.toUpperCase().replace(/\s+/g,"");if(nmA&&nmB&&nmA!==nmB)conflicts.push({doc:r.file,problem:"姓名不一致：新文件"+d.member+" vs 系統"+c.member});}
+    if(d.company&&c.name){const cA=d.company.toUpperCase().replace(/[^A-Z0-9]/g,"");const cB=c.name.toUpperCase().replace(/[^A-Z0-9]/g,"");if(cA&&cB&&!cB.includes(cA)&&!cA.includes(cB))conflicts.push({doc:r.file,problem:"公司名不一致：新文件"+d.company+" vs 系統"+c.name});}
+  }
+  // === 身份驗證：新文件裡的人是不是同一個 ===
+  const newNames=results.map(r=>r.data.member).filter(Boolean);
+  const identityMismatch=newNames.some(n=>{
+    const na=n.toUpperCase().replace(/[^A-Z]/g,"");const nb=(c.member||"").toUpperCase().replace(/[^A-Z]/g,"");
+    return na&&nb&&na!==nb&&!na.includes(nb)&&!nb.includes(na);
+  });
+  if(identityMismatch){
+    const names=newNames.join("、");
+    const proceed=await new Promise(res=>{
+      openModal(`<div style="text-align:center;padding:16px">
+        <div style="font-size:18px;font-weight:700;color:#ef4444;margin-bottom:10px">⚠️ 身份可能不符</div>
+        <div style="font-size:13px;color:var(--mut);line-height:1.8;margin-bottom:16px">
+          新上傳文件中的姓名為「<b style="color:var(--tx)">${esc(names)}</b>」<br>
+          系統中登記的法人為「<b style="color:var(--tx)">${esc(c.member||"—")}</b>」<br><br>
+          這可能不是同一個人，確定要繼續加入這些文件嗎？
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center">
+          <button class="btn" onclick="closeModal();res(false)">取消上傳</button>
+          <button class="btn" style="background:#dc2626;color:#fff" onclick="closeModal();res(true)">仍要加入</button>
+        </div>
+      </div>`);
+      window.res=res;
+    });
+    if(!proceed){aiLogDone("已取消身份不符的上傳");toast("已取消");return;}
+  }
+  // === 更新場景偵測：同類型舊文件標註為已作廢 ===
+  const docTypeMap={};
+  for(const r of results){
+    const t=r.data.doc_type||"";
+    if(/駕照|driver|license|DL/i.test(t))docTypeMap["dl"]=r.file;
+    else if(/EIN|稅號/i.test(t))docTypeMap["ein"]=r.file;
+    else if(/地址|街景|verify/i.test(t))docTypeMap["addr"]=r.file;
+  }
+  c.fileInsights=c.fileInsights||[];
+  const superseded=[];
+  for(const [cat,newFile] of Object.entries(docTypeMap)){
+    const catRe=/駕照|driver|license|DL/i.test(cat)?"/駕照|driver|license/i":cat==="ein"?"/EIN|稅號/i":"/地址|街景/i";
+    const oldOnes=c.fileInsights.filter(x=>!x.superseded&&new RegExp(catRe).test(x.type||"")&&x.file!==newFile);
+    for(const old of oldOnes){old.superseded=true;old.notes=(old.notes||"")+" 【已被"+newFile+"取代】";superseded.push(old.file);}
+    // 標註新文件為最新
+    const ni=c.fileInsights.find(x=>x.file===newFile);if(ni)ni.current=true;
+  }
+  // === 寫入 fileInsights ===
+  for(const r of results){
+    const card={file:r.file,via:"vision",type:r.data.doc_type||"未分類",summary:r.data.notes||"",company:r.data.company||c.name,member:r.data.member||c.member,ein:r.data.ein||c.ein,uploadedAt:Date.now()};
+    c.fileInsights=c.fileInsights.filter(x=>x.file!==r.file);
+    c.fileInsights.unshift(card);
+  }
+  // === 自動完成相關待辦 ===
+  c.aiTodos=c.aiTodos||[];
+  const closedTodos=[];
+  for(const r of results){
+    const t=r.data.doc_type||"";
+    if(/駕照|driver|license/i.test(t)){
+      c.aiTodos=c.aiTodos.filter(x=>{if(!x.done&&/駕照|license|DL/i.test(x.t)){closedTodos.push(x.t);x.done=true;x.doneAt=Date.now();return true;}return true;});
+    }
+    if(/EIN|稅號/i.test(t)){
+      c.aiTodos=c.aiTodos.filter(x=>{if(!x.done&&/EIN|稅號/i.test(x.t)){closedTodos.push(x.t);x.done=true;x.doneAt=Date.now();return true;}return true;});
+    }
+  }
+  // === 寫入時間線 ===
+  DATA.timeline[no]=DATA.timeline[no]||[];
+  const tlItem={t:nowBJ(),who:"補充上傳",txt:"上傳 "+results.length+" 份文件："+results.map(r=>r.file).join("、"),detail:"",key:"upload_"+Date.now()};
+  let detailLines=results.map(r=>"· "+r.file+"（"+(r.data.doc_type||"未分類")+(r.data.member?"｜法人:"+r.data.member:"")+"）");
+  if(superseded.length)detailLines.push("📦 已作廢舊版："+superseded.join("、"));
+  if(closedTodos.length)detailLines.push("✅ 自動完成待辦："+closedTodos.join("；"));
+  if(conflicts.length)detailLines.push("⚠️ 衝突提醒："+conflicts.map(x=>x.problem).join("；"));
+  tlItem.detail=detailLines.join("\n");
+  DATA.timeline[no].unshift(tlItem);
+  addAudit("補充上傳",c.name+"｜"+results.length+"份");
+  persistCust(no);
+  syncCustomerToRepo(no);
+  // === 完成總結 ===
+  const okMsg=results.length+" 份文件已完成分析並加入客戶檔案";
+  aiLogDone(okMsg);
+  openModal(`<div style="text-align:center;padding:16px">
+    <div style="font-size:18px;font-weight:700;color:#10b981;margin-bottom:10px">✅ 補充上傳完成</div>
+    <div style="font-size:13px;color:var(--mut);line-height:1.8;text-align:left;margin-bottom:14px">
+      <div>📄 上傳成功：<b style="color:var(--tx)">${okCount}</b> 份</div>
+      ${failCount?`<div>❌ 失敗：<b style="color:#ef4444">${failCount}</b> 份</div>`:""}
+      ${superseded.length?`<div>📦 舊版已標註作廢：<b style="color:var(--tx)">${superseded.join("、")}</b></div>`:""}
+      ${closedTodos.length?`<div>✅ 自動完成待辦：<b style="color:#10b981">${closedTodos.length}</b> 項</div>`:""}
+      ${conflicts.length?`<div style="color:#f0a040">⚠️ 衝突提醒：${conflicts.length} 項，詳見待辦</div>`:"<div style='color:#10b981'>✓ 與既有資料無衝突</div>"}
+    </div>
+    <button class="btn primary" onclick="closeModal()">完成</button>
+  </div>`);
+  render();
+}
 let QT="";let QT_EXP=0;
 function loadQiniuToken(){if(QT&&Date.now()<QT_EXP)return Promise.resolve(QT);return fetch("upload_token.json?v="+Date.now()).then(r=>r.json()).then(j=>{QT=j.token||"";QT_EXP=(j.expires||0)*1000;return QT;}).catch(()=>{QT="";return QT;});}
 function uploadToStorage(no,f){
