@@ -543,7 +543,19 @@ async function loadRepoData(){
       const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
       DATA.emails=em.map(x=>{
         const t=fmtMailDate(x.date);
-        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[]};
+        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
+      });
+      // 建立客户邮箱域名库，邮件按client标签和邮箱域名双重关联客户编号
+      window._mailCustMap={};
+      (DATA.customers||[]).forEach(c=>{
+        if(c.mail){
+          const dom=c.mail.split("@")[1].toLowerCase();
+          window._mailCustMap[dom]=c.no;
+        }
+        if(c.name){
+          const short=c.name.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").toLowerCase();
+          if(short)window._mailCustMap["name:"+short]=c.no;
+        }
       });
     }
     if(mb&&Array.isArray(mb.mailboxes)){
@@ -937,7 +949,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261101E";
+const APP_VER="20261101F";
 function genVersionCode(){
   const ua=navigator.userAgent;
   const br=/Chrome|Safari|Firefox|Edge/.test(ua)?ua.match(/(Chrome|Safari|Firefox|Edge)\//)?.[1]||"?":"?";
