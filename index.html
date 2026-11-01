@@ -2,6 +2,9 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>UCRM｜美國進口客戶關係管理系統</title>
 <link rel="icon" href="favicon-32.png">
@@ -1334,16 +1337,17 @@ async function compressImgForUpload(file){
 }
 function fileSlug(name){
   const n=name.toLowerCase();
-  if(/駕照正面|license.*front|front.*license/.test(n))return "driver-license-front";
-  if(/駕照背面|license.*back|back.*license/.test(n))return "driver-license-back";
-  if(/人像|人頭|member.*photo|headshot/.test(n))return "member-photo";
-  if(/ein/.test(n))return "ein-letter";
-  if(/章程|articles.*organization/.test(n))return "articles-of-organization";
-  if(/申請|通知書|filing|confirmation/.test(n))return "filing-confirmation";
-  if(/w-?9/.test(n))return "w9-form";
-  if(/護照|passport/.test(n))return "passport";
-  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8);
-  return "doc-"+Date.now().toString(36).slice(-4);
+  const suf="-"+Math.random().toString(36).slice(2,6);
+  if(/駕照正面|license.*front|front.*license/.test(n))return "driver-license-front"+suf;
+  if(/駕照背面|license.*back|back.*license/.test(n))return "driver-license-back"+suf;
+  if(/人像|人頭|member.*photo|headshot/.test(n))return "member-photo"+suf;
+  if(/ein/.test(n))return "ein-letter"+suf;
+  if(/章程|articles.*organization/.test(n))return "articles-of-organization"+suf;
+  if(/申請|通知書|filing|confirmation/.test(n))return "filing-confirmation"+suf;
+  if(/w-?9/.test(n))return "w9-form"+suf;
+  if(/護照|passport/.test(n))return "passport"+suf;
+  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8)+suf;
+  return "doc-"+Date.now().toString(36).slice(-4)+suf;
 }
 async function ghFetch(url,opts,timeoutMs){
   const ctrl=new AbortController();
