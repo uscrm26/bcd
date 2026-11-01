@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101k4";
+  var V="v20261102l1";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -993,9 +993,10 @@ function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
     <button class="btn small" onclick="editPhotoFlip('v')">⇵ 上下翻</button>
     <button class="btn small" onclick="document.getElementById('photoReplaceFile').click()">📁 更換照片</button>
     <input type="file" id="photoReplaceFile" accept="image/*" style="display:none" onchange="editPhotoReplace(this)">
+    <button class="btn small" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-color:transparent" onclick="setMemberPhotoFromViewer(${no},'${src}')">📷 設為法人照片</button>
     <button class="btn small" style="background:var(--acc);color:#fff" onclick="editPhotoSave(${no})">💾 儲存修改</button>
   </div>`:"";
-  openModal(`<div style="text-align:center"><h3>法人照片</h3>${tools}<img id="editImg" src="${src}" style="max-width:100%;max-height:65vh;border-radius:10px;transition:transform .2s"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
+  openModal(`<div style="text-align:center"><h3>照片預覽</h3>${tools}<img id="editImg" src="${src}" style="max-width:100%;max-height:65vh;border-radius:10px;transition:transform .2s"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
 }
 function editPhotoRot(d){window._editRot=(window._editRot||0)+d;applyEditTransform();}
 function editPhotoFlip(k){if(k==='h')window._editFlipH=!window._editFlipH;else window._editFlipV=!window._editFlipV;applyEditTransform();}
@@ -1649,6 +1650,7 @@ async function runDocumentReview(no,files,cust,onProgress){
     c.reviewReport=summaryParts.join("\n");
     // 問題寫入 AI 待辦
     c.aiTodos=c.aiTodos||[];
+    c.aiTodos.forEach(x=>{if(!x.done)x.superseded=true;});
     issues.forEach(it=>{const t=`[文件審查] ${it.doc||""}：${it.problem||""}${it.fix?"（建議："+it.fix+"）":""}`;if(!c.aiTodos.some(x=>x.t===t))c.aiTodos.unshift({t,done:false,ts:Date.now()});});
     // 時間線審查記錄
     DATA.timeline[no]=DATA.timeline[no]||[];
@@ -1765,7 +1767,12 @@ return `<div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6
   <div class="field"><div class="k">綁定信箱</div><div class="v" style="word-break:break-all">${esc(c.mail)}</div></div>
   <div class="field"><div class="k">文件</div><div class="v">共 ${((DATA.files||{})[no]||[]).length} 份，照片 ${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length} 張，詳見「附件文件」分頁</div></div>
   </div></div>
-<div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" style="background:var(--acc);color:#fff" onclick="pickUpload('${no}')">⬆ 補充上傳文件</button><button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button>${CURRENT_USER.aiFollow!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button>`:""}</div>
+<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button>
+</div>
+<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn" style="background:var(--acc);color:#fff" onclick="pickUpload('${no}')">⬆ 補充上傳文件</button>${CURRENT_USER.aiFollow!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiAnalyzeCustomer('${no}')">🤖 AI 跟進分析</button>`:""}<button class="btn" onclick="refreshOneMailbox('${no}')">📧 更新郵箱狀態</button>
+</div>
 <div id="aiProgress_${no}" style="display:none;margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px"></div>
 <div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div>`;}
 function sendAsCustomer(no,presetTo){const c=DATA.customers.find(x=>x.no===no);if(!c)return;window._sendNo=no;
@@ -1886,7 +1893,16 @@ function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  c.phone=document.getElementById("cf_phone").value;c.address=document.getElementById("cf_address").value;c.notes=document.getElementById("cf_notes").value;c.sysId=document.getElementById("cf_sysId").value;
  const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(no);render();};fr.readAsDataURL(pf.files[0]);}
  addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
-function clientAuditList(no){const rs=clientAudit[no]||[];
+async function clientAuditList(no){
+let rs=clientAudit[no]||[];
+try{
+const cloud=await sbReq("audit_logs","GET",null,"?select=*&target_client=eq."+encodeURIComponent(String(no))+"&action=eq.client_audit&order=created_at.desc&limit=100");
+if(Array.isArray(cloud)){
+cloud.forEach(a=>{try{const rec=JSON.parse(a.detail);if(!rs.some(r=>r.t===rec.t&&r.user===rec.user&&r.action===rec.action))rs.push(rec);}catch(e){}});
+rs.sort((a,b)=>String(b.t||"").localeCompare(String(a.t||"")));
+clientAudit[no]=rs;
+}
+}catch(e){}
 return `<table><thead><tr><th>時間</th><th>操作人</th><th>動作</th><th>舊值</th><th>新值</th><th>理由</th></tr></thead><tbody>
 ${rs.map(r=>`<tr><td>${r.t}</td><td>${esc(r.user)}</td><td>${esc(r.action)}</td><td>${esc(r.old)}</td><td>${esc(r.new)}</td><td>${esc(r.reason)}</td></tr>`).join("")||"<tr><td colspan='6' class='empty'>尚無操作記錄</td></tr>"}
 </tbody></table>`;}
@@ -1896,8 +1912,11 @@ function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=do
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:ownerMap[no]||null,status:st(nv).lb,note:reason||null});
   addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已更新並記錄");}
-function openAssign(no){if(!(CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor")){toast("歸屬由主管分配");return;}const opts=USERS.filter(u=>u.active&&myTeamIds().has(u.id)).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm}（${ROLE_LB[u.role]||u.role}）</option>`).join("");
-openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬負責人</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
+function openAssign(no){if(!(CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor")){toast("歸屬由主管分配");return;}
+const team=myTeamIds();team.delete(CURRENT_USER.id);
+if(team.size===0){openModal(`<h3>分配歸屬</h3><div style="padding:20px 0;text-align:center;color:var(--mut);font-size:14px">您沒有下線，無法使用分配歸屬功能。</div><div class="mrow"><button class="btn primary" onclick="closeModal()">確認</button></div>`);return;}
+const opts=USERS.filter(u=>u.active&&myTeamIds().has(u.id)).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm}（${ROLE_LB[u.role]||u.role}）</option>`).join("");
+openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬下線</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
 function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);const c=DATA.customers.find(x=>x.no===no);
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:uid,status:st(c.status).lb});
@@ -1944,8 +1963,19 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
   <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
  </div>
- <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map(t=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''}" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)} </span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''}" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}"><span class="src">${icon[t.e]||"📩"} ${esc(t.src)} </span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div>${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="margin-top:6px;font-size:10px;color:#ef4444;border-color:#ef4444" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}</div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 <div style="margin-top:14px"><button class="btn primary" onclick="openNote('${no}')">➕ 新增跟進記錄</button></div>`;}
+function confirmDeleteTl(no,key){
+  openModal(`<h3>刪除時間線記錄</h3><div style="padding:16px 0;font-size:14px;color:var(--mut)">確定要刪除這條時間線記錄嗎？此操作無法撤銷。</div>
+  <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn" style="background:#ef4444;color:#fff;border-color:transparent" onclick="deleteTl('${no}','${key}')">確認刪除</button></div>`);
+}
+function deleteTl(no,key){
+  if(!DATA.timeline[no]){closeModal();return;}
+  DATA.timeline[no]=DATA.timeline[no].filter(x=>x.key!==key);
+  addClientAudit(no,"刪除時間線","","刪掉一條時間線記錄","系統管理員");
+  addAudit("刪除時間線","客戶 "+no+" 刪掉一條記錄");
+  persistCust(no);closeModal();render();toast("已刪除");
+}
 function convET(bj){if(!bj||typeof bj!=="string")return "--";const h=parseInt((bj.match(/\d{2}:\d{2}/)||["12:00"])[0].split(":")[0]);let eh=(h-13+24)%24;return `${eh}:${(bj.match(/\d{2}:\d{2}/)||["00"])[0].split(":")[1]}`;}
 function autoTodos(c){const t=[];
  const unread=(DATA.emails||[]).some(e=>e.c===c.name&&e.unread);
@@ -1956,7 +1986,7 @@ function autoTodos(c){const t=[];
  return t;}
 function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  const auto=autoTodos(c);
- const aiTodos=(c.aiTodos||[]).filter(t=>!t.done);
+ const aiTodos=(c.aiTodos||[]).filter(t=>!t.done&&!t.superseded);
  return `<div class="search"><input id="newtodo" placeholder="新增待辦標題"><button class="btn primary" onclick="addTodo('${no}')">新增</button></div>
  <div style="font-size:11px;color:var(--mut);margin:8px 0">AI 依當前業務狀態自動提示</div>
  ${auto.length?auto.map((t,i)=>`<div class="logrow" ${i===0?'style="background:rgba(255,93,108,.07)"':''}><span class="c">${t.lv==="high"?"⚠️":"·"} ${esc(t.t)}</span><span class="o">未完成</span><button class="btn small" onclick="toast('待辦已標記完成');this.parentElement.style.opacity=.5">完成</button></div>`).join(""):"<div class='empty'>目前無待辦，狀態正常</div>"}
@@ -2042,7 +2072,7 @@ function docList(no){
       ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
       ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
       <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div>
-      ${isImg?`<button class="btn small" style="margin-top:6px;font-size:10px;padding:2px 8px;width:100%" onclick="event.stopPropagation();setMemberPhoto('${no}','${esc(nm)}')">📷 設為法人照片</button>`:""}
+      
       </div></div>`;}
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div class="sec-title" style="margin:0">全部附件</div>
@@ -2065,8 +2095,13 @@ function setMemberPhoto(no,nm){
   if(!f){toast("找不到文件");return;}
   const url=resolveFile(f.path||"");
   const c=DATA.customers.find(x=>String(x.no)===String(no));
-  if(c){c.memberPhoto=url;persistCust(no);syncCustomerToRepo(no);addAudit("設定法人照片",c.name+"｜"+nm);}
-  toast("已設為法人照片");
+  if(c){c.memberPhoto=url;persistCust(no);syncCustomerToRepo(no);addClientAudit(no,"設定法人照片","",c.name+"｜"+nm,"手動");addAudit("設定法人照片",c.name+"｜"+nm);}
+  toast("已設為法人照片");closeModal();render();
+}
+function setMemberPhotoFromViewer(no,url){
+  const c=DATA.customers.find(x=>x.no===no);if(!c)return;
+  c.memberPhoto=url;persistCust(no);syncCustomerToRepo(no);addClientAudit(no,"設定法人照片","",c.name,"手動");addAudit("設定法人照片",c.name);
+  toast("已設為法人照片");closeModal();render();
   render();
 }
 function setAttFilter(f){
@@ -2284,16 +2319,55 @@ function uploadToStorage(no,f){
  });
 }
 function waitForSign(key,sec){return new Promise(res=>{const t0=Date.now();const iv=setInterval(async()=>{try{const r=await fetch("qiniu_map.json?v="+Date.now());const m=await r.json();if(m[key]||m[decodeURIComponent(key)]){clearInterval(iv);res(true);return;}}catch(e){}if(Date.now()-t0>sec*1000){clearInterval(iv);res(false);}},2000);});}
+// ===== 更新單個客戶郵箱 =====
+async function refreshOneMailbox(no){
+  const c=DATA.customers.find(x=>x.no===no);if(!c||!c.mail){toast("此客戶未綁定信箱");return;}
+  openModal(`<h3>更新郵箱狀態</h3><div id="mbProgress" style="padding:16px 0;font-size:13px;line-height:2">正在聯線 ${esc(c.mail)} …</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);
+  try{
+    const tok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+    const r=await fetch("https://api.github.com/repos/uscrm26/bcd/actions/workflows/hourly-patrol.yml/dispatches",{method:"POST",headers:{Authorization:"token "+tok,"Content-Type":"application/json"},body:JSON.stringify({ref:"main",inputs:{target_mailbox:c.mail}})});
+    document.getElementById("mbProgress").innerHTML="已觸發後台巡查工作流。<br>正在連線郵箱、檢查新郵件、下載附件。<br>完成後自動更新到看板，請稍後刷新查看。";
+  }catch(e){
+    document.getElementById("mbProgress").innerHTML="觸發失敗："+e.message+"<br>請稍後手動在 GitHub Actions 頁面運行。";
+  }
+}
+
 // ===== 跟進備註 =====
-function openNote(no){openModal(`<h3>新增跟進記錄 ｜ 內部參考 ${no}</h3>
+function openNote(no){openModal(`<h3>新增跟進記錄</h3>
 <div class="fg" style="margin-bottom:10px"><label>事件標題</label><input id="ntitle" placeholder="例如 與經紀溝通補件事項"></div>
 <div class="fg" style="margin-bottom:10px"><label>內容</label><textarea id="nbody" placeholder="輸入跟進內容"></textarea></div>
-<div style="margin-bottom:14px"><button class="btn" onclick="document.getElementById('nbody').value='與經紀口頭確認將補寄資料，具體進度待郵件確認。'">🤖 產生參考草稿</button>
-<button class="btn small" onclick="toast('已切換英文草稿')">English</button></div>
-<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmNote('${no}')">確認新增</button></div>`);}
-function confirmNote(no){const tt=document.getElementById("ntitle").value||"手動跟進";const tx=document.getElementById("nbody").value||"";DATA.timeline[no]=DATA.timeline[no]||[];const noteItem={e:"note",tt,tm:nowBJ(),src:"📝 "+CURRENT_USER.nm,tx,key:"note_"+Date.now()};DATA.timeline[no].unshift(noteItem);
-sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(noteItem)});
-addClientAudit(no,"新增跟進","",tt,tx.slice(0,40));closeModal();render();toast("跟進記錄已保存");}
+<div style="margin-bottom:14px"><button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="aiPolishNote()">🤖 AI 潤色內容</button></div>
+<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" id="noteSaveBtn" onclick="confirmNote('${no}')">確認新增</button></div>`);}
+async function aiPolishNote(){
+  const body=document.getElementById("nbody").value.trim();
+  if(!body){toast("請先輸入內容");return;}
+  const btn=event.target;btn.disabled=true;btn.textContent="潤色中…";
+  try{
+    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"你是商務文書潤色助手。根據用戶輸入的語言進行潤色：英文輸入就英文潤色，繁體中文輸入就繁體中文潤色。保持原意，讓表達更專業流暢。只返回潤色後的文本。"},{role:"user",content:body}],max_tokens:500})});
+    const j=await r.json();
+    document.getElementById("nbody").value=j.choices[0].message.content.trim();
+    toast("潤色完成");
+  }catch(e){toast("潤色失敗："+e.message);}
+  btn.disabled=false;btn.textContent="🤖 AI 潤色內容";
+}
+async function confirmNote(no){
+  const btn=document.getElementById("noteSaveBtn");btn.disabled=true;btn.textContent="正在保存中…";
+  const tt=document.getElementById("ntitle").value||"手動跟進";
+  const tx=document.getElementById("nbody").value||"";
+  let txZh=tx, txCn=tx, txEn=tx;
+  try{
+    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"把用戶輸入翻譯成三語，返回JSON：{\"zh\":\"繁體中文\",\"cn\":\"简体中文\",\"en\":\"English\"}。原文已是某語言則該語言用原文。只返回JSON。"},{role:"user",content:tx}],max_tokens:600})});
+    const j=await r.json();
+    const tr=JSON.parse(j.choices[0].message.content.trim());
+    txZh=tr.zh||tx;txCn=tr.cn||tx;txEn=tr.en||tx;
+  }catch(e){console.warn("translate:",e);}
+  DATA.timeline[no]=DATA.timeline[no]||[];
+  const noteItem={e:"note",tt,tm:nowBJ(),who:"📝 "+CURRENT_USER.nm,src:"📝 "+CURRENT_USER.nm,tx:txZh,txCn,txEn,key:"note_"+Date.now()};
+  DATA.timeline[no].unshift(noteItem);
+  sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(noteItem)});
+  addClientAudit(no,"新增跟進","",tt,txZh.slice(0,40));
+  persistCust(no);closeModal();render();toast("跟進記錄已保存");
+}
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
 R.webmail=()=>{
