@@ -949,7 +949,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261101G";
+const APP_VER="20261101H";
 function genVersionCode(){
   const ua=navigator.userAgent;
   const br=/Chrome|Safari|Firefox|Edge/.test(ua)?ua.match(/(Chrome|Safari|Firefox|Edge)\//)?.[1]||"?":"?";
@@ -2359,11 +2359,31 @@ function chunkText(t,size=6000){
 async function extractPdfText(file){try{const r=await extractPdfFull(file);return r.text;}catch(e){return "";}}
 // 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
 async function callAIVision(sys,parts){
+  const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
+  // 主通道：方舟多模態 endpoint 直接讀圖（已實測支援 image_url），複用模型輪詢
+  let list=[];
+  try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/ai_models.json",{cache:"no-store"});list=await r.json();}catch(e){list=[];}
+  let models=Array.isArray(list)?list.filter(m=>m.enabled!==false&&m.endpoint).map(m=>m.endpoint):[];
+  const fb=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
+  if(!models.includes(fb))models.unshift(fb);
+  for(const model of models){
+    try{
+      const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),30000);
+      const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
+      clearTimeout(tm);
+      if(r.status===429||r.status===402||r.status===403)continue;
+      if(!r.ok){const t=await r.text();console.warn("vision ark",model,r.status,t.slice(0,100));continue;}
+      const j=await r.json();
+      const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+      if(out)return out;
+    }catch(e){console.warn("vision ark fail",model,e);}
+  }
+  // 備用：OpenRouter（key 已失效時快速返回空）
   try{
     const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),8000);
     const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
     clearTimeout(tm);
-    if(!r.ok){const t=await r.text();throw new Error("VL HTTP "+r.status);}
+    if(!r.ok)throw new Error("VL HTTP "+r.status);
     const j=await r.json();
     return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
   }catch(e){console.warn("callAIVision fail",e);return "";}
