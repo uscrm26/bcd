@@ -1366,7 +1366,14 @@ function fileSlug(name){
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8)+suf;
   return "doc-"+Date.now().toString(36).slice(-4)+suf;
 }
-function displayFileName(fname){return fname;}
+function displayFileName(fname){
+  if(!fname)return "";
+  const i=fname.indexOf("——");
+  if(i>=0)return fname.slice(i+2);
+  const j=fname.indexOf("-");
+  if(j>0 && fname.length<60)return fname.slice(j+1).trim();
+  return fname;
+}
 async function ghFetch(url,opts,timeoutMs){
   const ctrl=new AbortController();
   const t=setTimeout(()=>ctrl.abort(),timeoutMs||60000);
