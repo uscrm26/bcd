@@ -1215,7 +1215,12 @@ async function startAnalyzeAndCreate(){
         try{
           const dv=await fileToDataURL(f,1200);
           const out=await callAIVision("你是美國海關bond業務證件辨識員，只輸出指定JSON，不要多餘說明。",[{type:"text",text:"檔名："+f.name+"。請辨識這張證件照，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，辨識不到留空。"},{type:"image_url",image_url:{url:dv}}]);
-          try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j=out?{notes:out.slice(0,200)}:{};}
+          if(out){try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j=out?{notes:out.slice(0,200)}:{};}}
+          if(!j||!j.doc_type){
+            setAp("視覺模型不可用，改用檔名分析","warn");
+            const out2=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
+            try{j=JSON.parse(out2.replace(/```json|```/g,"").trim());}catch(e){j=out2?{notes:out2.slice(0,200)}:{};}
+          }
         }catch(e){setAp("視覺辨識失敗："+(e.message||e),"warn");}
       }else{
         setAp("比對檔案類型","");
