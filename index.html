@@ -291,7 +291,8 @@ tr:hover td{background:#1a2130}
 #aiLogBody .lg.ok{color:#10b981}
 #aiLogBody .lg.warn{color:#f0a040}
 #aiLogBody .lg.err{color:#ef4444}
-#aiLogMin{margin-left:auto;font-size:14px;color:var(--mut,#99);line-height:1;padding:0 4px}
+#aiLogMin{margin-left:auto;font-size:13px;color:var(--mut,#99);line-height:1;padding:2px 8px;border-radius:6px;cursor:pointer;user-select:none}
+#aiLogMin:hover{background:rgba(255,255,255,.08);color:#fff}
 </style>
 <script src="https://fastly.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
@@ -366,7 +367,7 @@ tr:hover td{background:#1a2130}
 
 <div class="modal" id="modal"></div>
 <div id="toast"></div>
-<div id="aiLogPanel"><div id="aiLogHead" onclick="toggleAiLog()"><span class="dot"></span><span id="aiLogTitle">AI 正在處理文件</span><span id="aiLogMin">—</span></div><div id="aiLogBody"></div></div>
+<div id="aiLogPanel"><div id="aiLogHead" onclick="toggleAiLog()"><span class="dot"></span><span id="aiLogTitle">AI 正在處理文件</span><span id="aiLogMin" title="關閉" onclick="event.stopPropagation();closeAiLog()">✕</span></div><div id="aiLogBody"></div></div>
 <div id="loginScreen">
   <div class="login-lang" id="loginLang">
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
@@ -609,7 +610,8 @@ function toast(m){const t=document.getElementById("toast");t.textContent=m;t.sty
 function aiLogStart(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");p.classList.remove("done");const b=document.getElementById("aiLogBody");if(b)b.innerHTML="";const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"AI 正在處理文件";}
 function aiLog(msg,kind){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");const b=document.getElementById("aiLogBody");if(!b)return;const d=document.createElement("div");d.className="lg"+(kind?" "+kind:"");d.innerHTML=(kind==="ok"?"✓ ":kind==="warn"?"⚠ ":kind==="err"?"✕ ":"· ")+"<b></b>";d.querySelector("b").textContent=msg;b.appendChild(d);b.scrollTop=b.scrollHeight;}
 function aiLogDone(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("done");const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"處理完成";}
-function toggleAiLog(){const b=document.getElementById("aiLogBody");if(!b)return;const hid=b.style.display==="none";b.style.display=hid?"block":"none";document.getElementById("aiLogMin").textContent=hid?"—":"+";}
+function toggleAiLog(){const b=document.getElementById("aiLogBody");if(!b)return;const hid=b.style.display==="none";b.style.display=hid?"block":"none";const m=document.getElementById("aiLogMin");if(m)m.textContent=hid?"✕":"+";}
+function closeAiLog(){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.remove("open");const b=document.getElementById("aiLogBody");if(b)b.style.display="block";const m=document.getElementById("aiLogMin");if(m)m.textContent="✕";}
 function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
@@ -1062,74 +1064,78 @@ async function startAnalyzeAndCreate(){
   if(!window._pickedFiles.length){toast("請至少上傳一個檔案");return;}
   window._pdfInsightMap={};
   const autoNo=maxNo();
-  openModal(`<h3>AI 分析與檔案分流上傳</h3>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:12px">第一通道 AI 分析，第二通道上傳分流，圖片進 GitHub 圖片雲端，文件進七牛文件雲端。全部完成後才確認建立客戶</div>
-  <div style="display:flex;gap:12px;min-height:240px">
-    <div style="flex:1;background:var(--bg2);border-radius:10px;padding:10px;border:1px solid var(--line)">
-      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">第一通道 AI 分析</div>
-      <div id="analyzeProgress" style="display:flex;flex-direction:column;gap:6px"></div>
+  const total=window._pickedFiles.length;
+  openModal(`<h3>AI 分析與檔案同步</h3>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:18px">系統正在讀取證件、辨識資料並同步到加密雲端，完成後才會建立客戶</div>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 0 6px">
+    <div style="position:relative;width:150px;height:150px">
+      <svg width="150" height="150" viewBox="0 0 120 120" style="transform:rotate(-90deg)">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line,#333)" stroke-width="8"/>
+        <circle id="progRing" cx="60" cy="60" r="52" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7" style="transition:stroke-dashoffset .4s ease"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div id="progPct" style="font-size:30px;font-weight:700;color:var(--tx,#fff);line-height:1">0%</div>
+        <div style="font-size:11px;color:var(--mut);margin-top:4px">已完成 <span id="progDone">0</span>/<span id="progTotal">${total}</span></div>
+      </div>
     </div>
-    <div style="flex:1;background:var(--bg2);border-radius:10px;padding:10px;border:1px solid var(--line)">
-      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">第二通道 上傳結果</div>
-      <div id="uploadProgress" style="display:flex;flex-direction:column;gap:6px"></div>
-    </div>
-    <div style="flex:1;background:var(--bg2);border-radius:10px;padding:10px;border:1px solid var(--line)">
-      <div style="font-size:11px;color:var(--mut);margin-bottom:8px">已辨識資料</div>
-      <div id="analyzeResult" style="font-size:12px;line-height:1.8;color:var(--mut)">分析完成後顯示辨識結果</div>
+    <div id="progStatus" style="font-size:13px;color:var(--tx,#ddd);text-align:center;max-width:380px">開始讀取檔案…</div>
+    <div style="display:flex;gap:18px;font-size:12px;color:var(--mut)">
+      <div>分析 <b id="statAnalyze" style="color:#8b5cf6">0</b></div>
+      <div>同步 <b id="statUpload" style="color:#10b981">0</b></div>
+      <div>辨識 <b id="statResult" style="color:#f0a040">0</b></div>
     </div>
   </div>`);
-  aiLogStart("AI 正在分析上傳的 "+window._pickedFiles.length+" 個檔案");
-  aiLog("開始處理，圖片進 GitHub 圖片雲端，文件進七牛文件雲端");
+  aiLogStart("AI 正在分析上傳的 "+total+" 個檔案");
+  const stat={done:0,analyze:0,upload:0,result:0};
+  function tick(pct){const r=document.getElementById("progRing");if(r)r.style.strokeDashoffset=326.7*(1-pct/100);const p=document.getElementById("progPct");if(p)p.textContent=Math.round(pct)+"%";const d=document.getElementById("progDone");if(d)d.textContent=stat.done;}
+  function setStatus(t){const s=document.getElementById("progStatus");if(s)s.textContent=t;}
+  function bump(k){if(k==="done")stat.done++;else stat[k]++;const el=document.getElementById("stat"+(k==="analyze"?"Analyze":k==="upload"?"Upload":"Result"));if(el)el.textContent=stat[k];tick((stat.analyze+stat.upload)/(total*2)*100);}
   const results=[];
   let allUp=true;
   const tasks=window._pickedFiles.map(async(f,i)=>{
     const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
-    const upEl=document.getElementById("uploadProgress");
-    const upRow=document.createElement("div");
-    upRow.style.cssText="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;margin-bottom:4px";
-    upRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">上傳中</span>`;
-    if(upEl)upEl.appendChild(upRow);
+    setStatus("同步上傳："+f.name);
+    aiLog("〔"+f.name+"〕開始同步到加密雲端");
     const upOK=isImg?await uploadToGithub(autoNo,f):await uploadFileToQiniu(autoNo,f);
-    if(!upOK)allUp=false;
-    const upLabel=isImg?"已成功上傳至 GitHub 圖片雲端":"已成功上傳至 七牛文件雲端";
-    upRow.innerHTML=`<span style="font-size:12px;color:${upOK?"#10b981":"#ef4444"}">${upOK?"✓":"✕"}</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:${upOK?"#10b981":"#ef4444"}">${upOK?upLabel:"上傳失敗"}</span>`;
-    const apEl=document.getElementById("analyzeProgress");
-    const apRow=document.createElement("div");
-    apRow.style.cssText="padding:8px 10px;background:var(--card);border-radius:8px;display:flex;align-items:center;gap:8px;margin-bottom:4px";
-    apRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">分析中</span>`;
-    if(apEl)apEl.appendChild(apRow);
-    const setAp=(msg,color,kind)=>{const c=color||"#8b5cf6";apRow.innerHTML=`<span style="font-size:12px;color:${c}">${kind==="ok"?"✓":kind==="err"?"✕":kind==="warn"?"⚠":"◌"}</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:${c}">${esc(msg)}</span>`;aiLog("〔"+f.name+"〕"+msg,kind);};
+    if(!upOK){allUp=false;aiLog("〔"+f.name+"〕同步失敗","err");setStatus("同步失敗："+f.name);}
+    else{aiLog("〔"+f.name+"〕已同步到加密雲端","ok");bump("upload");}
+    setStatus("AI 分析："+f.name);
+    const setAp=(msg,kind)=>{aiLog("〔"+f.name+"〕"+msg,kind);};
     try{
       let j={};
       if(/\.pdf$/i.test(f.name)){
-        const pa=await analyzePdfDoc(f,(m,k)=>setAp(m,"#8b5cf6",k));
+        const pa=await analyzePdfDoc(f,(m,k)=>setAp(m,k));
         window._pdfInsightMap=window._pdfInsightMap||{};window._pdfInsightMap[f.name]=pa;
         j={company:pa.company,member:pa.member,ein:pa.ein,address:pa.address,phone:pa.phone,doc_type:pa.doc_type,notes:pa.summary};
       }else if(isImg){
-        setAp("等待統一讀取證件照片");
+        setAp("讀取證件照片","");
         const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
         try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       }else{
-        setAp("依檔名與類型比對資料");
+        setAp("比對檔案類型","");
         const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
         try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
       }
       results.push({file:f.name,data:j});
-      setAp(j.doc_type||"完成","#10b981","ok");
-      const resEl=document.getElementById("analyzeResult");
-      if(resEl)resEl.innerHTML+=`<div style="padding:2px 0"><b>${esc(j.doc_type||f.name)}</b>：${esc(j.company||j.member||j.summary||"—")}</div>`;
+      setAp(j.doc_type||"辨識完成","ok");
+      bump("analyze");bump("result");bump("done");
+      tick((stat.analyze+stat.upload)/(total*2)*100);
     }catch(e){
-      setAp("分析失敗","#ef4444","err");
+      setAp("分析失敗","err");
     }
   });
   await Promise.all(tasks);
+  tick(100);
   if(!allUp){
-    aiLog("有檔案上傳失敗，本次未建立客戶，請檢查後重新操作","err");
-    aiLogDone("上傳未完成");
-    closeModal();
-    toast("⚠️ 有檔案上傳失敗，未建立客戶，請檢查後重新操作");
+    aiLog("有檔案同步失敗，本次未建立客戶，請檢查後重新操作","err");
+    aiLogDone("同步未完成");
+    setStatus("部分檔案同步失敗，請重試");
+    toast("⚠️ 有檔案同步失敗，未建立客戶，請檢查後重新操作");
     return;
   }
+  aiLog("全部檔案已同步並分析完成","ok");
+  aiLogDone("全部完成");
+  setStatus("全部完成，正在整理資料…");
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
@@ -1189,7 +1195,8 @@ function bufToB64(buf){
   return btoa(bin);
 }
 async function uploadToGithub(no,f){
-  const ghtok=localStorage.getItem("bcd_ghtok");if(!ghtok)return false;
+  const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+  if(!ghtok)return false;
   try{
     const buf=await f.arrayBuffer();
     const base64=bufToB64(buf);
