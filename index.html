@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l3";
+  var V="v20261102l4";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -329,8 +329,7 @@ tr:hover td{background:#1a2130}
 <div class="app">
 <aside class="side">
   <div class="brand" style="justify-content:center;flex-direction:column;gap:4px;cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼">
-    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM" style="height:44px">
-    <div id="verTag" style="font-size:9px;color:var(--dim);font-family:monospace"></div>
+    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM" style="height:52px">
   </div>
   <div class="sideclock" id="sideClock"></div>
   <nav class="nav">
@@ -2363,15 +2362,21 @@ function uploadToStorage(no,f){
 function waitForSign(key,sec){return new Promise(res=>{const t0=Date.now();const iv=setInterval(async()=>{try{const r=await fetch("qiniu_map.json?v="+Date.now());const m=await r.json();if(m[key]||m[decodeURIComponent(key)]){clearInterval(iv);res(true);return;}}catch(e){}if(Date.now()-t0>sec*1000){clearInterval(iv);res(false);}},2000);});}
 // ===== 更新單個客戶郵箱 =====
 async function refreshOneMailbox(no){
-  const c=DATA.customers.find(x=>x.no===no);if(!c||!c.mail){toast("此客戶未綁定信箱");return;}
-  openModal(`<h3>更新郵箱狀態</h3><div id="mbProgress" style="padding:16px 0;font-size:13px;line-height:2">正在聯線 ${esc(c.mail)} …</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);
+  const c=DATA.customers.find(x=>x.no===no);if(!c||!c.mail||c.mail==="-"||c.mail==="—"){toast("此客戶未綁定信箱，無法同步");return;}
+  // 右下角小窗顯示，不用大彈窗
+  let win=document.getElementById("mailSyncWin");if(win)win.remove();
+  win=document.createElement("div");win.id="mailSyncWin";
+  win.style.cssText="position:fixed;bottom:20px;right:20px;width:340px;max-height:400px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden";
+  win.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">📧 郵箱同步中</span><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;max-height:300px;overflow-y:auto">正在聯線 ${esc(c.mail)} …</div>`;
+  document.body.appendChild(win);
   try{
     const tok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
     const r=await fetch("https://api.github.com/repos/uscrm26/bcd/actions/workflows/hourly-patrol.yml/dispatches",{method:"POST",headers:{Authorization:"token "+tok,"Content-Type":"application/json"},body:JSON.stringify({ref:"main",inputs:{target_mailbox:c.mail}})});
-    document.getElementById("mbProgress").innerHTML="已觸發後台巡查工作流。<br>正在連線郵箱、檢查新郵件、下載附件。<br>完成後自動更新到看板，請稍後刷新查看。";
+    document.getElementById("mbProgress").innerHTML="已觸發後台巡查。<br>正在連線郵箱、檢查新郵件、下載附件。<br>完成後自動更新到看板。";
   }catch(e){
-    document.getElementById("mbProgress").innerHTML="觸發失敗："+e.message+"<br>請稍後手動在 GitHub Actions 頁面運行。";
+    document.getElementById("mbProgress").innerHTML="觸發失敗："+e.message;
   }
+  setTimeout(()=>{const w=document.getElementById("mailSyncWin");if(w)w.remove();},15000);
 }
 
 // ===== 跟進備註 =====
