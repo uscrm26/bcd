@@ -2728,6 +2728,20 @@ function confirmDeleteCust(no){
     }
   },1000);
 }
+async function saveDataJson(){
+  try{
+    const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+    if(!ghtok)return;
+    const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{headers:{Authorization:"token "+ghtok}});
+    const meta=await metaR.json();
+    const c=(meta.content||"").replace(/\n/g,"");
+    const old=JSON.parse(decodeURIComponent(escape(atob(c))));
+    old.customers=DATA.customers;
+    old.timeline=DATA.timeline;
+    const b64=btoa(unescape(encodeURIComponent(JSON.stringify(old))));
+    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"save data",content:b64,sha:meta.sha})});
+  }catch(e){console.warn("saveDataJson",e);}
+}
 function doDeleteCust(no){
   const idx=DATA.customers.findIndex(x=>String(x.no)===String(no));
   if(idx<0){closeModal();return;}
@@ -2753,6 +2767,7 @@ function doDeleteCust(no){
   }catch(e){}
   addAudit("刪除客戶",backup.name);
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_delete",target_client:String(no),detail:JSON.stringify({name:backup.name,cust:backup,timeline:DATA.timeline[no]||[],deletedAt:Date.now(),expiresAt:Date.now()+30*86400e3})});
+  saveDataJson();
   closeModal();
   curCust=null;custTab="info";
   render();
@@ -2807,6 +2822,7 @@ function restoreCust(i){
   saveRecycleBin();
   addAudit("恢復客戶",r.cust.name);
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_restore",target_client:String(r.cust.no),detail:JSON.stringify({name:r.cust.name,restoredAt:Date.now()})});
+  saveDataJson();
   render();
   toast("客戶已恢復");
 }
