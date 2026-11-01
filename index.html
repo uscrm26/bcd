@@ -1161,6 +1161,8 @@ async function startAnalyzeAndCreate(){
       }
       results.push({file:f.name,data:j});
       ["company","member","ein","address","phone","doc_type"].forEach(k=>{if(j[k]&&!merged[k])merged[k]=j[k];});
+      merged.doc_type=/\.pdf$/i.test(f.name)?"PDF 文件":/\.(jpe?g|png)$/i.test(f.name)?"JPG 圖片":merged.doc_type;
+      updateSummary();
       renderSummary();
       setAp(j.doc_type||"辨識完成","ok");
       bump("analyze");bump("done");
@@ -2803,12 +2805,25 @@ function renderRecycleBin(){
   saveRecycleBin();
   syncRecycleFromCloud().then(()=>{const el=document.getElementById("recycleBinList");if(el)el.outerHTML=renderRecycleBin();});
   if(!RECYCLE_BIN.length)return '<div id="recycleBinList" class="empty">回收站為空</div>';
-  return '<div id="recycleBinList">'+RECYCLE_BIN.map((r,i)=>{
+  return '<div id="recycleBinList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px">'+RECYCLE_BIN.map((r,i)=>{
     const days=Math.ceil((r.expiresAt-now)/86400e3);
-    return `<div class="logrow" style="margin-bottom:8px">
-      <span class="c">${esc(r.cust.name)}（編號 ${esc(r.cust.no)}）</span>
-      <span style="font-size:11px;color:var(--mut)">剩餘 ${days} 天</span>
-      <button class="btn small primary" onclick="restoreCust(${i})">恢復</button>
+    const avatar=resolveFile(r.cust.avatar||"");
+    return `<div class="ccard" style="opacity:.55;filter:grayscale(1);cursor:default">
+      <div style="display:flex;gap:12px">
+        <div style="width:80px;height:80px;border-radius:10px;overflow:hidden;background:var(--bg);flex-shrink:0">
+          ${avatar?`<img src="${avatar}" style="width:100%;height:100%;object-fit:cover">`:`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:24px">${esc((r.cust.name||"?")[0])}</div>`}
+        </div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:11px;color:var(--mut);margin-bottom:2px">編號 ${esc(r.cust.no)} · 已刪除</div>
+          <div style="font-weight:600;margin-bottom:4px">${esc(r.cust.name||"")}</div>
+          <div style="font-size:12px;color:var(--mut);margin-bottom:2px">法人 ${esc(r.cust.member||"—")}</div>
+          <div style="font-size:12px;color:var(--mut)">EIN ${esc(r.cust.ein||"—")}</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11px;color:var(--mut)">剩餘 ${days} 天可恢復</span>
+        <button class="btn small primary" onclick="event.stopPropagation();restoreCust(${i})">恢復此客戶</button>
+      </div>
     </div>`;
   }).join("")+'</div>';
 }
