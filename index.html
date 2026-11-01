@@ -1236,7 +1236,6 @@ async function startAnalyzeAndCreate(){
       results.push({file:f.name,data:j});
       ["company","member","ein","address","phone","doc_type"].forEach(k=>{if(j[k]&&!merged[k])merged[k]=j[k];});
       merged.doc_type=/\.pdf$/i.test(f.name)?"PDF 文件":/\.(jpe?g|png)$/i.test(f.name)?"JPG 圖片":merged.doc_type;
-      updateSummary();
       renderSummary();
       setAp(j.doc_type||"辨識完成","ok");
       bump("analyze");bump("done");
