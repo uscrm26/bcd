@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l6";
+  var V="v20261102l7";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1880,7 +1880,7 @@ function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
 
  </div>
  ${canEdit?`<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px">
-   ${editing?`<button class="btn" onclick="confirmRestoreEdit('${no}')">恢復資料</button><button class="btn primary" onclick="saveCustInfo('${no}')">儲存</button>`:`<button class="btn primary" onclick="enterEditCust('${no}')">編輯客戶資料</button>`}
+   ${editing?`<button class="btn" onclick="confirmRestoreEdit('${no}')">恢復資料</button><button class="btn" onclick="aiRefillCustomer('${no}')">AI 重填資料</button><button class="btn primary" onclick="saveCustInfo('${no}')">儲存</button>`:`<button class="btn primary" onclick="enterEditCust('${no}')">編輯客戶資料</button>`}
  </div>`:`<div class="empty">僅負責人與主管可編輯此表</div>`}`;}
 function enterEditCust(no){const c=DATA.customers.find(x=>x.no===no);window._custSnapshot=JSON.parse(JSON.stringify(c));window._editCust=no;render();}
 function confirmRestoreEdit(no){openModal(`<h3>恢復資料</h3><div style="font-size:13px;line-height:1.8">即將放棄目前所有未儲存的修改，還原到進入編輯前的狀態。</div>
@@ -1895,6 +1895,117 @@ function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  c.phone=document.getElementById("cf_phone").value;c.address=document.getElementById("cf_address").value;c.notes=document.getElementById("cf_notes").value;c.sysId=document.getElementById("cf_sysId").value;
  const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(no);render();};fr.readAsDataURL(pf.files[0]);}
  addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
+
+// ===== AI 重填客戶資料 =====
+async function aiRefillCustomer(no){
+  const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
+  // 右下角小窗
+  let win=document.getElementById("refillWin");if(win)win.remove();
+  win=document.createElement("div");win.id="refillWin";
+  win.style.cssText="position:fixed;bottom:20px;right:20px;width:380px;max-height:500px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden";
+  win.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700;color:#8b5cf6">AI 重填資料</span><button onclick="this.closest('#refillWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="refillLog" style="padding:14px 16px;font-size:12px;line-height:1.8;max-height:380px;overflow-y:auto"></div>`;
+  document.body.appendChild(win);
+  const log=document.getElementById("refillLog");
+  const say=(t,cl)=>{const d=document.createElement("div");d.style.cssText="margin-bottom:4px;color:"+(cl||"var(--text)");d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;};
+
+  try{
+    const files=((DATA.files||{})[no]||[]).filter(f=>f.type==="pdf");
+    say("找到 "+files.length+" 份 PDF 文件");
+    if(!files.length){say("沒有 PDF 可分析，結束。");return;}
+    const allText=[];
+    for(let i=0;i<files.length;i++){
+      const f=files[i];
+      const url=resolveFile(f.path);
+      say("讀取 "+f.name+" ...");
+      try{
+        const resp=await fetch(url);
+        const blob=await resp.blob();
+        const fileObj=new File([blob],f.name,{type:"application/pdf"});
+        const ext=await extractPdfFull(fileObj,(s)=>{if(i<3)say("  "+s);});
+        if(ext.text&&ext.text.length>50){
+          allText.push("=== "+f.name+" ===\n"+ext.text.slice(0,4000));
+          say("  成功提取 "+ext.text.length+" 字");
+        }else{
+          say("  文字太少，略過");
+        }
+      }catch(e){say("  讀取失敗："+e.message);}
+    }
+    if(!allText.length){say("沒有可用文字，結束。");return;}
+    say("正在交 AI 分析所有文件...");
+    const ctx=`客戶：${c.name}，法人：${c.member}，EIN：${c.ein}
+當前資料：電話=${c.phone||"(空)"}，地址=${c.address||"(空)"}，備註=${c.notes||"(空)"}
+
+以下是客戶所有文件的內容，請從中提取以下欄位：
+- phone：客戶公司的聯絡電話
+- address：客戶公司的完整地址
+- notes：值得記錄的補充資訊（如業務性質、進口商品、特殊要求等）
+
+只輸出 JSON，不要 markdown：
+{"phone":"...","address":"...","notes":"..."}
+找不到的欄位留空字串。`;
+    const sys="你是美國海關 bond 文件分析員。從文件中提取客戶資料，只輸出 JSON。";
+    const out=await callAI(sys,ctx+"\n\n"+allText.join("\n\n"));
+    let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){say("AI 回傳解析失敗");return;}
+    say("分析完成，正在生成對比...");
+    // 對比卡片
+    const fields=[
+      {key:"phone",label:"電話",old:c.phone||"",new:j.phone||""},
+      {key:"address",label:"地址",old:c.address||"",new:j.address||""},
+      {key:"notes",label:"備註",old:c.notes||"",new:j.notes||""}
+    ];
+    const changes=fields.filter(f=>f.new&&f.new.trim()&&f.new.trim()!==f.old.trim());
+    if(!changes.length){
+      say("AI 沒有新增或更改的內容");
+      setTimeout(()=>{const w=document.getElementById("refillWin");if(w)w.remove();},2000);
+      return;
+    }
+    // 彈出對比卡片
+    let cardsHtml=changes.map((f,i)=>{
+      const wasBlank=!f.old.trim();
+      return `<div style="border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:var(--bg2)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <input type="checkbox" id="refill_chk_${i}" checked style="width:16px;height:16px">
+          <span style="font-weight:700;font-size:14px">${f.label}</span>
+          ${wasBlank?'<span class="tag t-amber">原本空白</span>':'<span class="tag t-blue">有修改</span>'}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div style="background:var(--bg);padding:8px;border-radius:6px">
+            <div style="font-size:11px;color:var(--mut);margin-bottom:4px">原本</div>
+            <div style="font-size:12px;word-break:break-all">${wasBlank?'<span style="color:var(--dim)">空白未填寫</span>':esc(f.old)}</div>
+          </div>
+          <div style="background:rgba(139,92,246,.08);padding:8px;border-radius:6px;border:1px solid rgba(139,92,246,.2)">
+            <div style="font-size:11px;color:#8b5cf6;margin-bottom:4px">AI 建議</div>
+            <div style="font-size:12px;word-break:break-all">${esc(f.new)}</div>
+          </div>
+        </div>
+      </div>`;
+    }).join("");
+    openModal(`<h3>AI 重填結果</h3>
+    <div style="font-size:12px;color:var(--mut);margin-bottom:12px">勾選要採用的欄位，按下方按鈕寫入表單</div>
+    ${cardsHtml}
+    <div class="mrow">
+      <button class="btn" onclick="closeModal()">取消</button>
+      <button class="btn primary" onclick="applyRefillResult(${no})">採用所選</button>
+    </div>`);
+    window._refillChanges=changes;
+    say("已彈出對比視窗");
+  }catch(e){say("錯誤："+e.message);}
+}
+function applyRefillResult(no){
+  const changes=window._refillChanges||[];
+  let applied=0;
+  changes.forEach((f,i)=>{
+    const chk=document.getElementById("refill_chk_"+i);
+    if(chk&&chk.checked){
+      const el=document.getElementById("cf_"+f.key);
+      if(el){el.value=f.new;applied++;}
+    }
+  });
+  closeModal();
+  const w=document.getElementById("refillWin");if(w)w.remove();
+  toast("已採用 "+applied+" 項，請按「儲存」寫入");
+}
+
 async function clientAuditList(no){
 let rs=clientAudit[no]||[];
 try{
