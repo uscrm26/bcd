@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101d";
+  var V="v20261101e";
   try{
     if(localStorage.getItem("bcd_ver")!==V){
       localStorage.setItem("bcd_ver",V);
@@ -392,7 +392,7 @@ tr:hover td{background:#1a2130}
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
   </div>
   <div class="login-card">
-    <div class="login-head"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">美國進口客戶關係管理系統</div><div class="ls" id="lh_sub">US Customs Relationship Manager</div></div>
+    <div class="login-head" style="cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">美國進口客戶關係管理系統</div><div class="ls" id="lh_sub">US Customs Relationship Manager</div><div id="verTagLogin" style="font-size:10px;color:var(--dim);font-family:monospace;margin-top:6px"></div></div>
     <label id="ll_user">登入帳號</label>
     <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
     <label id="ll_pwd">密碼</label>
@@ -651,7 +651,7 @@ function closeModal(){document.getElementById("modal").classList.remove("show");
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){
-  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
+  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;const vl=document.getElementById("verTagLogin");if(vl)vl.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
@@ -937,7 +937,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261101D";
+const APP_VER="20261101E";
 function genVersionCode(){
   const ua=navigator.userAgent;
   const br=/Chrome|Safari|Firefox|Edge/.test(ua)?ua.match(/(Chrome|Safari|Firefox|Edge)\//)?.[1]||"?":"?";
