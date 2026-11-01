@@ -2138,7 +2138,7 @@ async function callAI(sys,user){
   const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
   const model=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
   try{
-    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}]})});
+    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
     if(!r.ok){const t=await r.text();throw new Error("方舟 HTTP "+r.status+" "+t.slice(0,200));}
     const j=await r.json();
     return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
