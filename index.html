@@ -1107,7 +1107,13 @@ async function startAnalyzeAndCreate(){
       <div id="progStatus" style="font-size:12px;color:#8b5cf6;margin-bottom:12px">開始讀取檔案…</div>
       <div id="summaryBox" style="font-size:12.5px;line-height:2;color:var(--tx,#ddd)"><span style="color:var(--mut)">等待 AI 讀取證件…</span></div>
     </div>
-  </div>`);
+  </div>
+  <div id="flowBar" style="margin-top:16px;padding:10px 14px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);font-size:13px;color:#8b5cf6;display:flex;align-items:center;gap:8px">
+    <span style="width:8px;height:8px;border-radius:50%;background:#8b5cf6;animation:blink 1s infinite"></span>
+    <span id="flowText">正在進行資料分析及上傳…</span>
+  </div>
+  <style>@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}</style>`);
+  window._flowBarDone=function(text){const b=document.getElementById("flowBar");if(!b)return;b.style.background="#10b981";b.style.borderColor="#10b981";b.style.color="#fff";b.querySelector("span").style.background="#fff";b.querySelector("span").style.animation="none";document.getElementById("flowText").textContent=text;};
   aiLogStart("AI 正在分析上傳的 "+total+" 個檔案");
   const stat={done:0,analyze:0,upload:0};
   const merged={company:"",member:"",ein:"",address:"",phone:"",doc_type:"",notes:""};
@@ -1118,6 +1124,7 @@ async function startAnalyzeAndCreate(){
   }
   function tick(pct){const r=document.getElementById("progRing");if(r)r.style.strokeDashoffset=326.7*(1-pct/100);const p=document.getElementById("progPct");if(p)p.textContent=Math.round(pct)+"%";const d=document.getElementById("progDone");if(d)d.textContent=stat.done;}
   function setStatus(t){const s=document.getElementById("progStatus");if(s)s.textContent=t;}
+  function setFlow(t){const f=document.getElementById("flowText");if(f)f.textContent=t;}
   function bump(k){if(k==="done")stat.done++;else stat[k]++;const el=document.getElementById("stat"+(k==="analyze"?"Analyze":"Upload"));if(el)el.textContent=stat[k];tick((stat.analyze+stat.upload)/(total*2)*100);}
   const results=[];
   let allUp=true;
@@ -1179,6 +1186,7 @@ async function startAnalyzeAndCreate(){
   aiLog("全部檔案已同步並分析完成","ok");
   aiLogDone("全部完成");
   setStatus("全部完成，正在整理資料…");
+  setFlow("AI 正在核實客戶資訊，請稍候…");
   // 公式重複檢查：比對既有客戶的公司/EIN，重複則報錯且不保存
   results.forEach(r=>Object.entries(r.data).forEach(([k,v])=>{if(v&&!merged[k])merged[k]=v;}));
   // 視覺模型直接讀取證件照片，提取公司名、法人、EIN、地址、電話回填，優先於檔名猜測
@@ -1186,6 +1194,7 @@ async function startAnalyzeAndCreate(){
     const vImgs=(window._pickedFiles||[]).filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name));
     if(vImgs.length){
       aiLog("正在把 "+vImgs.length+" 張證件照片轉成可辨識格式");
+      setFlow("AI 正在讀取證件照片，提取公司與法人資料…");
       const vp=[];
       for(const f of vImgs){vp.push({type:"image_url",image_url:{url:await fileToDataURL(f)}});}
       vp.unshift({type:"text",text:"從這些證件照片提取新客戶資料，只輸出JSON {company,member,ein,address,phone}，辨識不到的欄位留空，不要編造。檔名："+vImgs.map(f=>f.name).join("、")});
@@ -1211,6 +1220,7 @@ async function startAnalyzeAndCreate(){
   }
   aiLogDone("檔案分析完成，請確認建檔資料");
   aiLog("全部檔案分析完畢，等待你確認建立客戶","ok");
+  if(window._flowBarDone)window._flowBarDone("全部完成，請確認建檔資料");
   showAiConfirm(autoNo,merged,results);
 }
 let _fileRecChain=Promise.resolve();
