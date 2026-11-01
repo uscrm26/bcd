@@ -1152,8 +1152,11 @@ async function startAnalyzeAndCreate(){
         j={company:pa.company,member:pa.member,ein:pa.ein,address:pa.address,phone:pa.phone,doc_type:pa.doc_type,notes:pa.summary};
       }else if(isImg){
         setAp("讀取證件照片","");
-        const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
-        try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
+        try{
+          const dv=await fileToDataURL(f,1200);
+          const out=await callAIVision("你是美國海關bond業務證件辨識員，只輸出指定JSON，不要多餘說明。",[{type:"text",text:"檔名："+f.name+"。請辨識這張證件照，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，辨識不到留空。"},{type:"image_url",image_url:{url:dv}}]);
+          try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j=out?{notes:out.slice(0,200)}:{};}
+        }catch(e){setAp("視覺辨識失敗："+(e.message||e),"warn");}
       }else{
         setAp("比對檔案類型","");
         const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
@@ -2130,16 +2133,15 @@ const ZH_CACHE=JSON.parse(localStorage.getItem("bcd_zh")||"{}");
 const INTERP_CACHE=JSON.parse(localStorage.getItem("bcd_interp")||"{}");
 function saveZH(k,v){ZH_CACHE[k]=v;localStorage.setItem("bcd_zh",JSON.stringify(ZH_CACHE));}
 function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSON.stringify(INTERP_CACHE));}
-function getAIKey(){return localStorage.getItem("bcd_ark_key")||atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");}
 async function callAI(sys,user){
-  const key=getAIKey();
-  const useArk=key.startsWith("ark-");
-  const endpoint=useArk?"https://ark.cn-beijing.volces.com/api/v3/chat/completions":"https://openrouter.ai/api/v1/chat/completions";
-  const model=useArk?(localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh"):"google/gemma-4-31b-it:free";
-  const r=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}]})});
-  if(!r.ok)throw new Error("HTTP "+r.status);
-  const j=await r.json();
-  return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+  const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
+  const model=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
+  try{
+    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}]})});
+    if(!r.ok){const t=await r.text();throw new Error("方舟 HTTP "+r.status+" "+t.slice(0,200));}
+    const j=await r.json();
+    return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+  }catch(e){console.warn("callAI fail",e);return "";}
 }
 // 免費視覺通道：固定走 OpenRouter 的 NVIDIA Nemotron VL，不依賴方舟開通，可直接讀取證件照片
 const OR_KEY=atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
@@ -2203,10 +2205,12 @@ function chunkText(t,size=6000){
 async function extractPdfText(file){try{const r=await extractPdfFull(file);return r.text;}catch(e){return "";}}
 // 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
 async function callAIVision(sys,parts){
-  const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
-  if(!r.ok)throw new Error("VL HTTP "+r.status);
-  const j=await r.json();
-  return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+  try{
+    const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
+    if(!r.ok){const t=await r.text();throw new Error("VL HTTP "+r.status+" "+t.slice(0,200));}
+    const j=await r.json();
+    return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+  }catch(e){console.warn("callAIVision fail",e);return "";}
 }
 // 解析單份 PDF 分析結果併入識別卡
 function mergePdfJson(res,out){
