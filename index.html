@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l1";
+  var V="v20261102l2";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1698,7 +1698,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
+  <div class="row r2" style="margin-top:12px"><div class="panel"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦清單"],["doc","附件文件"],["mail","客戶郵箱"],["finance","財務與報價"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div>${custSub(curCust)}</div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
@@ -1859,7 +1859,7 @@ function submitCustomerMail(no){const to=(document.getElementById("sc_to")||{}).
  const c=DATA.customers.find(x=>x.no===no);
  addAudit("以客戶名義發信",`${c?c.name:no} → ${to} / ${sub}`);
  closeModal();toast("已排入發送佇列："+to);}
-function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return custInfoForm(no);}
+function custSub(no){if(custTab==="timeline")return tl(no);if(custTab==="todo")return todoList(no);if(custTab==="doc")return docList(no);if(custTab==="mail")return custMailbox(no);if(custTab==="finance")return finList(no);if(custTab==="audit")return clientAuditList(no);return custInfoForm(no);}
 function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return"<div class='empty'>無此客戶</div>";
  const canEdit=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor"||ownerName(no)===CURRENT_USER.nm;
  const editing=(window._editCust===no);
@@ -2053,13 +2053,43 @@ function fileThumb(f){
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
   return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(displayFileName(f.name))}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
 }
+// ===== 客戶郵箱分頁 =====
+function custMailbox(no){
+  const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return "<div class='empty'>無客戶</div>";
+  const cname=c.name||"";
+  const all=(DATA.emails||[]).filter(e=>{
+    if(e.c===cname)return true;
+    if(c.mail&&e.from&&e.from.toLowerCase().includes(c.mail.split("@")[0].toLowerCase().replace(/[._]/g,"")))return true;
+    return false;
+  }).sort((a,b)=>(b.t||"").localeCompare(a.t||""));
+  return `<div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
+  <div style="font-size:13px;color:var(--mut)">共 ${all.length} 封郵件 ｜ ${esc(c.mail||"")}</div>
+  <button class="btn small" onclick="refreshOneMailbox('${no}')">📧 立即更新</button>
+  </div>
+  <div style="max-height:480px;overflow-y:auto">
+  ${all.length?all.map(e=>`<div class="logrow" style="cursor:pointer" onclick="openMailDetail('${e.t.replace(/'/g,"\\'")}')">
+  <span class="c">${e.unread?"● ":""}${esc(e.from)}</span>
+  <div style="flex:1;min-width:0">
+    <div style="font-size:13px;${e.unread?"font-weight:700":""}">${esc(e.sub)}</div>
+    <div style="font-size:11px;color:var(--mut)">${esc(e.t)}${e.atts&&e.atts.length?` · 📎 ${e.atts.length} 個附件`:""}</div>
+  </div>
+  ${e.done?'<span class="tag t-green">已處理</span>':''}
+  </div>`).join(""):"<div class='empty'>尚無郵件</div>"}
+  </div>`;
+}
+
 function docList(no){
   const rawList=(DATA.files||{})[no]||[];
   const seen=new Set();const localList=[];
   for(const f of rawList){const k=f.path||f.name||f.nm||"";if(seen.has(k))continue;seen.add(k);localList.push(f);}
   const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
-  function card(f){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
+  // 申請文件：PDF 且文件名包含關鍵字
+  const appRe=/(bond|application|form|POA|financial|personal|credit|authorization|release|customs|請書|申請|表格|授權|財務)/i;
+  const appFiles=localList.filter(f=>appRe.test(f.name||f.nm||""));
+  const generalFiles=localList.filter(f=>!appRe.test(f.name||f.nm||""));
+  const attSubTab=window._attSub||"general";
+  function card(f,showMailLink){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
     const insight=((DATA.customers.find(x=>String(x.no)===String(no))||{}).fileInsights||[]).find(x=>x.file===nm);
     const url=resolveFile(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
@@ -2072,18 +2102,24 @@ function docList(no){
       ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
       ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
       <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div>
-      
       </div></div>`;}
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-  <div class="sec-title" style="margin:0">全部附件</div>
+  <div style="display:flex;gap:6px">
+    <button class="btn small" style="${attSubTab==='general'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='general';render()">客戶資料</button>
+    <button class="btn small" style="${attSubTab==='app'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='app';render()">申請文件檔案</button>
+  </div>
   <div style="display:flex;gap:6px">
     <button class="btn small att-f" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">全部</button>
     <button class="btn small att-f" data-f="img" onclick="setAttFilter('img')">照片</button>
     <button class="btn small att-f" data-f="doc" onclick="setAttFilter('doc')">文件</button>
   </div></div>
   <div id="attGrid" style="max-height:380px;overflow-y:auto;padding-right:4px">
-  ${imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">照片 ${imgs.length} 張</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(card).join("")}</div>`:""}
-  ${docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">文件 ${docs.length} 份</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(card).join("")}</div>`:""}
+  ${attSubTab==='app'
+    ?(appFiles.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">申請文件 ${appFiles.length} 份</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${appFiles.map(f=>card(f)).join("")}</div>`:"<div class='empty'>尚無申請文件</div>")
+    :(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">照片 ${imgs.length} 張</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(f=>card(f)).join("")}</div>`:"")}
+  ${attSubTab==='general'
+    ?(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">文件 ${docs.length} 份</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(f=>card(f)).join("")}</div>`:"")
+    :""}
   </div>
   ${!localList.length?"<div class='empty'>尚無附件</div>":""}
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份，點檔案可直接預覽。</div>
