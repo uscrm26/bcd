@@ -1199,8 +1199,14 @@ async function startAnalyzeAndCreate(){
     setStatus("同步上傳："+f.name);
     aiLog("〔"+f.name+"〕開始同步到加密雲端");
     let upOK=await uploadToGithub(autoNo,f);
-    if(!upOK){aiLog("〔"+f.name+"〕第一次失敗，1秒後自動重試…","err");await new Promise(r=>setTimeout(r,1000));upOK=await uploadToGithub(autoNo,f);}
-    if(!upOK){allUp=false;failedFiles.push(f.name);aiLog("〔"+f.name+"〕同步失敗 "+(window._lastUpErr||"未知錯誤"),"err");}
+    let upErr=window._lastUpErr||"";
+    for(let attempt=1;attempt<3&&!upOK;attempt++){
+      aiLog("〔"+f.name+"〕第 "+(attempt+1)+" 次重試，"+(upErr||"未知原因"),"err");
+      await new Promise(r=>setTimeout(r,1000*attempt));
+      upOK=await uploadToGithub(autoNo,f);
+      upErr=window._lastUpErr||"";
+    }
+    if(!upOK){allUp=false;failedFiles.push({name:f.name,err:upErr});aiLog("〔"+f.name+"〕同步失敗 "+(upErr||"未知錯誤"),"err");}
     else{aiLog("〔"+f.name+"〕已同步到加密雲端","ok");bump("upload");}
     setStatus("AI 分析："+f.name);
     const setAp=(msg,kind)=>{aiLog("〔"+f.name+"〕"+msg,kind);};
@@ -1247,7 +1253,7 @@ async function startAnalyzeAndCreate(){
     setStatus("以下 "+failedFiles.length+" 個檔案同步失敗，客戶未建立");
     cleanupUploadedPaths().then(()=>aiLog("已自動清除本次已上傳的暫存檔案",""));
     const box=document.getElementById("summaryBox");
-    if(box){box.innerHTML='<div style="color:#ef4444;font-weight:700;margin-bottom:10px">失敗檔案：</div>'+failedFiles.map(n=>'<div style="color:#ef4444">✕ '+esc(n)+'</div>').join("")+'<div style="color:var(--mut);font-size:11px;margin-top:10px">請點右上角「重新嘗試」重跑上傳</div>';}
+    if(box){box.innerHTML='<div style="color:#ef4444;font-weight:700;margin-bottom:10px">失敗檔案：</div>'+failedFiles.map(o=>'<div style="margin-bottom:8px"><div style="color:#ef4444">✕ '+esc(o.name)+'</div><div style="color:var(--mut);font-size:11px;margin-left:16px;margin-top:2px">'+esc(o.err||"未知錯誤")+'</div></div>').join("")+'<div style="color:var(--mut);font-size:11px;margin-top:10px">請點右上角「重新嘗試」重跑上傳</div>';}
     if(window._flowBarDone){const b=document.getElementById("flowBar");if(b){b.style.background="#dc2626";b.style.borderColor="#dc2626";b.style.color="#fff";b.querySelector("span").style.background="#fff";b.querySelector("span").style.animation="none";document.getElementById("flowText").textContent="上傳失敗，請點右上角重新嘗試";}}
     const stopBtn=document.querySelector("button[onclick='stopUploadFlow()']");
     if(stopBtn){stopBtn.textContent="重新嘗試";stopBtn.onclick=function(){closeModal();startAnalyzeAndCreate();};}
@@ -1337,19 +1343,26 @@ async function compressImgForUpload(file){
 }
 function fileSlug(name){
   const n=name.toLowerCase();
-  if(/駕照正面|license.*front|front.*license/.test(n))return "driver-license-front";
-  if(/駕照背面|license.*back|back.*license/.test(n))return "driver-license-back";
-  if(/人像|人頭|member.*photo|headshot/.test(n))return "member-photo";
+  if(/駕照正面|驾照正面|license.*front|front.*license/.test(n))return "driver-license-front";
+  if(/駕照背面|驾照背面|license.*back|back.*license/.test(n))return "driver-license-back";
+  if(/人像|人頭|人头|member.*photo|headshot/.test(n))return "member-photo";
   if(/ein/.test(n))return "ein-letter";
   if(/章程|articles.*organization/.test(n))return "articles-of-organization";
-  if(/申請|通知書|filing|confirmation/.test(n))return "filing-confirmation";
+  if(/申請|申请|通知書|通知书|filing|confirmation/.test(n))return "filing-confirmation";
   if(/w-?9/.test(n))return "w9-form";
-  if(/護照|passport/.test(n))return "passport";
+  if(/護照|护照|passport/.test(n))return "passport";
+  if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8);
   return "doc-"+Date.now().toString(36).slice(-4);
+}
+async function ghFetch(url,opts,timeoutMs){
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),timeoutMs||30000);
+  try{return await fetch(url,{...opts,signal:ctrl.signal});}
+  finally{clearTimeout(t);}
 }
 async function uploadToGithub(no,f){
   const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
-  if(!ghtok)return false;
+  if(!ghtok){window._lastUpErr="無存取權杖";return false;}
   try{
     const sf=await compressImgForUpload(f);
     const buf=await sf.arrayBuffer();
@@ -1358,12 +1371,18 @@ async function uploadToGithub(no,f){
     const safeName=fileSlug(sf.name)+"."+ext;
     const path="attachments/"+no+"/"+safeName;
     window._uploadedPaths=window._uploadedPaths||[];
-    let r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})});
+    let r;
+    try{
+      r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"upload "+sf.name,content:base64})},30000);
+    }catch(netErr){
+      window._lastUpErr="網路逾時或中斷："+(netErr.name==="AbortError"?"30秒逾時":netErr.message);
+      return false;
+    }
     if(r.status===409||r.status===422){
       try{
-        const exist=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{headers:{Authorization:"token "+ghtok}}).then(x=>x.json());
+        const exist=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{headers:{Authorization:"token "+ghtok}},20000).then(x=>x.json());
         if(exist&&exist.sha){
-          r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"update "+sf.name,content:base64,sha:exist.sha})});
+          r=await ghFetch("https://api.github.com/repos/uscrm26/bcd/contents/"+path,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"update "+sf.name,content:base64,sha:exist.sha})},30000);
         }
       }catch(e){}
     }
@@ -1371,15 +1390,21 @@ async function uploadToGithub(no,f){
       const ftype=/\.pdf$/i.test(sf.name)?"pdf":/\.(jpe?g|png|gif|webp)$/i.test(sf.name)?"image":"text";
       DATA.files[no]=DATA.files[no]||[];
       if(!DATA.files[no].find(x=>x.path===encodeURIComponent(path)))DATA.files[no].unshift({no:no,name:sf.name,path:encodeURIComponent(path),type:ftype});
-      await addFileRecord(no,sf.name,encodeURIComponent(path),ftype);
+      addFileRecord(no,sf.name,encodeURIComponent(path),ftype).catch(()=>{});
       if(typeof loadStorageList==="function")setTimeout(()=>loadStorageList(no),300);
       window._uploadedPaths.push(path);
       return true;
     }
-    console.warn("uploadToGithub",r.status,await r.text().catch(()=>""));
-    window._lastUpErr="HTTP "+r.status;
+    let errBody="";
+    try{errBody=await r.text();const ej=JSON.parse(errBody);if(ej.message)errBody=ej.message;}catch(e){}
+    window._lastUpErr="HTTP "+r.status+" "+(errBody||"").slice(0,120);
+    console.warn("uploadToGithub",r.status,errBody);
     return false;
-  }catch(e){console.warn("uploadToGithub exc",e);window._lastUpErr=String(e).slice(0,80);return false;}
+  }catch(e){
+    window._lastUpErr="程式例外："+String(e).slice(0,100);
+    console.warn("uploadToGithub exc",e);
+    return false;
+  }
 }
 async function cleanupUploadedPaths(){
   const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
