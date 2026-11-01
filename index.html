@@ -571,7 +571,7 @@ async function loadSB(){
         try{const item=JSON.parse(a.detail);DATA.timeline[a.target_client]=DATA.timeline[a.target_client]||[];if(!DATA.timeline[a.target_client].some(x=>x.key===item.key))DATA.timeline[a.target_client].push(item);}catch(e){}
       }else if(a.action==="client_audit"&&a.target_client){
         try{const rec=JSON.parse(a.detail);clientAudit[a.target_client]=clientAudit[a.target_client]||[];clientAudit[a.target_client].unshift(rec);}catch(e){}
-      }else if(a.action==="cust_state"&&a.target_client){const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c&&!c._custStateLoaded){try{const st=JSON.parse(a.detail);if(st.aiTodos)c.aiTodos=st.aiTodos;if(st.aiSuggestions)c.aiSuggestions=st.aiSuggestions;if(st.aiLastAt)c.aiLastAt=st.aiLastAt;c._custStateLoaded=true;}catch(e){}}
+      }else if(a.action==="cust_state"&&a.target_client){const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c&&!c._custStateLoaded){try{const st=JSON.parse(a.detail);if(st.aiTodos)c.aiTodos=st.aiTodos;if(st.aiSuggestions)c.aiSuggestions=st.aiSuggestions;if(st.reviewReport)c.reviewReport=st.reviewReport;if(st.fileInsights)c.fileInsights=st.fileInsights;if(st.aiLastAt)c.aiLastAt=st.aiLastAt;c._custStateLoaded=true;}catch(e){}}
       }else if(a.action==="ai_todo_add"&&a.target_client){
         const c=DATA.customers.find(x=>String(x.no)===String(a.target_client));if(c){try{const rec=JSON.parse(a.detail);c.aiTodos=c.aiTodos||[];if(!c.aiTodos.some(t=>t.t===rec.t))c.aiTodos.unshift(rec);}catch(e){}}
       }else if(a.action==="ai_todo_ignore"&&a.target_client){
@@ -1040,6 +1040,7 @@ function renderFileList(){
 function removePicked(i){window._pickedFiles.splice(i,1);renderFileList();}
 async function startAnalyzeAndCreate(){
   if(!window._pickedFiles.length){toast("請至少上傳一個檔案");return;}
+  window._pdfInsightMap={};
   const autoNo=maxNo();
   openModal(`<h3>AI 分析與檔案分流上傳</h3>
   <div style="font-size:12px;color:var(--mut);margin-bottom:12px">第一通道 AI 分析，第二通道上傳分流，圖片進 GitHub 圖片雲端，文件進七牛文件雲端。全部完成後才確認建立客戶</div>
@@ -1076,15 +1077,19 @@ async function startAnalyzeAndCreate(){
     apRow.innerHTML=`<span style="font-size:12px;color:#8b5cf6">◌</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#8b5cf6">分析中</span>`;
     if(apEl)apEl.appendChild(apRow);
     try{
-      let pdfText="";
-      if(/\.pdf$/i.test(f.name))pdfText=await extractPdfText(f);
-      const userIn=f.name+" 大小:"+f.size+" bytes"+(pdfText?("\n文件內容："+pdfText):"");
-      const out=await callAI("你是美國海關bond業務助理。根據檔案名稱、類型與PDF內容，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",userIn);
-      let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
+      let j={};
+      if(/\.pdf$/i.test(f.name)){
+        const pa=await analyzePdfDoc(f);
+        window._pdfInsightMap=window._pdfInsightMap||{};window._pdfInsightMap[f.name]=pa;
+        j={company:pa.company,member:pa.member,ein:pa.ein,address:pa.address,phone:pa.phone,doc_type:pa.doc_type,notes:pa.summary};
+      }else{
+        const out=await callAI("你是美國海關bond業務助理。根據檔案名稱和類型，提取關鍵信息，輸出JSON：{company,member,ein,address,phone,doc_type,notes}，沒有就留空",f.name+" 大小:"+f.size+" bytes");
+        try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={notes:out.slice(0,100)};}
+      }
       results.push({file:f.name,data:j});
       apRow.innerHTML=`<span style="font-size:12px;color:#10b981">✓</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#10b981">完成</span>`;
       const resEl=document.getElementById("analyzeResult");
-      if(resEl)resEl.innerHTML+=`<div style="padding:2px 0"><b>${esc(j.doc_type||f.name)}</b>：${esc(j.company||j.member||"—")}</div>`;
+      if(resEl)resEl.innerHTML+=`<div style="padding:2px 0"><b>${esc(j.doc_type||f.name)}</b>：${esc(j.company||j.member||j.summary||"—")}</div>`;
     }catch(e){
       apRow.innerHTML=`<span style="font-size:12px;color:#ef4444">✕</span><span style="font-size:12px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span><span style="font-size:11px;color:#ef4444">分析失敗</span>`;
     }
@@ -1262,6 +1267,7 @@ async function runDocumentReview(no,files,cust){
   const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
   try{
     const issues=[];const summaryParts=[];
+    let baseName="";const docFacts=[];
     // 圖片走視覺模型：以駕照/護照姓名為基準交叉比對
     if(imgs.length){
       const parts=[];
@@ -1272,21 +1278,34 @@ async function runDocumentReview(no,files,cust){
         try{
           const out=await callAIVision(sys,parts);
           let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,300),issues:[]};}
+          if(j.owner_name)baseName=j.owner_name;
+          if(Array.isArray(j.docs))j.docs.forEach(d=>docFacts.push(d));
           if(j.summary)summaryParts.push("照片："+j.summary);
           (Array.isArray(j.issues)?j.issues:[]).forEach(it=>issues.push(it));
         }catch(e){console.warn("視覺審查失敗",e);}
       }
     }
-    // PDF 抽文字走綜合文字 AI：比對姓名、有效期、拼寫
+    // PDF：每份獨立識別內容（文字型全文分段／掃描型逐頁視覺），產生識別卡存後台
+    c.fileInsights=c.fileInsights||[];
     for(const f of pdfs){
-      const txt=await extractPdfText(f);
-      if(!txt)continue;
+      let pa=(window._pdfInsightMap||{})[f.name];
+      if(!pa){try{pa=await analyzePdfDoc(f);}catch(e){console.warn("PDF分析失敗",f.name,e);continue;}}
+      const card={file:f.name,via:pa.via,pages:pa.pages,type:pa.doc_type||"未分類",summary:pa.summary||"",key_facts:pa.key_facts||"",company:pa.company||"",member:pa.member||"",ein:pa.ein||""};
+      c.fileInsights=c.fileInsights.filter(x=>x.file!==f.name);
+      c.fileInsights.unshift(card);
+      docFacts.push({file:f.name,type:card.type,name:card.member,company:card.company,ein:card.ein,expiry:""});
+      if(pa.summary)summaryParts.push(`PDF ${f.name}（${card.type}）：${pa.summary}${pa.key_facts?"｜關鍵："+pa.key_facts:""}`);
+      (Array.isArray(pa.issues)?pa.issues:[]).forEach(it=>issues.push(it));
+    }
+    // 整體交叉比對：以駕照/護照法人姓名為基準，檢查各文件姓名拼寫、EIN、公司是否一致
+    if(docFacts.length&&(baseName||c.member)){
       try{
-        const out=await callAI("你是美國海關 bond 開戶文件審查員。以下是一份PDF文件文字，對照法人基準姓名（若無基準則自行判斷）檢查姓名拼寫、證件有效期、是否缺漏。只輸出JSON：{\"issues\":[{\"level\":\"error|warn\",\"doc\":\"檔名\",\"problem\":\"問題\",\"fix\":\"建議\"}],\"summary\":\"繁體中文一句總結\"}，無問題則issues為空。","檔名："+f.name+"\n內容："+txt);
-        let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){continue;}
-        if(j.summary)summaryParts.push("PDF "+f.name+"："+j.summary);
-        (Array.isArray(j.issues)?j.issues:[]).forEach(it=>issues.push(it));
-      }catch(e){console.warn("PDF審查失敗",e);}
+        const basis=baseName||c.member;
+        const factText=docFacts.map(d=>`${d.file}｜類型:${d.type||""}｜姓名:${d.name||""}｜公司:${d.company||""}｜EIN:${d.ein||""}`).join("\n");
+        const xout=await callAI("你是文件一致性審查員。基準法人姓名："+basis+"。比對下列每份文件的姓名拼寫、公司名、EIN 是否與基準一致，是否有拼寫落差或矛盾。只輸出JSON {\"issues\":[{\"level\":\"error|warn\",\"doc\":\"檔名\",\"problem\":\"問題\",\"fix\":\"建議\"}]}，一致則issues為空，不要編造。","基準法人："+basis+"\n文件清單：\n"+factText);
+        let xj={};try{xj=JSON.parse(xout.replace(/```json|```/g,"").trim());}catch(e){}
+        (Array.isArray(xj.issues)?xj.issues:[]).forEach(it=>{if(!issues.some(x=>x.doc===it.doc&&x.problem===it.problem))issues.push(it);});
+      }catch(e){console.warn("整體交叉比對失敗",e);}
     }
     c.reviewReport=summaryParts.join("\n");
     // 問題寫入 AI 待辦
@@ -1299,7 +1318,7 @@ async function runDocumentReview(no,files,cust){
     DATA.timeline[no].unshift(reviewItem);
     persistCust(no);
     sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"timeline",target_client:String(no),detail:JSON.stringify(reviewItem)});
-    sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,reviewReport:c.reviewReport,aiLastAt:c.aiLastAt})});
+    sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,reviewReport:c.reviewReport,fileInsights:c.fileInsights,aiLastAt:c.aiLastAt})});
     syncCustomerToRepo(no);
     render();
   }catch(e){console.warn("文件審查失敗",e);}
@@ -1318,6 +1337,7 @@ async function syncCustomerToRepo(no){
       const t=cs[idx];
       if(c.reviewReport)t.reviewReport=c.reviewReport;
       if(c.aiTodos)t.aiTodos=c.aiTodos;
+      if(c.fileInsights)t.fileInsights=c.fileInsights;
       if(c.sysId&&!t.sysId)t.sysId=c.sysId;
     }
     const b=JSON.stringify(dj);
@@ -1645,6 +1665,7 @@ function docList(no){
   const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
   function card(f){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
+    const insight=((DATA.customers.find(x=>String(x.no)===String(no))||{}).fileInsights||[]).find(x=>x.file===nm);
     const url=resolveFile(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
     const inner=isImg
@@ -1653,6 +1674,8 @@ function docList(no){
     return `<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
       ${inner}
       <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
+      ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
+      ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
       <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div></div></div>`;}
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div class="sec-title" style="margin:0">全部附件</div>
@@ -1959,24 +1982,82 @@ function fileToDataURL(f,maxSide=1600){
     img.src=url;
   });
 }
-// PDF 抽文字：用 pdf.js，失敗或無庫時回空字串，安靜降級不影響流程
-async function extractPdfText(file){
-  try{
-    if(!window.pdfjsLib)return "";
-    pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
-    const buf=await file.arrayBuffer();
-    const pdf=await pdfjsLib.getDocument({data:buf,useWorkerFetch:false,isEvalSupported:false}).promise;
-    let out="";const max=Math.min(pdf.numPages,6);
-    for(let i=1;i<=max;i++){const p=await pdf.getPage(i);const tc=await p.getTextContent();out+=tc.items.map(it=>it.str).join(" ")+"\n";}
-    return out.replace(/\s+/g," ").trim().slice(0,3500);
-  }catch(e){return "";}
+// PDF 載入共用文件物件，File 可重複讀取
+async function loadPdfDoc(file){
+  if(!window.pdfjsLib)return null;
+  pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js";
+  const buf=await file.arrayBuffer();
+  return await pdfjsLib.getDocument({data:buf,useWorkerFetch:false,isEvalSupported:false}).promise;
 }
+// 抽取 PDF 全部頁面文字，偵測是否為掃描型，回傳 {text,pages,scanned}
+async function extractPdfFull(file){
+  const pdf=await loadPdfDoc(file);
+  if(!pdf)return {text:"",pages:0,scanned:false};
+  let text="";const per=[];
+  const n=pdf.numPages;
+  for(let i=1;i<=n;i++){
+    const p=await pdf.getPage(i);
+    const tc=await p.getTextContent();
+    const pt=tc.items.map(it=>it.str).join(" ").trim();
+    per.push(pt);text+=pt+"\n";
+  }
+  const empty=per.filter(t=>t.replace(/\s/g,"").length<15).length;
+  const scanned=n>0&&empty>=Math.ceil(n/2);
+  return {text:text.replace(/\s+/g," ").trim(),pages:n,scanned,pdf};
+}
+// 掃描型 PDF 單頁渲染成圖片，交視覺模型讀取
+async function pdfPageImage(pdf,pageIdx,scale=1.3){
+  const p=await pdf.getPage(pageIdx);
+  const vp=p.getViewport({scale});
+  const cv=document.createElement("canvas");
+  cv.width=Math.floor(vp.width);cv.height=Math.floor(vp.height);
+  await p.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;
+  return cv.toDataURL("image/jpeg",0.85);
+}
+// 長文切塊，每塊約 6000 字，供分段摘要
+function chunkText(t,size=6000){
+  const out=[];for(let i=0;i<t.length;i+=size)out.push(t.slice(i,i+size));return out;
+}
+// 向後相容舊呼叫：回純文字
+async function extractPdfText(file){try{const r=await extractPdfFull(file);return r.text;}catch(e){return "";}}
 // 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
 async function callAIVision(sys,parts){
   const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
   if(!r.ok)throw new Error("VL HTTP "+r.status);
   const j=await r.json();
   return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+}
+// 解析單份 PDF 分析結果併入識別卡
+function mergePdfJson(res,out){
+  let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:String(out||"").slice(0,300)};}
+  ["company","member","ein","address","phone","doc_type","summary","key_facts"].forEach(k=>{if(j[k])res[k]=String(j[k]).trim();});
+  if(Array.isArray(j.issues))res.issues=j.issues;
+}
+// 分析單份 PDF：文字型分段提煉，掃描型逐頁走視覺，回傳統一識別結構
+async function analyzePdfDoc(file){
+  const res={via:"text",pages:0,company:"",member:"",ein:"",address:"",phone:"",doc_type:"",summary:"",key_facts:"",issues:[]};
+  let r={text:"",pages:0,scanned:false,pdf:null};
+  try{r=await extractPdfFull(file);}catch(e){return res;}
+  res.pages=r.pages;res.via=r.scanned?"vision":"text";
+  if(r.scanned){
+    const parts=[];const maxP=Math.min(r.pages,6);
+    for(let i=1;i<=maxP;i++){try{parts.push({type:"image_url",image_url:{url:await pdfPageImage(r.pdf,i)}});}catch(e){}}
+    if(!parts.length)return res;
+    parts.unshift({type:"text",text:"檔名："+file.name+"。這是掃描PDF，請逐頁辨識，只輸出JSON {company,member,ein,address,phone,doc_type,summary:繁體中文說明這份文件是什麼及重點,key_facts:甲乙方、金額、期限、編號等關鍵事實,issues:[{level:error|warn,doc:檔名,problem:問題,fix:建議}]}，辨識不到留空，無問題issues為空陣列。"});
+    try{const out=await callAIVision("你是美國海關 bond 文件分析員，只輸出指定 JSON，不要多餘說明。",parts);mergePdfJson(res,out);}catch(e){console.warn("掃描PDF視覺分析失敗",e);}
+    return res;
+  }
+  if(!r.text)return res;
+  // 文字型：長文件分段提煉事實，再統一結構化
+  const digests=[];
+  for(const ch of chunkText(r.text,6000)){
+    try{const d=await callAI("濃縮這段文件文字的事實，保留人名、公司名、EIN、金額、日期、有效期、文件編號，去除套話，200字內。",ch);if(d)digests.push(d);}catch(e){}
+  }
+  try{
+    const out=await callAI("你是美國海關 bond 文件分析員。根據文件提煉結果，只輸出JSON {company,member,ein,address,phone,doc_type,summary:繁體中文說明這份文件是什麼及重點,key_facts:甲乙方、金額、期限、編號等關鍵事實,issues:[{level:error|warn,doc:檔名,problem:問題,fix:建議}]}，辨識不到留空，無問題issues為空陣列。","檔名："+file.name+"\n提煉："+digests.join("\n").slice(0,9000));
+    mergePdfJson(res,out);
+  }catch(e){console.warn("PDF文字分析失敗",e);}
+  return res;
 }
 // 組裝客戶檔案＋往來歷史，供 AI 前後文分析
 function buildMailContext(e){
