@@ -921,7 +921,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-function openModalImg(src,no){
+function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
   if(!src)return;
   if(src.indexOf("https://")!==0&&src.indexOf("http://")===0){window.open(src,"_blank");return;}
   window._editRot=0;window._editFlipH=false;window._editFlipV=false;
