@@ -1337,7 +1337,7 @@ async function compressImgForUpload(file){
 }
 function fileSlug(name){
   const n=name.toLowerCase();
-  const suf="-"+Math.random().toString(36).slice(2,6);
+  const suf="-"+Math.floor(10000+Math.random()*90000);
   if(/駕照正面|license.*front|front.*license/.test(n))return "driver-license-front"+suf;
   if(/駕照背面|license.*back|back.*license/.test(n))return "driver-license-back"+suf;
   if(/人像|人頭|member.*photo|headshot/.test(n))return "member-photo"+suf;
