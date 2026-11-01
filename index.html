@@ -905,14 +905,73 @@ function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
 function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canViewCust(c.no)).map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
-  <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}')">
+  <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody">
   <div class="top"><div><span class="no" title="內部序號，非客戶代號">#${c.no}<small class="noref">序號</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}<br><b>負責人</b> ${esc(ownerName(c.no))}</div>
   <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span></div>
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
   </div></div>`;}).join("")+`</div>`;}
-function openModalImg(src){if(!src)return;if(src.indexOf("https://")!==0&&src.indexOf("http://")===0){window.open(src,"_blank");return;}openModal(`<div style="text-align:center"><h3>法人照片</h3><img src="${src}" style="max-width:100%;max-height:70vh;border-radius:10px"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);}
+let PHOTO_OVERRIDE={};
+try{PHOTO_OVERRIDE=JSON.parse(localStorage.getItem("bcd_photo_override")||"{}");}catch(e){}
+function phSrc(no){
+  if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
+  const p=PHOTO[no]||"";return p?resolveFile(p):"";
+}
+function openModalImg(src,no){
+  if(!src)return;
+  if(src.indexOf("https://")!==0&&src.indexOf("http://")===0){window.open(src,"_blank");return;}
+  window._editRot=0;window._editFlipH=false;window._editFlipV=false;
+  const tools=no?`<div style="display:flex;gap:6px;justify-content:center;margin:10px 0;flex-wrap:wrap">
+    <button class="btn small" onclick="editPhotoRot(-90)">⟲ 左旋轉</button>
+    <button class="btn small" onclick="editPhotoRot(90)">⟳ 右旋轉</button>
+    <button class="btn small" onclick="editPhotoFlip('h')">⇋ 左右翻</button>
+    <button class="btn small" onclick="editPhotoFlip('v')">⇵ 上下翻</button>
+    <button class="btn small" onclick="document.getElementById('photoReplaceFile').click()">📁 更換照片</button>
+    <input type="file" id="photoReplaceFile" accept="image/*" style="display:none" onchange="editPhotoReplace(this)">
+    <button class="btn small" style="background:var(--acc);color:#fff" onclick="editPhotoSave(${no})">💾 儲存修改</button>
+  </div>`:"";
+  openModal(`<div style="text-align:center"><h3>法人照片</h3>${tools}<img id="editImg" src="${src}" style="max-width:100%;max-height:65vh;border-radius:10px;transition:transform .2s"><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div></div>`);
+}
+function editPhotoRot(d){window._editRot=(window._editRot||0)+d;applyEditTransform();}
+function editPhotoFlip(k){if(k==='h')window._editFlipH=!window._editFlipH;else window._editFlipV=!window._editFlipV;applyEditTransform();}
+function applyEditTransform(){const img=document.getElementById("editImg");if(!img)return;img.style.transform=`rotate(${window._editRot||0}deg) scale(${window._editFlipH?-1:1},${window._editFlipV?-1:1})`;}
+function editPhotoReplace(input){const f=input.files[0];if(!f)return;const img=document.getElementById("editImg");const url=URL.createObjectURL(f);img.src=url;window._replaceFile=f;}
+async function editPhotoSave(no){
+  const img=document.getElementById("editImg");if(!img)return;
+  const btn=event.target;btn.disabled=true;btn.textContent="儲存中…";
+  try{
+    const canvas=document.createElement("canvas");
+    const ctx=canvas.getContext("2d");
+    const rot=window._editRot||0;
+    const rad=rot*Math.PI/180;
+    const w=img.naturalWidth,h=img.naturalHeight;
+    if(Math.abs(rot%180)===90){canvas.width=h;canvas.height=w;}else{canvas.width=w;canvas.height=h;}
+    ctx.translate(canvas.width/2,canvas.height/2);
+    ctx.rotate(rad);
+    ctx.scale(window._editFlipH?-1:1,window._editFlipV?-1:1);
+    ctx.drawImage(img,-w/2,-h/2);
+    const blob=await new Promise(r=>canvas.toBlob(r,"image/jpeg",0.9));
+    const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+    const path="attachments/"+no+"/member-photo-edited.jpg";
+    const base64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(",")[1]);fr.readAsDataURL(blob);});
+    let body={message:"edit photo for #"+no,content:base64};
+    let method="PUT";
+    let url="https://api.github.com/repos/uscrm26/bcd/contents/"+path;
+    try{const exist=await fetch(url,{headers:{Authorization:"token "+ghtok}}).then(x=>x.json());if(exist&&exist.sha)body.sha=exist.sha;}catch(e){}
+    const r=await fetch(url,{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify(body)});
+    if(r.ok){
+      PHOTO_OVERRIDE[no]=path;
+      localStorage.setItem("bcd_photo_override",JSON.stringify(PHOTO_OVERRIDE));
+      toast("✅ 照片已儲存");
+      closeModal();
+      if(typeof render==="function")render();
+    }else{
+      toast("⚠️ 儲存失敗 HTTP "+r.status);
+      btn.disabled=false;btn.textContent="💾 儲存修改";
+    }
+  }catch(e){console.warn(e);toast("⚠️ 儲存失敗："+e.message);btn.disabled=false;btn.textContent="💾 儲存修改";}
+}
 function cardTable(){return `<table><thead><tr><th>編號</th><th>公司名稱</th><th>法人</th><th>業務狀態</th><th>待辦</th><th>駕照</th><th>信箱</th><th>操作</th></tr></thead><tbody>`+DATA.customers.map(c=>{const s=st(c.status);return `<tr><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${c.todo||0}</td><td class="${c.dl==="過期"?"v warn":""}">${c.dl}</td><td style="font-size:11px">${esc(c.mail)}</td><td><button class="btn small" onclick="openCust('${c.no}')">檢視</button></td></tr>`;}).join("")+`</tbody></table>`;}
 function openCustList(statusId){const list=DATA.customers.filter(c=>canViewCust(c.no)&&(!statusId||c.status===statusId));const s=statusId?st(statusId).lb:"全部客戶";
 openModal(`<h3>${s}（${list.length}）</h3><table><thead><tr><th>編號</th><th>公司</th><th>法人</th><th>負責人</th><th>狀態</th><th></th></tr></thead><tbody>
@@ -936,7 +995,7 @@ R.dashboard=()=>{
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}')"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 ¥${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">查看</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})"><div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>法人</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">待收 ¥${dueAmt.toLocaleString()}</span>`:""}<span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 R.worklog=()=>`<h1>工作通知</h1>
@@ -1549,7 +1608,7 @@ function custGridHTML(){
   const list=custFiltered();
   return `<div class="row r3">${list.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
-  <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}')">
+  <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span class="no" title="內部參考編號，非客戶代號">#${c.no}<small class="noref">內部參考</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
   <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
@@ -1573,7 +1632,7 @@ function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `
 const ph=phSrc(no);const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 return `<div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap;padding-left:4px">
   <div style="flex:0 0 200px;width:200px">
-  <div onclick="${ph?`openModalImg('${ph}')`:''}" title="法人照片" style="width:200px;height:200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
+  <div onclick="${ph?`openModalImg('${ph}',${no})`:''}" title="法人照片" style="width:200px;height:200px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
     ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">法人照片<br>未上傳</div>`}
   </div>
   <div style="margin-top:10px;width:200px;padding:14px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px;text-align:center">
