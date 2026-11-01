@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261101j2";
+  var V="v20261101k1";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1975,7 +1975,15 @@ let QMAP={};
 let IMGMAP={};
 fetch("qiniu_map.json").then(r=>r.json()).then(j=>{QMAP=j;if(typeof render==="function")render();}).catch(()=>{});
 fetch("img_map.json").then(r=>r.json()).then(j=>{IMGMAP=j;if(typeof render==="function")render();}).catch(()=>{});
-function phSrc(no){const c=DATA.customers.find(x=>String(x.no)===String(no));if(c&&c.memberPhoto)return c.memberPhoto;const p=PHOTO[no]||"";return p?resolveFile(p):"";}
+function phSrc(no){
+  const c=DATA.customers.find(x=>String(x.no)===String(no));
+  if(c&&c.memberPhoto)return c.memberPhoto;
+  const p=PHOTO[no]||"";if(p)return resolveFile(p);
+  const fl=(DATA.files||{})[no]||[];
+  const portrait=fl.find(f=>/法人照片|人像|人頭|member.?photo|headshot/i.test(f.name||f.nm||""));
+  if(portrait)return resolveFile(portrait.path||"");
+  return "";
+}
 function resolveFile(p){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
@@ -2021,7 +2029,9 @@ function docList(no){
       <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
       ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
       ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
-      <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div></div></div>`;}
+      <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div>
+      ${isImg?`<button class="btn small" style="margin-top:6px;font-size:10px;padding:2px 8px;width:100%" onclick="event.stopPropagation();setMemberPhoto('${no}','${esc(nm)}')">📷 設為法人照片</button>`:""}
+      </div></div>`;}
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div class="sec-title" style="margin:0">全部附件</div>
   <div style="display:flex;gap:6px">
@@ -2036,6 +2046,16 @@ function docList(no){
   ${!localList.length?"<div class='empty'>尚無附件</div>":""}
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">共 ${localList.length} 份，點檔案可直接預覽。</div>
   <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">管理資料夾</button><button class="btn primary" onclick="pickUpload('${no}')">⬆ 上傳文件</button></div>`;
+}
+function setMemberPhoto(no,nm){
+  const fl=(DATA.files||{})[no]||[];
+  const f=fl.find(x=>(x.name||x.nm||"")===nm);
+  if(!f){toast("找不到文件");return;}
+  const url=resolveFile(f.path||"");
+  const c=DATA.customers.find(x=>String(x.no)===String(no));
+  if(c){c.memberPhoto=url;persistCust(no);syncCustomerToRepo(no);addAudit("設定法人照片",c.name+"｜"+nm);}
+  toast("已設為法人照片");
+  render();
 }
 function setAttFilter(f){
   document.querySelectorAll(".att-f").forEach(b=>{const on=b.dataset.f===f;b.style.background=on?"var(--acc)":"var(--bg2)";b.style.color=on?"#fff":"var(--text)";});
@@ -2175,6 +2195,13 @@ async function enhancedUploadAnalyze(no,c,files){
     for(const old of oldOnes){old.superseded=true;old.notes=(old.notes||"")+" 【已被"+newFile+"取代】";superseded.push(old.file);}
     // 標註新文件為最新
     const ni=c.fileInsights.find(x=>x.file===newFile);if(ni)ni.current=true;
+  }
+  // === 自動偵測人像並設為法人照片 ===
+  for(const r of results){
+    if(/人像|人頭|headshot|selfie|portrait|法人照片/i.test(r.data.doc_type||"")||/人像|人頭|法人照片/i.test(r.file)){
+      const f=(DATA.files[no]||[]).find(x=>(x.name||"")===r.file);
+      if(f){c.memberPhoto=resolveFile(f.path||"");aiLog("已自動設定為法人照片："+r.file,"ok");break;}
+    }
   }
   // === 寫入 fileInsights ===
   for(const r of results){
