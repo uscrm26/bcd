@@ -1349,27 +1349,7 @@ function fileSlug(name){
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8)+suf;
   return "doc-"+Date.now().toString(36).slice(-4)+suf;
 }
-function displayFileName(fname){
-  if(!fname)return "";
-  const n=fname.toLowerCase();
-  const L=typeof LANG!=="string"?"zh":(LANG==="en"?"en":LANG==="cn"?"cn":"zh");
-  const ext=(fname.match(/\.([^.]+)$/)||["",""])[1];
-  const parts=fname.split(/[—–-]/);
-  let company=parts[0]||"";
-  if(company.length>30)company=company.slice(0,30);
-  let type="";
-  if(/driver-license-front|駕照正面|驾照正面/.test(n))type=L==="en"?"Driver License (Front)":L==="cn"?"驾照正面":"駕照正面";
-  else if(/driver-license-back|駕照背面|驾照背面/.test(n))type=L==="en"?"Driver License (Back)":L==="cn"?"驾照背面":"駕照背面";
-  else if(/member-photo|人像|人頭|人头/.test(n))type=L==="en"?"Member Photo":L==="cn"?"法人照片":"法人照片";
-  else if(/ein-letter|ein/.test(n))type=L==="en"?"EIN Letter":L==="cn"?"EIN 通知书":"EIN 通知書";
-  else if(/articles-of-organization|章程/.test(n))type=L==="en"?"Articles of Organization":L==="cn"?"公司章程":"公司章程";
-  else if(/filing-confirmation|申請|申请|通知書|通知书/.test(n))type=L==="en"?"Filing Confirmation":L==="cn"?"申请通知书":"申請通知書";
-  else if(/w9-form|w-?9/.test(n))type=L==="en"?"W-9 Form":L==="cn"?"W-9 表格":"W-9 表格";
-  else if(/passport|護照|护照/.test(n))type=L==="en"?"Passport":L==="cn"?"护照":"護照";
-  else if(/^[0-9a-f]{8}-[0-9a-f]{4}/.test(n)||/screenshot/.test(n))type=L==="en"?"Screenshot":L==="cn"?"截图":"截圖";
-  if(!type)return fname;
-  return (company?company+" - ":"")+type+(ext?"."+ext:"");
-}
+function displayFileName(fname){return fname;}
 async function ghFetch(url,opts,timeoutMs){
   const ctrl=new AbortController();
   const t=setTimeout(()=>ctrl.abort(),timeoutMs||60000);
