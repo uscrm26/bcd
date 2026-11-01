@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l23";
+  var V="v20261102l24";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -91,7 +91,7 @@ a{color:var(--acc);text-decoration:none}
 .side{width:232px;background:linear-gradient(180deg,#12161e,#10131a);border-right:1px solid var(--line);position:fixed;inset:0 auto 0 0;padding:18px 14px;display:flex;flex-direction:column;z-index:50}
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1d3350,#0e1c2e);border:1px solid #2b4a70;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--acc2);font-size:16px}
-.brand .logo-img{height:32px;width:auto;border-radius:8px;object-fit:contain;flex:0 0 auto}
+.brand .logo-img{height:64px;width:64px;border-radius:12px;object-fit:cover;object-position:center top;flex:0 0 auto;display:block}
 .brand .bt{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3}
 .brand .bs{font-size:10px;color:var(--dim)}
 .sideclock{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.9;color:var(--mut)}
@@ -330,7 +330,7 @@ tr:hover td{background:#1a2130}
 <div class="app">
 <aside class="side">
   <div class="brand" style="justify-content:center;flex-direction:column;gap:4px;cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼">
-    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM" style="height:64px;object-fit:cover;object-position:center top">
+    <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM">
   </div>
   <div class="sideclock" id="sideClock"></div>
   <nav class="nav">
