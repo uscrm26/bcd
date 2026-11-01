@@ -463,7 +463,7 @@ function persistCust(no){
   try{
     const c=DATA.customers.find(x=>x.no===no);if(!c)return;
     const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
-    saved[no]={aiTodos:c.aiTodos||[],aiSuggestions:c.aiSuggestions||[],aiLastAt:c.aiLastAt||null,status:c.status};
+    saved[no]={aiTodos:c.aiTodos||[],aiSuggestions:c.aiSuggestions||[],aiLastAt:c.aiLastAt||null,status:c.status,reviewReport:c.reviewReport||"",fileInsights:c.fileInsights||[]};
     localStorage.setItem("bcd_cust_override",JSON.stringify(saved));
     if(DATA.timeline&&DATA.timeline[no])localStorage.setItem("bcd_tl_"+no,JSON.stringify(DATA.timeline[no]));
     if(clientAudit[no])localStorage.setItem("bcd_client_audit_"+no,JSON.stringify(clientAudit[no]));
@@ -472,7 +472,7 @@ function persistCust(no){
 function loadPersisted(){
   try{
     const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
-    Object.keys(saved).forEach(no=>{const c=DATA.customers.find(x=>String(x.no)===String(no));if(c){Object.assign(c,saved[no]);}});
+    Object.keys(saved).forEach(no=>{const c=DATA.customers.find(x=>String(x.no)===String(no));if(c){const sv=saved[no];Object.assign(c,sv);if(!sv.reviewReport)delete c.reviewReport;if(!sv.fileInsights||!sv.fileInsights.length)delete c.fileInsights;}});
     DATA.timeline=DATA.timeline||{};
     DATA.customers.forEach(c=>{const t=localStorage.getItem("bcd_tl_"+c.no);if(t){try{DATA.timeline[c.no]=JSON.parse(t);}catch(e){}}});
     clientAudit=clientAudit||{};
