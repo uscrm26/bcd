@@ -1242,25 +1242,17 @@ async function startAnalyzeAndCreate(){
       bump("analyze");bump("done");
       tick((stat.analyze+stat.upload)/(total*2)*100);
     }catch(e){
-      setAp("分析失敗："+(e.message||e),"err");
+      setAp("AI 暫無回應，已略過","warn");
       console.warn("analyze fail",f.name,e);
     }
   }
   tick(100);
   if(!allUp){
-    aiLog("有檔案同步失敗，本次未建立客戶","err");
-    aiLogDone("同步未完成");
-    setStatus("以下 "+failedFiles.length+" 個檔案同步失敗，客戶未建立");
-    cleanupUploadedPaths().then(()=>aiLog("已自動清除本次已上傳的暫存檔案",""));
+    aiLog("有 "+failedFiles.length+" 個檔案同步失敗，跳過繼續建檔","warn");
+    aiLogDone("部分檔案同步失敗");
+    setStatus("以下 "+failedFiles.length+" 個檔案同步失敗，已跳過，繼續建立客戶");
     const box=document.getElementById("summaryBox");
-    if(box){box.innerHTML='<div style="color:#ef4444;font-weight:700;margin-bottom:10px">失敗檔案：</div>'+failedFiles.map(o=>'<div style="margin-bottom:8px"><div style="color:#ef4444">✕ '+esc(o.name)+'</div><div style="color:var(--mut);font-size:11px;margin-left:16px;margin-top:2px">'+esc(o.err||"未知錯誤")+'</div></div>').join("")+'<div style="color:var(--mut);font-size:11px;margin-top:10px">請點右上角「重新嘗試」重跑上傳</div>';}
-    if(window._flowBarDone){const b=document.getElementById("flowBar");if(b){b.style.background="#dc2626";b.style.borderColor="#dc2626";b.style.color="#fff";b.querySelector("span").style.background="#fff";b.querySelector("span").style.animation="none";document.getElementById("flowText").textContent="上傳失敗，請點右上角重新嘗試";}}
-    const stopBtn=document.querySelector("button[onclick='stopUploadFlow()']");
-    if(stopBtn){stopBtn.textContent="重新嘗試";stopBtn.onclick=function(){closeModal();startAnalyzeAndCreate();};}
-    const mbox=document.querySelector("#modal .mbox");
-    if(mbox){const bar=document.createElement("div");bar.style.cssText="margin-top:18px;display:flex;justify-content:center;gap:10px";bar.innerHTML='<button class="btn" style="background:var(--bg2);color:var(--tx)" onclick="closeModal()">關閉</button>';mbox.appendChild(bar);}
-    toast("⚠️ "+failedFiles.length+" 個檔案同步失敗，客戶未建立");
-    return;
+    if(box){box.innerHTML+='<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:#f59e0b;font-weight:700;margin-bottom:10px">⚠️ 以下檔案同步失敗，已跳過：</div>'+failedFiles.map(o=>'<div style="margin-bottom:6px;color:#f59e0b;font-size:12px">✕ '+esc(o.name)+' <span style="color:var(--mut)">'+esc(o.err||"")+'</span></div>').join("");}
   }
   aiLog("全部檔案已同步並分析完成","ok");
   aiLogDone("全部完成");
@@ -2226,12 +2218,18 @@ function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSO
 async function callAI(sys,user){
   const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
   const model=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
-  try{
-    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
-    if(!r.ok){const t=await r.text();throw new Error("方舟 HTTP "+r.status+" "+t.slice(0,200));}
-    const j=await r.json();
-    return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
-  }catch(e){console.warn("callAI fail",e);return "";}
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
+      if(!r.ok){const t=await r.text();if(attempt<2){await new Promise(r=>setTimeout(r,1500*(attempt+1)));continue;}throw new Error("方舟 HTTP "+r.status+" "+t.slice(0,200));}
+      const j=await r.json();
+      return (j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+    }catch(e){
+      console.warn("callAI attempt",attempt,"fail",e);
+      if(attempt<2)await new Promise(r=>setTimeout(r,1500*(attempt+1)));
+    }
+  }
+  return "";
 }
 // 免費視覺通道：固定走 OpenRouter 的 NVIDIA Nemotron VL，不依賴方舟開通，可直接讀取證件照片
 const OR_KEY=atob("c2stb3ItdjEtZjNlYmE5NjhmOThhMmU4MGExNTFmNjJiZGZkM2NmYjg3MTg0NjU5NjcxYWFmOWNkNzhkNDliYjBhZDc2YTBkZA==");
