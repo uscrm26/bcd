@@ -1106,6 +1106,7 @@ async function startAnalyzeAndCreate(){
   function bump(k){if(k==="done")stat.done++;else stat[k]++;const el=document.getElementById("stat"+(k==="analyze"?"Analyze":"Upload"));if(el)el.textContent=stat[k];tick((stat.analyze+stat.upload)/(total*2)*100);}
   const results=[];
   let allUp=true;
+  const failedFiles=[];
   window._stopUpload=false;
   window.stopUploadUploadFlow=function(){window._stopUpload=true;closeModal();aiLogDone("已手動停止");toast("已停止上傳，本次未建立客戶");};
   window.stopUploadFlow=window.stopUploadUploadFlow;
@@ -1114,8 +1115,9 @@ async function startAnalyzeAndCreate(){
     const isImg=/\.(jpe?g|png|gif|webp)$/i.test(f.name);
     setStatus("同步上傳："+f.name);
     aiLog("〔"+f.name+"〕開始同步到加密雲端");
-    const upOK=await uploadToGithub(autoNo,f);
-    if(!upOK){allUp=false;aiLog("〔"+f.name+"〕同步失敗 "+(window._lastUpErr||""),"err");setStatus("同步失敗："+f.name);}
+    let upOK=await uploadToGithub(autoNo,f);
+    if(!upOK){aiLog("〔"+f.name+"〕第一次失敗，1秒後自動重試…","err");await new Promise(r=>setTimeout(r,1000));upOK=await uploadToGithub(autoNo,f);}
+    if(!upOK){allUp=false;failedFiles.push(f.name);aiLog("〔"+f.name+"〕同步失敗 "+(window._lastUpErr||"未知錯誤"),"err");}
     else{aiLog("〔"+f.name+"〕已同步到加密雲端","ok");bump("upload");}
     setStatus("AI 分析："+f.name);
     const setAp=(msg,kind)=>{aiLog("〔"+f.name+"〕"+msg,kind);};
@@ -1147,12 +1149,14 @@ async function startAnalyzeAndCreate(){
   await Promise.all(tasks);
   tick(100);
   if(!allUp){
-    aiLog("有檔案同步失敗，本次未建立客戶，請檢查後重新操作","err");
+    aiLog("有檔案同步失敗，本次未建立客戶","err");
     aiLogDone("同步未完成");
-    setStatus("部分檔案同步失敗，請重試");
+    setStatus("以下 "+failedFiles.length+" 個檔案同步失敗，客戶未建立");
+    const box=document.getElementById("summaryBox");
+    if(box){box.innerHTML='<div style="color:#ef4444;font-weight:700;margin-bottom:10px">失敗檔案：</div>'+failedFiles.map(n=>'<div style="color:#ef4444">✕ '+esc(n)+'</div>').join("")+'<div style="color:var(--mut);font-size:11px;margin-top:10px">請點右上角「停止上傳」後重新上傳</div>';}
     const mbox=document.querySelector("#modal .mbox");
-    if(mbox){const bar=document.createElement("div");bar.style.cssText="margin-top:18px;display:flex;justify-content:center;gap:10px";bar.innerHTML='<button class="btn" onclick="closeModal()">關閉</button>';mbox.appendChild(bar);}
-    toast("⚠️ 有檔案同步失敗，未建立客戶，請檢查後重新操作");
+    if(mbox){const bar=document.createElement("div");bar.style.cssText="margin-top:18px;display:flex;justify-content:center;gap:10px";bar.innerHTML='<button class="btn" style="background:#dc2626;color:#fff" onclick="closeModal()">關閉</button>';mbox.appendChild(bar);}
+    toast("⚠️ "+failedFiles.length+" 個檔案同步失敗，客戶未建立");
     return;
   }
   aiLog("全部檔案已同步並分析完成","ok");
