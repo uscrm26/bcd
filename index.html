@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l24";
+  var V="v20261102l25";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -171,7 +171,7 @@ tr:hover td{background:#1a2130}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .ccard .no{font-size:11px;color:var(--dim)}
 .noref{font-weight:400;font-size:9px;color:var(--mut);margin-left:4px;opacity:.8}
-.ccard .nm{font-size:14px;font-weight:700;color:var(--txt);margin-top:2px;overflow-wrap:break-word;word-break:break-word;max-width:100%}
+.ccard .nm{font-size:14px;font-weight:700;color:var(--txt);margin-top:2px;word-break:keep-all;overflow-wrap:normal;max-width:100%;line-height:1.3}
 .ccard .meta{font-size:11px;color:var(--mut);margin-top:6px;line-height:1.7}
 .ccard .meta b{color:var(--txt);font-weight:600}
 .ccard .foots{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center}
@@ -579,6 +579,10 @@ async function loadRepoData(){
       const savedAI={};
       (DATA.customers||[]).forEach(c=>{savedAI[c.no]={aiLastAt:c.aiLastAt,aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions};});
       ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
+      // 自動修復雙重編碼亂碼
+      const fixMoj=function(s){if(typeof s!=="string"||!s)return s;try{const f=decodeURIComponent(escape(s));if(/[\u4e00-\u9fff]/.test(f))return f;}catch(e){}return s;};
+      const fixDeep=function(o){if(Array.isArray(o))return o.map(fixDeep);if(o&&typeof o==="object"){for(const k in o)o[k]=fixDeep(o[k]);return o;}return fixMoj(o);};
+      fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);
       // 恢复 AI 状态
       (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
       // 雲端載入後補齊缺漏的 4 位 sysId，已有編號原樣保留
