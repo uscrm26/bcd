@@ -1133,7 +1133,7 @@ function renderFileList(){
   const el=document.getElementById("fileList");if(!el)return;
   el.innerHTML=window._pickedFiles.map((f,i)=>
     `<div style="padding:5px 8px;display:flex;justify-content:space-between;align-items:center;background:var(--bg);border-radius:6px;margin-bottom:4px">
-      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</span>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(displayFileName(f.name))}</span>
       <span style="color:#ef4444;cursor:pointer;margin-left:8px" onclick="event.stopPropagation();removePicked(${i})">✕</span>
     </div>`).join("");
 }
@@ -1348,6 +1348,27 @@ function fileSlug(name){
   if(/護照|passport/.test(n))return "passport"+suf;
   if(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(n))return "screenshot-"+n.slice(0,8)+suf;
   return "doc-"+Date.now().toString(36).slice(-4)+suf;
+}
+function displayFileName(fname){
+  if(!fname)return "";
+  const n=fname.toLowerCase();
+  const L=typeof LANG!=="string"?"zh":(LANG==="en"?"en":LANG==="cn"?"cn":"zh");
+  const ext=(fname.match(/\.([^.]+)$/)||["",""])[1];
+  const parts=fname.split(/[—–-]/);
+  let company=parts[0]||"";
+  if(company.length>30)company=company.slice(0,30);
+  let type="";
+  if(/driver-license-front|駕照正面|驾照正面/.test(n))type=L==="en"?"Driver License (Front)":L==="cn"?"驾照正面":"駕照正面";
+  else if(/driver-license-back|駕照背面|驾照背面/.test(n))type=L==="en"?"Driver License (Back)":L==="cn"?"驾照背面":"駕照背面";
+  else if(/member-photo|人像|人頭|人头/.test(n))type=L==="en"?"Member Photo":L==="cn"?"法人照片":"法人照片";
+  else if(/ein-letter|ein/.test(n))type=L==="en"?"EIN Letter":L==="cn"?"EIN 通知书":"EIN 通知書";
+  else if(/articles-of-organization|章程/.test(n))type=L==="en"?"Articles of Organization":L==="cn"?"公司章程":"公司章程";
+  else if(/filing-confirmation|申請|申请|通知書|通知书/.test(n))type=L==="en"?"Filing Confirmation":L==="cn"?"申请通知书":"申請通知書";
+  else if(/w9-form|w-?9/.test(n))type=L==="en"?"W-9 Form":L==="cn"?"W-9 表格":"W-9 表格";
+  else if(/passport|護照|护照/.test(n))type=L==="en"?"Passport":L==="cn"?"护照":"護照";
+  else if(/^[0-9a-f]{8}-[0-9a-f]{4}/.test(n)||/screenshot/.test(n))type=L==="en"?"Screenshot":L==="cn"?"截图":"截圖";
+  if(!type)return fname;
+  return (company?company+" - ":"")+type+(ext?"."+ext:"");
 }
 async function ghFetch(url,opts,timeoutMs){
   const ctrl=new AbortController();
@@ -1920,9 +1941,9 @@ function resolveFile(p){
 }
 function fileThumb(f){
   const url=resolveFile(f.path);
-  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(f.name)}"><img src="${url}" data-path="${encodeURIComponent(f.path)}" loading="lazy" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}"><div class="fcap">${esc(f.name)}</div></div>`;
+  if(f.type==="image")return `<div class="fthumb" onclick="openModalImg('${url}')" title="${esc(displayFileName(f.name))}"><img src="${url}" data-path="${encodeURIComponent(f.path)}" loading="lazy" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}"><div class="fcap">${esc(displayFileName(f.name))}</div></div>`;
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
-  return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
+  return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(displayFileName(f.name))}</div><div class="ft">${f.type==="pdf"?"PDF 文件":f.type==="text"?"文字文件":"附件"}</div></div><span class="sync ok">開啟</span></a>`;
 }
 function docList(no){
   const localList=(DATA.files||{})[no]||[];
@@ -1997,9 +2018,9 @@ async function loadStorageList(no){
     const imgs=files.filter(f=>/\.(jpe?g|png|webp|gif)$/i.test(f.name));
     const docs=files.filter(f=>!/\.(jpe?g|png|webp|gif)$/i.test(f.name));
     const thumb=f=>{const url=PUB+encodeURIComponent(no+"/"+f.name);const isImg=/\.(jpe?g|png|webp|gif)$/i.test(f.name);
-      if(isImg)return `<div class="fthumb" onclick="window.open('${url}')" title="${esc(f.name)}"><img src="${url}" loading="lazy"><div class="fcap">${esc(f.name)}</div></div>`;
+      if(isImg)return `<div class="fthumb" onclick="window.open('${url}')" title="${esc(displayFileName(f.name))}"><img src="${url}" loading="lazy"><div class="fcap">${esc(displayFileName(f.name))}</div></div>`;
       const ic=/\.pdf$/i.test(f.name)?"📄":"📎";
-      return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(f.name)}</div><div class="ft">${(f.metadata&&f.metadata.size?Math.round(f.metadata.size/1024)+" KB":"")}</div></div><span class="sync ok">開啟</span></a>`;};
+      return `<a class="docbox" href="${url}" target="_blank" rel="noopener"><span class="fi">${ic}</span><div><div class="fn">${esc(displayFileName(f.name))}</div><div class="ft">${(f.metadata&&f.metadata.size?Math.round(f.metadata.size/1024)+" KB":"")}</div></div><span class="sync ok">開啟</span></a>`;};
     box.innerHTML=(imgs.length?`<div class="fgrid">${imgs.map(thumb).join("")}</div>`:"")+`<div class="row r2">${docs.map(thumb).join("")||""}</div>`;
   }catch(e){box.innerHTML="<div class='empty'>雲端附件讀取失敗</div>";}
 }
@@ -3165,12 +3186,12 @@ function fileThumbDel(f,no,isAdmin){
   const ic=f.type==="pdf"?"📄":f.type==="text"?"📝":"📎";
   const pv=isImg?`<div class="pv" onclick="openModalImg('${url}')"><img src="${url}" data-path="${encodeURIComponent(f.path)}" loading="lazy" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}"></div>`:`<a class="pv" href="${url}" target="_blank" rel="noopener">${ic}</a>`;
   const dt=CUST_CREATED[no]||"—";
-  const cell=`${pv}<div class="fn">${esc(f.name)}</div><div class="meta">${dt} · 系統管理員上傳</div>`;
+  const cell=`${pv}<div class="fn">${esc(displayFileName(f.name))}</div><div class="meta">${dt} · 系統管理員上傳</div>`;
   if(!isAdmin)return `<div class="file-cell">${cell}</div>`;
   const acts=`<div style="display:flex;gap:4px;padding:0 6px 8px">
     <a class="btn small" style="text-decoration:none;flex:1;text-align:center" href="${url}" download>下載</a>
-    <button class="btn small" style="flex:1" onclick="moveFile('${no}','${esc(f.name)}')">轉存</button>
-    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(f.name)}')"title="刪除" style="flex:1">刪除</button></div>`;
+    <button class="btn small" style="flex:1" onclick="moveFile('${no}','${esc(displayFileName(f.name))}')">轉存</button>
+    <button class="btn small" style="flex:1;background:var(--err);color:#fff;border:none" onclick="delFile('${no}','${esc(displayFileName(f.name))}')"title="刪除" style="flex:1">刪除</button></div>`;
   return `<div class="file-cell">${cell}${acts}</div>`;
 }
 function moveFile(no,name){
