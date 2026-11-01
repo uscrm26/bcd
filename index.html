@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l32";
+  var V="v20261102l33";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2063,9 +2063,21 @@ function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=do
   addClientAudit(no,"狀態變更",old,st(nv).lb,reason);closeModal();render();toast("狀態已更新並記錄");}
 function openAssign(no){if(!(CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor")){toast("歸屬由主管分配");return;}
 const team=myTeamIds();team.delete(CURRENT_USER.id);
+const cust=DATA.customers.find(x=>x.no===no);
 if(team.size===0){openModal(`<h3>分配歸屬</h3><div style="padding:20px 0;text-align:center;color:var(--mut);font-size:14px">您沒有下線，無法使用分配歸屬功能。</div><div class="mrow"><button class="btn primary" onclick="closeModal()">確認</button></div>`);return;}
 const opts=USERS.filter(u=>u.active&&myTeamIds().has(u.id)).map(u=>`<option value="${u.id}" ${ownerMap[no]===u.id?"selected":""}>${u.nm}（${ROLE_LB[u.role]||u.role}）</option>`).join("");
-openModal(`<h3>分配歸屬 ｜ 客戶 ${no}</h3><div class="fg"><label>歸屬下線</label><select id="as_user">${opts}</select></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
+const ph=phSrc(no);
+const stt=st(cust.status);
+openModal(`<h3>分配歸屬</h3>
+<div style="display:flex;gap:14px;align-items:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:16px">
+  <img src="${ph}" style="width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--card)" onerror="this.style.visibility='hidden'">
+  <div style="flex:1;min-width:0">
+    <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:4px">${esc(cust.name)}</div>
+    <div style="font-size:12px;color:var(--mut)">法人 ${esc(cust.member)} · <span class="tag ${stt.cl}" style="font-size:11px">${stt.lb}</span></div>
+  </div>
+</div>
+<div class="fg"><label>歸屬下線</label><select id="as_user">${opts}</select></div>
+<div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmAssign('${no}')">確認分配</button></div>`);}
 function confirmAssign(no){const uid=document.getElementById("as_user").value;const old=ownerName(no);ownerMap[no]=uid;const u=USERS.find(x=>x.id===uid);const c=DATA.customers.find(x=>x.no===no);
   const key=NO2KEY[no];
   if(key)upsertOwnership({client_key:key,client_name:c.name,owner:uid,status:st(c.status).lb});
@@ -3138,9 +3150,17 @@ function recentMailsForCustomer(cust, days){
 }
 async function aiAnalyzeCustomer(no){
   const cust=DATA.customers.find(x=>x.no===no);if(!cust)return;
+  // 右下角彈窗
+  let aw=document.getElementById("aiSyncWin");if(aw)aw.remove();
+  aw=document.createElement("div");aw.id="aiSyncWin";
+  aw.style.cssText="position:fixed;bottom:20px;right:20px;width:380px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
+  aw.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">AI 跟進分析</span><button onclick="this.closest('#aiSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="aiProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
+  document.body.appendChild(aw);
+  const log=document.getElementById("aiProgress");
+  const aSay=(t,cl,id)=>{let d=id?document.getElementById(id):null;if(!d){d=document.createElement("div");d.style.cssText="margin-bottom:6px;color:"+(cl||"var(--text)");if(id)d.id=id;log.appendChild(d);}d.innerHTML=t;log.scrollTop=log.scrollHeight;};
+  aSay('<span class="spin"></span>正在統計跟進數據、調取郵件與檔案…',"var(--mut)","ai_p1");
   const prog=document.getElementById("aiProgress_"+no);
   const res=document.getElementById("aiResult_"+no);
-  if(prog){prog.style.display="block";prog.innerHTML="<div style='color:#8b5cf6;font-size:13px'>🤖 AI 正在統計跟進數據、調取郵件與檔案，請稍候…</div>";}
   if(res)res.style.display="none";
   try{
     const dom=cust.mail?cust.mail.split("@")[1].toLowerCase():"";
@@ -3152,6 +3172,7 @@ async function aiAnalyzeCustomer(no){
     const brokerReplied=allMails.some(e=>/broker|bond|quota|premium|approval|issued|審批|報價|出單/i.test((e.sub||"")+(e.body||"")));
     const files=((DATA.files||{})[no]||[]).map(f=>f.name||f.nm).slice(0,15);
     const status=st(cust.status);
+    aSay('<span class="spin"></span>已讀取 '+totalReceived+' 封來信、'+sentCount+' 封已發郵件、'+files.length+' 份附件，正在調用 AI 分析…',"var(--mut)","ai_p1");
     let progressNote="";
     if(totalReceived===0&&sentCount===0)progressNote="此客戶尚未有任何來往郵件，屬全新線索，需主動開發。";
     else if(unreadCount>0)progressNote="有 "+unreadCount+" 封未處理郵件，需立即回覆。";
@@ -3195,9 +3216,10 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
 每個欄位精簡，summary 不超過 60 字，next_actions 最多 3 條，每條不超過 30 字。`;
     const out=await callAI(sys,ctx);
     let j={};try{j=JSON.parse(out.replace(/```json|```/g,"").trim());}catch(e){j={summary:out.slice(0,200),next_actions:[]};}
-    if(prog)prog.style.display="none";
+    const sumTxt=j.summary_zh_hk||j.summary_zh||j.summary||"AI 分析已完成";
+    aSay("✓ AI 分析完成","#22c55e","ai_p1");
+    aSay('<div style="font-size:13px;line-height:1.7;margin:4px 0">'+esc(sumTxt)+"</div>"+(j.status_suggest?'<div style="font-size:12px;margin:4px 0">建議狀態：<span class="tag t-blue">'+esc(j.status_suggest)+"</span></div>":"")+(j.risk?'<div style="font-size:12px;color:#f87171;margin-top:4px">⚠️ '+esc(j.risk)+"</div>":""),"var(--text)","ai_result");
     if(res){res.style.display="block";
-      const sumTxt=j.summary_zh_hk||j.summary_zh||j.summary||"AI 分析已完成，可前往歷史記錄查看。";
       res.innerHTML=`<div style="font-size:12px;color:#8b5cf6;font-weight:700;margin-bottom:8px">🤖 AI 跟進分析結果</div>
       <div style="font-size:13px;line-height:1.8;margin-bottom:10px">${esc(sumTxt)}</div>
       ${j.status_suggest?`<div style="font-size:12px;margin-bottom:8px">建議狀態：<span class="tag t-blue">${esc(j.status_suggest)}</span></div>`:""}
