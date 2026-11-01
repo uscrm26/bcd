@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l8";
+  var V="v20261102l9";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2067,7 +2067,7 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
  const dom=c&&c.mail?c.mail.split("@")[1].toLowerCase():"";
  const mails=dom?(DATA.emails||[]).filter(e=>(e.from||"").toLowerCase().includes(dom)):[];
  const mailRows=mails.map(e=>({e:"email",src:mailDirLabel(e),tt:e.sub,tm:e.t||"",tx:e.body?e.body.slice(0,200):"",key:"m_"+e.t}));
- const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||"跟進",tt:x.txt||"",tm:x.t||"",tx:x.detail||"",key:x.key||""}));
+ const tsRows=ts.map(x=>({e:(x.who&&x.who.indexOf("AI")>=0)?"ai":"note",src:x.who||x.src||"跟進",tt:x.txt||x.tt||"",tm:x.t||x.tm||"",tx:x.detail||x.tx||"",key:x.key||""}));
  const all=tsRows.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
  const f=window._tlFilter||"all";
  const filtered=f==="ai"?all.filter(t=>t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
