@@ -2764,14 +2764,17 @@ async function syncRecycleFromCloud(){
     const restores=await sbReq("audit_logs","GET",null,"?select=*&action=eq.cust_restore&order=created_at.desc&limit=200");
     const restoredNos=new Set((restores||[]).map(r=>String(r.target_client)));
     const now=Date.now();
+    const seenNos=new Set(RECYCLE_BIN.map(r=>String(r.cust.no)));
     (dels||[]).forEach(d=>{
       if(restoredNos.has(String(d.target_client)))return;
       let detail={};try{detail=JSON.parse(d.detail||"{}");}catch(e){}
       if(!detail.cust)return;
       if(detail.expiresAt&&detail.expiresAt<now)return;
-      if(RECYCLE_BIN.find(r=>String(r.cust.no)===String(detail.cust.no)))return;
+      if(seenNos.has(String(detail.cust.no)))return;
+      seenNos.add(String(detail.cust.no));
       RECYCLE_BIN.push({cust:detail.cust,timeline:detail.timeline||[],clientAudit:detail.clientAudit||[],deletedAt:detail.deletedAt||Date.now(),expiresAt:detail.expiresAt||now+30*86400e3});
     });
+    RECYCLE_BIN=RECYCLE_BIN.filter((r,i,arr)=>arr.findIndex(x=>String(x.cust.no)===String(r.cust.no))===i);
     saveRecycleBin();
   }catch(e){}
 }
@@ -2781,6 +2784,7 @@ function renderRecycleBin(){
     if(r.expiresAt<now){return false;}
     return true;
   });
+  RECYCLE_BIN=RECYCLE_BIN.filter((r,i,arr)=>arr.findIndex(x=>String(x.cust.no)===String(r.cust.no))===i);
   saveRecycleBin();
   syncRecycleFromCloud().then(()=>{const el=document.getElementById("recycleBinList");if(el)el.outerHTML=renderRecycleBin();});
   if(!RECYCLE_BIN.length)return '<div id="recycleBinList" class="empty">回收站為空</div>';
