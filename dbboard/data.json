@@ -1,1591 +1,1 @@
-{
-  "daily": [
-    {
-      "date": "11/02 04:27",
-      "work": "GitHub Actions 自動巡查 04:27，15 個信箱連線完成",
-      "output": "auto"
-    },
-    {
-      "date": "11/01 20:48",
-      "work": "GitHub Actions èªåå·¡æ¥ 20:48ï¼15 åä¿¡ç®±é£ç·å®æ",
-      "output": "auto"
-    },
-    {
-      "date": "10/31 16:10",
-      "work": "å®æå·¡æ¥ 15 åä¿¡ç®±å¨é¨æåé£ç·ï¼æ°éµä»¶ 0 å°ï¼å¤ç¼ä½åå¾å·è¡ã",
-      "output": "15/15 okï¼0 æ°ä¿¡"
-    },
-    {
-      "t": "10/31 05:12",
-      "txt": "å·¡æ¥ 15/15 ä¿¡ç®±æåï¼æ°ä¿¡ 0 å°ï¼ç¡å®¢æ¶åéµ"
-    },
-    {
-      "t": "10/31 04:11",
-      "txt": "å·¡æ¥ 15/15 ä¿¡ç®±æåï¼æ°ä¿¡ 2 å°ï¼Nervaqon è£ä»¶å¬ä¿ãHuntington è¢« Clearit å©æ"
-    },
-    {
-      "t": "10/31 03:11",
-      "txt": "å·¡æ¥ 15/15 ä¿¡ç®±æåï¼æ°ä¿¡ 5 å°ï¼Nervaqon è£ä»¶ãKervalonix 2 å°ãLeidos 2 å°"
-    },
-    {
-      "t": "10/31 02:12",
-      "txt": "å·¡æ¥ 15/15 ä¿¡ç®±æåï¼æ°ä¿¡ 2 å°ï¼Home Depot æ¶å° GLCHB å©å°æ­£é¢åè¦ï¼"
-    },
-    {
-      "t": "10/31 02:10",
-      "txt": "æ¹éå·åéç¼ä¿¡ï¼æåç¼åº 89 å°ï¼7 æ¶è¼ªè©¢ï¼JELD-WEN ä¿¡ç®±èªè­å¤±æ 15 å°"
-    },
-    {
-      "t": "10/31 01:13",
-      "txt": "å·¡æ¥ 15/15 ä¿¡ç®±é£ç·æåï¼æ°ä¿¡ 0 å°ï¼ç¡éè¦åè¦"
-    },
-    {
-      "date": "10 æ 31 æ¥é±å­ 00:11",
-      "clients": "15 ç®±å¨å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼IMAP SSL 993 é£ç· 15 åä¿¡ç®±å¨é¨æåï¼æ°ä¿¡ 0 å°ï¼å¤ç¼ä½å pending=0ï¼ç¡å¾ç¼ï¼notes.json ç¡æªåæ­¥åè¨»ã",
-      "output": "15/15 å¨ç¶ ï¼ç¡æ°ä¿¡ï¼ç¡éç«å³è·é²"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 23:12",
-      "clients": "15 ç®±å¨å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼IMAP SSL 993 é£ç· 15 åä¿¡ç®±å¨é¨æåï¼æ°ä¿¡ 0 å°ï¼å¤ç¼ä½å pending=0ï¼ç¡å¾ç¼ã",
-      "output": "15/15 å¨ç¶ ï¼ç¡æ°ä¿¡ï¼ç¡éç«å³è·é²"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 22:16",
-      "clients": "15 ç®±å¨å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼IMAP SSL 993 é£ç· 15 åä¿¡ç®±å¨é¨æåï¼æ°ä¿¡ 0 å°ï¼å¤ç¼ä½ååæ­¥æª¢æ¥ã",
-      "output": "15/15 å¨ç¶ ï¼ç¡æ°ä¿¡ï¼ç¡éç«å³è·é²"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 21:34",
-      "clients": "15 ç®±å¨å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼IMAP SSL 993 é£ç· 15 åä¿¡ç®±å¨é¨æåï¼æ°ä¿¡ 0 å°ï¼å¤ç¼ä½ååæ­¥æª¢æ¥ã",
-      "output": "15/15 å¨ç¶ ï¼ç¡æ°ä¿¡ï¼ç¡éç«å³è·é²"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 03:20",
-      "clients": "7 ç®±å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ 12 åä¿¡ç®±ï¼Home DepotãHoneywellãKontoor ä¸ç®±èªè­å¤±æï¼æ°ä¿¡ 8 å°ãKervalonix æ¶ RPS Joe Allen æ­£é¢åè¦ï¼å¯æ¿åï¼éç³è«è¡¨ãå¬å¸è²¡å ±èåäººè²¡åï¼å¯©æ ¸ 2-3 åå·¥ä½å¤©ï¼JELD-WEN Trinity Carmen å©æç¨ç« bondï¼åªçµ¦èªå·±æ¸éå®¢æ¶åï¼Lennar Bluebird Emily åæ¨£å©æï¼å¶é¤çºä¼åãéä¼ãç¢åè½ä»èèªåç¢ºèªä¿¡ãä½å 1 å° Immunora æ¸¬è©¦ä¿¡å·²å³æå¯åº",
-      "output": "8 å°å·²è®å­æªï¼Kervalonix çºææé²å±ï¼å¾åè²¡å ±å¾åè¦ï¼2 å°å©æè¨éå¨æ¡"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 03:17",
-      "clients": "7 ç®±è¼ªç¼ï¼Huntington / JELD-WEN / Kervalonix / L3Harris / Laureate / Leidos / Lennar",
-      "work": "7 åå¯ç»å¥ä¿¡ç®±åç¼ 15 å°å·®ç°åç ´å°ä¿¡è³ 105 å®¶äºä¸éè¤ç brokerï¼è¼ªèåç®±ãæ¯å°éé 30 ç§ãå®æ¶ä»¶äººç¡ Cc/Bccï¼ç¾å¼è±ææ­£æï¼å¨é¨ sent é¶å¤±æï¼Home DepotãHoneywellãKontoor ä¸ç®±èªè­å¤±ææªç¼",
-      "output": "105/105 æåï¼æ¼æç´¯è¨è³ 230ï¼æç´°è¦ send_log_batch2.json"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 01:13",
-      "clients": "Pebblehome",
-      "work": "æ¶å° E.C. Ferrer CHBï¼Irene Mahiposï¼åè¦ãRE: Bond for Long Beach Entriesãï¼broker è¿½åè²¨ç©åé¡ï¼commodityï¼èåºè²¨åè½å¦åå ± ISFï¼å¾æååè¦ååè³è¨è ISF æç¨å¾åè«é£çº bond å§è¨­",
-      "output": "1å°æ°ä¿¡å¥ emails.jsonï¼åè¦è¨ 8ï¼éæ¬åè¦æä¾ commodity è ISF å®æ"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 00:24",
-      "clients": "å¨é¨5ç®±å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼é£ç· ImmunoraãOlivewareãPebblehomeãSagewareãNervaqon äºåéµç®±ï¼æ°ä¿¡4å°ãImmunora æ¶å° Importivity Tanner å®¢æ°£æ¶å°¾ï¼Pebblehome æ¶å° Assured CHB å©å°ç³»çµ±ç¢ºèªä¿¡è Julianachb ä¼ååè¦ï¼åçºèªåæå®¢å¥ä¿¡ï¼ç¡å¯¦è³ªå ±å¹å¥è³¬æå©æ",
-      "output": "4å°å·²å¥ emails.json ä¸¦æ¨å·²è®ï¼ç¡éç«å³è·é²"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å 23:50",
-      "clients": "Nervaqon",
-      "work": "å¾ christianjgpunzalan@nervaqon.live å®ç¼ 15 å°å·®ç°åéç¼ä¿¡è³ 15 å®¶å ±éè¡ï¼æ¯å°é¨æ©éé 40-90 ç§ï¼å®æ¶ä»¶äººç¡ Cc/Bccï¼å¨é¨ sent é¶å¤±æ",
-      "output": "15/15 æåï¼æ¼æç´¯è¨è³ 125"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å 23:05",
-      "clients": "Pebblehome",
-      "work": "å¾ christopherhodge@pebblehomeinc.com å®ç¼ 15 å°å·®ç°åéç¼ä¿¡è³ 15 å®¶å ±éè¡ï¼æ¯å°é¨æ©éé 40-90 ç§ï¼å®æ¶ä»¶äººç¡ Cc/Bccï¼å¨é¨ sent é¶å¤±æ",
-      "output": "15/15 æå"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å 21:27",
-      "clients": "å¨é¨5ç®±å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼é£ç· ImmunoraãOlivewareãPebblehomeãSagewareãNervaqon äºåéµç®±ï¼ä»æ¥æ°ä¿¡0å°ï¼å¨éæ¨é¡æ¯å°ç¡éºæ¼ï¼å©æ¢éç¼åå¿å·²è®åå­æª",
-      "output": "ç¡æ°ä¿¡ï¼ç¡éè·é²"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å 20:30",
-      "clients": "å¨é¨5ç®±å·¡æ¥",
-      "work": "æ¯å°æå®æå·¡æ¥ï¼é£ç· ImmunoraãOlivewareãPebblehomeãSagewareãNervaqon äºåéµç®±ï¼ä»æ¥æ°ä¿¡0å°ï¼å¨éæ¨é¡æ¯å°ç¡éºæ¼ï¼notes.json ç¡å¾å¸æ¶åè¨»",
-      "output": "ç¡æ°ä¿¡ï¼ç¡éè·é²"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å",
-      "clients": "Immunora",
-      "work": "å¬å¸ç¨±å·²ä»æ¬¾ä¸¦æä¾Stripeæ¶æ1953-1682ï¼795.60 USDï¼VISA-1573ï¼10/29 02:24:38 UTCï¼å°æINV-5542ï¼èåINV-5533èç¢¼æå·®ç°ï¼ï¼19:33å·²å»ä¿¡BorderBuddyæ ¸å¯¦ç¼ç¥¨èå·®ç°èå¥è³¬ï¼bondå°æªåºå·",
-      "output": "æ ¸å¯¦éµä»¶å·²ç¼ service@borderbuddy.comï¼ç­å¾åè¦ç¢ºèªå¥è³¬å¾å¬ä¿åºbond"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å",
-      "clients": "Oliveware",
-      "work": "åè¦IIA/DRI/Aurora/BorderBuddyåå®¶brokerï¼æäº¤ç°½å¥½çBluebird POAé²å£è¡¨æ ¼",
-      "output": "4å°åè¦+1å°éä»¶éµä»¶ç¼éå®æ"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å",
-      "clients": "Sageware",
-      "work": "é¦è¼ª15å°å·®ç°åéç¼ä¿¡éå°ç¼éå®æ",
-      "output": "æ¯å°éé1åéï¼å¨é¨æåéé"
-    },
-    {
-      "date": "10 æ 29 æ¥é±å",
-      "clients": "Nervaqon",
-      "work": "å¡«å¯«å®æ´CBPç³è«è¡¨åè¦SPG Anova",
-      "output": "ç­å¾å°æ¹å ±å¹"
-    },
-    {
-      "date": "10 æ 30 æ¥é±äº 16:37",
-      "clients": "å¨é¨15ç®±",
-      "work": "å®æå·¡æ¥ï¼éæ¶é£ç· mail.pony-it.com IMAP 993 æª¢æ¥æ°éµä»¶ï¼ä¸¦æ¥å¤ç¼ä½å",
-      "output": "15ç®±å¨é¨é£ç·æåï¼æ°éµä»¶0å°ï¼å¤ç¼ä½åå¾å¯0å°ï¼ç¡éè¦åè¦"
-    },
-    {
-      "date": "10 æ 31 æ¥é±å­ 12:39",
-      "clients": "å¨é¨15ç®±",
-      "work": "å®æå·¡æ¥ï¼éæ¶é£ç· mail.pony-it.com IMAP 993 æª¢æ¥æ°éµä»¶ï¼ä¸¦æ¥å¤ç¼ä½å",
-      "output": "15ç®±å¨é¨é£ç·æåï¼æ°éµä»¶0å°ï¼å¤ç¼ä½åå¾å¯0å°ï¼ç¡éè¦åè¦"
-    }
-  ],
-  "policy": [
-    {
-      "title": "ä¸ãå®¢æ¶å°æ¥èèçæµç¨",
-      "body": "ææå®¢æ¶ä¸è«æ¯å¦å·²é²å¥å°æ¥éæ®µï¼ä¸å¾çµ±ä¸è·é²ãæªå°æ¥éæ®µåå®ææææ­¸æªèçæç¢ºèªï¼ç¢ºèªæ¯å¦éè¦è£ä»¶ãéè¦è£ä»¶çå®¢æ¶æ¨è¨çºå¾è£ä»¶ï¼å¾çºè·é²ç´å°ææé½å¨ãææé½å¨çå®¢æ¶æ¨è¨çºå¯ååï¼ååéç¼ä¿¡æµç¨ã"
-    },
-    {
-      "title": "äºãéµä»¶ç¼éèé¤èç­ç¥",
-      "body": "ä»¥é¤èçºç®çï¼æ¯å¤©æ¯åéµç®±é¦è¼ªç¼é 10 å°å·®ç°åéç¼ä¿¡ãæ¬¡æ¥å°æªåè¦çè³¬æ¶è¿½ç¼ï¼åæ¨£ 10 å°çºä¸è¼ªãéµä»¶å§å®¹åèå·²æåæ¡ä¾çéå ´æ¹å¼ï¼ä½æ¯å°ææ¡åä¸ç¸åï¼é¿åæ©æ¢°æãå·²åè¦çè³¬æ¶ç«å³åæ­¢ç¾¤ç¼ï¼è½å¥ä¸å°ä¸è·é²ã"
-    },
-    {
-      "title": "ä¸ãæåº¦ç®æ¨",
-      "body": "æ¯ææåç²å¾æµ·éæä¿æä»¶ä¸å°æ¼ 30 å®¶ãå¨èçå®¢æ¶ä¸å°æ¼ 5 å®¶å¨éã"
-    },
-    {
-      "title": "åãçæé¡è²æ¨è¨»",
-      "body": "å®¢æ¶çæåç´ï¼ç´è²å¾è£ä»¶ãèè²å¯ååãé»è²æ¯ä»ç¢ºèªä¸­ãç¶ è²å·²å®æãå ±éç¶ç´è³æºæ± äºç´ï¼ç°è²æªè¯ç¹«ãèè²å·²ç¼ä¿¡ãç¶ è²å·²åè¦ãæ·±ç¶ è²å·²åä½ãç´è²å·²ééãå·²åä½ä»£è¡¨ææåå°æ¥è¨éï¼ä¸ç­åæ¼å®¢æ¶ bond æäº¤ã"
-    },
-    {
-      "title": "äºãç­å¾åè¦å¤å®è¦å",
-      "body": "å¾ä¸åå®¢æ¶éµç®±ååä¸å ±éç¶ç´ç¼ééç¼ä¿¡ï¼ç´¯è¨é 3 åå·¥ä½æ¥ä»æªæ¶å°åè¦ï¼å³å¤å®çºä¸åè¦ãè¨ç®å·¥ä½æ¥æèªåæé¤ç¾åè¯é¦åæåé±æ«ãå¤å®ä¸åè¦å¾æ¨è¨çºå·²ééï¼ä¸åç¹¼çºè·é²ãæ¯æ¬¡ç¼ä¿¡ååææ­¤è¦åç¯©é¸åå®ï¼é¿åæµªè²»ç²¾åå¨ç¡åè¦æé¡çå°åä¸ã"
-    }
-  ],
-  "companyDocs": [
-    {
-      "name": "è±æå©çå·¥ä½åé ç¥",
-      "path": "docs/company/è±æå©ç å·¥ä½åé¡»ç¥.xlsx",
-      "desc": "èªªæè±æå©ççå·¥ä½è·è²¬ãç³è«bondæéæææ¸å®ãè¼å©ææè¦æ±ï¼ä»¥åä¸ç´ä¸»ç®¡åå·¥ã"
-    },
-    {
-      "name": "å·ååå¤å¼è©±è¡æå",
-      "path": "docs/company/å·å¯å¨å¤å¼-åä»¶åå®¹è¯æ¯æå.docx",
-      "desc": "éç¼ä¿¡è©±è¡ç¯æ¬ï¼åå«ä¸åå ´æ¯çéå ´ãè·é²ãçµå°¾æ¨¡æ¿ï¼ç¨æ¼å·®ç°åç¾¤ç¼ã"
-    },
-    {
-      "name": "è²¡åç¯æ¬ï¼Havorynï¼",
-      "path": "docs/company/ç¯æ¬%20Havoryn_Personal_Financial_DRAFT_ESTIMATED_v2.pdf",
-      "desc": "å®¢æ¶è²¡åçæ³è©ä¼°ç¯æ¬ï¼ç¨æ¼ç³è«bondæçè²¡åè³æåèã"
-    },
-    {
-      "name": "å ±éè¡èæä¿å¬å¸åå®",
-      "path": "docs/company/Customs%20broker%26%20Bond%20broker.xlsx",
-      "desc": "å®æ´çå ±éè¡èæä¿å¬å¸è¯çµ¡åå®ï¼åå«å¬å¸åãå°åãé»è©±ãéµç®±ã"
-    }
-  ],
-  "todos": [
-    {
-      "client": "Nervaqon LLC",
-      "level": "high",
-      "tag": "2å®¶brokerå·²åè¦å¾åè¦",
-      "time": "10/28 23:10",
-      "body": "å©å®¶æä¿å¬å¸é½å·²ç¼ä¾å ±å¹è¦æ±ï¼éè¦æ´çææåè¦ãSurety One è¦ç³è«è¡¨ãåäººè²¡åå ±è¡¨ãå¬å¸è²¡å ±ãCBPå¾ä¾ãåå¾é·èªªæï¼SPG Anova Marine å·²ç¼ç³è«è¡¨ï¼å¡«å®åè¦ã",
-      "ai": "å©å®¶é½æ¯é«æåç·ç´¢ï¼åªåèçãç¬¬ä¸æ­¥ååè¦å©å®¶ç¢ºèªæ¶å°ï¼åè¨´å®¢æ¶æææºåä¸­ï¼ç´3åå·¥ä½æ¥å§æä¾ãç¬¬äºæ­¥æ Nervaqon ç EINãç« ç¨ãè²¡åæææ´çé½å¨ï¼å¡«å°æ¹ç³è«è¡¨ç¼åå»ã"
-    },
-    {
-      "client": "Immunora Bio LLC",
-      "level": "mid",
-      "tag": "å·²ä»æ¬¾å¾åºbond",
-      "time": "10/29 è·é²",
-      "body": "å¬å¸ç¨±å·²ä»æ¬¾ä¸¦æä¾ Stripe æ¶æ1953-1682ï¼795.60 USDï¼VISA-1573ï¼10/29 02:24:38 UTCï¼å°æç¼ç¥¨ INV-5542ï¼å INV-5533 èç¢¼æå·®ç°éæ ¸å¯¦ãéµç®±å°æªæ¶å°æ¶æï¼bond æä¿æä»¶å°æªåºå·ï¼å¾å BorderBuddy ç¢ºèªå¥è³¬ä¸¦å¬ä¿åºä¿ã"
-    },
-    {
-      "client": "Kervalonix LLC",
-      "level": "mid",
-      "tag": "RPSæ­£é¢åè¦å¾åæ",
-      "time": "10/30 03:20",
-      "body": "RPS Joe Allen åè¦å¯æ¿åï¼éç³è«è¡¨ãå¬å¸è³ç¢è² åµè¡¨èæçè¡¨ãåäººè²¡åï¼2-3 åå·¥ä½å¤©å¯©æ ¸ï¼å¾åé½å¾åè¦ã"
-    },
-    {
-      "client": "Pebblehome LLC",
-      "level": "low",
-      "tag": "ç­å¾å®¢æ¶è£ä»¶",
-      "time": "10/28 19:15",
-      "body": "ä½å·é§ç§10/20éæï¼EIN åå­ ROBIM è ROBIN æ¼å¯«ä¸ä¸è´ï¼å·²è½ä¸æ¸¸åäºï¼ç­å¾å®¢æ¶è£æ°ææï¼ECF å commodity è ISF å®æã"
-    }
-  ],
-  "archive": [
-    {
-      "name": "å¤ç¼éµä»¶å¾ä¾ç¸½å¸³",
-      "path": "docs/å¤ç¼éµä»¶å¾ä¾ç¸½å¸³.pdf",
-      "desc": "ç´¯è¨å¤ç¼éç¼ä¿¡èå¾ä¾æç´°ï¼å«å®¢æ¶åçµèéäººè¨éã",
-      "date": "2026/10/29"
-    }
-  ],
-  "timeline": {
-    "2": [
-      {
-        "e": "note",
-        "tt": "測試內容",
-        "tm": "11/2 03:29",
-        "who": "📝 Kevin W",
-        "src": "📝 Kevin W",
-        "tx": "我也不太確定，因為這部分內容我也不清楚該怎麼處理，所以想看看如何能做得更好一些。請分析一下他的客戶是否已有跟進，因為一直都沒有下 bond。",
-        "txCn": "我也不太确定，因为这部分内容我也不清楚该怎么处理，所以想看看如何能做得更好一些。请分析一下他的客户是否已有跟进，因为一直都没有下 bond。",
-        "txEn": "I’m not entirely sure either, because I’m also unclear on how to handle this part, so I’d like to see how it can be done better. Please analyze whether his client has already followed up, because no bond has been placed the whole time.",
-        "key": "note_1793561389072"
-      },
-      {
-        "e": "email",
-        "tt": "BorderBuddy ä»æ¬¾å·²å¥å¸³ç¢ºèª",
-        "tm": "10/30 05:14",
-        "src": "ð© docs.usa@borderbuddy.com",
-        "tx": "Laura Rucker / Tanya 回覆發票號碼不符但款項已應用，Bond 申請流程推進中，待補差額說明。"
-      },
-      {
-        "e": "auto",
-        "tt": "Importivity ä¾ä¿¡è¿½è¹¤é¦ç¥¨åºè²¨",
-        "tm": "10/29 21:36",
-        "src": "ð© info@importivity.com",
-        "tx": "Re: Setting Up A Bond For Our First Shipment，需回覆時程。"
-      },
-      {
-        "e": "email",
-        "tt": "gowithknown Gabrielle ç¢åè½ä»",
-        "tm": "10/26 17:37",
-        "src": "ð© Gabrielle@gowithknown.com",
-        "tx": "自動回覆，一般事務改 Dylan dylan@gowithknown.com，會計 accounting@gowithknown.com。"
-      }
-    ],
-    "3": [
-      {
-        "e": "reject",
-        "tt": "Just Your Broker å©æ",
-        "tm": "10/29 18:09",
-        "src": "ð© hello@justyourbroker.com",
-        "tx": "回覆不做新 LLC 獨立 bond，標已關閉。"
-      },
-      {
-        "e": "email",
-        "tt": "Bluebird Emily é¡é¨é²å£å°è£",
-        "tm": "10/28 17:05",
-        "src": "ð© emily@bluebirdchb.com",
-        "tx": "願意隨 Oliveware 自己的進口封裝做，不做獨立零售 bond。"
-      },
-      {
-        "e": "email",
-        "tt": "Aurora Customs Allison åè¦",
-        "tm": "10/28 10:06",
-        "src": "ð© allison@auroracustomsbroker.com",
-        "tx": "Re: new CA importer, bond question，待跟進。"
-      }
-    ],
-    "5": [
-      {
-        "e": "email",
-        "tt": "E.C. Ferrer Irene è¿½åååè ISF",
-        "tm": "10/30 01:13",
-        "src": "ð© irene@ecferrer.com",
-        "tx": "Re: Bond for Long Beach Entries，需告知貨物品類與出貨前 ISF 時程，再談連續 bond 內設。"
-      },
-      {
-        "e": "auto",
-        "tt": "Assured CHB / Juliana James èªååè¦",
-        "tm": "10/29 15:43",
-        "src": "ð© inquiry@assured / r.james@julianachb.com",
-        "tx": "均為自動回覆，待真人接手。"
-      }
-    ],
-    "8": [
-      {
-        "e": "email",
-        "tt": "SPG Anova åè¦è©¢å¹",
-        "tm": "10/27 19:47",
-        "src": "ð© bonds@anovamarine.com",
-        "tx": "RE: Inquiry About Obtaining Customs Bond for Nervaqon，待補公司資料。"
-      },
-      {
-        "e": "email",
-        "tt": "SuretyOne åè¦",
-        "tm": "10/24 23:28",
-        "src": "ð© StaffUnderwriters@suretyone.com",
-        "tx": "Re: Inquiry，已進入保險公司流程。"
-      }
-    ],
-    "61": [
-      {
-        "e": "auto",
-        "tt": "Lexington Mark ä¼åè³ 11/2",
-        "tm": "10/29 18:25",
-        "src": "ð© mholtschneider@lexington",
-        "tx": "自動回覆休假中，急件打 410-625-0800，無指定轉介人。"
-      }
-    ],
-    "64": [
-      {
-        "e": "reject",
-        "tt": "Trinity Carmen å©æç¨ç« bond",
-        "tm": "10/29 15:14",
-        "src": "ð© carmen@trinitycb.com",
-        "tx": "Re: Who handles bond setup，只給自己清關客戶做，不做獨立 bond。"
-      }
-    ],
-    "66": [
-      {
-        "e": "email",
-        "tt": "RPS Joe Allen è¦æ±è£äº¤è²¡åæä»¶",
-        "tm": "10/29 16:20",
-        "src": "ð© joe_allen@rpsins.com",
-        "tx": "要求公司資產負債表、損益表、個人財務表、Bond 申請表，2-3 工作天審核。"
-      },
-      {
-        "e": "note",
-        "tt": "åäººè²¡åè¡¨å·²å¡«å¦¥",
-        "tm": "10/30 12:43",
-        "src": "📝 手動",
-        "tx": "按已婚未聯合、美國中產數值填妥 Personal Financial，待回覆 RPS。"
-      },
-      {
-        "e": "doc",
-        "tt": "Bond ç³è«è¡¨èç¨¿å·²çæ",
-        "tm": "10/30 12:44",
-        "src": "AI 草稿",
-        "tx": "Customs App 填答版已生成，HTS 編碼與進口額為中產佔位，待依真實貨品調整。"
-      }
-    ],
-    "69": [
-      {
-        "e": "auto",
-        "tt": "Miami Valley Sandy Duncan éä¼è½ä»",
-        "tm": "10/29 18:27",
-        "src": "ð© sduncan@miamivalleyworldwide.com",
-        "tx": "自動回覆退休，改聯絡 Denise Shirk dshirk@miamivalleyworldwide.com。"
-      }
-    ],
-    "71": [
-      {
-        "e": "auto",
-        "tt": "Leavitt Alan Anderson éä¼è½ä»",
-        "tm": "10/29 18:36",
-        "src": "ð© alan-anderson@leavitt.com",
-        "tx": "自動回覆退休，憑證事宜改 Teresa Deoliveira teresa-deoliveira@leavitt.com，一般來電 801-566-7272。"
-      }
-    ],
-    "73": [
-      {
-        "e": "email",
-        "tt": "Crystal Boomhower ä¾åé£çº bond",
-        "tm": "10/30 06:15",
-        "src": "ð© crystalboomhower@hotmail.com",
-        "tx": "主動來信 Continuous Bond，待回報價與所需材料。"
-      }
-    ],
-    "75": [
-      {
-        "e": "email",
-        "tt": "SuretyOne å lead time",
-        "tm": "10/29 16:35",
-        "src": "ð© StaffUnderwriters@suretyone.com",
-        "tx": "Re: Bond lead time before first entry，待回覆首票時程。"
-      },
-      {
-        "e": "reject",
-        "tt": "Bluebird Emily ä¸åç¨ç« bond",
-        "tm": "10/29 14:42",
-        "src": "ð© emily@bluebirdchb.com",
-        "tx": "只做自己清關客戶，不做獨立 retail bond。"
-      },
-      {
-        "e": "auto",
-        "tt": "Propeller Bonds èªåç¢ºèª",
-        "tm": "10/29 18:42",
-        "src": "ð© support@propellerbonds.com",
-        "tx": "24 小時內人工回覆。"
-      }
-    ],
-    "89": [
-      {
-        "e": "email",
-        "tt": "A1 Worldwide Angely åæ³å¾æä»¶",
-        "tm": "10/22 19:17",
-        "src": "ð© angely@a1wwl.com",
-        "tx": "Re: Legal documents for application of US custom bond，待補 POA 與公司文件。"
-      }
-    ],
-    "93": [
-      {
-        "e": "doc",
-        "tt": "å®¢æ¶å¨å¥æææ­¸æª",
-        "tm": "10/30 12:33",
-        "src": "系統自動",
-        "tx": "EIN 43-2215896、CA Entity B20260438027、公司地址 USPS 驗證通過。發現佛州駕照 H320-116-96-380-0 於 2026/10/20 到期，列為待補件。"
-      },
-      {
-        "e": "auto",
-        "tt": "èèå®¢æ¶ Pebblehome åä¸å¯¦éåçäºº",
-        "tm": "10/30 11:50",
-        "src": "系統自動",
-        "tx": "法人 Christopher Robin Hodge，SSN / DOB / 住址三項與 Pebblehome 完全一致，判斷為同一主體，送保時需向保險公司主動說明關聯。"
-      },
-      {
-        "e": "note",
-        "tt": "ä¸ç´æç¤ºæ«åç³è«",
-        "tm": "10/31 01:00",
-        "src": "Kevin W",
-        "tx": "同一 SSN 開兩間 LLC，上級要求先暫停，等指示再處理。"
-      }
-    ],
-    "Home Depot": [
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 bruce@boschcustomsbrokerage.com（BOSCH CUSTOMS BROKERAGE,INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@interport.us（Interport Logistics LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@glchb.com（Guy Lichtenstein CHB Corp.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 import@elmcustomsservice.com（ELM CUSTOMS BROKERAGE, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@alliancechb.com（ALLIANCE INTERNATIONAL CHB INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@wtdc.com（Warehouse Division of World Terminal and）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@arii.net（AMERICAN ROYAL INTERNATIONAL INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@promptus.us（Promptus, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@imperialfreight.com（IMPERIAL FREIGHT BROKERS INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@hartryinc.com（HOWARD HARTRY, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 mia@jtmsa.us（JOIN THE MOMENT FORWARDING CORP）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 General@jec-chb.com（JEC Customs House Brokerage）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@ranchocustomsbrokers.com（Rancho Customs Brokers, Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@robertsonforwarding.com（ROBERTSON FORWARDING COMPANY INC）"
-      },
-      {
-        "e": "email",
-        "tt": "Re: Looking for a Bond Broker",
-        "tm": "10/31 02:12",
-        "src": "GLCHB Team <info@glchb.com>",
-        "tx": "GLCHB 正面回覆，詢問所需 bond 金額後報價；另派 Enrique 接手跟進，將補發所需文件清單。地址 2550 NW 72 Ave Ste 100 Miami FL 33122，電話 305-593-5022。"
-      }
-    ],
-    "Kervalonix": [
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 service@kappacustomsbrokers.com（Kappa Customs Brokers, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 veronica@airacs.com（Airport Customs Service Inc）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 mvincent@reliantchb.com（Reliant Customs Broker, Inc）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@tranzport.com（TRANZPORT, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 rgonzalez@biscayneimport.com（BISCAYNE IMPORT SERVICES, INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@priorityimex.com（PRIORITY IMPORT-EXPORT SERVICES, IN）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@vortexwl.com（Vortex Worldwide Logistics Corporation）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 imports.cst@worldnationsusa.com（WORLD NATIONS, INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@allbordersinc.com（ALL BORDERS INCORPORATED）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@maccbi.com（MAC Customs Brokerage, Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 logistics@blchainlogistics.com（Blockchain Logistics LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales.mia@neelevat.com（Miami International Freight Solutions, L）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 melissa@itbfusa.com（INTERNATIONAL TRADE BROKERS FRDWR）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 imports@prioritycb.com（PRIORITY CUSTOMS BROKER INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@dbcustomsbrokers.com（D & B Customs Brokers, LLC）"
-      },
-      {
-        "e": "email",
-        "tt": "RE: Continuous Bond Quote Needed",
-        "tm": "10/31 03:11",
-        "src": "Francisco Ollino <CF.Ollino@vortexwl.com> VORTEX",
-        "tx": "VORTEX Worldwide Logistics 要求提供介紹人姓名與公司，待回覆。"
-      },
-      {
-        "e": "email",
-        "tt": "Re: Customs Bond Services Request",
-        "tm": "10/31 03:11",
-        "src": "Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B",
-        "tx": "D&B Customs Brokers 報價年費 1690 美元，12 個月保額 5 萬美元關稅，不含 ADD/CVD，待客戶決定是否進行。"
-      }
-    ],
-    "Lennar": [
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 rpalekseev@gmail.com（Customs Broker Miami）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@itcg.us（INTERNATINAL TRADE CMPLNCE GRP LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 infousa@ameritransworldwide.com（AMERITRANS WORLD GROUP INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 arash@clearpointint.com（ClearPoint International, Inc）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 samuel@miamicsinc.com（MIAMI CUSTOMS SERVICES INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 INFO@JCORTINA.COM（J. CORTINA, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 mpatigler@aol.com（SERVICE EXPRESS CUSTOMS CORPORATION）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@allynintl.com（ALLYN INTERNATIONAL SERVICES INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@mborder.com（M Border Solutions, Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 pat@advancecustomsbrokers.com（Advance Customs Brokers & Consulting LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 Evertrustworld@gmail.com（Evertrust World Logistics）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@nitusa.com（Nissin International Transport U.S.A., Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 operations@elemar.com（Elemar International Forwarding Inc）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 masforwarding@marineairservice.com（MARINE AIR SERVICE FORWARDING INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@aeaglecustomsbroker.com（American Eagle Customs Broker, LLC）"
-      }
-    ],
-    "Nervaqon": [
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@dna-logistics.com（DNA Logistics Group, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 ralph@omegacb.com（OMEGA CUSTOMS BROKERS INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@jdbrokers.net（JD BROKERS & FORWARDING CO.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@GJMia.com（GJ ENTERPRISES, CUSTOMS BROKERAGE & CONS）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 alcidesfsilva@aol.com（Quicksilver Customs Brokers, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@kglogistics.com（KELLY GLOBAL LOGISTICS, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 miamiports@kcimia.com（KCI CUSTOMS BROKERS INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 imports@wlmia.com（World Logistics (MIA), Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 bgsbrokers@bgs-chb.com（Border Group Services Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 LATINB@aol.com（LATIN AMERICAN BROKERS INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 customercare@intradeco.com（INTRADECO LOGISTICS, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 contact@logiaide.com（LOGIAIDE INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@cccustomsbroker.com（CC CUSTOMS BROKER, INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@almarlogistics.net（ALMAR LOGISTICS, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 monica@pinnaclefreightus.com（Pinnacle Freight Solutions, LLC）"
-      },
-      {
-        "e": "email",
-        "tt": "RE: [EXTERNAL] Inquiry About Obtaining Customs Bond",
-        "tm": "10/31 03:11",
-        "src": "SPG Anova Marine Bond Department <bonds@anovamarin...>",
-        "tx": "客戶已交申請表，對方要求補 2025 年完整資產負債表與損益表，以及 2026 年至 6 月的 YTD 財務報表。"
-      },
-      {
-        "e": "email",
-        "tt": "RE: Inquiry About Obtaining Customs Bond",
-        "tm": "10/31 04:11",
-        "src": "Paloma Zhou <bonds@anovamarine.com> SPG Anova",
-        "tx": "對方再次催促提供 2025 年資產負債表與損益表，以及 2026 年至 6 月 YTD 財務報表。"
-      }
-    ],
-    "Oliveware": [
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 imports@hahnintl.com（HAHN INTERNATIONAL INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@dmanganelli.com（D MANGANELLI LOGISTICS, INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@CEPBroker.com（CEP CUSTOMS BROKER, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 hello@efilog.us（EFI LOGISTICS INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 JANETHAPPY@BELLSOUTH.NET（HAPPY CUSTOMS BROKERS, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 imports@farrischb.com（Farris Global Logistics）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 truckimports@charterbrokerage.net（CHARTER BROKERAGE LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@blufenixintl.com（Blufenix International LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 ahilsabeck@amhcc.com（AMH Custom Consultants）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@bcfmiami.com（BC & F BROKERAGE, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@promptus.us（PROMPTUS, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 skimchb@gmail.com（SUNG MOO KIM）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@blufenixintl.com（Blufenix International LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 Miami@worldwidemiami.com（WORLDWIDE CUSTOMS SERVICES INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@dracofreight.com（Draco Freight Logistics Corporation）"
-      }
-    ],
-    "Leidos": [
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 rob@customsandcompliance.com（Customs & Compliance Solutions, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 dixon.smith@comcast.net（DIXON, SMITH & ASSOCIATES, INC.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 johncassidy@johncassidyintl.com（JOHN CASSIDY INT L CHB INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 imports@lmbcustomsbrokers.com（LMB Customs Brokers）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@dbcustomsbrokers.com（D & B Customs Brokers, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "New Importer Continuous Bond Setup",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 natalia@asapmarinedocs.com（HOWARD S REEDER INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 rpalekseev@gmail.com（Customs Broker Miami, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Customs Bond Inquiry",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 brokerageintl8@gmail.com（BROKERAGE INTERNATIONAL INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@americargoexpress.com（Americargo Express Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Looking for a Customs Bond Broker",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 marthamartinezbcg@gmail.com（Brokerage Consultants Group, Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@gofastcb.com（GO FAST CUSTOMS BROKERAGE INC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 david@unitedcustomservices.com（United Customs Services LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Customs Bond Services Request",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 info@overseasfreight.com（OVERSEAS FREIGHT SOLUTIONS, LLC）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 sales@imperialfreight.com（Imperial Freight Brokers, Inc.）"
-      },
-      {
-        "e": "sent",
-        "tt": "Continuous Bond Quote Needed",
-        "tm": "10/31 02:10",
-        "src": "系統自動",
-        "tx": "冷啟開發信已發送至 usa.info@seafairgroup.com（SEAFAIR USA, LLC）"
-      },
-      {
-        "e": "email",
-        "tt": "Re: Continuous Customs Bond Inquiry",
-        "tm": "10/31 03:11",
-        "src": "Armando Hevia <brokerageintl8@gmail.com> Brokerage International",
-        "tx": "Brokerage International 請客戶直接致電 305-639-3335 洽談。"
-      },
-      {
-        "e": "email",
-        "tt": "Re: Customs Bond Services Request",
-        "tm": "10/31 03:11",
-        "src": "Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B",
-        "tx": "D&B Customs Brokers 報價年費 1690 美元，12 個月保額 5 萬美元關稅，不含 ADD/CVD。"
-      }
-    ],
-    "Huntington": [
-      {
-        "e": "email",
-        "tt": "Re: Clearit Operations Right person for bond onboarding",
-        "tm": "10/31 04:11",
-        "src": "Clearit Support <support@clearitusa.com>",
-        "tx": "Clearit 婉拒：只為走他們清關的客戶辦 bond，不接受單獨 bond 需求，建議聯繫港口本地 broker。"
-      }
-    ]
-  },
-  "statuses": [
-    {
-      "id": "new",
-      "lb": "新線索",
-      "cl": "t-gray"
-    },
-    {
-      "id": "waiting",
-      "lb": "等待啟動",
-      "cl": "t-blue"
-    },
-    {
-      "id": "collect",
-      "lb": "資料收集中",
-      "cl": "t-blue"
-    },
-    {
-      "id": "pending_client",
-      "lb": "等待客戶補交資料",
-      "cl": "t-amber"
-    },
-    {
-      "id": "form",
-      "lb": "待填申請表",
-      "cl": "t-amber"
-    },
-    {
-      "id": "reply",
-      "lb": "待回覆郵件",
-      "cl": "t-amber"
-    },
-    {
-      "id": "broker",
-      "lb": "等待報關行審核",
-      "cl": "t-blue"
-    },
-    {
-      "id": "quote",
-      "lb": "收到報價",
-      "cl": "t-amber"
-    },
-    {
-      "id": "paid",
-      "lb": "財務已付款",
-      "cl": "t-amber"
-    },
-    {
-      "id": "done",
-      "lb": "已獲擔保文件",
-      "cl": "t-green"
-    },
-    {
-      "id": "hold",
-      "lb": "擱置暫停",
-      "cl": "t-gray"
-    },
-    {
-      "id": "reject",
-      "lb": "申請被拒",
-      "cl": "t-red"
-    }
-  ],
-  "customers": [
-    {
-      "no": "89",
-      "name": "Home Depot LLC",
-      "member": "Amjad Bahmad",
-      "ein": "43-2208990",
-      "status": "supply",
-      "dl": "正常",
-      "mail": "amjadbahmad@home-depot.live",
-      "todo": 1,
-      "sysId": "1001"
-    },
-    {
-      "no": "90",
-      "name": "Honeywell LLC",
-      "member": "Allyson Fankuchen",
-      "ein": "43-2210034",
-      "status": "new",
-      "dl": "正常",
-      "mail": "allysonbrennafankuchen@honeywellinternational.live",
-      "todo": 0,
-      "sysId": "1002",
-      "fileInsights": [],
-      "aiTodos": []
-    },
-    {
-      "no": "98",
-      "name": "Kontoor LLC",
-      "member": "Amant Hir Adam",
-      "ein": "43-2202115",
-      "status": "new",
-      "dl": "正常",
-      "mail": "amantahiradam@kontoorbrands.live",
-      "todo": 0,
-      "sysId": "1003"
-    },
-    {
-      "no": "2",
-      "name": "Immunora Bio LLC",
-      "member": "Kashay Odom",
-      "ein": "43-2180144",
-      "status": "confirm",
-      "dl": "正常",
-      "mail": "kashayisisramonaodom@immunora-bio.com",
-      "todo": 1,
-      "sysId": "1004"
-    },
-    {
-      "no": "3",
-      "name": "Oliveware LLC",
-      "member": "Horacio Sanchez",
-      "ein": "43-2187231",
-      "status": "collect",
-      "dl": "正常",
-      "mail": "horaciolsanchez@olivewareinc.com",
-      "todo": 1,
-      "sysId": "1005"
-    },
-    {
-      "no": "5",
-      "name": "Pebblehome LLC",
-      "member": "Christopher Hodge",
-      "ein": "43-2200451",
-      "status": "hold",
-      "dl": "正常",
-      "mail": "christopherhodge@pebblehomeinc.com",
-      "todo": 1,
-      "sysId": "1006"
-    },
-    {
-      "no": "7",
-      "name": "Sageware LLC",
-      "member": "Jaliar Thomas",
-      "ein": "43-2188760",
-      "status": "new",
-      "dl": "正常",
-      "mail": "jaliarthomas@sagewareinc.com",
-      "todo": 0,
-      "sysId": "1007"
-    },
-    {
-      "no": "8",
-      "name": "Nervaqon LLC",
-      "member": "Christian Punzalan",
-      "ein": "43-2191002",
-      "status": "collect",
-      "dl": "正常",
-      "mail": "christianjgpunzalan@nervaqon.live",
-      "todo": 0,
-      "sysId": "1008"
-    },
-    {
-      "no": "61",
-      "name": "Huntington LLC",
-      "member": "Jessica Yates",
-      "ein": "43-2220178",
-      "status": "collect",
-      "dl": "正常",
-      "mail": "jessicakeyates@huntingtoningallsindustries.live",
-      "todo": 0,
-      "sysId": "1009"
-    },
-    {
-      "no": "64",
-      "name": "JELD-WEN LLC",
-      "member": "Amer Jok",
-      "ein": "43-2207568",
-      "status": "reject",
-      "dl": "正常",
-      "mail": "amerdaujok@jeld-wenholding.live",
-      "todo": 0,
-      "sysId": "1010"
-    },
-    {
-      "no": "66",
-      "name": "Kervalonix LLC",
-      "member": "Ahmed Mohamed Ali",
-      "ein": "43-2187474",
-      "status": "supply",
-      "dl": "正常",
-      "mail": "ahmedmohamedali@kervalonix.live",
-      "todo": 1,
-      "sysId": "1011"
-    },
-    {
-      "no": "69",
-      "name": "L3Harris LLC",
-      "member": "Enrique Justo-Rendon",
-      "ein": "43-2216646",
-      "status": "collect",
-      "dl": "正常",
-      "mail": "enriqueajrendon@l3harristechnologies.live",
-      "todo": 0,
-      "sysId": "1012"
-    },
-    {
-      "no": "71",
-      "name": "Laureate LLC",
-      "member": "Adisu Mulatu",
-      "ein": "43-2223471",
-      "status": "collect",
-      "dl": "正常",
-      "mail": "adisushimelismulatu@laureateeducation.live",
-      "todo": 0,
-      "sysId": "1013"
-    },
-    {
-      "no": "73",
-      "name": "Leidos LLC",
-      "member": "Jennie Myers",
-      "ein": "43-2219490",
-      "status": "new",
-      "dl": "正常",
-      "mail": "jennieannmyers@leidosholdings.live",
-      "todo": 1,
-      "sysId": "1014"
-    },
-    {
-      "no": "75",
-      "name": "Lennar LLC",
-      "member": "Corey Heaward",
-      "ein": "43-2216265",
-      "status": "collect",
-      "dl": "正常",
-      "mail": "coreymheaward@lennar.live",
-      "todo": 1,
-      "sysId": "1015"
-    },
-    {
-      "no": "99",
-      "name": "Interface LLC",
-      "member": "CHRISTOPHER ROBIN HODGE",
-      "ein": "43-2215896",
-      "phone": "(916) 657-5448",
-      "address": "510 NORTH AVE W BROOKSVILLE, FL 34601-1205",
-      "notes": "仅提供UUID格式PNG文件名，无法确认是街景截图或地址验证截图",
-      "status": "new",
-      "dl": "正常",
-      "mail": "â",
-      "todo": 0,
-      "sysId": "1016",
-      "created": "2026-11-01",
-      "aiStatus": "å·²åæ",
-      "aiAnalyzedAt": "2026-11-01T19:20:33.973Z"
-    }
-  ],
-  "finance": {
-    "2": [
-      {
-        "type": "bond_premium",
-        "desc": "BorderBuddy Continuous Bond ä¿è²»",
-        "amount": 795.6,
-        "currency": "CNY",
-        "status": "paid",
-        "paid_at": "10/29"
-      }
-    ],
-    "66": [
-      {
-        "type": "quote",
-        "desc": "RPS / Golden Valley å ±å¹ï¼å¾åºæ­£å¼å®ï¼",
-        "amount": 1250,
-        "currency": "CNY",
-        "status": "pending"
-      }
-    ]
-  },
-  "mailboxes": [
-    {
-      "nm": "Immunora",
-      "em": "kashayisisramonaodom@immunora-bio.com",
-      "st": "ok",
-      "unread": 1
-    },
-    {
-      "nm": "Oliveware",
-      "em": "horaciolsanchez@olivewareinc.com",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Pebblehome",
-      "em": "christopherhodge@pebblehomeinc.com",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Sageware",
-      "em": "jaliarthomas@sagewareinc.com",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Nervaqon",
-      "em": "christianjgpunzalan@nervaqon.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Home Depot",
-      "em": "amjadbahmad@home-depot.live",
-      "st": "ok",
-      "unread": 1
-    },
-    {
-      "nm": "Honeywell",
-      "em": "allysonbrennafankuchen@honeywellinternational.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Huntington",
-      "em": "jessicakeyates@huntingtoningallsindustries.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "JELD-WEN",
-      "em": "amerdaujok@jeld-wenholding.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Kervalonix",
-      "em": "ahmedmohamedali@kervalonix.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Kontoor",
-      "em": "amantahiradam@kontoorbrands.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "L3Harris",
-      "em": "enriqueajrendon@l3harristechnologies.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Laureate",
-      "em": "adisushimelismulatu@laureateeducation.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Leidos",
-      "em": "jennieannmyers@leidosholdings.live",
-      "st": "ok",
-      "unread": 0
-    },
-    {
-      "nm": "Lennar",
-      "em": "coreymheaward@lennar.live",
-      "st": "ok",
-      "unread": 0
-    }
-  ],
-  "emails": [
-    {
-      "c": "Home Depot",
-      "from": "Angely Arias <angely@a1wwl.com>",
-      "sub": "Re: Legal documents for application of US custom bond",
-      "t": "10/30 10:59",
-      "unread": true,
-      "type": "quote"
-    },
-    {
-      "c": "Immunora",
-      "from": "Laura Rucker <docs.usa@borderbuddy.com>",
-      "sub": "Invoice Number Mismatch, Payment Applied Confirmation",
-      "t": "10/30 05:14",
-      "unread": true,
-      "type": "supply"
-    },
-    {
-      "c": "Lennar",
-      "from": "StaffUnderwriters@SuretyOne.com",
-      "sub": "Re: Bond lead time before first entry",
-      "t": "10/30 05:14",
-      "unread": true,
-      "type": "supply"
-    },
-    {
-      "c": "Leidos",
-      "from": "Crystal Boomhower-Villalobos <crystalboomhower@hotmail.com>",
-      "sub": "Continuous Bond",
-      "t": "10/30 06:15",
-      "unread": false,
-      "type": "quote"
-    },
-    {
-      "c": "Oliveware",
-      "from": "Jermeale Lewis-Johnson <hello@justyourbroker.com>",
-      "sub": "Re: continuous bond",
-      "t": "10/30 07:27",
-      "unread": false,
-      "type": "reject"
-    }
-  ],
-  "logs": [
-    {
-      "t": "10/30 14:13",
-      "c": "å®æå·¡æ¥ 15 åä¿¡ç®±å¨é¨æåé£ç·ï¼æ°éµä»¶ 0 å°ï¼å¤ç¼ä½å 0 æ¢ã",
-      "o": "0 æ°ä¿¡"
-    },
-    {
-      "t": "10/30 13:17",
-      "c": "å®æå·¡æ¥ 15 åä¿¡ç®±å¨é¨æåé£ç·ï¼æ°éµä»¶ 0 å°ï¼å¤ç¼ä½å 0 æ¢ã",
-      "o": "0 æ°ä¿¡"
-    },
-    {
-      "t": "10/30 12:40",
-      "c": "ä¸ç®± Home Depot / Honeywell / Kontoor å¯¦æ¸¬ç»å¥æåï¼çæ¿çææ¹çºå·²å¯ç»å¥ã",
-      "o": "15 ç®±å¨ç¶ "
-    },
-    {
-      "t": "10/30 12:33",
-      "c": "Interface LLC 93 èå®¢æ¶å¨å¥æææ­¸æªï¼ä½å·é§ç§ 10/20 å°ææ¨çºå¾è£ä»¶ã",
-      "o": "93 èå¥æª"
-    },
-    {
-      "t": "10/30 11:52",
-      "c": "å®æå·¡æ¥ 15 ç®±å¨é£ç·ï¼æ°éµä»¶ 0 å°ã",
-      "o": "0 æ°ä¿¡"
-    },
-    {
-      "t": "10/30 10:59",
-      "c": "15 ç®±å¨é£ç·ï¼æ°éµä»¶ 6 å°ï¼å¶ä¸­ 5 å°ç³»çµ±éç¥ï¼çäººåè¦ 1 å° A1 Worldwide è¦æ±å¡« POAã",
-      "o": "1 çäººåè¦"
-    },
-    {
-      "t": "10/30 09:11",
-      "c": "å®æå·¡æ¥ 15 ç®±ï¼æ°éµä»¶ 0 å°ã",
-      "o": "0 æ°ä¿¡"
-    },
-    {
-      "t": "10/30 08:11",
-      "c": "å®æå·¡æ¥ 15 ç®±ï¼æ°éµä»¶ 0 å°ã",
-      "o": "0 æ°ä¿¡"
-    },
-    {
-      "t": "10/30 07:27",
-      "c": "Oliveware æ¶ Just Your Broker Inc. å©æï¼æ¨ tag å·²ééã",
-      "o": "1 å©æ"
-    }
-  ]
-}
+{"daily":[{"date":"11/02 04:27","work":"GitHub Actions èªåå·¡æ¥ 04:27ï¼15 åä¿¡ç®±é£ç·å®æ","output":"auto"},{"date":"11/01 20:48","work":"GitHub Actions Ã¨ÂÂªÃ¥ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 20:48Ã¯Â¼Â15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã©ÂÂ£Ã§Â·ÂÃ¥Â®ÂÃ¦ÂÂ","output":"auto"},{"date":"10/31 16:10","work":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ©ÂÂ£Ã§Â·ÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂÃ¥Â¾ÂÃ¥ÂÂ·Ã¨Â¡ÂÃ£ÂÂ","output":"15/15 okÃ¯Â¼Â0 Ã¦ÂÂ°Ã¤Â¿Â¡"},{"t":"10/31 05:12","txt":"Ã¥Â·Â¡Ã¦ÂÂ¥ 15/15 Ã¤Â¿Â¡Ã§Â®Â±Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ§ÂÂ¡Ã¥Â®Â¢Ã¦ÂÂ¶Ã¥ÂÂÃ©ÂÂµ"},{"t":"10/31 04:11","txt":"Ã¥Â·Â¡Ã¦ÂÂ¥ 15/15 Ã¤Â¿Â¡Ã§Â®Â±Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 2 Ã¥Â°ÂÃ¯Â¼ÂNervaqon Ã¨Â£ÂÃ¤Â»Â¶Ã¥ÂÂ¬Ã¤Â¿ÂÃ£ÂÂHuntington Ã¨Â¢Â« Clearit Ã¥Â©ÂÃ¦ÂÂ"},{"t":"10/31 03:11","txt":"Ã¥Â·Â¡Ã¦ÂÂ¥ 15/15 Ã¤Â¿Â¡Ã§Â®Â±Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 5 Ã¥Â°ÂÃ¯Â¼ÂNervaqon Ã¨Â£ÂÃ¤Â»Â¶Ã£ÂÂKervalonix 2 Ã¥Â°ÂÃ£ÂÂLeidos 2 Ã¥Â°Â"},{"t":"10/31 02:12","txt":"Ã¥Â·Â¡Ã¦ÂÂ¥ 15/15 Ã¤Â¿Â¡Ã§Â®Â±Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 2 Ã¥Â°ÂÃ¯Â¼ÂHome Depot Ã¦ÂÂ¶Ã¥ÂÂ° GLCHB Ã¥ÂÂ©Ã¥Â°ÂÃ¦Â­Â£Ã©ÂÂ¢Ã¥ÂÂÃ¨Â¦ÂÃ¯Â¼Â"},{"t":"10/31 02:10","txt":"Ã¦ÂÂ¹Ã©ÂÂÃ¥ÂÂ·Ã¥ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¯Â¼ÂÃ¦ÂÂÃ¥ÂÂÃ§ÂÂ¼Ã¥ÂÂº 89 Ã¥Â°ÂÃ¯Â¼Â7 Ã¦ÂÂ¶Ã¨Â¼ÂªÃ¨Â©Â¢Ã¯Â¼ÂJELD-WEN Ã¤Â¿Â¡Ã§Â®Â±Ã¨ÂªÂÃ¨Â­ÂÃ¥Â¤Â±Ã¦ÂÂ 15 Ã¥Â°Â"},{"t":"10/31 01:13","txt":"Ã¥Â·Â¡Ã¦ÂÂ¥ 15/15 Ã¤Â¿Â¡Ã§Â®Â±Ã©ÂÂ£Ã§Â·ÂÃ¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ¨Â¦ÂÃ¥ÂÂÃ¨Â¦Â"},{"date":"10 Ã¦ÂÂ 31 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ­ 00:11","clients":"15 Ã§Â®Â±Ã¥ÂÂ¨Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂIMAP SSL 993 Ã©ÂÂ£Ã§Â·Â 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂ pending=0Ã¯Â¼ÂÃ§ÂÂ¡Ã¥Â¾ÂÃ§ÂÂ¼Ã¯Â¼Ânotes.json Ã§ÂÂ¡Ã¦ÂÂªÃ¥ÂÂÃ¦Â­Â¥Ã¥ÂÂÃ¨Â¨Â»Ã£ÂÂ","output":"15/15 Ã¥ÂÂ¨Ã§Â¶Â Ã¯Â¼ÂÃ§ÂÂ¡Ã¦ÂÂ°Ã¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ§Â«ÂÃ¥ÂÂ³Ã¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 23:12","clients":"15 Ã§Â®Â±Ã¥ÂÂ¨Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂIMAP SSL 993 Ã©ÂÂ£Ã§Â·Â 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂ pending=0Ã¯Â¼ÂÃ§ÂÂ¡Ã¥Â¾ÂÃ§ÂÂ¼Ã£ÂÂ","output":"15/15 Ã¥ÂÂ¨Ã§Â¶Â Ã¯Â¼ÂÃ§ÂÂ¡Ã¦ÂÂ°Ã¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ§Â«ÂÃ¥ÂÂ³Ã¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 22:16","clients":"15 Ã§Â®Â±Ã¥ÂÂ¨Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂIMAP SSL 993 Ã©ÂÂ£Ã§Â·Â 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂÃ¥ÂÂÃ¦Â­Â¥Ã¦ÂªÂ¢Ã¦ÂÂ¥Ã£ÂÂ","output":"15/15 Ã¥ÂÂ¨Ã§Â¶Â Ã¯Â¼ÂÃ§ÂÂ¡Ã¦ÂÂ°Ã¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ§Â«ÂÃ¥ÂÂ³Ã¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 21:34","clients":"15 Ã§Â®Â±Ã¥ÂÂ¨Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂIMAP SSL 993 Ã©ÂÂ£Ã§Â·Â 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂÃ¥ÂÂÃ¦Â­Â¥Ã¦ÂªÂ¢Ã¦ÂÂ¥Ã£ÂÂ","output":"15/15 Ã¥ÂÂ¨Ã§Â¶Â Ã¯Â¼ÂÃ§ÂÂ¡Ã¦ÂÂ°Ã¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ§Â«ÂÃ¥ÂÂ³Ã¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 03:20","clients":"7 Ã§Â®Â±Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 12 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¯Â¼ÂHome DepotÃ£ÂÂHoneywellÃ£ÂÂKontoor Ã¤Â¸ÂÃ§Â®Â±Ã¨ÂªÂÃ¨Â­ÂÃ¥Â¤Â±Ã¦ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡ 8 Ã¥Â°ÂÃ£ÂÂKervalonix Ã¦ÂÂ¶ RPS Joe Allen Ã¦Â­Â£Ã©ÂÂ¢Ã¥ÂÂÃ¨Â¦ÂÃ¯Â¼ÂÃ¥ÂÂ¯Ã¦ÂÂ¿Ã¥ÂÂÃ¯Â¼ÂÃ©ÂÂÃ§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã£ÂÂÃ¥ÂÂ¬Ã¥ÂÂ¸Ã¨Â²Â¡Ã¥Â Â±Ã¨ÂÂÃ¥ÂÂÃ¤ÂºÂºÃ¨Â²Â¡Ã¥ÂÂÃ¯Â¼ÂÃ¥Â¯Â©Ã¦Â Â¸ 2-3 Ã¥ÂÂÃ¥Â·Â¥Ã¤Â½ÂÃ¥Â¤Â©Ã¯Â¼ÂJELD-WEN Trinity Carmen Ã¥Â©ÂÃ¦ÂÂÃ§ÂÂ¨Ã§Â«Â bondÃ¯Â¼ÂÃ¥ÂÂªÃ§ÂµÂ¦Ã¨ÂÂªÃ¥Â·Â±Ã¦Â¸ÂÃ©ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¥ÂÂÃ¯Â¼ÂLennar Bluebird Emily Ã¥ÂÂÃ¦Â¨Â£Ã¥Â©ÂÃ¦ÂÂÃ¯Â¼ÂÃ¥ÂÂ¶Ã©Â¤ÂÃ§ÂÂºÃ¤Â¼ÂÃ¥ÂÂÃ£ÂÂÃ©ÂÂÃ¤Â¼ÂÃ£ÂÂÃ§ÂÂ¢Ã¥ÂÂÃ¨Â½ÂÃ¤Â»ÂÃ¨ÂÂÃ¨ÂÂªÃ¥ÂÂÃ§Â¢ÂºÃ¨ÂªÂÃ¤Â¿Â¡Ã£ÂÂÃ¤Â½ÂÃ¥ÂÂ 1 Ã¥Â°Â Immunora Ã¦Â¸Â¬Ã¨Â©Â¦Ã¤Â¿Â¡Ã¥Â·Â²Ã¥ÂÂ³Ã¦ÂÂÃ¥Â¯ÂÃ¥ÂÂº","output":"8 Ã¥Â°ÂÃ¥Â·Â²Ã¨Â®ÂÃ¥Â­ÂÃ¦ÂªÂÃ¯Â¼ÂKervalonix Ã§ÂÂºÃ¦ÂÂÃ¦ÂÂÃ©ÂÂ²Ã¥Â±ÂÃ¯Â¼ÂÃ¥Â¾ÂÃ¥ÂÂÃ¨Â²Â¡Ã¥Â Â±Ã¥Â¾ÂÃ¥ÂÂÃ¨Â¦ÂÃ¯Â¼Â2 Ã¥Â°ÂÃ¥Â©ÂÃ¦ÂÂÃ¨Â¨ÂÃ©ÂÂÃ¥ÂÂ¨Ã¦Â¡Â"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 03:17","clients":"7 Ã§Â®Â±Ã¨Â¼ÂªÃ§ÂÂ¼Ã¯Â¼ÂHuntington / JELD-WEN / Kervalonix / L3Harris / Laureate / Leidos / Lennar","work":"7 Ã¥ÂÂÃ¥ÂÂ¯Ã§ÂÂ»Ã¥ÂÂ¥Ã¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂÃ§ÂÂ¼ 15 Ã¥Â°ÂÃ¥Â·Â®Ã§ÂÂ°Ã¥ÂÂÃ§Â Â´Ã¥ÂÂ°Ã¤Â¿Â¡Ã¨ÂÂ³ 105 Ã¥Â®Â¶Ã¤ÂºÂÃ¤Â¸ÂÃ©ÂÂÃ¨Â¤ÂÃ§ÂÂ brokerÃ¯Â¼ÂÃ¨Â¼ÂªÃ¨ÂÂÃ¥ÂÂÃ§Â®Â±Ã£ÂÂÃ¦Â¯ÂÃ¥Â°ÂÃ©ÂÂÃ©ÂÂ 30 Ã§Â§ÂÃ£ÂÂÃ¥ÂÂ®Ã¦ÂÂ¶Ã¤Â»Â¶Ã¤ÂºÂºÃ§ÂÂ¡ Cc/BccÃ¯Â¼ÂÃ§Â¾ÂÃ¥Â¼ÂÃ¨ÂÂ±Ã¦ÂÂÃ¦Â­Â£Ã¦ÂÂÃ¯Â¼ÂÃ¥ÂÂ¨Ã©ÂÂ¨ sent Ã©ÂÂ¶Ã¥Â¤Â±Ã¦ÂÂÃ¯Â¼ÂHome DepotÃ£ÂÂHoneywellÃ£ÂÂKontoor Ã¤Â¸ÂÃ§Â®Â±Ã¨ÂªÂÃ¨Â­ÂÃ¥Â¤Â±Ã¦ÂÂÃ¦ÂÂªÃ§ÂÂ¼","output":"105/105 Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦Â¼ÂÃ¦ÂÂÃ§Â´Â¯Ã¨Â¨ÂÃ¨ÂÂ³ 230Ã¯Â¼ÂÃ¦ÂÂÃ§Â´Â°Ã¨Â¦Â send_log_batch2.json"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 01:13","clients":"Pebblehome","work":"Ã¦ÂÂ¶Ã¥ÂÂ° E.C. Ferrer CHBÃ¯Â¼ÂIrene MahiposÃ¯Â¼ÂÃ¥ÂÂÃ¨Â¦ÂÃ£ÂÂRE: Bond for Long Beach EntriesÃ£ÂÂÃ¯Â¼Âbroker Ã¨Â¿Â½Ã¥ÂÂÃ¨Â²Â¨Ã§ÂÂ©Ã¥ÂÂÃ©Â¡ÂÃ¯Â¼ÂcommodityÃ¯Â¼ÂÃ¨ÂÂÃ¥ÂÂºÃ¨Â²Â¨Ã¥ÂÂÃ¨ÂÂ½Ã¥ÂÂ¦Ã¥ÂÂÃ¥Â Â± ISFÃ¯Â¼ÂÃ¥Â¾ÂÃ¦ÂÂÃ¥ÂÂÃ¥ÂÂÃ¨Â¦ÂÃ¥ÂÂÃ¥ÂÂÃ¨Â³ÂÃ¨Â¨ÂÃ¨ÂÂ ISF Ã¦ÂÂÃ§Â¨ÂÃ¥Â¾ÂÃ¥ÂÂÃ¨Â«ÂÃ©ÂÂ£Ã§ÂºÂ bond Ã¥ÂÂ§Ã¨Â¨Â­","output":"1Ã¥Â°ÂÃ¦ÂÂ°Ã¤Â¿Â¡Ã¥ÂÂ¥ emails.jsonÃ¯Â¼ÂÃ¥ÂÂÃ¨Â¦ÂÃ¨Â¨Â 8Ã¯Â¼ÂÃ©ÂÂÃ¦ÂÂ¬Ã¥ÂÂÃ¨Â¦ÂÃ¦ÂÂÃ¤Â¾Â commodity Ã¨ÂÂ ISF Ã¥Â®ÂÃ¦ÂÂ"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 00:24","clients":"Ã¥ÂÂ¨Ã©ÂÂ¨5Ã§Â®Â±Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂÃ©ÂÂ£Ã§Â·Â ImmunoraÃ£ÂÂOlivewareÃ£ÂÂPebblehomeÃ£ÂÂSagewareÃ£ÂÂNervaqon Ã¤ÂºÂÃ¥ÂÂÃ©ÂÂµÃ§Â®Â±Ã¯Â¼ÂÃ¦ÂÂ°Ã¤Â¿Â¡4Ã¥Â°ÂÃ£ÂÂImmunora Ã¦ÂÂ¶Ã¥ÂÂ° Importivity Tanner Ã¥Â®Â¢Ã¦Â°Â£Ã¦ÂÂ¶Ã¥Â°Â¾Ã¯Â¼ÂPebblehome Ã¦ÂÂ¶Ã¥ÂÂ° Assured CHB Ã¥ÂÂ©Ã¥Â°ÂÃ§Â³Â»Ã§ÂµÂ±Ã§Â¢ÂºÃ¨ÂªÂÃ¤Â¿Â¡Ã¨ÂÂ Julianachb Ã¤Â¼ÂÃ¥ÂÂÃ¥ÂÂÃ¨Â¦ÂÃ¯Â¼ÂÃ¥ÂÂÃ§ÂÂºÃ¨ÂÂªÃ¥ÂÂÃ¦ÂÂÃ¥Â®Â¢Ã¥Â¥ÂÃ¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã¥Â¯Â¦Ã¨Â³ÂªÃ¥Â Â±Ã¥ÂÂ¹Ã¥ÂÂ¥Ã¨Â³Â¬Ã¦ÂÂÃ¥Â©ÂÃ¦ÂÂ","output":"4Ã¥Â°ÂÃ¥Â·Â²Ã¥ÂÂ¥ emails.json Ã¤Â¸Â¦Ã¦Â¨ÂÃ¥Â·Â²Ã¨Â®ÂÃ¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ§Â«ÂÃ¥ÂÂ³Ã¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ 23:50","clients":"Nervaqon","work":"Ã¥Â¾Â christianjgpunzalan@nervaqon.live Ã¥ÂÂ®Ã§ÂÂ¼ 15 Ã¥Â°ÂÃ¥Â·Â®Ã§ÂÂ°Ã¥ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¨ÂÂ³ 15 Ã¥Â®Â¶Ã¥Â Â±Ã©ÂÂÃ¨Â¡ÂÃ¯Â¼ÂÃ¦Â¯ÂÃ¥Â°ÂÃ©ÂÂ¨Ã¦Â©ÂÃ©ÂÂÃ©ÂÂ 40-90 Ã§Â§ÂÃ¯Â¼ÂÃ¥ÂÂ®Ã¦ÂÂ¶Ã¤Â»Â¶Ã¤ÂºÂºÃ§ÂÂ¡ Cc/BccÃ¯Â¼ÂÃ¥ÂÂ¨Ã©ÂÂ¨ sent Ã©ÂÂ¶Ã¥Â¤Â±Ã¦ÂÂ","output":"15/15 Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦Â¼ÂÃ¦ÂÂÃ§Â´Â¯Ã¨Â¨ÂÃ¨ÂÂ³ 125"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ 23:05","clients":"Pebblehome","work":"Ã¥Â¾Â christopherhodge@pebblehomeinc.com Ã¥ÂÂ®Ã§ÂÂ¼ 15 Ã¥Â°ÂÃ¥Â·Â®Ã§ÂÂ°Ã¥ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¨ÂÂ³ 15 Ã¥Â®Â¶Ã¥Â Â±Ã©ÂÂÃ¨Â¡ÂÃ¯Â¼ÂÃ¦Â¯ÂÃ¥Â°ÂÃ©ÂÂ¨Ã¦Â©ÂÃ©ÂÂÃ©ÂÂ 40-90 Ã§Â§ÂÃ¯Â¼ÂÃ¥ÂÂ®Ã¦ÂÂ¶Ã¤Â»Â¶Ã¤ÂºÂºÃ§ÂÂ¡ Cc/BccÃ¯Â¼ÂÃ¥ÂÂ¨Ã©ÂÂ¨ sent Ã©ÂÂ¶Ã¥Â¤Â±Ã¦ÂÂ","output":"15/15 Ã¦ÂÂÃ¥ÂÂ"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ 21:27","clients":"Ã¥ÂÂ¨Ã©ÂÂ¨5Ã§Â®Â±Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂÃ©ÂÂ£Ã§Â·Â ImmunoraÃ£ÂÂOlivewareÃ£ÂÂPebblehomeÃ£ÂÂSagewareÃ£ÂÂNervaqon Ã¤ÂºÂÃ¥ÂÂÃ©ÂÂµÃ§Â®Â±Ã¯Â¼ÂÃ¤Â»ÂÃ¦ÂÂ¥Ã¦ÂÂ°Ã¤Â¿Â¡0Ã¥Â°ÂÃ¯Â¼ÂÃ¥ÂÂ¨Ã©ÂÂÃ¦Â¨ÂÃ©Â¡ÂÃ¦Â¯ÂÃ¥Â°ÂÃ§ÂÂ¡Ã©ÂÂºÃ¦Â¼ÂÃ¯Â¼ÂÃ¥ÂÂ©Ã¦Â¢ÂÃ©ÂÂÃ§ÂÂ¼Ã¥ÂÂÃ¥Â¿ÂÃ¥Â·Â²Ã¨Â®ÂÃ¥ÂÂÃ¥Â­ÂÃ¦ÂªÂ","output":"Ã§ÂÂ¡Ã¦ÂÂ°Ã¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ 20:30","clients":"Ã¥ÂÂ¨Ã©ÂÂ¨5Ã§Â®Â±Ã¥Â·Â¡Ã¦ÂÂ¥","work":"Ã¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂÃ©ÂÂ£Ã§Â·Â ImmunoraÃ£ÂÂOlivewareÃ£ÂÂPebblehomeÃ£ÂÂSagewareÃ£ÂÂNervaqon Ã¤ÂºÂÃ¥ÂÂÃ©ÂÂµÃ§Â®Â±Ã¯Â¼ÂÃ¤Â»ÂÃ¦ÂÂ¥Ã¦ÂÂ°Ã¤Â¿Â¡0Ã¥Â°ÂÃ¯Â¼ÂÃ¥ÂÂ¨Ã©ÂÂÃ¦Â¨ÂÃ©Â¡ÂÃ¦Â¯ÂÃ¥Â°ÂÃ§ÂÂ¡Ã©ÂÂºÃ¦Â¼ÂÃ¯Â¼Ânotes.json Ã§ÂÂ¡Ã¥Â¾ÂÃ¥ÂÂ¸Ã¦ÂÂ¶Ã¥ÂÂÃ¨Â¨Â»","output":"Ã§ÂÂ¡Ã¦ÂÂ°Ã¤Â¿Â¡Ã¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ¨Â·ÂÃ©ÂÂ²"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ","clients":"Immunora","work":"Ã¥ÂÂ¬Ã¥ÂÂ¸Ã§Â¨Â±Ã¥Â·Â²Ã¤Â»ÂÃ¦Â¬Â¾Ã¤Â¸Â¦Ã¦ÂÂÃ¤Â¾ÂStripeÃ¦ÂÂ¶Ã¦ÂÂ1953-1682Ã¯Â¼Â795.60 USDÃ¯Â¼ÂVISA-1573Ã¯Â¼Â10/29 02:24:38 UTCÃ¯Â¼ÂÃ¥Â°ÂÃ¦ÂÂINV-5542Ã¯Â¼ÂÃ¨ÂÂÃ¥ÂÂINV-5533Ã¨ÂÂÃ§Â¢Â¼Ã¦ÂÂÃ¥Â·Â®Ã§ÂÂ°Ã¯Â¼ÂÃ¯Â¼Â19:33Ã¥Â·Â²Ã¥ÂÂ»Ã¤Â¿Â¡BorderBuddyÃ¦Â Â¸Ã¥Â¯Â¦Ã§ÂÂ¼Ã§Â¥Â¨Ã¨ÂÂÃ¥Â·Â®Ã§ÂÂ°Ã¨ÂÂÃ¥ÂÂ¥Ã¨Â³Â¬Ã¯Â¼ÂbondÃ¥Â°ÂÃ¦ÂÂªÃ¥ÂÂºÃ¥ÂÂ·","output":"Ã¦Â Â¸Ã¥Â¯Â¦Ã©ÂÂµÃ¤Â»Â¶Ã¥Â·Â²Ã§ÂÂ¼ service@borderbuddy.comÃ¯Â¼ÂÃ§Â­ÂÃ¥Â¾ÂÃ¥ÂÂÃ¨Â¦ÂÃ§Â¢ÂºÃ¨ÂªÂÃ¥ÂÂ¥Ã¨Â³Â¬Ã¥Â¾ÂÃ¥ÂÂ¬Ã¤Â¿ÂÃ¥ÂÂºbond"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ","clients":"Oliveware","work":"Ã¥ÂÂÃ¨Â¦ÂIIA/DRI/Aurora/BorderBuddyÃ¥ÂÂÃ¥Â®Â¶brokerÃ¯Â¼ÂÃ¦ÂÂÃ¤ÂºÂ¤Ã§Â°Â½Ã¥Â¥Â½Ã§ÂÂBluebird POAÃ©ÂÂ²Ã¥ÂÂ£Ã¨Â¡Â¨Ã¦Â Â¼","output":"4Ã¥Â°ÂÃ¥ÂÂÃ¨Â¦Â+1Ã¥Â°ÂÃ©ÂÂÃ¤Â»Â¶Ã©ÂÂµÃ¤Â»Â¶Ã§ÂÂ¼Ã©ÂÂÃ¥Â®ÂÃ¦ÂÂ"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ","clients":"Sageware","work":"Ã©Â¦ÂÃ¨Â¼Âª15Ã¥Â°ÂÃ¥Â·Â®Ã§ÂÂ°Ã¥ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã©ÂÂÃ¥Â°ÂÃ§ÂÂ¼Ã©ÂÂÃ¥Â®ÂÃ¦ÂÂ","output":"Ã¦Â¯ÂÃ¥Â°ÂÃ©ÂÂÃ©ÂÂ1Ã¥ÂÂÃ©ÂÂÃ¯Â¼ÂÃ¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ©ÂÂÃ©ÂÂ"},{"date":"10 Ã¦ÂÂ 29 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ","clients":"Nervaqon","work":"Ã¥Â¡Â«Ã¥Â¯Â«Ã¥Â®ÂÃ¦ÂÂ´CBPÃ§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã¥ÂÂÃ¨Â¦ÂSPG Anova","output":"Ã§Â­ÂÃ¥Â¾ÂÃ¥Â°ÂÃ¦ÂÂ¹Ã¥Â Â±Ã¥ÂÂ¹"},{"date":"10 Ã¦ÂÂ 30 Ã¦ÂÂ¥Ã©ÂÂ±Ã¤ÂºÂ 16:37","clients":"Ã¥ÂÂ¨Ã©ÂÂ¨15Ã§Â®Â±","work":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂÃ©ÂÂÃ¦ÂÂ¶Ã©ÂÂ£Ã§Â·Â mail.pony-it.com IMAP 993 Ã¦ÂªÂ¢Ã¦ÂÂ¥Ã¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶Ã¯Â¼ÂÃ¤Â¸Â¦Ã¦ÂÂ¥Ã¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂ","output":"15Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã©ÂÂ£Ã§Â·ÂÃ¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶0Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂÃ¥Â¾ÂÃ¥Â¯Â0Ã¥Â°ÂÃ¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ¨Â¦ÂÃ¥ÂÂÃ¨Â¦Â"},{"date":"10 Ã¦ÂÂ 31 Ã¦ÂÂ¥Ã©ÂÂ±Ã¥ÂÂ­ 12:39","clients":"Ã¥ÂÂ¨Ã©ÂÂ¨15Ã§Â®Â±","work":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥Ã¯Â¼ÂÃ©ÂÂÃ¦ÂÂ¶Ã©ÂÂ£Ã§Â·Â mail.pony-it.com IMAP 993 Ã¦ÂªÂ¢Ã¦ÂÂ¥Ã¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶Ã¯Â¼ÂÃ¤Â¸Â¦Ã¦ÂÂ¥Ã¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂ","output":"15Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã©ÂÂ£Ã§Â·ÂÃ¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶0Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂÃ¥Â¾ÂÃ¥Â¯Â0Ã¥Â°ÂÃ¯Â¼ÂÃ§ÂÂ¡Ã©ÂÂÃ¨Â¦ÂÃ¥ÂÂÃ¨Â¦Â"}],"policy":[{"title":"Ã¤Â¸ÂÃ£ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¥Â°ÂÃ¦ÂÂ¥Ã¨ÂÂÃ¨ÂÂÃ§ÂÂÃ¦ÂµÂÃ§Â¨Â","body":"Ã¦ÂÂÃ¦ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¤Â¸ÂÃ¨Â«ÂÃ¦ÂÂ¯Ã¥ÂÂ¦Ã¥Â·Â²Ã©ÂÂ²Ã¥ÂÂ¥Ã¥Â°ÂÃ¦ÂÂ¥Ã©ÂÂÃ¦Â®ÂµÃ¯Â¼ÂÃ¤Â¸ÂÃ¥Â¾ÂÃ§ÂµÂ±Ã¤Â¸ÂÃ¨Â·ÂÃ©ÂÂ²Ã£ÂÂÃ¦ÂÂªÃ¥Â°ÂÃ¦ÂÂ¥Ã©ÂÂÃ¦Â®ÂµÃ¥ÂÂÃ¥Â®ÂÃ¦ÂÂÃ¦ÂÂÃ¦ÂÂÃ¦Â­Â¸Ã¦ÂªÂÃ¨ÂÂÃ§ÂÂÃ¦ÂÂÃ§Â¢ÂºÃ¨ÂªÂÃ¯Â¼ÂÃ§Â¢ÂºÃ¨ÂªÂÃ¦ÂÂ¯Ã¥ÂÂ¦Ã©ÂÂÃ¨Â¦ÂÃ¨Â£ÂÃ¤Â»Â¶Ã£ÂÂÃ©ÂÂÃ¨Â¦ÂÃ¨Â£ÂÃ¤Â»Â¶Ã§ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¦Â¨ÂÃ¨Â¨ÂÃ§ÂÂºÃ¥Â¾ÂÃ¨Â£ÂÃ¤Â»Â¶Ã¯Â¼ÂÃ¥Â¾ÂÃ§ÂºÂÃ¨Â·ÂÃ©ÂÂ²Ã§ÂÂ´Ã¥ÂÂ°Ã¦ÂÂÃ¦ÂÂÃ©Â½ÂÃ¥ÂÂ¨Ã£ÂÂÃ¦ÂÂÃ¦ÂÂÃ©Â½ÂÃ¥ÂÂ¨Ã§ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¦Â¨ÂÃ¨Â¨ÂÃ§ÂÂºÃ¥ÂÂ¯Ã¥ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ¥ÂÂÃ¥ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¦ÂµÂÃ§Â¨ÂÃ£ÂÂ"},{"title":"Ã¤ÂºÂÃ£ÂÂÃ©ÂÂµÃ¤Â»Â¶Ã§ÂÂ¼Ã©ÂÂÃ¨ÂÂÃ©Â¤ÂÃ¨ÂÂÃ§Â­ÂÃ§ÂÂ¥","body":"Ã¤Â»Â¥Ã©Â¤ÂÃ¨ÂÂÃ§ÂÂºÃ§ÂÂ®Ã§ÂÂÃ¯Â¼ÂÃ¦Â¯ÂÃ¥Â¤Â©Ã¦Â¯ÂÃ¥ÂÂÃ©ÂÂµÃ§Â®Â±Ã©Â¦ÂÃ¨Â¼ÂªÃ§ÂÂ¼Ã©ÂÂ 10 Ã¥Â°ÂÃ¥Â·Â®Ã§ÂÂ°Ã¥ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã£ÂÂÃ¦Â¬Â¡Ã¦ÂÂ¥Ã¥Â°ÂÃ¦ÂÂªÃ¥ÂÂÃ¨Â¦ÂÃ§ÂÂÃ¨Â³Â¬Ã¦ÂÂ¶Ã¨Â¿Â½Ã§ÂÂ¼Ã¯Â¼ÂÃ¥ÂÂÃ¦Â¨Â£ 10 Ã¥Â°ÂÃ§ÂÂºÃ¤Â¸ÂÃ¨Â¼ÂªÃ£ÂÂÃ©ÂÂµÃ¤Â»Â¶Ã¥ÂÂ§Ã¥Â®Â¹Ã¥ÂÂÃ¨ÂÂÃ¥Â·Â²Ã¦ÂÂÃ¥ÂÂÃ¦Â¡ÂÃ¤Â¾ÂÃ§ÂÂÃ©ÂÂÃ¥Â Â´Ã¦ÂÂ¹Ã¥Â¼ÂÃ¯Â¼ÂÃ¤Â½ÂÃ¦Â¯ÂÃ¥Â°ÂÃ¦ÂÂÃ¦Â¡ÂÃ¥ÂÂÃ¤Â¸ÂÃ§ÂÂ¸Ã¥ÂÂÃ¯Â¼ÂÃ©ÂÂ¿Ã¥ÂÂÃ¦Â©ÂÃ¦Â¢Â°Ã¦ÂÂÃ£ÂÂÃ¥Â·Â²Ã¥ÂÂÃ¨Â¦ÂÃ§ÂÂÃ¨Â³Â¬Ã¦ÂÂ¶Ã§Â«ÂÃ¥ÂÂ³Ã¥ÂÂÃ¦Â­Â¢Ã§Â¾Â¤Ã§ÂÂ¼Ã¯Â¼ÂÃ¨Â½ÂÃ¥ÂÂ¥Ã¤Â¸ÂÃ¥Â°ÂÃ¤Â¸ÂÃ¨Â·ÂÃ©ÂÂ²Ã£ÂÂ"},{"title":"Ã¤Â¸ÂÃ£ÂÂÃ¦ÂÂÃ¥ÂºÂ¦Ã§ÂÂ®Ã¦Â¨Â","body":"Ã¦Â¯ÂÃ¦ÂÂÃ¦ÂÂÃ¥ÂÂÃ§ÂÂ²Ã¥Â¾ÂÃ¦ÂµÂ·Ã©ÂÂÃ¦ÂÂÃ¤Â¿ÂÃ¦ÂÂÃ¤Â»Â¶Ã¤Â¸ÂÃ¥Â°ÂÃ¦ÂÂ¼ 30 Ã¥Â®Â¶Ã£ÂÂÃ¥ÂÂ¨Ã¨ÂÂÃ§ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¤Â¸ÂÃ¥Â°ÂÃ¦ÂÂ¼ 5 Ã¥Â®Â¶Ã¥ÂÂ¨Ã©ÂÂÃ£ÂÂ"},{"title":"Ã¥ÂÂÃ£ÂÂÃ§ÂÂÃ¦ÂÂÃ©Â¡ÂÃ¨ÂÂ²Ã¦Â¨ÂÃ¨Â¨Â»","body":"Ã¥Â®Â¢Ã¦ÂÂ¶Ã§ÂÂÃ¦ÂÂÃ¥ÂÂÃ§Â´ÂÃ¯Â¼ÂÃ§Â´ÂÃ¨ÂÂ²Ã¥Â¾ÂÃ¨Â£ÂÃ¤Â»Â¶Ã£ÂÂÃ¨ÂÂÃ¨ÂÂ²Ã¥ÂÂ¯Ã¥ÂÂÃ¥ÂÂÃ£ÂÂÃ©Â»ÂÃ¨ÂÂ²Ã¦ÂÂ¯Ã¤Â»ÂÃ§Â¢ÂºÃ¨ÂªÂÃ¤Â¸Â­Ã£ÂÂÃ§Â¶Â Ã¨ÂÂ²Ã¥Â·Â²Ã¥Â®ÂÃ¦ÂÂÃ£ÂÂÃ¥Â Â±Ã©ÂÂÃ§Â¶ÂÃ§Â´ÂÃ¨Â³ÂÃ¦ÂºÂÃ¦Â±Â Ã¤ÂºÂÃ§Â´ÂÃ¯Â¼ÂÃ§ÂÂ°Ã¨ÂÂ²Ã¦ÂÂªÃ¨ÂÂ¯Ã§Â¹Â«Ã£ÂÂÃ¨ÂÂÃ¨ÂÂ²Ã¥Â·Â²Ã§ÂÂ¼Ã¤Â¿Â¡Ã£ÂÂÃ§Â¶Â Ã¨ÂÂ²Ã¥Â·Â²Ã¥ÂÂÃ¨Â¦ÂÃ£ÂÂÃ¦Â·Â±Ã§Â¶Â Ã¨ÂÂ²Ã¥Â·Â²Ã¥ÂÂÃ¤Â½ÂÃ£ÂÂÃ§Â´ÂÃ¨ÂÂ²Ã¥Â·Â²Ã©ÂÂÃ©ÂÂÃ£ÂÂÃ¥Â·Â²Ã¥ÂÂÃ¤Â½ÂÃ¤Â»Â£Ã¨Â¡Â¨Ã¦ÂÂÃ¦ÂÂÃ¥ÂÂÃ¥Â°ÂÃ¦ÂÂ¥Ã¨Â¨ÂÃ©ÂÂÃ¯Â¼ÂÃ¤Â¸ÂÃ§Â­ÂÃ¥ÂÂÃ¦ÂÂ¼Ã¥Â®Â¢Ã¦ÂÂ¶ bond Ã¦ÂÂÃ¤ÂºÂ¤Ã£ÂÂ"},{"title":"Ã¤ÂºÂÃ£ÂÂÃ§Â­ÂÃ¥Â¾ÂÃ¥ÂÂÃ¨Â¦ÂÃ¥ÂÂ¤Ã¥Â®ÂÃ¨Â¦ÂÃ¥ÂÂ","body":"Ã¥Â¾ÂÃ¤Â¸ÂÃ¥ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã©ÂÂµÃ§Â®Â±Ã¥ÂÂÃ¥ÂÂÃ¤Â¸ÂÃ¥Â Â±Ã©ÂÂÃ§Â¶ÂÃ§Â´ÂÃ§ÂÂ¼Ã©ÂÂÃ©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¯Â¼ÂÃ§Â´Â¯Ã¨Â¨ÂÃ©ÂÂ 3 Ã¥ÂÂÃ¥Â·Â¥Ã¤Â½ÂÃ¦ÂÂ¥Ã¤Â»ÂÃ¦ÂÂªÃ¦ÂÂ¶Ã¥ÂÂ°Ã¥ÂÂÃ¨Â¦ÂÃ¯Â¼ÂÃ¥ÂÂ³Ã¥ÂÂ¤Ã¥Â®ÂÃ§ÂÂºÃ¤Â¸ÂÃ¥ÂÂÃ¨Â¦ÂÃ£ÂÂÃ¨Â¨ÂÃ§Â®ÂÃ¥Â·Â¥Ã¤Â½ÂÃ¦ÂÂ¥Ã¦ÂÂÃ¨ÂÂªÃ¥ÂÂÃ¦ÂÂÃ©ÂÂ¤Ã§Â¾ÂÃ¥ÂÂÃ¨ÂÂ¯Ã©ÂÂ¦Ã¥ÂÂÃ¦ÂÂÃ¥ÂÂÃ©ÂÂ±Ã¦ÂÂ«Ã£ÂÂÃ¥ÂÂ¤Ã¥Â®ÂÃ¤Â¸ÂÃ¥ÂÂÃ¨Â¦ÂÃ¥Â¾ÂÃ¦Â¨ÂÃ¨Â¨ÂÃ§ÂÂºÃ¥Â·Â²Ã©ÂÂÃ©ÂÂÃ¯Â¼ÂÃ¤Â¸ÂÃ¥ÂÂÃ§Â¹Â¼Ã§ÂºÂÃ¨Â·ÂÃ©ÂÂ²Ã£ÂÂÃ¦Â¯ÂÃ¦Â¬Â¡Ã§ÂÂ¼Ã¤Â¿Â¡Ã¥ÂÂÃ¥ÂÂÃ¦ÂÂÃ¦Â­Â¤Ã¨Â¦ÂÃ¥ÂÂÃ§Â¯Â©Ã©ÂÂ¸Ã¥ÂÂÃ¥ÂÂ®Ã¯Â¼ÂÃ©ÂÂ¿Ã¥ÂÂÃ¦ÂµÂªÃ¨Â²Â»Ã§Â²Â¾Ã¥ÂÂÃ¥ÂÂ¨Ã§ÂÂ¡Ã¥ÂÂÃ¨Â¦ÂÃ¦ÂÂÃ©Â¡ÂÃ§ÂÂÃ¥Â°ÂÃ¥ÂÂÃ¤Â¸ÂÃ£ÂÂ"}],"companyDocs":[{"name":"Ã¨ÂÂ±Ã¦ÂÂÃ¥ÂÂ©Ã§ÂÂÃ¥Â·Â¥Ã¤Â½ÂÃ¥ÂÂÃ©Â ÂÃ§ÂÂ¥","path":"docs/company/Ã¨ÂÂ±Ã¦ÂÂÃ¥ÂÂ©Ã§ÂÂ Ã¥Â·Â¥Ã¤Â½ÂÃ¥ÂÂÃ©Â¡Â»Ã§ÂÂ¥.xlsx","desc":"Ã¨ÂªÂªÃ¦ÂÂÃ¨ÂÂ±Ã¦ÂÂÃ¥ÂÂ©Ã§ÂÂÃ§ÂÂÃ¥Â·Â¥Ã¤Â½ÂÃ¨ÂÂ·Ã¨Â²Â¬Ã£ÂÂÃ§ÂÂ³Ã¨Â«ÂbondÃ¦ÂÂÃ©ÂÂÃ¦ÂÂÃ¦ÂÂÃ¦Â¸ÂÃ¥ÂÂ®Ã£ÂÂÃ¨Â¼ÂÃ¥ÂÂ©Ã¦ÂÂÃ¦ÂÂÃ¨Â¦ÂÃ¦Â±ÂÃ¯Â¼ÂÃ¤Â»Â¥Ã¥ÂÂÃ¤Â¸ÂÃ§Â´ÂÃ¤Â¸Â»Ã§Â®Â¡Ã¥ÂÂÃ¥Â·Â¥Ã£ÂÂ"},{"name":"Ã¥ÂÂ·Ã¥ÂÂÃ¥ÂÂÃ¥Â¤ÂÃ¥ÂÂ¼Ã¨Â©Â±Ã¨Â¡ÂÃ¦ÂÂÃ¥ÂÂ","path":"docs/company/Ã¥ÂÂ·Ã¥ÂÂ¯Ã¥ÂÂ¨Ã¥Â¤ÂÃ¥ÂÂ¼-Ã¥ÂÂÃ¤Â»Â¶Ã¥ÂÂÃ¥Â®Â¹Ã¨Â¯ÂÃ¦ÂÂ¯Ã¦ÂÂÃ¥ÂÂ.docx","desc":"Ã©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¨Â©Â±Ã¨Â¡ÂÃ§Â¯ÂÃ¦ÂÂ¬Ã¯Â¼ÂÃ¥ÂÂÃ¥ÂÂ«Ã¤Â¸ÂÃ¥ÂÂÃ¥Â Â´Ã¦ÂÂ¯Ã§ÂÂÃ©ÂÂÃ¥Â Â´Ã£ÂÂÃ¨Â·ÂÃ©ÂÂ²Ã£ÂÂÃ§ÂµÂÃ¥Â°Â¾Ã¦Â¨Â¡Ã¦ÂÂ¿Ã¯Â¼ÂÃ§ÂÂ¨Ã¦ÂÂ¼Ã¥Â·Â®Ã§ÂÂ°Ã¥ÂÂÃ§Â¾Â¤Ã§ÂÂ¼Ã£ÂÂ"},{"name":"Ã¨Â²Â¡Ã¥ÂÂÃ§Â¯ÂÃ¦ÂÂ¬Ã¯Â¼ÂHavorynÃ¯Â¼Â","path":"docs/company/Ã§Â¯ÂÃ¦ÂÂ¬%20Havoryn_Personal_Financial_DRAFT_ESTIMATED_v2.pdf","desc":"Ã¥Â®Â¢Ã¦ÂÂ¶Ã¨Â²Â¡Ã¥ÂÂÃ§ÂÂÃ¦Â³ÂÃ¨Â©ÂÃ¤Â¼Â°Ã§Â¯ÂÃ¦ÂÂ¬Ã¯Â¼ÂÃ§ÂÂ¨Ã¦ÂÂ¼Ã§ÂÂ³Ã¨Â«ÂbondÃ¦ÂÂÃ§ÂÂÃ¨Â²Â¡Ã¥ÂÂÃ¨Â³ÂÃ¦ÂÂÃ¥ÂÂÃ¨ÂÂÃ£ÂÂ"},{"name":"Ã¥Â Â±Ã©ÂÂÃ¨Â¡ÂÃ¨ÂÂÃ¦ÂÂÃ¤Â¿ÂÃ¥ÂÂ¬Ã¥ÂÂ¸Ã¥ÂÂÃ¥ÂÂ®","path":"docs/company/Customs%20broker%26%20Bond%20broker.xlsx","desc":"Ã¥Â®ÂÃ¦ÂÂ´Ã§ÂÂÃ¥Â Â±Ã©ÂÂÃ¨Â¡ÂÃ¨ÂÂÃ¦ÂÂÃ¤Â¿ÂÃ¥ÂÂ¬Ã¥ÂÂ¸Ã¨ÂÂ¯Ã§ÂµÂ¡Ã¥ÂÂÃ¥ÂÂ®Ã¯Â¼ÂÃ¥ÂÂÃ¥ÂÂ«Ã¥ÂÂ¬Ã¥ÂÂ¸Ã¥ÂÂÃ£ÂÂÃ¥ÂÂ°Ã¥ÂÂÃ£ÂÂÃ©ÂÂ»Ã¨Â©Â±Ã£ÂÂÃ©ÂÂµÃ§Â®Â±Ã£ÂÂ"}],"todos":[{"client":"Nervaqon LLC","level":"high","tag":"2Ã¥Â®Â¶brokerÃ¥Â·Â²Ã¥ÂÂÃ¨Â¦ÂÃ¥Â¾ÂÃ¥ÂÂÃ¨Â¦Â","time":"10/28 23:10","body":"Ã¥ÂÂ©Ã¥Â®Â¶Ã¦ÂÂÃ¤Â¿ÂÃ¥ÂÂ¬Ã¥ÂÂ¸Ã©ÂÂ½Ã¥Â·Â²Ã§ÂÂ¼Ã¤Â¾ÂÃ¥Â Â±Ã¥ÂÂ¹Ã¨Â¦ÂÃ¦Â±ÂÃ¯Â¼ÂÃ©ÂÂÃ¨Â¦ÂÃ¦ÂÂ´Ã§ÂÂÃ¦ÂÂÃ¦ÂÂÃ¥ÂÂÃ¨Â¦ÂÃ£ÂÂSurety One Ã¨Â¦ÂÃ§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã£ÂÂÃ¥ÂÂÃ¤ÂºÂºÃ¨Â²Â¡Ã¥ÂÂÃ¥Â Â±Ã¨Â¡Â¨Ã£ÂÂÃ¥ÂÂ¬Ã¥ÂÂ¸Ã¨Â²Â¡Ã¥Â Â±Ã£ÂÂCBPÃ¥Â¾ÂÃ¤Â¾ÂÃ£ÂÂÃ¥ÂÂÃ¥ÂÂ¾Ã©ÂÂ·Ã¨ÂªÂªÃ¦ÂÂÃ¯Â¼ÂSPG Anova Marine Ã¥Â·Â²Ã§ÂÂ¼Ã§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã¯Â¼ÂÃ¥Â¡Â«Ã¥Â®ÂÃ¥ÂÂÃ¨Â¦ÂÃ£ÂÂ","ai":"Ã¥ÂÂ©Ã¥Â®Â¶Ã©ÂÂ½Ã¦ÂÂ¯Ã©Â«ÂÃ¦ÂÂÃ¥ÂÂÃ§Â·ÂÃ§Â´Â¢Ã¯Â¼ÂÃ¥ÂÂªÃ¥ÂÂÃ¨ÂÂÃ§ÂÂÃ£ÂÂÃ§Â¬Â¬Ã¤Â¸ÂÃ¦Â­Â¥Ã¥ÂÂÃ¥ÂÂÃ¨Â¦ÂÃ¥ÂÂ©Ã¥Â®Â¶Ã§Â¢ÂºÃ¨ÂªÂÃ¦ÂÂ¶Ã¥ÂÂ°Ã¯Â¼ÂÃ¥ÂÂÃ¨Â¨Â´Ã¥Â®Â¢Ã¦ÂÂ¶Ã¦ÂÂÃ¦ÂÂÃ¦ÂºÂÃ¥ÂÂÃ¤Â¸Â­Ã¯Â¼ÂÃ§Â´Â3Ã¥ÂÂÃ¥Â·Â¥Ã¤Â½ÂÃ¦ÂÂ¥Ã¥ÂÂ§Ã¦ÂÂÃ¤Â¾ÂÃ£ÂÂÃ§Â¬Â¬Ã¤ÂºÂÃ¦Â­Â¥Ã¦ÂÂ Nervaqon Ã§ÂÂ EINÃ£ÂÂÃ§Â«Â Ã§Â¨ÂÃ£ÂÂÃ¨Â²Â¡Ã¥ÂÂÃ¦ÂÂÃ¦ÂÂÃ¦ÂÂ´Ã§ÂÂÃ©Â½ÂÃ¥ÂÂ¨Ã¯Â¼ÂÃ¥Â¡Â«Ã¥Â°ÂÃ¦ÂÂ¹Ã§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã§ÂÂ¼Ã¥ÂÂÃ¥ÂÂ»Ã£ÂÂ"},{"client":"Immunora Bio LLC","level":"mid","tag":"Ã¥Â·Â²Ã¤Â»ÂÃ¦Â¬Â¾Ã¥Â¾ÂÃ¥ÂÂºbond","time":"10/29 Ã¨Â·ÂÃ©ÂÂ²","body":"Ã¥ÂÂ¬Ã¥ÂÂ¸Ã§Â¨Â±Ã¥Â·Â²Ã¤Â»ÂÃ¦Â¬Â¾Ã¤Â¸Â¦Ã¦ÂÂÃ¤Â¾Â Stripe Ã¦ÂÂ¶Ã¦ÂÂ1953-1682Ã¯Â¼Â795.60 USDÃ¯Â¼ÂVISA-1573Ã¯Â¼Â10/29 02:24:38 UTCÃ¯Â¼ÂÃ¥Â°ÂÃ¦ÂÂÃ§ÂÂ¼Ã§Â¥Â¨ INV-5542Ã¯Â¼ÂÃ¥ÂÂ INV-5533 Ã¨ÂÂÃ§Â¢Â¼Ã¦ÂÂÃ¥Â·Â®Ã§ÂÂ°Ã©ÂÂÃ¦Â Â¸Ã¥Â¯Â¦Ã£ÂÂÃ©ÂÂµÃ§Â®Â±Ã¥Â°ÂÃ¦ÂÂªÃ¦ÂÂ¶Ã¥ÂÂ°Ã¦ÂÂ¶Ã¦ÂÂÃ¯Â¼Âbond Ã¦ÂÂÃ¤Â¿ÂÃ¦ÂÂÃ¤Â»Â¶Ã¥Â°ÂÃ¦ÂÂªÃ¥ÂÂºÃ¥ÂÂ·Ã¯Â¼ÂÃ¥Â¾ÂÃ¥ÂÂ BorderBuddy Ã§Â¢ÂºÃ¨ÂªÂÃ¥ÂÂ¥Ã¨Â³Â¬Ã¤Â¸Â¦Ã¥ÂÂ¬Ã¤Â¿ÂÃ¥ÂÂºÃ¤Â¿ÂÃ£ÂÂ"},{"client":"Kervalonix LLC","level":"mid","tag":"RPSÃ¦Â­Â£Ã©ÂÂ¢Ã¥ÂÂÃ¨Â¦ÂÃ¥Â¾ÂÃ¥ÂÂÃ¦ÂÂ","time":"10/30 03:20","body":"RPS Joe Allen Ã¥ÂÂÃ¨Â¦ÂÃ¥ÂÂ¯Ã¦ÂÂ¿Ã¥ÂÂÃ¯Â¼ÂÃ©ÂÂÃ§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã£ÂÂÃ¥ÂÂ¬Ã¥ÂÂ¸Ã¨Â³ÂÃ§ÂÂ¢Ã¨Â²Â Ã¥ÂÂµÃ¨Â¡Â¨Ã¨ÂÂÃ¦ÂÂÃ§ÂÂÃ¨Â¡Â¨Ã£ÂÂÃ¥ÂÂÃ¤ÂºÂºÃ¨Â²Â¡Ã¥ÂÂÃ¯Â¼Â2-3 Ã¥ÂÂÃ¥Â·Â¥Ã¤Â½ÂÃ¥Â¤Â©Ã¥Â¯Â©Ã¦Â Â¸Ã¯Â¼ÂÃ¥Â¾ÂÃ¥ÂÂÃ©Â½ÂÃ¥Â¾ÂÃ¥ÂÂÃ¨Â¦ÂÃ£ÂÂ"},{"client":"Pebblehome LLC","level":"low","tag":"Ã§Â­ÂÃ¥Â¾ÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¨Â£ÂÃ¤Â»Â¶","time":"10/28 19:15","body":"Ã¤Â½ÂÃ¥Â·ÂÃ©Â§ÂÃ§ÂÂ§10/20Ã©ÂÂÃ¦ÂÂÃ¯Â¼ÂEIN Ã¥ÂÂÃ¥Â­Â ROBIM Ã¨ÂÂ ROBIN Ã¦ÂÂ¼Ã¥Â¯Â«Ã¤Â¸ÂÃ¤Â¸ÂÃ¨ÂÂ´Ã¯Â¼ÂÃ¥Â·Â²Ã¨Â½ÂÃ¤Â¸ÂÃ¦Â¸Â¸Ã¥ÂÂÃ¤ÂºÂÃ¯Â¼ÂÃ§Â­ÂÃ¥Â¾ÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¨Â£ÂÃ¦ÂÂ°Ã¦ÂÂÃ¦ÂÂÃ¯Â¼ÂECF Ã¥ÂÂ commodity Ã¨ÂÂ ISF Ã¥Â®ÂÃ¦ÂÂÃ£ÂÂ"}],"archive":[{"name":"Ã¥Â¤ÂÃ§ÂÂ¼Ã©ÂÂµÃ¤Â»Â¶Ã¥Â¾ÂÃ¤Â¾ÂÃ§Â¸Â½Ã¥Â¸Â³","path":"docs/Ã¥Â¤ÂÃ§ÂÂ¼Ã©ÂÂµÃ¤Â»Â¶Ã¥Â¾ÂÃ¤Â¾ÂÃ§Â¸Â½Ã¥Â¸Â³.pdf","desc":"Ã§Â´Â¯Ã¨Â¨ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã©ÂÂÃ§ÂÂ¼Ã¤Â¿Â¡Ã¨ÂÂÃ¥Â¾ÂÃ¤Â¾ÂÃ¦ÂÂÃ§Â´Â°Ã¯Â¼ÂÃ¥ÂÂ«Ã¥Â®Â¢Ã¦ÂÂ¶Ã¥ÂÂÃ§ÂµÂÃ¨ÂÂÃ©ÂÂÃ¤ÂºÂºÃ¨Â¨ÂÃ©ÂÂÃ£ÂÂ","date":"2026/10/29"}],"timeline":{"2":[{"e":"note","tt":"æ¸¬è©¦å§å®¹","tm":"11/2 03:29","who":"ð Kevin W","src":"ð Kevin W","tx":"æä¹ä¸å¤ªç¢ºå®ï¼å çºéé¨åå§å®¹æä¹ä¸æ¸æ¥è©²æéº¼èçï¼æä»¥æ³ççå¦ä½è½åå¾æ´å¥½ä¸äºãè«åæä¸ä¸ä»çå®¢æ¶æ¯å¦å·²æè·é²ï¼å çºä¸ç´é½æ²æä¸ bondã","txCn":"æä¹ä¸å¤ªç¡®å®ï¼å ä¸ºè¿é¨ååå®¹æä¹ä¸æ¸æ¥è¯¥æä¹å¤çï¼æä»¥æ³ççå¦ä½è½åå¾æ´å¥½ä¸äºãè¯·åæä¸ä¸ä»çå®¢æ·æ¯å¦å·²æè·è¿ï¼å ä¸ºä¸ç´é½æ²¡æä¸ bondã","txEn":"Iâm not entirely sure either, because Iâm also unclear on how to handle this part, so Iâd like to see how it can be done better. Please analyze whether his client has already followed up, because no bond has been placed the whole time.","key":"note_1793561389072"},{"e":"email","tt":"BorderBuddy Ã¤Â»ÂÃ¦Â¬Â¾Ã¥Â·Â²Ã¥ÂÂ¥Ã¥Â¸Â³Ã§Â¢ÂºÃ¨ÂªÂ","tm":"10/30 05:14","src":"Ã°ÂÂÂ© docs.usa@borderbuddy.com","tx":"Laura Rucker / Tanya åè¦ç¼ç¥¨èç¢¼ä¸ç¬¦ä½æ¬¾é å·²æç¨ï¼Bond ç³è«æµç¨æ¨é²ä¸­ï¼å¾è£å·®é¡èªªæã"},{"e":"auto","tt":"Importivity Ã¤Â¾ÂÃ¤Â¿Â¡Ã¨Â¿Â½Ã¨Â¹Â¤Ã©Â¦ÂÃ§Â¥Â¨Ã¥ÂÂºÃ¨Â²Â¨","tm":"10/29 21:36","src":"Ã°ÂÂÂ© info@importivity.com","tx":"Re: Setting Up A Bond For Our First Shipmentï¼éåè¦æç¨ã"},{"e":"email","tt":"gowithknown Gabrielle Ã§ÂÂ¢Ã¥ÂÂÃ¨Â½ÂÃ¤Â»Â","tm":"10/26 17:37","src":"Ã°ÂÂÂ© Gabrielle@gowithknown.com","tx":"èªååè¦ï¼ä¸è¬äºåæ¹ Dylan dylan@gowithknown.comï¼æè¨ accounting@gowithknown.comã"}],"3":[{"e":"reject","tt":"Just Your Broker Ã¥Â©ÂÃ¦ÂÂ","tm":"10/29 18:09","src":"Ã°ÂÂÂ© hello@justyourbroker.com","tx":"åè¦ä¸åæ° LLC ç¨ç« bondï¼æ¨å·²ééã"},{"e":"email","tt":"Bluebird Emily Ã©Â¡ÂÃ©ÂÂ¨Ã©ÂÂ²Ã¥ÂÂ£Ã¥Â°ÂÃ¨Â£Â","tm":"10/28 17:05","src":"Ã°ÂÂÂ© emily@bluebirdchb.com","tx":"é¡æé¨ Oliveware èªå·±çé²å£å°è£åï¼ä¸åç¨ç«é¶å® bondã"},{"e":"email","tt":"Aurora Customs Allison Ã¥ÂÂÃ¨Â¦Â","tm":"10/28 10:06","src":"Ã°ÂÂÂ© allison@auroracustomsbroker.com","tx":"Re: new CA importer, bond questionï¼å¾è·é²ã"}],"5":[{"e":"email","tt":"E.C. Ferrer Irene Ã¨Â¿Â½Ã¥ÂÂÃ¥ÂÂÃ¥ÂÂÃ¨ÂÂ ISF","tm":"10/30 01:13","src":"Ã°ÂÂÂ© irene@ecferrer.com","tx":"Re: Bond for Long Beach Entriesï¼éåç¥è²¨ç©åé¡èåºè²¨å ISF æç¨ï¼åè«é£çº bond å§è¨­ã"},{"e":"auto","tt":"Assured CHB / Juliana James Ã¨ÂÂªÃ¥ÂÂÃ¥ÂÂÃ¨Â¦Â","tm":"10/29 15:43","src":"Ã°ÂÂÂ© inquiry@assured / r.james@julianachb.com","tx":"åçºèªååè¦ï¼å¾çäººæ¥æã"}],"8":[{"e":"email","tt":"SPG Anova Ã¥ÂÂÃ¨Â¦ÂÃ¨Â©Â¢Ã¥ÂÂ¹","tm":"10/27 19:47","src":"Ã°ÂÂÂ© bonds@anovamarine.com","tx":"RE: Inquiry About Obtaining Customs Bond for Nervaqonï¼å¾è£å¬å¸è³æã"},{"e":"email","tt":"SuretyOne Ã¥ÂÂÃ¨Â¦Â","tm":"10/24 23:28","src":"Ã°ÂÂÂ© StaffUnderwriters@suretyone.com","tx":"Re: Inquiryï¼å·²é²å¥ä¿éªå¬å¸æµç¨ã"}],"61":[{"e":"auto","tt":"Lexington Mark Ã¤Â¼ÂÃ¥ÂÂÃ¨ÂÂ³ 11/2","tm":"10/29 18:25","src":"Ã°ÂÂÂ© mholtschneider@lexington","tx":"èªååè¦ä¼åä¸­ï¼æ¥ä»¶æ 410-625-0800ï¼ç¡æå®è½ä»äººã"}],"64":[{"e":"reject","tt":"Trinity Carmen Ã¥Â©ÂÃ¦ÂÂÃ§ÂÂ¨Ã§Â«Â bond","tm":"10/29 15:14","src":"Ã°ÂÂÂ© carmen@trinitycb.com","tx":"Re: Who handles bond setupï¼åªçµ¦èªå·±æ¸éå®¢æ¶åï¼ä¸åç¨ç« bondã"}],"66":[{"e":"email","tt":"RPS Joe Allen Ã¨Â¦ÂÃ¦Â±ÂÃ¨Â£ÂÃ¤ÂºÂ¤Ã¨Â²Â¡Ã¥ÂÂÃ¦ÂÂÃ¤Â»Â¶","tm":"10/29 16:20","src":"Ã°ÂÂÂ© joe_allen@rpsins.com","tx":"è¦æ±å¬å¸è³ç¢è² åµè¡¨ãæçè¡¨ãåäººè²¡åè¡¨ãBond ç³è«è¡¨ï¼2-3 å·¥ä½å¤©å¯©æ ¸ã"},{"e":"note","tt":"Ã¥ÂÂÃ¤ÂºÂºÃ¨Â²Â¡Ã¥ÂÂÃ¨Â¡Â¨Ã¥Â·Â²Ã¥Â¡Â«Ã¥Â¦Â¥","tm":"10/30 12:43","src":"ð æå","tx":"æå·²å©æªè¯åãç¾åä¸­ç¢æ¸å¼å¡«å¦¥ Personal Financialï¼å¾åè¦ RPSã"},{"e":"doc","tt":"Bond Ã§ÂÂ³Ã¨Â«ÂÃ¨Â¡Â¨Ã¨ÂÂÃ§Â¨Â¿Ã¥Â·Â²Ã§ÂÂÃ¦ÂÂ","tm":"10/30 12:44","src":"AI èç¨¿","tx":"Customs App å¡«ç­çå·²çæï¼HTS ç·¨ç¢¼èé²å£é¡çºä¸­ç¢ä½ä½ï¼å¾ä¾çå¯¦è²¨åèª¿æ´ã"}],"69":[{"e":"auto","tt":"Miami Valley Sandy Duncan Ã©ÂÂÃ¤Â¼ÂÃ¨Â½ÂÃ¤Â»Â","tm":"10/29 18:27","src":"Ã°ÂÂÂ© sduncan@miamivalleyworldwide.com","tx":"èªååè¦éä¼ï¼æ¹è¯çµ¡ Denise Shirk dshirk@miamivalleyworldwide.comã"}],"71":[{"e":"auto","tt":"Leavitt Alan Anderson Ã©ÂÂÃ¤Â¼ÂÃ¨Â½ÂÃ¤Â»Â","tm":"10/29 18:36","src":"Ã°ÂÂÂ© alan-anderson@leavitt.com","tx":"èªååè¦éä¼ï¼æè­äºå®æ¹ Teresa Deoliveira teresa-deoliveira@leavitt.comï¼ä¸è¬ä¾é» 801-566-7272ã"}],"73":[{"e":"email","tt":"Crystal Boomhower Ã¤Â¾ÂÃ¥ÂÂÃ©ÂÂ£Ã§ÂºÂ bond","tm":"10/30 06:15","src":"Ã°ÂÂÂ© crystalboomhower@hotmail.com","tx":"ä¸»åä¾ä¿¡ Continuous Bondï¼å¾åå ±å¹èæéææã"}],"75":[{"e":"email","tt":"SuretyOne Ã¥ÂÂ lead time","tm":"10/29 16:35","src":"Ã°ÂÂÂ© StaffUnderwriters@suretyone.com","tx":"Re: Bond lead time before first entryï¼å¾åè¦é¦ç¥¨æç¨ã"},{"e":"reject","tt":"Bluebird Emily Ã¤Â¸ÂÃ¥ÂÂÃ§ÂÂ¨Ã§Â«Â bond","tm":"10/29 14:42","src":"Ã°ÂÂÂ© emily@bluebirdchb.com","tx":"åªåèªå·±æ¸éå®¢æ¶ï¼ä¸åç¨ç« retail bondã"},{"e":"auto","tt":"Propeller Bonds Ã¨ÂÂªÃ¥ÂÂÃ§Â¢ÂºÃ¨ÂªÂ","tm":"10/29 18:42","src":"Ã°ÂÂÂ© support@propellerbonds.com","tx":"24 å°æå§äººå·¥åè¦ã"}],"89":[{"e":"email","tt":"A1 Worldwide Angely Ã¥ÂÂÃ¦Â³ÂÃ¥Â¾ÂÃ¦ÂÂÃ¤Â»Â¶","tm":"10/22 19:17","src":"Ã°ÂÂÂ© angely@a1wwl.com","tx":"Re: Legal documents for application of US custom bondï¼å¾è£ POA èå¬å¸æä»¶ã"}],"93":[{"e":"doc","tt":"Ã¥Â®Â¢Ã¦ÂÂ¶Ã¥ÂÂ¨Ã¥Â¥ÂÃ¦ÂÂÃ¦ÂÂÃ¦Â­Â¸Ã¦ÂªÂ","tm":"10/30 12:33","src":"ç³»çµ±èªå","tx":"EIN 43-2215896ãCA Entity B20260438027ãå¬å¸å°å USPS é©è­ééãç¼ç¾ä½å·é§ç§ H320-116-96-380-0 æ¼ 2026/10/20 å°æï¼åçºå¾è£ä»¶ã"},{"e":"auto","tt":"Ã¨ÂÂÃ¨ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶ Pebblehome Ã¥ÂÂÃ¤Â¸ÂÃ¥Â¯Â¦Ã©ÂÂÃ¥ÂÂÃ§ÂÂÃ¤ÂºÂº","tm":"10/30 11:50","src":"ç³»çµ±èªå","tx":"æ³äºº Christopher Robin Hodgeï¼SSN / DOB / ä½åä¸é è Pebblehome å®å¨ä¸è´ï¼å¤æ·çºåä¸ä¸»é«ï¼éä¿æéåä¿éªå¬å¸ä¸»åèªªæéè¯ã"},{"e":"note","tt":"Ã¤Â¸ÂÃ§Â´ÂÃ¦ÂÂÃ§Â¤ÂºÃ¦ÂÂ«Ã¥ÂÂÃ§ÂÂ³Ã¨Â«Â","tm":"10/31 01:00","src":"Kevin W","tx":"åä¸ SSN éå©é LLCï¼ä¸ç´è¦æ±åæ«åï¼ç­æç¤ºåèçã"}],"99":[{"e":"note","tt":"1","tm":"11/2 04:44","who":"📝 Kevin W","src":"📝 Kevin W","tx":"1","txCn":"1","txEn":"1","key":"note_1793565889718"}],"Home Depot":[{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ bruce@boschcustomsbrokerage.comï¼BOSCH CUSTOMS BROKERAGE,INC.ï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@interport.usï¼Interport Logistics LLCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@glchb.comï¼Guy Lichtenstein CHB Corp.ï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ import@elmcustomsservice.comï¼ELM CUSTOMS BROKERAGE, INC.ï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@alliancechb.comï¼ALLIANCE INTERNATIONAL CHB INCï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@wtdc.comï¼Warehouse Division of World Terminal andï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@arii.netï¼AMERICAN ROYAL INTERNATIONAL INCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@promptus.usï¼Promptus, LLCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@imperialfreight.comï¼IMPERIAL FREIGHT BROKERS INC.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@hartryinc.comï¼HOWARD HARTRY, INC.ï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ mia@jtmsa.usï¼JOIN THE MOMENT FORWARDING CORPï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ General@jec-chb.comï¼JEC Customs House Brokerageï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@ranchocustomsbrokers.comï¼Rancho Customs Brokers, Inc.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@robertsonforwarding.comï¼ROBERTSON FORWARDING COMPANY INCï¼"},{"e":"email","tt":"Re: Looking for a Bond Broker","tm":"10/31 02:12","src":"GLCHB Team <info@glchb.com>","tx":"GLCHB æ­£é¢åè¦ï¼è©¢åæé bond éé¡å¾å ±å¹ï¼å¦æ´¾ Enrique æ¥æè·é²ï¼å°è£ç¼æéæä»¶æ¸å®ãå°å 2550 NW 72 Ave Ste 100 Miami FL 33122ï¼é»è©± 305-593-5022ã"}],"Kervalonix":[{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ service@kappacustomsbrokers.comï¼Kappa Customs Brokers, LLCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ veronica@airacs.comï¼Airport Customs Service Incï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ mvincent@reliantchb.comï¼Reliant Customs Broker, Incï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@tranzport.comï¼TRANZPORT, INC.ï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ rgonzalez@biscayneimport.comï¼BISCAYNE IMPORT SERVICES, INCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@priorityimex.comï¼PRIORITY IMPORT-EXPORT SERVICES, INï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@vortexwl.comï¼Vortex Worldwide Logistics Corporationï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ imports.cst@worldnationsusa.comï¼WORLD NATIONS, INCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@allbordersinc.comï¼ALL BORDERS INCORPORATEDï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@maccbi.comï¼MAC Customs Brokerage, Inc.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ logistics@blchainlogistics.comï¼Blockchain Logistics LLCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales.mia@neelevat.comï¼Miami International Freight Solutions, Lï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ melissa@itbfusa.comï¼INTERNATIONAL TRADE BROKERS FRDWRï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ imports@prioritycb.comï¼PRIORITY CUSTOMS BROKER INC.ï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@dbcustomsbrokers.comï¼D & B Customs Brokers, LLCï¼"},{"e":"email","tt":"RE: Continuous Bond Quote Needed","tm":"10/31 03:11","src":"Francisco Ollino <CF.Ollino@vortexwl.com> VORTEX","tx":"VORTEX Worldwide Logistics è¦æ±æä¾ä»ç´¹äººå§åèå¬å¸ï¼å¾åè¦ã"},{"e":"email","tt":"Re: Customs Bond Services Request","tm":"10/31 03:11","src":"Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B","tx":"D&B Customs Brokers å ±å¹å¹´è²» 1690 ç¾åï¼12 åæä¿é¡ 5 è¬ç¾åéç¨ï¼ä¸å« ADD/CVDï¼å¾å®¢æ¶æ±ºå®æ¯å¦é²è¡ã"}],"Lennar":[{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ rpalekseev@gmail.comï¼Customs Broker Miamiï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@itcg.usï¼INTERNATINAL TRADE CMPLNCE GRP LLCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ infousa@ameritransworldwide.comï¼AMERITRANS WORLD GROUP INCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ arash@clearpointint.comï¼ClearPoint International, Incï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ samuel@miamicsinc.comï¼MIAMI CUSTOMS SERVICES INC.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ INFO@JCORTINA.COMï¼J. CORTINA, INC.ï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ mpatigler@aol.comï¼SERVICE EXPRESS CUSTOMS CORPORATIONï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@allynintl.comï¼ALLYN INTERNATIONAL SERVICES INCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@mborder.comï¼M Border Solutions, Inc.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ pat@advancecustomsbrokers.comï¼Advance Customs Brokers & Consulting LLCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ Evertrustworld@gmail.comï¼Evertrust World Logisticsï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@nitusa.comï¼Nissin International Transport U.S.A., Inc.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ operations@elemar.comï¼Elemar International Forwarding Incï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ masforwarding@marineairservice.comï¼MARINE AIR SERVICE FORWARDING INC.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@aeaglecustomsbroker.comï¼American Eagle Customs Broker, LLCï¼"}],"Nervaqon":[{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@dna-logistics.comï¼DNA Logistics Group, LLCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ ralph@omegacb.comï¼OMEGA CUSTOMS BROKERS INCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@jdbrokers.netï¼JD BROKERS & FORWARDING CO.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@GJMia.comï¼GJ ENTERPRISES, CUSTOMS BROKERAGE & CONSï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ alcidesfsilva@aol.comï¼Quicksilver Customs Brokers, LLCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@kglogistics.comï¼KELLY GLOBAL LOGISTICS, INC.ï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ miamiports@kcimia.comï¼KCI CUSTOMS BROKERS INCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ imports@wlmia.comï¼World Logistics (MIA), Inc.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ bgsbrokers@bgs-chb.comï¼Border Group Services Inc.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ LATINB@aol.comï¼LATIN AMERICAN BROKERS INC.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ customercare@intradeco.comï¼INTRADECO LOGISTICS, LLCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ contact@logiaide.comï¼LOGIAIDE INCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@cccustomsbroker.comï¼CC CUSTOMS BROKER, INCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@almarlogistics.netï¼ALMAR LOGISTICS, LLCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ monica@pinnaclefreightus.comï¼Pinnacle Freight Solutions, LLCï¼"},{"e":"email","tt":"RE: [EXTERNAL] Inquiry About Obtaining Customs Bond","tm":"10/31 03:11","src":"SPG Anova Marine Bond Department <bonds@anovamarin...>","tx":"å®¢æ¶å·²äº¤ç³è«è¡¨ï¼å°æ¹è¦æ±è£ 2025 å¹´å®æ´è³ç¢è² åµè¡¨èæçè¡¨ï¼ä»¥å 2026 å¹´è³ 6 æç YTD è²¡åå ±è¡¨ã"},{"e":"email","tt":"RE: Inquiry About Obtaining Customs Bond","tm":"10/31 04:11","src":"Paloma Zhou <bonds@anovamarine.com> SPG Anova","tx":"å°æ¹åæ¬¡å¬ä¿æä¾ 2025 å¹´è³ç¢è² åµè¡¨èæçè¡¨ï¼ä»¥å 2026 å¹´è³ 6 æ YTD è²¡åå ±è¡¨ã"}],"Oliveware":[{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ imports@hahnintl.comï¼HAHN INTERNATIONAL INCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@dmanganelli.comï¼D MANGANELLI LOGISTICS, INCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@CEPBroker.comï¼CEP CUSTOMS BROKER, INC.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ hello@efilog.usï¼EFI LOGISTICS INCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ JANETHAPPY@BELLSOUTH.NETï¼HAPPY CUSTOMS BROKERS, INC.ï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ imports@farrischb.comï¼Farris Global Logisticsï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ truckimports@charterbrokerage.netï¼CHARTER BROKERAGE LLCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@blufenixintl.comï¼Blufenix International LLCï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ ahilsabeck@amhcc.comï¼AMH Custom Consultantsï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@bcfmiami.comï¼BC & F BROKERAGE, INC.ï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@promptus.usï¼PROMPTUS, LLCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ skimchb@gmail.comï¼SUNG MOO KIMï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@blufenixintl.comï¼Blufenix International LLCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ Miami@worldwidemiami.comï¼WORLDWIDE CUSTOMS SERVICES INCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@dracofreight.comï¼Draco Freight Logistics Corporationï¼"}],"Leidos":[{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ rob@customsandcompliance.comï¼Customs & Compliance Solutions, LLCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ dixon.smith@comcast.netï¼DIXON, SMITH & ASSOCIATES, INC.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ johncassidy@johncassidyintl.comï¼JOHN CASSIDY INT L CHB INCï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ imports@lmbcustomsbrokers.comï¼LMB Customs Brokersï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@dbcustomsbrokers.comï¼D & B Customs Brokers, LLCï¼"},{"e":"sent","tt":"New Importer Continuous Bond Setup","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ natalia@asapmarinedocs.comï¼HOWARD S REEDER INCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ rpalekseev@gmail.comï¼Customs Broker Miami, LLCï¼"},{"e":"sent","tt":"Continuous Customs Bond Inquiry","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ brokerageintl8@gmail.comï¼BROKERAGE INTERNATIONAL INCï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@americargoexpress.comï¼Americargo Express Inc.ï¼"},{"e":"sent","tt":"Looking for a Customs Bond Broker","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ marthamartinezbcg@gmail.comï¼Brokerage Consultants Group, Inc.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@gofastcb.comï¼GO FAST CUSTOMS BROKERAGE INCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ david@unitedcustomservices.comï¼United Customs Services LLCï¼"},{"e":"sent","tt":"Customs Bond Services Request","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ info@overseasfreight.comï¼OVERSEAS FREIGHT SOLUTIONS, LLCï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ sales@imperialfreight.comï¼Imperial Freight Brokers, Inc.ï¼"},{"e":"sent","tt":"Continuous Bond Quote Needed","tm":"10/31 02:10","src":"ç³»çµ±èªå","tx":"å·åéç¼ä¿¡å·²ç¼éè³ usa.info@seafairgroup.comï¼SEAFAIR USA, LLCï¼"},{"e":"email","tt":"Re: Continuous Customs Bond Inquiry","tm":"10/31 03:11","src":"Armando Hevia <brokerageintl8@gmail.com> Brokerage International","tx":"Brokerage International è«å®¢æ¶ç´æ¥è´é» 305-639-3335 æ´½è«ã"},{"e":"email","tt":"Re: Customs Bond Services Request","tm":"10/31 03:11","src":"Kristy Perez-Naranjo <info@dbcustomsbrokers.com> D&B","tx":"D&B Customs Brokers å ±å¹å¹´è²» 1690 ç¾åï¼12 åæä¿é¡ 5 è¬ç¾åéç¨ï¼ä¸å« ADD/CVDã"}],"Huntington":[{"e":"email","tt":"Re: Clearit Operations Right person for bond onboarding","tm":"10/31 04:11","src":"Clearit Support <support@clearitusa.com>","tx":"Clearit å©æï¼åªçºèµ°ä»åæ¸éçå®¢æ¶è¾¦ bondï¼ä¸æ¥åå®ç¨ bond éæ±ï¼å»ºè­°è¯ç¹«æ¸¯å£æ¬å° brokerã"}]},"statuses":[{"id":"new","lb":"æ°ç·ç´¢","cl":"t-gray"},{"id":"waiting","lb":"ç­å¾åå","cl":"t-blue"},{"id":"collect","lb":"è³ææ¶éä¸­","cl":"t-blue"},{"id":"pending_client","lb":"ç­å¾å®¢æ¶è£äº¤è³æ","cl":"t-amber"},{"id":"form","lb":"å¾å¡«ç³è«è¡¨","cl":"t-amber"},{"id":"reply","lb":"å¾åè¦éµä»¶","cl":"t-amber"},{"id":"broker","lb":"ç­å¾å ±éè¡å¯©æ ¸","cl":"t-blue"},{"id":"quote","lb":"æ¶å°å ±å¹","cl":"t-amber"},{"id":"paid","lb":"è²¡åå·²ä»æ¬¾","cl":"t-amber"},{"id":"done","lb":"å·²ç²æä¿æä»¶","cl":"t-green"},{"id":"hold","lb":"æ±ç½®æ«å","cl":"t-gray"},{"id":"reject","lb":"ç³è«è¢«æ","cl":"t-red"}],"customers":[{"no":"89","name":"Home Depot LLC","member":"Amjad Bahmad","ein":"43-2208990","status":"supply","dl":"æ­£å¸¸","mail":"amjadbahmad@home-depot.live","todo":1,"sysId":"1001"},{"no":"90","name":"Honeywell LLC","member":"Allyson Fankuchen","ein":"43-2210034","status":"new","dl":"æ­£å¸¸","mail":"allysonbrennafankuchen@honeywellinternational.live","todo":0,"sysId":"1002","fileInsights":[],"aiTodos":[]},{"no":"98","name":"Kontoor LLC","member":"Amant Hir Adam","ein":"43-2202115","status":"new","dl":"æ­£å¸¸","mail":"amantahiradam@kontoorbrands.live","todo":0,"sysId":"1003"},{"no":"2","name":"Immunora Bio LLC","member":"Kashay Odom","ein":"43-2180144","status":"confirm","dl":"æ­£å¸¸","mail":"kashayisisramonaodom@immunora-bio.com","todo":1,"sysId":"1004"},{"no":"3","name":"Oliveware LLC","member":"Horacio Sanchez","ein":"43-2187231","status":"collect","dl":"æ­£å¸¸","mail":"horaciolsanchez@olivewareinc.com","todo":1,"sysId":"1005"},{"no":"5","name":"Pebblehome LLC","member":"Christopher Hodge","ein":"43-2200451","status":"hold","dl":"æ­£å¸¸","mail":"christopherhodge@pebblehomeinc.com","todo":1,"sysId":"1006"},{"no":"7","name":"Sageware LLC","member":"Jaliar Thomas","ein":"43-2188760","status":"new","dl":"æ­£å¸¸","mail":"jaliarthomas@sagewareinc.com","todo":0,"sysId":"1007"},{"no":"8","name":"Nervaqon LLC","member":"Christian Punzalan","ein":"43-2191002","status":"collect","dl":"æ­£å¸¸","mail":"christianjgpunzalan@nervaqon.live","todo":0,"sysId":"1008"},{"no":"61","name":"Huntington LLC","member":"Jessica Yates","ein":"43-2220178","status":"collect","dl":"æ­£å¸¸","mail":"jessicakeyates@huntingtoningallsindustries.live","todo":0,"sysId":"1009"},{"no":"64","name":"JELD-WEN LLC","member":"Amer Jok","ein":"43-2207568","status":"reject","dl":"æ­£å¸¸","mail":"amerdaujok@jeld-wenholding.live","todo":0,"sysId":"1010"},{"no":"66","name":"Kervalonix LLC","member":"Ahmed Mohamed Ali","ein":"43-2187474","status":"supply","dl":"æ­£å¸¸","mail":"ahmedmohamedali@kervalonix.live","todo":1,"sysId":"1011"},{"no":"69","name":"L3Harris LLC","member":"Enrique Justo-Rendon","ein":"43-2216646","status":"collect","dl":"æ­£å¸¸","mail":"enriqueajrendon@l3harristechnologies.live","todo":0,"sysId":"1012"},{"no":"71","name":"Laureate LLC","member":"Adisu Mulatu","ein":"43-2223471","status":"collect","dl":"æ­£å¸¸","mail":"adisushimelismulatu@laureateeducation.live","todo":0,"sysId":"1013"},{"no":"73","name":"Leidos LLC","member":"Jennie Myers","ein":"43-2219490","status":"new","dl":"æ­£å¸¸","mail":"jennieannmyers@leidosholdings.live","todo":1,"sysId":"1014"},{"no":"75","name":"Lennar LLC","member":"Corey Heaward","ein":"43-2216265","status":"collect","dl":"æ­£å¸¸","mail":"coreymheaward@lennar.live","todo":1,"sysId":"1015"},{"no":"99","name":"Interface LLC","member":"CHRISTOPHER ROBIN HODGE","ein":"43-2215896","phone":"(916) 657-5448","address":"510 NORTH AVE W BROOKSVILLE, FL 34601-1205","notes":"ä»æä¾UUIDæ ¼å¼PNGæä»¶åï¼æ æ³ç¡®è®¤æ¯è¡æ¯æªå¾æå°åéªè¯æªå¾","status":"new","dl":"æ­£å¸¸","mail":"Ã¢ÂÂ","todo":0,"sysId":"1016","created":"2026-11-01","aiStatus":"Ã¥Â·Â²Ã¥ÂÂÃ¦ÂÂ","aiAnalyzedAt":"2026-11-01T19:20:33.973Z"}],"finance":{"2":[{"type":"bond_premium","desc":"BorderBuddy Continuous Bond Ã¤Â¿ÂÃ¨Â²Â»","amount":795.6,"currency":"CNY","status":"paid","paid_at":"10/29"}],"66":[{"type":"quote","desc":"RPS / Golden Valley Ã¥Â Â±Ã¥ÂÂ¹Ã¯Â¼ÂÃ¥Â¾ÂÃ¥ÂÂºÃ¦Â­Â£Ã¥Â¼ÂÃ¥ÂÂ®Ã¯Â¼Â","amount":1250,"currency":"CNY","status":"pending"}]},"mailboxes":[{"nm":"Immunora","em":"kashayisisramonaodom@immunora-bio.com","st":"ok","unread":1},{"nm":"Oliveware","em":"horaciolsanchez@olivewareinc.com","st":"ok","unread":0},{"nm":"Pebblehome","em":"christopherhodge@pebblehomeinc.com","st":"ok","unread":0},{"nm":"Sageware","em":"jaliarthomas@sagewareinc.com","st":"ok","unread":0},{"nm":"Nervaqon","em":"christianjgpunzalan@nervaqon.live","st":"ok","unread":0},{"nm":"Home Depot","em":"amjadbahmad@home-depot.live","st":"ok","unread":1},{"nm":"Honeywell","em":"allysonbrennafankuchen@honeywellinternational.live","st":"ok","unread":0},{"nm":"Huntington","em":"jessicakeyates@huntingtoningallsindustries.live","st":"ok","unread":0},{"nm":"JELD-WEN","em":"amerdaujok@jeld-wenholding.live","st":"ok","unread":0},{"nm":"Kervalonix","em":"ahmedmohamedali@kervalonix.live","st":"ok","unread":0},{"nm":"Kontoor","em":"amantahiradam@kontoorbrands.live","st":"ok","unread":0},{"nm":"L3Harris","em":"enriqueajrendon@l3harristechnologies.live","st":"ok","unread":0},{"nm":"Laureate","em":"adisushimelismulatu@laureateeducation.live","st":"ok","unread":0},{"nm":"Leidos","em":"jennieannmyers@leidosholdings.live","st":"ok","unread":0},{"nm":"Lennar","em":"coreymheaward@lennar.live","st":"ok","unread":0}],"emails":[{"c":"Home Depot","from":"Angely Arias <angely@a1wwl.com>","sub":"Re: Legal documents for application of US custom bond","t":"10/30 10:59","unread":true,"type":"quote"},{"c":"Immunora","from":"Laura Rucker <docs.usa@borderbuddy.com>","sub":"Invoice Number Mismatch, Payment Applied Confirmation","t":"10/30 05:14","unread":true,"type":"supply"},{"c":"Lennar","from":"StaffUnderwriters@SuretyOne.com","sub":"Re: Bond lead time before first entry","t":"10/30 05:14","unread":true,"type":"supply"},{"c":"Leidos","from":"Crystal Boomhower-Villalobos <crystalboomhower@hotmail.com>","sub":"Continuous Bond","t":"10/30 06:15","unread":false,"type":"quote"},{"c":"Oliveware","from":"Jermeale Lewis-Johnson <hello@justyourbroker.com>","sub":"Re: continuous bond","t":"10/30 07:27","unread":false,"type":"reject"}],"logs":[{"t":"10/30 14:13","c":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ©ÂÂ£Ã§Â·ÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂ 0 Ã¦Â¢ÂÃ£ÂÂ","o":"0 Ã¦ÂÂ°Ã¤Â¿Â¡"},{"t":"10/30 13:17","c":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 15 Ã¥ÂÂÃ¤Â¿Â¡Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ¨Ã¦ÂÂÃ¥ÂÂÃ©ÂÂ£Ã§Â·ÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 0 Ã¥Â°ÂÃ¯Â¼ÂÃ¥Â¤ÂÃ§ÂÂ¼Ã¤Â½ÂÃ¥ÂÂ 0 Ã¦Â¢ÂÃ£ÂÂ","o":"0 Ã¦ÂÂ°Ã¤Â¿Â¡"},{"t":"10/30 12:40","c":"Ã¤Â¸ÂÃ§Â®Â± Home Depot / Honeywell / Kontoor Ã¥Â¯Â¦Ã¦Â¸Â¬Ã§ÂÂ»Ã¥ÂÂ¥Ã¦ÂÂÃ¥ÂÂÃ¯Â¼ÂÃ§ÂÂÃ¦ÂÂ¿Ã§ÂÂÃ¦ÂÂÃ¦ÂÂ¹Ã§ÂÂºÃ¥Â·Â²Ã¥ÂÂ¯Ã§ÂÂ»Ã¥ÂÂ¥Ã£ÂÂ","o":"15 Ã§Â®Â±Ã¥ÂÂ¨Ã§Â¶Â "},{"t":"10/30 12:33","c":"Interface LLC 93 Ã¨ÂÂÃ¥Â®Â¢Ã¦ÂÂ¶Ã¥ÂÂ¨Ã¥Â¥ÂÃ¦ÂÂÃ¦ÂÂÃ¦Â­Â¸Ã¦ÂªÂÃ¯Â¼ÂÃ¤Â½ÂÃ¥Â·ÂÃ©Â§ÂÃ§ÂÂ§ 10/20 Ã¥ÂÂ°Ã¦ÂÂÃ¦Â¨ÂÃ§ÂÂºÃ¥Â¾ÂÃ¨Â£ÂÃ¤Â»Â¶Ã£ÂÂ","o":"93 Ã¨ÂÂÃ¥ÂÂ¥Ã¦ÂªÂ"},{"t":"10/30 11:52","c":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 15 Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ£Ã§Â·ÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 0 Ã¥Â°ÂÃ£ÂÂ","o":"0 Ã¦ÂÂ°Ã¤Â¿Â¡"},{"t":"10/30 10:59","c":"15 Ã§Â®Â±Ã¥ÂÂ¨Ã©ÂÂ£Ã§Â·ÂÃ¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 6 Ã¥Â°ÂÃ¯Â¼ÂÃ¥ÂÂ¶Ã¤Â¸Â­ 5 Ã¥Â°ÂÃ§Â³Â»Ã§ÂµÂ±Ã©ÂÂÃ§ÂÂ¥Ã¯Â¼ÂÃ§ÂÂÃ¤ÂºÂºÃ¥ÂÂÃ¨Â¦Â 1 Ã¥Â°Â A1 Worldwide Ã¨Â¦ÂÃ¦Â±ÂÃ¥Â¡Â« POAÃ£ÂÂ","o":"1 Ã§ÂÂÃ¤ÂºÂºÃ¥ÂÂÃ¨Â¦Â"},{"t":"10/30 09:11","c":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 15 Ã§Â®Â±Ã¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 0 Ã¥Â°ÂÃ£ÂÂ","o":"0 Ã¦ÂÂ°Ã¤Â¿Â¡"},{"t":"10/30 08:11","c":"Ã¥Â®ÂÃ¦ÂÂÃ¥Â·Â¡Ã¦ÂÂ¥ 15 Ã§Â®Â±Ã¯Â¼ÂÃ¦ÂÂ°Ã©ÂÂµÃ¤Â»Â¶ 0 Ã¥Â°ÂÃ£ÂÂ","o":"0 Ã¦ÂÂ°Ã¤Â¿Â¡"},{"t":"10/30 07:27","c":"Oliveware Ã¦ÂÂ¶ Just Your Broker Inc. Ã¥Â©ÂÃ¦ÂÂÃ¯Â¼ÂÃ¦Â¨Â tag Ã¥Â·Â²Ã©ÂÂÃ©ÂÂÃ£ÂÂ","o":"1 Ã¥Â©ÂÃ¦ÂÂ"}]}
