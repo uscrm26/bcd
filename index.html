@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l75";
+  var V="v20261102l76";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2292,12 +2292,13 @@ async function aiRefillCustomer(no){
   const say=(t,cl)=>{const d=document.createElement("div");d.style.cssText="margin-bottom:4px;color:"+(cl||"var(--text)");d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;};
 
   try{
-    const files=((DATA.files||{})[no]||[]).filter(f=>f.type==="pdf");
-    say("找到 "+files.length+" 份 PDF 文件");
-    if(!files.length){say("沒有 PDF 可分析，結束。");return;}
+    const allFiles=((DATA.files||{})[no]||[]);
+    const pdfFiles=allFiles.filter(f=>f.type==="pdf");
+    const txtFiles=allFiles.filter(f=>f.type==="text"||f.name.endsWith(".txt"));
+    say("找到 "+pdfFiles.length+" 份 PDF，"+txtFiles.length+" 份文本文件");
     const allText=[];
-    for(let i=0;i<files.length;i++){
-      const f=files[i];
+    for(let i=0;i<pdfFiles.length;i++){
+      const f=pdfFiles[i];
       const url=resolveFile(f.path);
       say("讀取 "+f.name+" ...");
       try{
@@ -2313,15 +2314,25 @@ async function aiRefillCustomer(no){
         }
       }catch(e){say("  讀取失敗："+e.message);}
     }
+    for(const f of txtFiles){
+      try{
+        const resp=await fetch(resolveFile(f.path));
+        const t=await resp.text();
+        if(t&&t.length>10){
+          allText.push("=== "+f.name+" ===\n"+t.slice(0,4000));
+          say("讀取 "+f.name+" ... 成功");
+        }
+      }catch(e){say("  "+f.name+" 讀取失敗");}
+    }
     if(!allText.length){say("沒有可用文字，結束。");return;}
     say("正在交 AI 分析所有文件...");
     const ctx=`客戶：${c.name}，法人：${c.member}，EIN：${c.ein}
 當前資料：電話=${c.phone||"(空)"}，地址=${c.address||"(空)"}，備註=${c.notes||"(空)"}
 
 以下是客戶所有文件的內容，請從中提取以下欄位：
-- phone：客戶公司的聯絡電話
-- address：客戶公司的完整地址
-- notes：值得記錄的補充資訊（如業務性質、進口商品、特殊要求等）
+- phone：客戶法人的聯絡電話。注意 SSN 文件（文件名含 SSN）裡通常有 Phone Numbers 段落，列出多個號碼，取第一個或最新的號碼作為 phone
+- address：客戶公司的完整地址（以 EIN 通知書或公司章程為準）
+- notes：值得記錄的補充資訊（如法人出生日期、SSN 後四位、歷史地址、Email 等）
 
 只輸出 JSON，不要 markdown：
 {"phone":"...","address":"...","notes":"..."}
