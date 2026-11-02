@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l67";
+  var V="v20261102l68";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2985,7 +2985,7 @@ async function refreshOneMailbox(no){
             if(newFiles>0)say(t.newFile(newFiles));
             if(j.conclusion==="success"){say(t.finish,"#22c55e");}
             else{say(langT("巡查已結束，可能無新郵件或郵箱連線異常。","巡查已结束，可能无新邮件或邮箱连线异常。","Patrol finished; may be no new mail or mailbox connection issue."),"#ffb454");}
-            setTimeout(()=>{loadRepoData().then(()=>render());},500);
+            (async()=>{try{await loadRepoData();render();}catch(e2){say(t.reloadErr,"#ef4444");}})();
           }catch(e){say(t.reloadErr,"#ef4444");}
           return;
         }else{
