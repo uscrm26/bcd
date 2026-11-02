@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l74";
+  var V="v20261102l75";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2028,22 +2028,27 @@ async function runDocumentReview(no,files,cust,onProgress){
 async function syncCustomerToRepo(no){
   try{
     const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
-    const c=DATA.customers.find(x=>x.no===no);if(!c)return;
+    const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
     const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{headers:{Authorization:"token "+ghtok}});
     const meta=await metaR.json();
-    const dj=JSON.parse(decodeURIComponent(escape(atob((meta.content||"").replace(/\n/g,"")))));
+    const dj=JSON.parse(new TextDecoder("utf-8").decode(Uint8Array.from(atob((meta.content||"").replace(/\n/g,"")),b=>b)));
     const cs=dj.customers=dj.customers||[];
     const idx=cs.findIndex(x=>String(x.no)===String(no));
     if(idx<0)cs.push(c);
-    else{// 已存在：補上後台審查總結與 AI 待辦，不覆蓋雲端既有欄位
+    else{
       const t=cs[idx];
+      t.name=c.name;t.member=c.member;t.ein=c.ein;t.mail=c.mail;t.dl=c.dl;t.pp=c.pp;
+      t.phone=c.phone||"";t.address=c.address||"";t.notes=c.notes||"";
+      if(c.created)t.created=c.created;if(c.createdAt)t.createdAt=c.createdAt;
       if(c.reviewReport)t.reviewReport=c.reviewReport;
       if(c.aiTodos)t.aiTodos=c.aiTodos;
       if(c.fileInsights)t.fileInsights=c.fileInsights;
       if(c.sysId&&!t.sysId)t.sysId=c.sysId;
+      if(c.memberPhoto)t.memberPhoto=c.memberPhoto;
+      if(c.status)t.status=c.status;
     }
     const b=JSON.stringify(dj);
-    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"新增客戶 "+no,content:btoa(unescape(encodeURIComponent(b))),sha:meta.sha})});
+    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"更新客戶 "+no,content:btoa(unescape(encodeURIComponent(b))),sha:meta.sha})});
   }catch(e){console.warn("syncCustomerToRepo",e);}
 }
 
@@ -2272,7 +2277,7 @@ function saveCustInfo(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
   if(DATA.mailbox&&DATA.mailbox[no]){DATA.mailbox[newRef]=DATA.mailbox[no];delete DATA.mailbox[no];}
  }
  const pf=document.getElementById("cf_memberPhoto");if(pf&&pf.files&&pf.files[0]){const fr=new FileReader();fr.onload=function(){c.memberPhoto=fr.result;persistCust(newRef||no);syncCustomerToRepo(newRef||no);};fr.readAsDataURL(pf.files[0]);}
- addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;render();toast("客戶資料已儲存並寫入審計");}
+ addAudit("編輯客戶資料",old+" → "+c.name+" / "+c.member+" / "+c.ein);window._editCust=null;persistCust(no);syncCustomerToRepo(no);render();toast("客戶資料已儲存並寫入加密雲端");}
 
 // ===== AI 重填客戶資料 =====
 async function aiRefillCustomer(no){
