@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l52";
+  var V="v20261102l53";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -4486,14 +4486,22 @@ function initSlideLogin(){
   document.addEventListener("touchmove",onMove,{passive:false});
   document.addEventListener("mouseup",onUp);
   document.addEventListener("touchend",onUp);
+  window._resetSlideLogin=function(){
+    done=false;currentX=0;
+    handle.style.left="0px";
+    track.style.width="0px";
+    handle.classList.remove("done");
+    handle.querySelector(".arrow").textContent="⇨";
+    text.style.opacity=1;
+  };
 }
 function doLogin(){const u=document.getElementById("li_user").value.trim().toLowerCase();const p=document.getElementById("li_pwd").value;const err=document.getElementById("li_err");
 const agree=document.getElementById("li_agree");
-if(!agree.checked){err.textContent=CURRENT_LANG==="en"?"Please agree to the terms before signing in.":CURRENT_LANG==="cn"?"请先勾选同意使用条款再登录。":"請先勾選同意使用條款再登入。";return;}
-if(!u||!p){err.textContent="請輸入帳號與密碼";return;}
+if(!agree.checked){err.textContent=CURRENT_LANG==="en"?"Please agree to the terms before signing in.":CURRENT_LANG==="cn"?"请先勾选同意使用条款再登录。":"請先勾選同意使用條款再登入。";if(window._resetSlideLogin)window._resetSlideLogin();return;}
+if(!u||!p){err.textContent=CURRENT_LANG==="en"?"Please enter username and password.":CURRENT_LANG==="cn"?"请输入账号与密码。":"請輸入帳號與密碼";if(window._resetSlideLogin)window._resetSlideLogin();return;}
 const rec=USERS.find(x=>x.id.toLowerCase()===u);
-if(!rec||String(rec.pwd)!==String(p)){err.textContent="帳號或密碼錯誤";document.getElementById("li_pwd").value="";return;}
-if(rec.active===false){err.textContent="此帳號已停用，請聯絡管理員";return;}
+if(!rec||String(rec.pwd)!==String(p)){err.textContent=CURRENT_LANG==="en"?"Invalid username or password.":CURRENT_LANG==="cn"?"账号或密码错误。":"帳號或密碼錯誤";document.getElementById("li_pwd").value="";if(window._resetSlideLogin)window._resetSlideLogin();return;}
+if(rec.active===false){err.textContent=CURRENT_LANG==="en"?"This account is disabled.":"此帳號已停用，請聯絡管理員";if(window._resetSlideLogin)window._resetSlideLogin();return;}
 CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
@@ -4647,7 +4655,7 @@ document.getElementById("li_foot").textContent=L.foot;
 document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter"){const h=document.getElementById("slideHandle");if(h&&!h.classList.contains("done")){const t=document.getElementById("slideText");if(t){t.style.opacity=0.3;h.style.left=document.getElementById("slideLogin").offsetWidth-h.offsetWidth+"px";h.classList.add("done");h.querySelector(".arrow").textContent="✓";document.getElementById("slideTrack").style.width="100%";setTimeout(()=>{doLogin();},200);}}else doLogin();}});
-try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}
+try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");const SESSION_TTL=72*60*60*1000;if(s&&s.id&&s.at&&(Date.now()-s.at<SESSION_TTL)){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}else if(s&&s.id){localStorage.removeItem("bcd_session");}}catch(e){}
 if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
 initSlideLogin();
 })();
