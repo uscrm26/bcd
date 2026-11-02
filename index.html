@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l86";
+  var V="v20261102l87";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2085,8 +2085,8 @@ R.customer=()=>{
   <span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>
   <button class="${(window._ownerFilter||'me')==='me'?'on':''}" onclick="window._ownerFilter='me';window._selOwners=[];refreshCustList();render()">僅顯示自己的客戶</button>
   ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='all'?'on':''}" onclick="window._ownerFilter='all';refreshCustList();render()">顯示所有客戶</button>`:""}
-  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='sub'?'on':''}" onclick="window._ownerFilter='sub';refreshCustList();render()">顯示指定下線</button>`:""}
-  ${window._ownerFilter==='sub'&&(CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin')?`<select multiple style="min-width:160px;height:auto" onchange="window._selOwners=Array.from(this.selectedOptions).map(o=>o.value)">${USERS.filter(u=>u.parent===CURRENT_USER.id).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("")}</select>`:""}
+  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='sub'?'on':''}" onclick="window._ownerFilter='sub';openOwnerPicker();render()">顯示指定下線</button>`:""}
+  ${window._ownerFilter==='sub'&&(CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin')?`<span style="font-size:13px;color:var(--mut)">已選 ${(window._selOwners||[]).length} 人</span>`:""}
   </div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
@@ -2098,6 +2098,27 @@ function custTableHTML(){
   </tbody></table>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
+function openOwnerPicker(){
+  const subs=USERS.filter(u=>u.parent===CURRENT_USER.id);
+  if(!subs.length){toast("尚無下線");return;}
+  if(!window._selOwners)window._selOwners=[];
+  const box=document.createElement("div");
+  box.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center";
+  box.innerHTML=`<div class="panel" style="width:360px;max-width:90vw;padding:20px">
+    <div style="font-size:16px;font-weight:700;margin-bottom:12px">選擇下線客戶</div>
+    ${subs.map(u=>`<label style="display:flex;align-items:center;gap:8px;padding:8px;cursor:pointer"><input type="checkbox" value="${u.id}" ${window._selOwners.includes(u.id)?"checked":""}>${u.nm}</label>`).join("")}
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+      <button class="btn" onclick="this.closest('div[style*=fixed]').remove()">取消</button>
+      <button class="btn primary" onclick="
+        window._selOwners=Array.from(document.querySelectorAll('.panel input[type=checkbox]:checked')).map(c=>c.value);
+        this.closest('div[style*=fixed]').remove();
+        refreshCustList();
+      ">確認</button>
+    </div>
+  </div>`;
+  box.onclick=e=>{if(e.target===box)box.remove();};
+  document.body.appendChild(box);
+}
 let PINNED={};
 async function loadPinned(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json",{cache:"no-store"});if(r.ok)PINNED=await r.json();}catch(e){PINNED={};}}
 async function togglePin(no){
