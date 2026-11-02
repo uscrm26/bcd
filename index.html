@@ -8,10 +8,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l81";
+  var V="v20261102l82";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
+      // 版本變更：清除舊客戶本地緩存，防止重複卡片
+      localStorage.removeItem("bcd_all_cust");
+      localStorage.removeItem("bcd_cust_override");
       localStorage.setItem("bcd_ver",V);
       // 版本變更：強制帶時間戳重新抓取，徹底繞過 GitHub Pages CDN 快取
       var u=new URL(location.href);
