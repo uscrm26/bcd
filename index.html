@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l83";
+  var V="v20261102l84";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2117,14 +2117,30 @@ function custFiltered(){
   return DATA.customers.filter(c=>canViewCust(c.no)&&(!q||(c.no+c.name+c.member+c.ein+c.sysId).toLowerCase().includes(q))&&(!stf||c.status===stf))
     .sort((a,b)=>(pinnedSet.has(b.no)?1:0)-(pinnedSet.has(a.no)?1:0));
 }
-function custGridHTML(){
-  const list=custFiltered();
-  return `<div class="row r3">${list.map(c=>{const s=st(c.status);const pinned=isPinned(c.no);return `<div class="ccard" style="${pinned?'border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);':''}" onclick="openCust('${c.no}')">
+function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);return `<div class="ccard" style="${pinned?'border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);':''}" onclick="openCust('${c.no}')">
   <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${pinned?'background:#d4a017;color:#fff;border-color:#d4a017;':''}">${pinned?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}).join("")||"<div class='empty'>無符合客戶</div>"}</div>`;
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}
+function monthLabel(dt){const d=new Date(dt);const m=d.toLocaleDateString("en-US",{month:"short"});return m+" "+d.getFullYear();}
+function custGridHTML(){
+  const list=custFiltered();
+  const pinned=list.filter(c=>isPinned(c.no));
+  const rest=list.filter(c=>!isPinned(c.no));
+  let html="";
+  if(pinned.length){
+    html+=`<div style="font-size:14px;font-weight:700;color:#d4a017;margin:16px 0 8px">置頂</div>`;
+    html+=`<div class="row r3">${pinned.map(custCardHTML).join("")}</div>`;
+  }
+  // Group rest by month
+  const groups={};
+  rest.forEach(c=>{const mk=c.created||"2026-11";const ym=mk.slice(0,7);if(!groups[ym])groups[ym]=[];groups[ym].push(c);});
+  Object.keys(groups).sort().reverse().forEach(ym=>{
+    html+=`<div style="font-size:14px;font-weight:700;color:var(--mut);margin:16px 0 8px">${monthLabel(ym+"-01")}</div>`;
+    html+=`<div class="row r3">${groups[ym].map(custCardHTML).join("")}</div>`;
+  });
+  return html||"<div class='empty'>無符合客戶</div>";
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=custGridHTML();}
 function myTeamIds(){const me=CURRENT_USER.id;const ids=new Set([me]);USERS.forEach(u=>{if(u.parent===me)ids.add(u.id);});return ids;}
