@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l56";
+  var V="v20261102l57";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2099,7 +2099,7 @@ function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `
 const ph=phSrc(no);const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 const L=CURRENT_LANG;
 const T={zh:{quick:"快捷操作",files:"共",fen:"份，照片",zhang:"張，詳見「附件文件」分頁",dl:"法人照片",nophoto:"未上傳",viewHist:"查看歷史記錄",noAI:"從未為該客戶進行 AI 分析。"},cn:{quick:"快捷操作",files:"共",fen:"份，照片",zhang:"张，详见「附件文件」分页",dl:"法人照片",nophoto:"未上传",viewHist:"查看历史记录",noAI:"从未为该客户进行 AI 分析。"},en:{quick:"Quick Actions",files:"Total ",fen:" files, ",zhang:" photos, see Attachments tab",dl:"ID Photo",nophoto:"No photo uploaded",viewHist:"View History",noAI:"No AI analysis yet."}}[L]||{zh:{quick:"快捷操作",files:"共",fen:"份，照片",zhang:"張，詳見「附件文件」分頁",dl:"法人照片",nophoto:"未上傳",viewHist:"查看歷史記錄",noAI:"從未為該客戶進行 AI 分析。"}};
-return `<div style="margin-bottom:10px;display:inline-block;padding:6px 14px;background:linear-gradient(135deg,rgba(74,158,255,.15),rgba(74,158,255,.05));border:1px solid rgba(74,158,255,.3);border-radius:8px;font-size:20px;font-weight:800;color:var(--acc2)">${esc(c.name)}</div>
+return `<div style="margin-bottom:12px;padding:10px 16px;background:linear-gradient(135deg,#1a3a5c,#0d2137);border:1px solid #2b5a8c;border-radius:10px;font-size:22px;font-weight:800;color:#7cc0ff;letter-spacing:.5px">${esc(c.name)}</div>
 <div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap;padding-left:4px">
   <div style="flex:0 0 220px;width:220px">
   <div onclick="${ph?`openModalImg('${ph}',${no})`:''}" title="${T.dl}" style="width:220px;height:260px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
