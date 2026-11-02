@@ -2031,5 +2031,13 @@
     "date": "Thu, 29 Oct 2026 16:35:55 -0400",
     "read": true,
     "done": true
+  },
+  {
+    "client": "Immunora",
+    "from": "\"Docs.usa\" <messaging-service@post.xero.com>",
+    "subject": "Statement from Border Buddy Technologies USA Inc for Immunora Bio LLC",
+    "date": "Sun, 01 Nov 2026 23:27:11 +0000",
+    "body": "Hello Kashay,\r\n\r\nPlease find attached your statement as at Nov 1, 2026.\r\n\r\nIf you have any questions, please let us know.\r\n\r\nThank you,\r\nBorder Buddy Technologies USA Inc",
+    "read": false
   }
 ]
