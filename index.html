@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l107";
+  var V="v20261103l108";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -418,11 +418,7 @@ tr:hover td{background:#1a2130}
         <span id="li_agree_txt" style="flex:1">我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。</span>
       </label>
     </div>
-    <div class="slide-login" id="slideLogin">
-      <div class="slide-track" id="slideTrack"></div>
-      <div class="slide-text" id="slideText">右滑方塊登入</div>
-      <div class="slide-handle" id="slideHandle"><span class="arrow">⇨</span></div>
-    </div>
+    <button class="login-btn" onclick="doLogin()" style="margin-top:22px;width:100%;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:13px;font-size:15px;font-weight:700;cursor:pointer">登入系統</button>
     <div class="login-foot" id="li_foot">本系統僅供授權人士使用</div>
     <div id="verTagLogin" style="text-align:center;font-size:10px;color:var(--dim);font-family:monospace;margin-top:8px;margin-bottom:4px"></div>
   </div>
