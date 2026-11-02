@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l84";
+  var V="v20261102l85";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2081,7 +2081,13 @@ R.customer=()=>{
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
   <button class="btn" onclick="exportCustCsv()">匯出 CSV</button>
   ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">AI 批量解讀客戶</button>`:""}</div>
-  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button></div>
+  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button>
+  <span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>
+  <button class="${(window._ownerFilter||'me')==='me'?'on':''}" onclick="window._ownerFilter='me';window._selOwners=[];refreshCustList();render()">僅顯示自己的客戶</button>
+  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='all'?'on':''}" onclick="window._ownerFilter='all';refreshCustList();render()">顯示所有客戶</button>`:""}
+  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='sub'?'on':''}" onclick="window._ownerFilter='sub';refreshCustList();render()">顯示指定下線</button>`:""}
+  ${window._ownerFilter==='sub'&&(CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin')?`<select multiple style="min-width:160px;height:auto" onchange="window._selOwners=Array.from(this.selectedOptions).map(o=>o.value)">${USERS.filter(u=>u.parent===CURRENT_USER.id).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("")}</select>`:""}
+  </div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
 let listMode="card";
@@ -2114,8 +2120,16 @@ function custFiltered(){
   const q=(window._cs||"").toLowerCase(),stf=window._cst||"";
   const me=CURRENT_USER.id;
   const pinnedSet=new Set(PINNED[me]||[]);
-  return DATA.customers.filter(c=>canViewCust(c.no)&&(!q||(c.no+c.name+c.member+c.ein+c.sysId).toLowerCase().includes(q))&&(!stf||c.status===stf))
-    .sort((a,b)=>(pinnedSet.has(b.no)?1:0)-(pinnedSet.has(a.no)?1:0));
+  const of=window._ownerFilter||"me";
+  const subIds=new Set(window._selOwners||[]);
+  return DATA.customers.filter(c=>{
+    if(!canViewCust(c.no))return false;
+    if(of==='me'&&ownerMap[c.no]!==me)return false;
+    if(of==='sub'&&!subIds.has(ownerMap[c.no]))return false;
+    if(q&&!(c.no+c.name+c.member+c.ein+c.sysId).toLowerCase().includes(q))return false;
+    if(stf&&c.status!==stf)return false;
+    return true;
+  }).sort((a,b)=>(pinnedSet.has(b.no)?1:0)-(pinnedSet.has(a.no)?1:0));
 }
 function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);return `<div class="ccard" style="${pinned?'border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);':''}" onclick="openCust('${c.no}')">
   <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${pinned?'background:#d4a017;color:#fff;border-color:#d4a017;':''}">${pinned?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
