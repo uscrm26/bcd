@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l108";
+  var V="v20261103l109";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -414,7 +414,7 @@ tr:hover td{background:#1a2130}
     <div class="login-err" id="li_err"></div>
     <div style="margin:14px 0 0;font-size:12px;color:var(--mut);line-height:1.7">
       <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer">
-        <input type="checkbox" id="li_agree" style="margin-top:4px;flex-shrink:0;width:15px;height:15px">
+        <input type="checkbox" id="li_agree" checked style="margin-top:4px;flex-shrink:0;width:15px;height:15px">
         <span id="li_agree_txt" style="flex:1">我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。</span>
       </label>
     </div>
@@ -4831,10 +4831,11 @@ document.getElementById("li_agree_txt").innerHTML=L.agree;
 document.getElementById("li_foot").textContent=L.foot;
 document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
-(function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter"){const h=document.getElementById("slideHandle");if(h&&!h.classList.contains("done")){const t=document.getElementById("slideText");if(t){t.style.opacity=0.3;h.style.left=document.getElementById("slideLogin").offsetWidth-h.offsetWidth+"px";h.classList.add("done");h.querySelector(".arrow").textContent="✓";document.getElementById("slideTrack").style.width="100%";setTimeout(()=>{doLogin();},200);}}else doLogin();}});
+(function initAuth(){setLangLogin(PREF.lang||"zh");
+document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+document.getElementById("li_user").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("li_pwd").focus();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");const SESSION_TTL=72*60*60*1000;if(s&&s.id&&s.at&&(Date.now()-s.at<SESSION_TTL)){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}else if(s&&s.id){localStorage.removeItem("bcd_session");}}catch(e){}
 if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
-initSlideLogin();
 })();
 function auditRow(a){return `<div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;font-size:13px">
  <span style="color:var(--mut);font-size:11px;min-width:90px;font-variant-numeric:tabular-nums">${a.t}</span>
