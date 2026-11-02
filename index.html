@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l106";
+  var V="v20261103l107";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2688,12 +2688,21 @@ function phSrc(no){
   if(portrait)return resolveFile(portrait.path||"");
   return "";
 }
-function resolveFile(p){
+const CLIENT_FOLDERS={
+  "2":"Immunora-Bio","3":"Oliveware","5":"Pebblehome","7":"Sageware","8":"Nervaqon",
+  "61":"Huntington","64":"JELD-WEN","66":"Kervalonix","69":"L3Harris","71":"Laureate",
+  "73":"Leidos","75":"Lennar","89":"Home Depot","90":"Honeywell","93":"Interface","98":"Kontoor"
+};
+function resolveFile(p,no){
   if(!p)return "#";
   try{var dec=decodeURIComponent(p);}catch(e){var dec=p;}
   if(IMGMAP[dec])return FILEBASE+IMGMAP[dec];
   if(dec.startsWith("attachments/"))return "https://xlcyumbyqcwedqwpspzs.supabase.co/storage/v1/object/public/"+encodeURI(dec);
   if(QMAP[dec])return QMAP[dec].replace(/^http:\/\//i,"https://");
+  // GitHub Pages: files in docs/clients/{folder}/
+  if(no&&CLIENT_FOLDERS[String(no)])return FILEBASE+"clients/"+CLIENT_FOLDERS[String(no)]+"/"+encodeURIComponent(dec);
+  return FILEBASE+p;
+}
   // 副檔名不一致：本來記 .png 實際是 .jpg，本地 img/ 優先，避免被七牛 HTTP 混合內容擋掉
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
   if(IMGMAP[jpg])return FILEBASE+IMGMAP[jpg];
