@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l73";
+  var V="v20261102l74";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -693,7 +693,7 @@ const R={};
 function toast(m,kind){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";t.style.background=kind==="err"?"#dc2626":kind==="ok"?"#10b981":"var(--bg2)";t.style.color=kind==="err"||kind==="ok"?"#fff":"var(--tx)";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
 let _floatCount=0;
 function floatPos(){return 20+(_floatCount%5)*420;}
-function floatNext(){_floatCount++;return floatPos();}
+function floatNext(){_floatCount++;if(_floatCount>10)_floatCount=0;return floatPos();}
 // AI 即時進度浮動日誌：把系統正在做的動作即時講給使用者看
 function aiLogStart(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");p.classList.remove("done");const b=document.getElementById("aiLogBody");if(b)b.innerHTML="";const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"AI 正在處理文件";}
 function aiLog(msg,kind){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("open");const b=document.getElementById("aiLogBody");if(!b)return;const d=document.createElement("div");d.className="lg"+(kind?" "+kind:"");d.innerHTML=(kind==="ok"?"✓ ":kind==="warn"?"⚠ ":kind==="err"?"✕ ":"· ")+"<b></b>";d.querySelector("b").textContent=msg;b.appendChild(d);b.scrollTop=b.scrollHeight;}
