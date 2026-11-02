@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l88";
+  var V="v20261102l89";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -3626,7 +3626,7 @@ async function aiAnalyzeCustomer(no){
   // 右下角彈窗
   let aw=document.getElementById("aiSyncWin");if(aw)aw.remove();
   aw=document.createElement("div");aw.id="aiSyncWin";
-  aw.style.cssText="position:fixed;bottom:"+floatNext()+"px;right:20px;width:480px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
+  aw.style.cssText="position:fixed;bottom:20px;right:20px;width:480px;max-height:60vh;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
   aw.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">AI 跟進分析</span><button onclick="this.closest('#aiSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="aiProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
   document.body.appendChild(aw);
   const log=document.getElementById("aiProgress");
