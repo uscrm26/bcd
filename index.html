@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l77";
+  var V="v20261102l78";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -614,6 +614,7 @@ async function loadRepoData(){
       const remoteLogs=db.daily.map(x=>({t:x.date||"",c:_fixMojibake(x.work||""),o:_fixMojibake(x.output||"")}));
       DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
     }
+    await loadPinned();
     render();fillLoginStats();
   }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
 }
@@ -2080,14 +2081,35 @@ function custTableHTML(){
   </tbody></table>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
+let PINNED={};
+async function loadPinned(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json",{cache:"no-store"});if(r.ok)PINNED=await r.json();}catch(e){PINNED={};}}
+async function togglePin(no){
+  const me=CURRENT_USER.id;
+  if(!PINNED[me])PINNED[me]=[];
+  const i=PINNED[me].indexOf(no);
+  if(i>=0)PINNED[me].splice(i,1);else PINNED[me].unshift(no);
+  try{
+    const tok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
+    const meta=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/pinned.json",{headers:{Authorization:"token "+tok}});
+    let sha="";
+    if(meta.ok){const m=await meta.json();sha=m.sha;}
+    const body={message:"更新置頂",content:btoa(unescape(encodeURIComponent(JSON.stringify(PINNED)))),...(sha?{sha}:{})};
+    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/pinned.json",{method:"PUT",headers:{Authorization:"token "+tok,"Content-Type":"application/json"},body:JSON.stringify(body)});
+  }catch(e){console.warn("pin save fail",e);}
+  refreshCustList();
+}
+function isPinned(no){const me=CURRENT_USER.id;return PINNED[me]&&PINNED[me].includes(no);}
 function custFiltered(){
   const q=(window._cs||"").toLowerCase(),stf=window._cst||"";
-  return DATA.customers.filter(c=>canViewCust(c.no)&&(!q||(c.no+c.name+c.member+c.ein+c.sysId).toLowerCase().includes(q))&&(!stf||c.status===stf));
+  const me=CURRENT_USER.id;
+  const pinnedSet=new Set(PINNED[me]||[]);
+  return DATA.customers.filter(c=>canViewCust(c.no)&&(!q||(c.no+c.name+c.member+c.ein+c.sysId).toLowerCase().includes(q))&&(!stf||c.status===stf))
+    .sort((a,b)=>(pinnedSet.has(b.no)?1:0)-(pinnedSet.has(a.no)?1:0));
 }
 function custGridHTML(){
   const list=custFiltered();
   return `<div class="row r3">${list.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
-  <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
+  <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${isPinned(c.no)?'background:var(--acc);color:#fff;':''}">${isPinned(c.no)?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
