@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l44";
+  var V="v20261102l45";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2037,7 +2037,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div class="row" style="margin-top:12px;align-items:start;grid-template-columns:minmax(280px,1fr) minmax(0,2fr)"><div class="panel" style="min-height:400px"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="min-height:400px"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="max-height:calc(100vh - 240px);overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
+  <div class="row" style="margin-top:12px;align-items:start;grid-template-columns:1fr 1fr"><div class="panel" style="min-height:400px"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="min-height:400px"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="max-height:calc(100vh - 240px);overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
