@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l55";
+  var V="v20261102l56";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2099,7 +2099,7 @@ function custDetail(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return `
 const ph=phSrc(no);const isMgr=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
 const L=CURRENT_LANG;
 const T={zh:{quick:"快捷操作",files:"共",fen:"份，照片",zhang:"張，詳見「附件文件」分頁",dl:"法人照片",nophoto:"未上傳",viewHist:"查看歷史記錄",noAI:"從未為該客戶進行 AI 分析。"},cn:{quick:"快捷操作",files:"共",fen:"份，照片",zhang:"张，详见「附件文件」分页",dl:"法人照片",nophoto:"未上传",viewHist:"查看历史记录",noAI:"从未为该客户进行 AI 分析。"},en:{quick:"Quick Actions",files:"Total ",fen:" files, ",zhang:" photos, see Attachments tab",dl:"ID Photo",nophoto:"No photo uploaded",viewHist:"View History",noAI:"No AI analysis yet."}}[L]||{zh:{quick:"快捷操作",files:"共",fen:"份，照片",zhang:"張，詳見「附件文件」分頁",dl:"法人照片",nophoto:"未上傳",viewHist:"查看歷史記錄",noAI:"從未為該客戶進行 AI 分析。"}};
-return `<div style="margin-bottom:8px;font-size:18px;font-weight:800;color:var(--txt)">${esc(c.name)}</div>
+return `<div style="margin-bottom:10px;display:inline-block;padding:6px 14px;background:linear-gradient(135deg,rgba(74,158,255,.15),rgba(74,158,255,.05));border:1px solid rgba(74,158,255,.3);border-radius:8px;font-size:20px;font-weight:800;color:var(--acc2)">${esc(c.name)}</div>
 <div style="display:flex;gap:24px;align-items:flex-start;margin-bottom:6px;flex-wrap:wrap;padding-left:4px">
   <div style="flex:0 0 220px;width:220px">
   <div onclick="${ph?`openModalImg('${ph}',${no})`:''}" title="${T.dl}" style="width:220px;height:260px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
@@ -2121,7 +2121,7 @@ return `<div style="margin-bottom:8px;font-size:18px;font-weight:800;color:var(-
   <div class="field"><div class="k">${L==='en'?'Bound Email':L==='cn'?'绑定信箱':'綁定信箱'}</div><div class="v" style="word-break:break-all">${esc(c.mail)}</div></div>
   <div class="field"><div class="k">${L==='en'?'Documents':L==='cn'?'文件':'文件'}</div><div class="v">${T.files}${((DATA.files||{})[no]||[]).length}${T.fen}${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length}${T.zhang}</div></div>
   </div></div>
-<div style="margin-top:14px;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:8px">${T.quick}</div>
+<div style="margin-top:10px;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:4px">${T.quick}</div>
 <div style="display:flex;gap:8px;flex-wrap:wrap">
 <div style="margin-top:14px;padding:12px;background:var(--bg2);border:1px solid var(--line);border-radius:12px">
 ${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button><button class="btn" onclick="openMarkDone('${no}')">標記成功出單</button>`:""}<button class="btn" onclick="sendAsCustomer('${no}')">以該客戶名義發信</button><button class="btn" onclick="openNote('${no}')">跟進備註</button>
