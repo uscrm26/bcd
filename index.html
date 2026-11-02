@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l58";
+  var V="v20261102l59";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1300,7 +1300,7 @@ function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canVi
 let PHOTO_OVERRIDE={};
 try{PHOTO_OVERRIDE=JSON.parse(localStorage.getItem("bcd_photo_override")||"{}");}catch(e){}
 function phSrc(no){
-  if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
+  if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
 const APP_VER="20261101I";
@@ -2550,7 +2550,7 @@ let IMGMAP={};
 fetch("qiniu_map.json").then(r=>r.json()).then(j=>{QMAP=j;if(typeof render==="function")render();}).catch(()=>{});
 fetch("img_map.json").then(r=>r.json()).then(j=>{IMGMAP=j;if(typeof render==="function")render();}).catch(()=>{});
 function phSrc(no){
-  if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no];
+  if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const c=DATA.customers.find(x=>String(x.no)===String(no));
   if(c&&c.memberPhoto)return c.memberPhoto;
   const p=PHOTO[no]||"";if(p)return resolveFile(p);
