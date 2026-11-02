@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l92";
+  var V="v20261103l93";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -698,6 +698,15 @@ async function loadSB(){
   render();
 }
 const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];
+function dlStatus(c){
+  if(!c.dl_exp)return {lb:c.dl||"正常",warn:false,expired:false};
+  const exp=new Date(c.dl_exp+"T00:00:00");
+  const now=new Date();
+  const diff=(exp-now)/86400e3;
+  if(diff<0)return {lb:"已過期",warn:true,expired:true,exp:c.dl_exp};
+  if(diff<90)return {lb:`90天內過期`,warn:true,expired:false,exp:c.dl_exp};
+  return {lb:"正常",warn:false,expired:false,exp:c.dl_exp};
+}
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const fixMoji=s=>{if(!s||typeof s!=="string")return s;try{const bytes=[];for(let i=0;i<s.length;i++)bytes.push(s.charCodeAt(i)&0xff);return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
 let view="dashboard";
@@ -1311,7 +1320,7 @@ function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canVi
   <div class="cbody">
   <div class="top"><div><span class="no" title="內部序號，非客戶代號">#${c.no}<small class="noref">序號</small></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}<br><b>負責人</b> ${esc(ownerName(c.no))}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span></div>
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}${dlStatus(c).exp?" "+dlStatus(c).exp.slice(5,7)+"/"+dlStatus(c).exp.slice(8,10):""}</span></div>
   <div class="quick"><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button><button onclick="event.stopPropagation();toast('產生歸檔包中')">匯出</button></div>
   </div></div>`;}).join("")+`</div>`;}
 let PHOTO_OVERRIDE={};
@@ -2157,7 +2166,7 @@ function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);return
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${c.dl==="過期"?"warn":""}">駕照${c.dl}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}
 function monthLabel(dt){const d=new Date(dt);if(CURRENT_LANG==="en"){return d.toLocaleDateString("en-US",{month:"short"})+" "+d.getFullYear();}return d.getFullYear()+"年"+(d.getMonth()+1)+"月";}
 function custGridHTML(){
   const list=custFiltered();
@@ -2215,7 +2224,7 @@ return `<div style="margin-bottom:12px;padding:10px 16px;background:linear-gradi
   <div class="field"><div class="k">EIN</div><div class="v">${esc(c.ein)}</div></div>
   <div class="field"><div class="k">${L==='en'?'Assigned Owner':L==='cn'?'归属负责人':'歸屬負責人'}</div><div class="v">${esc(ownerName(no))}</div></div>
   <div class="field"><div class="k">${L==='en'?'Business Status':L==='cn'?'业务状态':'業務狀態'}</div><div class="v"><span class="tag ${s.cl}">${s.lb}</span> <button class="btn small" onclick="openStatusChange('${no}')">${L==='en'?'Change Status':L==='cn'?'变更状态':'變更狀態'}</button></div></div>
-  <div class="field"><div class="k">${L==='en'?'License Status':L==='cn'?'驾照状态':'駕照狀態'}</div><div class="v ${c.dl==="過期"?"warn":""}">${c.dl==="過期"?(L==='en'?'Expired, needs renewal':L==='cn'?'⚠️ 已过期，需更新':'⚠️ 已過期，需更新'):c.dl}</div></div>
+  <div class="field"><div class="k">${L==='en'?'License Status':L==='cn'?'驾照状态':'駕照狀態'}</div><div class="v ${dlStatus(c).warn?"warn":""}">${dlStatus(c).lb}${dlStatus(c).exp?"（"+dlStatus(c).exp.slice(0,10)+"）":""}</div></div>
   <div class="field"><div class="k">${L==='en'?'Bound Email':L==='cn'?'绑定信箱':'綁定信箱'}</div><div class="v" style="word-break:break-all">${esc(fixMoji(c.mail))}</div></div>
   <div class="field"><div class="k">${L==='en'?'Documents':L==='cn'?'文件':'文件'}</div><div class="v">${T.files}${((DATA.files||{})[no]||[]).length}${T.fen}${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length}${T.zhang}</div></div>
   </div></div></div>
@@ -2619,7 +2628,8 @@ function autoTodos(c){const t=[];
  if(unread)t.push({lv:"high",t:"有新郵件待回覆"});
  const sm={new:"首封開發信尚未送出",collect:"資料收集中，待客戶補齊 EIN／章程／地址證明",form:"Bond 申請表尚未填寫",submit:"已提交，跟進 Broker 出單進度",supply:"等客戶補交所需文件",quote:"等待 Broker 回覆報價",confirm:"等待客戶確認報價"};
  if(sm[c.status])t.push({lv:c.status==="new"?"mid":"low",t:sm[c.status]});
- if(c.dl==="過期")t.push({lv:"high",t:"駕照已過期，需更新"});
+ if(dlStatus(c).expired)t.push({lv:"high",t:"駕照已過期，需更新"});
+ else if(dlStatus(c).warn)t.push({lv:"med",t:"駕照即將過期（"+(dlStatus(c).exp||"")+"）"});
  return t;}
 function todoList(no){const c=DATA.customers.find(x=>x.no===no);
  const auto=autoTodos(c);
