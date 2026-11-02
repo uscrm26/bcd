@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l48";
+  var V="v20261102l49";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2037,7 +2037,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div style="margin-top:12px;display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap"><div class="panel" style="flex:1;min-width:0;min-height:400px;margin-bottom:0"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="flex:1;min-width:0;min-height:400px;margin-bottom:0"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="max-height:calc(100vh - 240px);overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
+  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"><div class="panel" style="min-height:400px;margin-bottom:0"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="min-height:400px;margin-bottom:0"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="max-height:calc(100vh - 240px);overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
@@ -2113,7 +2113,7 @@ ${isMgr?`<button class="btn" onclick="openAssign('${no}')">分配歸屬</button>
 </div>
 </div>
 <div id="aiProgress_${no}" style="display:none;margin-top:12px;padding:14px;background:var(--bg2);border:1px solid var(--line);border-radius:12px"></div>
-<div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div>`;}
+<div id="aiResult_${no}" style="display:none;margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:12px"></div></div>`;}
 function sendAsCustomer(no,presetTo){const c=DATA.customers.find(x=>x.no===no);if(!c)return;window._sendNo=no;
  openModal(`<h3>以 ${esc(c.name)} 名義發信</h3>
  <div style="margin-bottom:8px"><div style="font-size:11px;color:var(--mut);margin-bottom:2px">寄件人</div><div style="font-size:13px">${esc(c.mail||"—")}</div></div>
