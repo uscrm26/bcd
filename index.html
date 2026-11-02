@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l50";
+  var V="v20261102l51";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -270,6 +270,15 @@ tr:hover td{background:#1a2130}
 .login-card input{width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 13px;font-size:14px;outline:none}
 .login-card input:focus{border-color:var(--acc)}
 .login-btn{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
+/* 滑塊登錄 */
+.slide-login{margin-top:22px;position:relative;height:46px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;overflow:hidden;user-select:none}
+.slide-login .slide-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--mut);pointer-events:none}
+.slide-login .slide-track{position:absolute;inset:0;border-radius:10px;background:linear-gradient(135deg,var(--acc),var(--acc2));width:0;transition:width .2s}
+.slide-login .slide-handle{position:absolute;left:0;top:0;width:46px;height:46px;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:grab;box-shadow:0 2px 8px rgba(0,0,0,.3);z-index:2;transition:background .2s}
+.slide-login .slide-handle:active{cursor:grabbing}
+.slide-login .slide-handle.done{background:var(--acc2)}
+.slide-login .slide-handle .arrow{font-size:18px;color:var(--acc);transition:color .2s}
+.slide-login .slide-handle.done .arrow{color:#fff}
 .login-err{color:var(--err);font-size:12px;min-height:16px;margin-top:10px;text-align:center}
 .login-foot{text-align:center;color:var(--dim);font-size:11px;margin-top:18px}
 .login-head{text-align:center;margin-bottom:8px}
@@ -406,7 +415,11 @@ tr:hover td{background:#1a2130}
         <span id="li_agree_txt" style="flex:1">我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。</span>
       </label>
     </div>
-    <button class="login-btn" onclick="doLogin()" id="li_btn">登 入</button>
+    <div class="slide-login" id="slideLogin">
+      <div class="slide-track" id="slideTrack"></div>
+      <div class="slide-text" id="slideText">右滑方塊登入</div>
+      <div class="slide-handle" id="slideHandle"><span class="arrow">⇨</span></div>
+    </div>
     <div class="login-foot" id="li_foot">本系統僅供授權人士使用</div>
     <div id="verTagLogin" style="text-align:center;font-size:10px;color:var(--dim);font-family:monospace;margin-top:8px;margin-bottom:4px"></div>
   </div>
@@ -4426,6 +4439,54 @@ function openPref(){
 function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){CURRENT_USER.pwd=p;syncUserToDB(CURRENT_USER);addAudit("修改密碼",CURRENT_USER.nm);toast("密碼已更新");}closeModal();}
 paintFoot();
 // ===== 登入 / 登出 =====
+// ===== 滑塊登錄 =====
+function initSlideLogin(){
+  const track=document.getElementById("slideTrack");
+  const handle=document.getElementById("slideHandle");
+  const container=document.getElementById("slideLogin");
+  const text=document.getElementById("slideText");
+  if(!track||!handle||!container)return;
+  const texts={zh:"右滑方塊登入",cn:"滑动方块登录",en:"Slide to Sign In"};
+  text.textContent=texts[CURRENT_LANG]||texts.zh;
+  let dragging=false,startX=0,currentX=0,done=false;
+  const maxX=()=>container.offsetWidth-handle.offsetWidth;
+  function onDown(e){
+    if(done)return;
+    dragging=true;startX=(e.touches?e.touches[0].clientX:e.clientX)-handle.offsetLeft;
+    e.preventDefault();
+  }
+  function onMove(e){
+    if(!dragging||done)return;
+    const x=(e.touches?e.touches[0].clientX:e.clientX)-startX;
+    currentX=Math.max(0,Math.min(x,maxX()));
+    handle.style.left=currentX+"px";
+    track.style.width=currentX+handle.offsetWidth+"px";
+    text.style.opacity=1-currentX/maxX();
+  }
+  function onUp(){
+    if(!dragging||done)return;
+    dragging=false;
+    if(currentX>=maxX()-10){
+      done=true;
+      handle.style.left=maxX()+"px";
+      track.style.width="100%";
+      handle.classList.add("done");
+      handle.querySelector(".arrow").textContent="✓";
+      text.style.opacity=0;
+      setTimeout(()=>{doLogin();},300);
+    }else{
+      handle.style.left="0px";
+      track.style.width="0px";
+      text.style.opacity=1;
+    }
+  }
+  handle.addEventListener("mousedown",onDown);
+  handle.addEventListener("touchstart",onDown,{passive:false});
+  document.addEventListener("mousemove",onMove);
+  document.addEventListener("touchmove",onMove,{passive:false});
+  document.addEventListener("mouseup",onUp);
+  document.addEventListener("touchend",onUp);
+}
 function doLogin(){const u=document.getElementById("li_user").value.trim().toLowerCase();const p=document.getElementById("li_pwd").value;const err=document.getElementById("li_err");
 const agree=document.getElementById("li_agree");
 if(!agree.checked){err.textContent=CURRENT_LANG==="en"?"Please agree to the terms before signing in.":CURRENT_LANG==="cn"?"请先勾选同意使用条款再登录。":"請先勾選同意使用條款再登入。";return;}
@@ -4563,13 +4624,13 @@ ov.innerHTML='<div style="background:#1a1a2e;border-radius:14px;width:900px;max-
 +'</div>';}
 
 const LLANG={
-zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入",
+zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入",slide:"右滑方塊登入",
 agree:'我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。',
 foot:"本系統僅供授權人士使用",ver:"系統內核編號："},
-cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录",
+cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录",slide:"滑动方块登录",
 agree:'我同意并理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用条款与细则》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 个人隐私保护章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客户信息保密协议》</a>，并愿意遵守有关文件内容。',
 foot:"本系统仅供授权人士使用",ver:"系统内核编号："},
-en:{t:"UCRM",s:"US Customs Relationship Manager",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In",
+en:{t:"UCRM",s:"US Customs Relationship Manager",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In",slide:"Slide to Sign In",
 agree:'I have read and agree to the <a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">UCRM Terms of Service</a>, <a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">UCRM Privacy Policy</a>, and <a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">UCRM Client Confidentiality Agreement</a>, and agree to be bound by all their terms.',
 foot:"Authorized personnel only",ver:"System Build: "}
 };
@@ -4580,14 +4641,15 @@ document.getElementById("ll_user").textContent=L.u;
 document.getElementById("ll_pwd").textContent=L.p;
 document.getElementById("li_user").placeholder=L.up;
 document.getElementById("li_pwd").placeholder=L.pp;
-document.getElementById("li_btn").textContent=L.b;
+document.getElementById("slideText").textContent=L.slide||L.b;
 document.getElementById("li_agree_txt").innerHTML=L.agree;
 document.getElementById("li_foot").textContent=L.foot;
 document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
-(function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
+(function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter"){const h=document.getElementById("slideHandle");if(h&&!h.classList.contains("done")){const t=document.getElementById("slideText");if(t){t.style.opacity=0.3;h.style.left=document.getElementById("slideLogin").offsetWidth-h.offsetWidth+"px";h.classList.add("done");h.querySelector(".arrow").textContent="✓";document.getElementById("slideTrack").style.width="100%";setTimeout(()=>{doLogin();},200);}}else doLogin();}});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}
 if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
+initSlideLogin();
 })();
 function auditRow(a){return `<div style="padding:10px 14px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:flex-start;font-size:13px">
  <span style="color:var(--mut);font-size:11px;min-width:90px;font-variant-numeric:tabular-nums">${a.t}</span>
