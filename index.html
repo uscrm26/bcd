@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l94";
+  var V="v20261103l95";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -4618,16 +4618,20 @@ function initSlideLogin(){
   const maxX=()=>container.offsetWidth-handle.offsetWidth;
   function onDown(e){
     if(done)return;
-    dragging=true;startX=(e.touches?e.touches[0].clientX:e.clientX)-handle.offsetLeft;
-    e.preventDefault();
+    dragging=true;
+    const pt=e.touches?e.touches[0]:e;
+    startX=pt.clientX-handle.offsetLeft;
+    if(e.cancelable)e.preventDefault();
   }
   function onMove(e){
     if(!dragging||done)return;
-    const x=(e.touches?e.touches[0].clientX:e.clientX)-startX;
+    const pt=e.touches?e.touches[0]:e;
+    const x=pt.clientX-startX;
     currentX=Math.max(0,Math.min(x,maxX()));
     handle.style.left=currentX+"px";
     track.style.width=currentX+handle.offsetWidth+"px";
     text.style.opacity=1-currentX/maxX();
+    if(e.cancelable)e.preventDefault();
   }
   function onUp(){
     if(!dragging||done)return;
@@ -4648,6 +4652,8 @@ function initSlideLogin(){
   }
   handle.addEventListener("mousedown",onDown);
   handle.addEventListener("touchstart",onDown,{passive:false});
+  container.addEventListener("mousedown",onDown);
+  container.addEventListener("touchstart",onDown,{passive:false});
   document.addEventListener("mousemove",onMove);
   document.addEventListener("touchmove",onMove,{passive:false});
   document.addEventListener("mouseup",onUp);
