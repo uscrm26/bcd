@@ -1,0 +1,4 @@
+ContactName,EmailAddress,POAddressLine1,POAddressLine2,POAddressLine3,POAddressLine4,POCity,PORegion,POPostalCode,POCountry,InvoiceNumber,Reference,InvoiceDate,DueDate,Total,Description,Quantity,UnitAmount,Discount,TaxAmount
+Border Buddy Technologies USA Inc,kashayisisramonaodom@immunora-bio.com,2 12th St,,,,Blaine,WA,98230,United States,INV-5533,5106 + bond,27 Oct 2026,27 Oct 2026,795.60,Continuous Bond Fee,1.0000,640.0000,,0.00
+Border Buddy Technologies USA Inc,kashayisisramonaodom@immunora-bio.com,2 12th St,,,,Blaine,WA,98230,United States,INV-5533,5106 + bond,27 Oct 2026,27 Oct 2026,795.60,Import Registration Fee,1.0000,125.0000,,0.00
+Border Buddy Technologies USA Inc,kashayisisramonaodom@immunora-bio.com,2 12th St,,,,Blaine,WA,98230,United States,INV-5533,5106 + bond,27 Oct 2026,27 Oct 2026,795.60,Administration Fee,1.0000,30.6000,,0.00
