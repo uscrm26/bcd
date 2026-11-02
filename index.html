@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l105";
+  var V="v20261103l106";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2214,7 +2214,7 @@ return `<div style="margin-bottom:12px;padding:10px 16px;background:linear-gradi
   </div>
   <div style="margin-top:10px;width:220px;padding:12px 14px;min-height:120px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px">
     <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:4px">${L==='en'?'AI Status':L==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
-    <div style="font-size:11px;color:var(--mut);line-height:1.5;margin-bottom:6px;min-height:40px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(function(){const tl=(DATA.timeline||[]).filter(t=>t.c==no&&(t.e==='ai'||(t.act||'').includes('AI')));if(tl.length){const last=tl[0];return "最近 AI 分析："+(last.tm||"")+"<br>共 "+tl.length+" 條記錄";}return T.noAI;})()}</div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.5;margin-bottom:6px;min-height:40px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(function(){const tl=((DATA.timeline&&DATA.timeline[no])||[]).filter(t=>t.e==='ai'||(t.act||'').includes('AI')||(t.txt||'').includes('AI')||(t.tt||'').includes('AI'));if(tl.length){const last=tl[0];return "最近 AI 分析："+(last.tm||"")+"<br>共 "+tl.length+" 條記錄";}return T.noAI;})()}</div>
     <button class="btn small" style="font-size:11px;padding:3px 8px" onclick="openAiHistory('${no}')">${T.viewHist}</button>
   </div>
   </div>
