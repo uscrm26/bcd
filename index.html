@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l82";
+  var V="v20261102l83";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2119,8 +2119,8 @@ function custFiltered(){
 }
 function custGridHTML(){
   const list=custFiltered();
-  return `<div class="row r3">${list.map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
-  <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${isPinned(c.no)?'background:var(--acc);color:#fff;':''}">${isPinned(c.no)?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
+  return `<div class="row r3">${list.map(c=>{const s=st(c.status);const pinned=isPinned(c.no);return `<div class="ccard" style="${pinned?'border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);':''}" onclick="openCust('${c.no}')">
+  <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${pinned?'background:#d4a017;color:#fff;border-color:#d4a017;':''}">${pinned?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
