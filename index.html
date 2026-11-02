@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l36";
+  var V="v20261102l37";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -400,6 +400,10 @@ tr:hover td{background:#1a2130}
     <label id="ll_pwd">密碼</label>
     <input id="li_pwd" type="password" autocomplete="current-password" placeholder="請輸入賬戶密碼">
     <div class="login-err" id="li_err"></div>
+    <div style="margin:10px 0;font-size:12px;color:var(--mut);line-height:1.6;display:flex;gap:8px;align-items:flex-start">
+      <input type="checkbox" id="li_agree" style="margin-top:3px;flex-shrink:0">
+      <span id="li_agree_txt">我同意並理解<a href="#" onclick="event.preventDefault();openTerms()">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms()">《UCRM 個人隱私保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms()">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。</span>
+    </div>
     <button class="login-btn" onclick="doLogin()" id="li_btn">登 入</button>
     <div class="login-foot">本系統僅供授權人士使用</div>
   </div>
@@ -898,8 +902,8 @@ const EN={
 "找不到巡查記錄，請稍後手動刷新頁面查看結果":"No patrol record found, please refresh later",
 "巡查結束：":"Patrol ended: ",
 "正在載入最新數據…":"Loading latest data…",
-"新增郵件 ":"New emails: "," 封","",
-"新增附件 ":"New attachments: "," 個","",
+"新增郵件 ":"New emails: "," 封":"",
+"新增附件 ":"New attachments: "," 個":"",
 "完成！你可以關閉此視窗。":"Done! You can close this window.",
 "數據重載失敗，請手動刷新":"Data reload failed, please refresh manually",
 "巡查時間較長，仍在背景運行中，完成後刷新頁面即可看到結果。":"Patrol still running in background, refresh when done.",
@@ -4234,6 +4238,8 @@ function savePrefPwd(){const p=document.getElementById("pref_pwd").value;if(p){C
 paintFoot();
 // ===== 登入 / 登出 =====
 function doLogin(){const u=document.getElementById("li_user").value.trim().toLowerCase();const p=document.getElementById("li_pwd").value;const err=document.getElementById("li_err");
+const agree=document.getElementById("li_agree");
+if(!agree.checked){err.textContent=CURRENT_LANG==="en"?"Please agree to the terms before signing in.":CURRENT_LANG==="cn"?"请先勾选同意使用条款再登录。":"請先勾選同意使用條款再登入。";return;}
 if(!u||!p){err.textContent="請輸入帳號與密碼";return;}
 const rec=USERS.find(x=>x.id.toLowerCase()===u);
 if(!rec||String(rec.pwd)!==String(p)){err.textContent="帳號或密碼錯誤";document.getElementById("li_pwd").value="";return;}
@@ -4242,6 +4248,142 @@ CURRENT_USER=rec;rec.lastLogin=nowBJ();addAudit("登入",rec.nm);
 try{localStorage.setItem("bcd_session",JSON.stringify({id:rec.id,at:Date.now()}));}catch(e){}
 err.textContent="";document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();toast("歡迎回來，"+rec.nm);}
 function doLogout(){try{localStorage.removeItem("bcd_session");}catch(e){}location.reload();}
+function openTerms(tab){tab=tab||0;
+const L=CURRENT_LANG;
+const T={
+zh:{tabs:["使用條款與細則","個人隱私保護章程","客戶資訊保密協議"],close:"關閉"},
+cn:{tabs:["使用条款与细则","个人隐私保护章程","客户信息保密协议"],close:"关闭"},
+en:{tabs:["Terms of Service","Privacy Policy","Client Confidentiality Agreement"],close:"Close"}
+}[L]||{tabs:["使用條款與細則","個人隱私保護章程","客戶資訊保密協議"],close:"關閉"};
+const docs={
+zh:[
+`<h2>UCRM 使用條款與細則</h2>
+<p style="color:var(--mut);font-size:12px">生效日期：2026 年 11 月</p>
+<h3>第一條 使用規則</h3>
+<p>用戶在使用 UCRM 系統期間，須遵守以下規則：</p>
+<p>（一）未經書面授權，不得將系統任何畫面、數據、報告截圖或以其他方式發送、轉載給系統以外的任何人。</p>
+<p>（二）不得破壞、干擾系統正常運作，不得對系統伺服器、數據庫進行未經授權的訪問、修改或攻擊。</p>
+<p>（三）不得使用任何技術手段，包括但不限於網絡爬蟲、抓包工具、逆向工程，批量下載、複製系統內的客戶數據、郵件、文件。</p>
+<p>（四）不得利用系統從事任何違法活動，不得利用系統帳號進行未經授權的第三方操作。</p>
+<p>（五）用戶須妥善保管自己的帳號密碼，不得將帳號借予他人使用。因用戶本人洩露密碼導致的後果，由用戶自行承擔。</p>
+<h3>第二條 帳號與權限</h3>
+<p>系統管理員有權根據工作需要分配或調整用戶權限。用戶僅能查看和操作自己權限範圍內的數據，不得試圖越權訪問其他用戶或其他客戶的資料。</p>
+<h3>第三條 違規處理</h3>
+<p>如發現用戶違反上述規則，系統管理員有權立即凍結或刪除其帳號，保留追究法律責任的權利。情節嚴重者，將依法移送司法機關處理。</p>`,
+`<h2>UCRM 個人隱私保護章程</h2>
+<p style="color:var(--mut);font-size:12px">生效日期：2026 年 11 月</p>
+<h3>第一條 數據收集</h3>
+<p>為保障系統正常運作及安全審計，系統會自動收集並記錄以下數據：</p>
+<p>（一）用戶登入時間、登出時間、所用 IP 地址及地理位置資訊。</p>
+<p>（二）用戶在系統內的所有操作行為，包括查看、編輯、刪除、發送郵件、上傳文件等動作。</p>
+<p>（三）用戶的使用習慣數據，例如瀏覽路徑、點擊行為、頁面停留時間。</p>
+<p>上述數據會上傳至本系統的加密雲端伺服器，並用於 AI 分析及系統優化。</p>
+<h3>第二條 保密承諾</h3>
+<p>本系統承諾：所收集的用戶行為數據，僅用於內部運營分析及系統改進，不會提供給任何第三方用於商業用途或外部工作分析。</p>
+<h3>第三條 默認同意</h3>
+<p>用戶登入系統即視為已閱讀、理解並同意本章程的全部內容。如用戶不同意，應立即停止使用系統並聯繫管理員註銷帳號。</p>`,
+`<h2>UCRM 客戶資訊保密協議</h2>
+<p style="color:var(--mut);font-size:12px">生效日期：2026 年 11 月</p>
+<h3>第一條 保密義務</h3>
+<p>用戶在使用系統過程中接觸到的所有客戶資料，包括但不限於公司名稱、法人姓名、EIN 稅號、聯絡方式、財務數據、護照及駕照照片，均屬高度機密商業資訊。</p>
+<h3>第二條 禁止傳播</h3>
+<p>用戶不得以任何方式傳播客戶資料，包括但不限於：</p>
+<p>（一）對客戶資料進行截圖、錄屏、拍照，發送到系統外部。</p>
+<p>（二）以口頭、書面、電子郵件、即時通訊等方式，向系統外的任何人透露客戶資料。</p>
+<p>（三）將客戶資料複製、下載到本地未加密的設備或伺服器中存儲。</p>
+<h3>第三條 存儲規範</h3>
+<p>客戶資料僅允許存儲在本系統的加密雲端伺服器中。用戶不得將客戶資料保存至未經加密的本地電腦、U 盤、個人雲盤或公共雲端，否則可能違反香港及中國大陸相關個人資料保護法規，用戶須承擔相應法律責任。</p>
+<h3>第四條 違約責任</h3>
+<p>如因用戶違反本協議導致客戶資料洩露，用戶須承擔由此產生的全部法律責任及經濟損失賠償。</p>`
+],
+cn:[
+`<h2>UCRM 使用条款与细则</h2>
+<p style="color:var(--mut);font-size:12px">生效日期：2026 年 11 月</p>
+<h3>第一条 使用规则</h3>
+<p>用户在使用 UCRM 系统期间，须遵守以下规则：</p>
+<p>（一）未经书面授权，不得将系统任何画面、数据、报告截图或以其他方式发送、转载给系统以外的任何人。</p>
+<p>（二）不得破坏、干扰系统正常运作，不得对系统服务器、数据库进行未经授权的访问、修改或攻击。</p>
+<p>（三）不得使用任何技术手段，包括但不限于网络爬虫、抓包工具、逆向工程，批量下载、复制系统内的客户数据、邮件、文件。</p>
+<p>（四）不得利用系统从事任何违法活动，不得利用系统账号进行未经授权的第三方操作。</p>
+<p>（五）用户须妥善保管自己的账号密码，不得将账号借予他人使用。因用户本人泄露密码导致的后果，由用户自行承担。</p>
+<h3>第二条 账号与权限</h3>
+<p>系统管理员有权根据工作需要分配或调整用户权限。用户仅能查看和操作自己权限范围内的数据，不得试图越权访问其他用户或其他客户的资料。</p>
+<h3>第三条 违规处理</h3>
+<p>如发现用户违反上述规则，系统管理员有权立即冻结或删除其账号，保留追究法律责任的权利。情节严重者，将依法移送司法机关处理。</p>`,
+`<h2>UCRM 个人隐私保护章程</h2>
+<p style="color:var(--mut);font-size:12px">生效日期：2026 年 11 月</p>
+<h3>第一条 数据收集</h3>
+<p>为保障系统正常运作及安全审计，系统会自动收集并记录以下数据：</p>
+<p>（一）用户登入时间、登出时间、所用 IP 地址及地理位置信息。</p>
+<p>（二）用户在系统内的所有操作行为，包括查看、编辑、删除、发送邮件、上传文件等动作。</p>
+<p>（三）用户的使用习惯数据，例如浏览路径、点击行为、页面停留时间。</p>
+<p>上述数据会上传至本系统的加密云端服务器，并用于 AI 分析及系统优化。</p>
+<h3>第二条 保密承诺</h3>
+<p>本系统承诺：所收集的用户行为数据，仅用于内部运营分析及系统改进，不会提供给任何第三方用于商业用途或外部工作分析。</p>
+<h3>第三条 默认同意</h3>
+<p>用户登录系统即视为已阅读、理解并同意本章程的全部内容。如用户不同意，应立即停止使用系统并联系管理员注销账号。</p>`,
+`<h2>UCRM 客户信息保密协议</h2>
+<p style="color:var(--mut);font-size:12px">生效日期：2026 年 11 月</p>
+<h3>第一条 保密义务</h3>
+<p>用户在使用系统过程中接触到的所有客户资料，包括但不限于公司名称、法人姓名、EIN 税号、联系方式、财务数据、护照及驾照照片，均属高度机密商业信息。</p>
+<h3>第二条 禁止传播</h3>
+<p>用户不得以任何方式传播客户资料，包括但不限于：</p>
+<p>（一）对客户资料进行截图、录屏、拍照，发送到系统外部。</p>
+<p>（二）以口头、书面、电子邮件、即时通讯等方式，向系统外的任何人透露客户资料。</p>
+<p>（三）将客户资料复制、下载到本地未加密的设备或服务器中存储。</p>
+<h3>第三条 存储规范</h3>
+<p>客户资料仅允许存储在本系统的加密云端服务器中。用户不得将客户资料保存至未经加密的本地电脑、U 盘、个人云盘或公共云端，否则可能违反香港及中国大陆相关个人资料保护法规，用户须承担相应法律责任。</p>
+<h3>第四条 违约责任</h3>
+<p>如因用户违反本协议导致客户资料泄露，用户须承担由此产生的全部法律责任及经济损失赔偿。</p>`
+],
+en:[
+`<h2>UCRM Terms of Service</h2>
+<p style="color:var(--mut);font-size:12px">Effective: November 2026</p>
+<h3>Article 1. Acceptable Use</h3>
+<p>While using the UCRM system, users must comply with the following rules:</p>
+<p>(a) Without written authorization, users may not screenshot, screen-record, or otherwise transmit any system screens, data, or reports to anyone outside the system.</p>
+<p>(b) Users may not disrupt, damage, or interfere with system operations, nor attempt unauthorized access to or modification of the system servers or database.</p>
+<p>(c) Users may not use any technical means, including but not limited to web scrapers, packet sniffing tools, or reverse engineering, to bulk-download or copy customer data, emails, or files from the system.</p>
+<p>(d) Users may not use the system for any illegal activity or perform unauthorized actions on behalf of third parties.</p>
+<p>(e) Users must keep their account credentials secure and may not share accounts. The user is responsible for any consequences arising from password disclosure.</p>
+<h3>Article 2. Accounts and Permissions</h3>
+<p>The system administrator may assign or adjust user permissions based on operational needs. Users may only view and operate data within their assigned permissions and may not attempt to access other users' or other customers' data.</p>
+<h3>Article 3. Violations</h3>
+<p>If a user is found to have violated these rules, the administrator may immediately suspend or terminate the account and reserves the right to pursue legal action. Serious violations may be referred to judicial authorities.</p>`,
+`<h2>UCRM Privacy Policy</h2>
+<p style="color:var(--mut);font-size:12px">Effective: November 2026</p>
+<h3>Article 1. Data Collection</h3>
+<p>To ensure system operation and security auditing, the system automatically collects and records the following data:</p>
+<p>(a) User login and logout times, IP addresses, and geolocation information.</p>
+<p>(b) All user actions within the system, including viewing, editing, deleting, sending emails, and uploading files.</p>
+<p>(c) Usage behavior data, such as browsing paths, click patterns, and page dwell time.</p>
+<p>The above data is uploaded to our encrypted cloud servers and used for AI analysis and system improvement.</p>
+<h3>Article 2. Confidentiality Commitment</h3>
+<p>We commit that collected user behavior data is used solely for internal operational analysis and system improvement, and will not be provided to any third party for commercial purposes or external work analysis.</p>
+<h3>Article 3. Implied Consent</h3>
+<p>By logging into the system, the user is deemed to have read, understood, and agreed to this policy in full. If the user does not agree, they must immediately stop using the system and contact the administrator to close the account.</p>`,
+`<h2>UCRM Client Confidentiality Agreement</h2>
+<p style="color:var(--mut);font-size:12px">Effective: November 2026</p>
+<h3>Article 1. Confidentiality Obligation</h3>
+<p>All client data encountered while using the system, including but not limited to company names, owner names, EIN tax IDs, contact information, financial data, passport and driver's license photos, is strictly confidential business information.</p>
+<h3>Article 2. Prohibition on Disclosure</h3>
+<p>Users may not disseminate client data in any form, including but not limited to:</p>
+<p>(a) Screenshotting, screen-recording, or photographing client data and sending it outside the system.</p>
+<p>(b) Disclosing client data to anyone outside the system verbally, in writing, by email, or via instant messaging.</p>
+<p>(c) Copying or downloading client data to unencrypted local devices or servers.</p>
+<h3>Article 3. Storage Standards</h3>
+<p>Client data may only be stored on our encrypted cloud servers. Users may not save client data to unencrypted local computers, USB drives, personal cloud storage, or public clouds, as this may violate Hong Kong and mainland China personal data protection laws. Users are responsible for any resulting legal liability.</p>
+<h3>Article 4. Liability for Breach</h3>
+<p>If a user breaches this agreement and causes client data to be leaked, the user shall bear full legal liability and compensation for all resulting damages.</p>`
+]
+}[L]||docs.zh;
+return openModal(`<div style="max-width:700px;max-height:80vh;overflow-y:auto">
+<div style="display:flex;gap:0;border-bottom:2px solid var(--line);margin-bottom:16px">
+${T.tabs.map((t,i)=>`<button onclick="openTerms(${i})" style="flex:1;padding:10px;background:${i===tab?'var(--acc)':'transparent'};color:${i===tab?'#fff':'var(--mut)'};border:none;border-bottom:2px solid ${i===tab?'var(--acc)':'transparent'};cursor:pointer;font-size:13px;font-weight:600">${t}</button>`).join("")}
+</div>
+${docs[tab]}
+<div style="margin-top:20px;text-align:right"><button class="btn" onclick="closeModal()">${T.close}</button></div>
+</div>`);}
 const LLANG={zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入"},cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录"},en:{t:"US Customs Relationship Manager",s:"American Import Client Management System",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In"}};
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
