@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l61";
+  var V="v20261102l62";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -212,7 +212,7 @@ tr:hover td{background:#1a2130}
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:14px 0}
 .tabs button{background:transparent;border:0;border-bottom:2px solid transparent;color:var(--mut);padding:10px 16px;font-size:13px;cursor:pointer}
 .tabs button.on{color:var(--acc2);border-bottom-color:var(--acc)}
-.field{display:grid;grid-template-columns:180px 1fr;gap:10px;padding:10px 0;border-bottom:1px dashed #1a2230;font-size:13px;align-items:start}
+.field{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:10px 0;border-bottom:1px dashed #1a2230;font-size:13px;align-items:start}
 .field .k{color:var(--mut)}
 .field .v{color:var(--txt)}
 .field .v.warn{color:var(--err)}
@@ -686,6 +686,7 @@ async function loadSB(){
 }
 const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const fixMoji=s=>{if(!s||typeof s!=="string")return s;try{const bytes=[];for(let i=0;i<s.length;i++)bytes.push(s.charCodeAt(i)&0xff);return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
 let view="dashboard";
 const R={};
 function toast(m,kind){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";t.style.background=kind==="err"?"#dc2626":kind==="ok"?"#10b981":"var(--bg2)";t.style.color=kind==="err"||kind==="ok"?"#fff":"var(--tx)";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
@@ -2119,7 +2120,7 @@ return `<div style="margin-bottom:12px;padding:10px 16px;background:linear-gradi
   <div class="field"><div class="k">${L==='en'?'Assigned Owner':L==='cn'?'归属负责人':'歸屬負責人'}</div><div class="v">${esc(ownerName(no))}</div></div>
   <div class="field"><div class="k">${L==='en'?'Business Status':L==='cn'?'业务状态':'業務狀態'}</div><div class="v"><span class="tag ${s.cl}">${s.lb}</span> <button class="btn small" onclick="openStatusChange('${no}')">${L==='en'?'Change Status':L==='cn'?'变更状态':'變更狀態'}</button></div></div>
   <div class="field"><div class="k">${L==='en'?'License Status':L==='cn'?'驾照状态':'駕照狀態'}</div><div class="v ${c.dl==="過期"?"warn":""}">${c.dl==="過期"?(L==='en'?'Expired, needs renewal':L==='cn'?'⚠️ 已过期，需更新':'⚠️ 已過期，需更新'):c.dl}</div></div>
-  <div class="field"><div class="k">${L==='en'?'Bound Email':L==='cn'?'绑定信箱':'綁定信箱'}</div><div class="v" style="word-break:break-all">${esc(c.mail)}</div></div>
+  <div class="field"><div class="k">${L==='en'?'Bound Email':L==='cn'?'绑定信箱':'綁定信箱'}</div><div class="v" style="word-break:break-all">${esc(fixMoji(c.mail))}</div></div>
   <div class="field"><div class="k">${L==='en'?'Documents':L==='cn'?'文件':'文件'}</div><div class="v">${T.files}${((DATA.files||{})[no]||[]).length}${T.fen}${((DATA.files||{})[no]||[]).filter(f=>f.type==="image").length}${T.zhang}</div></div>
   </div></div></div>
 <div style="margin-top:10px;font-size:13px;font-weight:700;color:var(--mut);margin-bottom:4px">${T.quick}</div>
@@ -2230,7 +2231,7 @@ function custInfoForm(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return
  <div class="fg"><label>${F.cn}</label><input id="cf_name" value="${esc(c.name)}" ${dis}></div>
  <div class="fg"><label>${F.member}</label><input id="cf_member" value="${esc(c.member)}" ${dis}></div>
  <div class="fg"><label>${F.ein}</label><input id="cf_ein" value="${esc(c.ein)}" ${dis}></div>
- <div class="fg"><label>${F.mail}</label><input id="cf_mail" value="${esc(c.mail)}" ${dis} style="word-break:break-all"></div>
+ <div class="fg"><label>${F.mail}</label><input id="cf_mail" value="${esc(fixMoji(c.mail))}" ${dis} style="word-break:break-all"></div>
  <div class="fg"><label>${F.refNo}</label><input id="cf_refNo" value="${esc(c.no)}" ${dis}><div style="font-size:11px;color:var(--dim);margin-top:2px">${F.refHint}</div></div>
  <div class="fg"><label>${F.sysId}</label><input value="${esc(c.sysId||c.no)}" disabled style="opacity:.6;cursor:not-allowed"><div style="font-size:11px;color:var(--dim);margin-top:2px">${F.sysHint}</div></div>
  <div class="fg"><label>${F.created}</label><input id="cf_created" value="${esc(createdDate)}" ${createdDis}><div style="font-size:11px;color:var(--dim);margin-top:2px">${F.createdHint}</div></div>
@@ -2480,11 +2481,12 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
  const tsRows=ts.map(x=>{let w=x.who||x.src||"";w=w.replace(/^[📩📝🤖📎]\s*/,"").trim();return{e:(w.indexOf("AI")>=0)||x.e==="ai"?"ai":"note",who:w,act:x.act||(x.e==="note"?"note":""),tt:x.txt||x.tt||"",tm:x.t||x.tm||"",tx:x.detail||x.tx||"",key:x.key||""};});
  const all=tsRows.concat(mailRows).sort((a,b)=>(b.tm||"").localeCompare(a.tm||""));
  const f=window._tlFilter||"all";
- const filtered=f==="ai"?all.filter(t=>t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):all;
+ const filtered=f==="ai"?all.filter(t=>t.e==="ai"):f==="unread"?all.filter(t=>t.e==="email"):f==="note"?all.filter(t=>t.e==="note"):all;
  return `<div style="margin-bottom:10px;display:flex;gap:6px">
   <button class="btn small" style="${f==='all'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='all';render()">全部</button>
   <button class="btn small" style="${f==='unread'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='unread';render()">信件</button>
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
+  <button class="btn small" style="${f==='note'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='note';render()">備註</button>
  </div>
  <div style="max-height:420px;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.who||t.src||"")}${t.act==="note"?(CURRENT_LANG==="en"?" manually added note":CURRENT_LANG==="cn"?" 手动添加备注":" 手動添加備註"):""}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 `;}
@@ -2608,7 +2610,10 @@ function custMailbox(no){
   <div style="font-size:13px;${e.unread?'font-weight:700':''};margin-bottom:4px">${esc(e.sub)}</div>
   <div style="display:flex;gap:8px;align-items:center">
     ${e.atts&&e.atts.length?`<span style="font-size:10px;color:var(--mut)">📎 ${e.atts.length} 個附件</span>`:""}
+    ${e.translated?'<span class="tag t-blue">已翻譯</span>':''}
+    ${e.interpreted||e.aiRead?'<span class="tag t-green">已解讀</span>':''}
     ${e.done?'<span class="tag t-green">已處理</span>':''}
+    ${!e.done?'<span class="tag t-red">未處理</span>':''}
   </div>
   </div>`).join(""):"<div class='empty'>尚無郵件</div>"}
   </div>`;
