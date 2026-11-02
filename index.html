@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l62";
+  var V="v20261102l63";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2680,7 +2680,19 @@ function setMemberPhoto(no,nm){
 function setMemberPhotoFromViewer(no,url){
   const c=DATA.customers.find(x=>x.no===no);if(!c)return;
   c.memberPhoto=url;persistCust(no);syncCustomerToRepo(no);addClientAudit(no,"設定法人照片","",c.name,"手動");addAudit("設定法人照片",c.name);
-  toast("已設為法人照片");closeModal();render();
+  window._memberPhotoSet=true;
+  // Update button state in modal without closing
+  const btns=document.querySelectorAll(".mrow, .modal-body button");
+  const setBtn=event&&event.target;
+  if(setBtn){
+    setBtn.textContent="✓ 已設為法人照片";
+    setBtn.disabled=true;
+    setBtn.style.background="#3fca8a";
+    setBtn.style.color="#fff";
+    setBtn.style.opacity="1";
+    setBtn.style.cursor="default";
+  }
+  toast("已設為法人照片，按「關閉」返回");
   render();
 }
 function setAttFilter(f){
