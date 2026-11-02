@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l43";
+  var V="v20261102l44";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -91,7 +91,7 @@ a{color:var(--acc);text-decoration:none}
 .side{width:232px;background:linear-gradient(180deg,#12161e,#10131a);border-right:1px solid var(--line);position:fixed;inset:0 auto 0 0;padding:18px 14px;display:flex;flex-direction:column;z-index:50}
 .brand{display:flex;align-items:center;gap:10px;padding:6px 8px 18px;border-bottom:1px solid var(--line);margin-bottom:14px}
 .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1d3350,#0e1c2e);border:1px solid #2b4a70;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--acc2);font-size:16px}
-.brand .logo-img{height:64px;width:72px;border-radius:12px;object-fit:cover;object-position:center;flex:0 0 auto;display:block;padding:0 4px;box-sizing:border-box;background:transparent}
+.brand .logo-img{height:64px;width:72px;border-radius:12px;object-fit:contain;object-position:center;flex:0 0 auto;display:block;padding:6px 10px;box-sizing:border-box;background:linear-gradient(135deg,#1a3a6b,#0d2149)}
 .brand .bt{font-size:13px;font-weight:700;color:var(--txt);line-height:1.3}
 .brand .bs{font-size:10px;color:var(--dim)}
 .sideclock{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.9;color:var(--mut)}
@@ -2037,7 +2037,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div class="row r2" style="margin-top:12px;align-items:start"><div class="panel" style="min-height:400px"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="min-height:400px"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="max-height:calc(100vh - 240px);overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
+  <div class="row" style="margin-top:12px;align-items:start;grid-template-columns:minmax(280px,1fr) minmax(0,2fr)"><div class="panel" style="min-height:400px"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="min-height:400px"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="max-height:calc(100vh - 240px);overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
