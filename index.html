@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l91";
+  var V="v20261102l92";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2599,8 +2599,9 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
   <button class="btn small" style="${f==='note'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='note';render()">備註</button>
  </div>
- <div style="flex:1;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:""}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.who||t.src||"")}${t.act==="note"?(CURRENT_LANG==="en"?" manually added note":CURRENT_LANG==="cn"?" 手动添加备注":" 手動添加備註"):""}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ <div style="flex:1;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:`openTlNote('${esc(t.tt||"")}','${esc(t.tx||"")}')`}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.who||t.src||"")}${t.act==="note"?(CURRENT_LANG==="en"?" manually added note":CURRENT_LANG==="cn"?" 手动添加备注":" 手動添加備註"):""}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 `;}
+function openTlNote(tt,tx){openModal(`<h3>${esc(tt)}</h3><div style="font-size:13px;line-height:1.8;max-height:50vh;overflow:auto;white-space:pre-wrap">${esc(tx)||"（無內容）"}</div><div class="mrow"><button class="btn primary" onclick="closeModal()">關閉</button></div>`);}
 function confirmDeleteTl(no,key){
   openModal(`<h3>刪除時間線記錄</h3><div style="padding:16px 0;font-size:14px;color:var(--mut)">確定要刪除這條時間線記錄嗎？此操作無法撤銷。</div>
   <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn" style="background:#ef4444;color:#fff;border-color:transparent" onclick="deleteTl('${no}','${key}')">確認刪除</button></div>`);
