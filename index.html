@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l39";
+  var V="v20261102l40";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -394,7 +394,7 @@ tr:hover td{background:#1a2130}
     <button onclick="setLangLogin('zh')">繁</button><button onclick="setLangLogin('cn')">简</button><button onclick="setLangLogin('en')">EN</button>
   </div>
   <div class="login-card">
-    <div class="login-head" style="cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">美國進口客戶關係管理系統</div><div class="ls" id="lh_sub">US Customs Relationship Manager</div><div id="verTagLogin" style="font-size:10px;color:var(--dim);font-family:monospace;margin-top:6px"></div></div>
+    <div class="login-head" style="cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">美國進口客戶關係管理系統</div><div class="ls" id="lh_sub">US Customs Relationship Manager</div></div>
     <label id="ll_user">登入帳號</label>
     <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
     <label id="ll_pwd">密碼</label>
@@ -403,11 +403,12 @@ tr:hover td{background:#1a2130}
     <div style="margin:14px 0 0;font-size:12px;color:var(--mut);line-height:1.7">
       <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer">
         <input type="checkbox" id="li_agree" style="margin-top:4px;flex-shrink:0;width:15px;height:15px">
-        <span style="flex:1">我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。</span>
+        <span id="li_agree_txt" style="flex:1">我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。</span>
       </label>
     </div>
     <button class="login-btn" onclick="doLogin()" id="li_btn">登 入</button>
-    <div class="login-foot">本系統僅供授權人士使用</div>
+    <div id="verTagLogin" style="text-align:center;font-size:10px;color:var(--dim);font-family:monospace;margin-top:10px"></div>
+    <div class="login-foot" id="li_foot">本系統僅供授權人士使用</div>
   </div>
 </div>
 <!-- ===== 資料 ===== -->
@@ -4375,8 +4376,29 @@ ov.innerHTML='<div style="background:#1a1a2e;border-radius:14px;width:900px;max-
 +'<div style="flex:1;overflow-y:auto;background:#fff">'+docs[tab]+'</div>'
 +'</div>';}
 
-const LLANG={zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入"},cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录"},en:{t:"US Customs Relationship Manager",s:"American Import Client Management System",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In"}};
-function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;document.getElementById("lh_title").textContent=L.t;document.getElementById("lh_sub").textContent=L.s;document.getElementById("ll_user").textContent=L.u;document.getElementById("ll_pwd").textContent=L.p;document.getElementById("li_user").placeholder=L.up;document.getElementById("li_pwd").placeholder=L.pp;document.getElementById("li_btn").textContent=L.b;document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
+const LLANG={
+zh:{t:"美國進口客戶關係管理系統",s:"US Customs Relationship Manager",u:"登入帳號",p:"密碼",up:"請輸入賬號名稱",pp:"請輸入賬戶密碼",b:"登 入",
+agree:'我同意並理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用條款與細則》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 個人私隱保護章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客戶資訊保密協議》</a>，並願意遵守有關文件內容。',
+foot:"本系統僅供授權人士使用",ver:"系統內核編號："},
+cn:{t:"美国进口客户关系管理系统",s:"US Customs Relationship Manager",u:"登录账号",p:"密码",up:"请输入账号名称",pp:"请输入账户密码",b:"登 录",
+agree:'我同意并理解<a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">《UCRM 使用条款与细则》</a>、<a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">《UCRM 个人隐私保护章程》</a>及<a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">《UCRM 客户信息保密协议》</a>，并愿意遵守有关文件内容。',
+foot:"本系统仅供授权人士使用",ver:"系统内核编号："},
+en:{t:"UCRM",s:"US Customs Relationship Manager",u:"Username",p:"Password",up:"Enter username",pp:"Enter password",b:"Sign In",
+agree:'I have read and agree to the <a href="#" onclick="event.preventDefault();openTerms(0)" style="color:var(--acc)">UCRM Terms of Service</a>, <a href="#" onclick="event.preventDefault();openTerms(1)" style="color:var(--acc)">UCRM Privacy Policy</a>, and <a href="#" onclick="event.preventDefault();openTerms(2)" style="color:var(--acc)">UCRM Client Confidentiality Agreement</a>, and agree to be bound by all their terms.',
+foot:"Authorized personnel only",ver:"System Build: "}
+};
+function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;
+document.getElementById("lh_title").textContent=L.t;
+document.getElementById("lh_sub").textContent=L.s;
+document.getElementById("ll_user").textContent=L.u;
+document.getElementById("ll_pwd").textContent=L.p;
+document.getElementById("li_user").placeholder=L.up;
+document.getElementById("li_pwd").placeholder=L.pp;
+document.getElementById("li_btn").textContent=L.b;
+document.getElementById("li_agree_txt").innerHTML=L.agree;
+document.getElementById("li_foot").textContent=L.foot;
+document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
+document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function initAuth(){setLangLogin(PREF.lang||"zh");document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");if(s&&s.id){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}}catch(e){}
 if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
