@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l80";
+  var V="v20261102l81";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -520,9 +520,14 @@ async function loadPersisted(){
   try{
     // 先从 localStorage 加载新建但云端可能没保存成功的客户
     const allSaved=JSON.parse(localStorage.getItem("bcd_all_cust")||"{}");
+    const cloudEINs=new Set(DATA.customers.map(c=>c.ein));
     Object.keys(allSaved).forEach(no=>{
       const exists=DATA.customers.find(x=>String(x.no)===String(no));
-      if(!exists){DATA.customers.unshift(allSaved[no]);}
+      if(!exists){
+        const sc=allSaved[no];
+        if(sc.ein&&cloudEINs.has(sc.ein))return; // 同EIN已在雲端，跳過舊記錄
+        DATA.customers.unshift(sc);
+      }
     });
     const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
     Object.keys(saved).forEach(no=>{const c=DATA.customers.find(x=>String(x.no)===String(no));if(c){const sv=saved[no];Object.assign(c,sv);if(!sv.reviewReport)delete c.reviewReport;if(!sv.fileInsights||!sv.fileInsights.length)delete c.fileInsights;}});
