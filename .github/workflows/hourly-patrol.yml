@@ -10,11 +10,15 @@ on:
         required: false
         default: ''
 
+concurrency:
+  group: hourly-patrol
+  cancel-in-progress: false
+
 jobs:
   patrol:
     runs-on: ubuntu-latest
     steps:
-      - name:  checkout 程式碼
+      - name: checkout 程式碼
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT }}
@@ -66,15 +70,25 @@ jobs:
           print('巡查留痕已寫入:', ts)
           "
 
-      - name: 自動 commit 與 push
+      - name: 自動 commit 與 push（含重試）
         run: |
           git config user.name "Kevin W"
           git config user.email "kevinyama@local"
           git remote set-url origin https://x-access-token:${{ secrets.PAT }}@github.com/uscrm26/bcd.git
           git add -A
-          if ! git diff --staged --quiet; then
-            git commit -m "auto: 每小時巡查留痕"
-            git push
-          else
+          if git diff --staged --quiet; then
             echo "沒有變更，不需 push"
+            exit 0
           fi
+          git commit -m "auto: 每小時巡查留痕"
+          for i in 1 2 3; do
+            git pull origin main --rebase --strategy-option=ours || true
+            if git push; then
+              echo "push 成功"
+              exit 0
+            fi
+            echo "push 失敗，重試 $i..."
+            sleep $((i * 5))
+          done
+          echo "push 最終失敗，略過（不影響郵件巡查結果）"
+          exit 0
