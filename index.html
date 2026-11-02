@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l90";
+  var V="v20261102l91";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2120,7 +2120,7 @@ function openOwnerPicker(){
   document.body.appendChild(box);
 }
 let PINNED={};
-async function loadPinned(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json",{cache:"no-store"});if(r.ok)PINNED=await r.json();}catch(e){PINNED={};}}
+async function loadPinned(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json?cb="+Date.now(),{cache:"no-store"});if(r.ok)PINNED=await r.json();}catch(e){PINNED={};}}
 async function togglePin(no){
   const me=CURRENT_USER.id;
   if(!PINNED[me])PINNED[me]=[];
@@ -2505,7 +2505,8 @@ function confirmStatus(no){const c=DATA.customers.find(x=>x.no===no);const nv=do
   addClientAudit(no,"狀態變更",old,st(nv).lb,reason);
   DATA.timeline[no]=DATA.timeline[no]||[];
   DATA.timeline[no].unshift({t:new Date().toISOString(),who:CURRENT_USER.nm,act:"",txt:`狀態變更：${old} → ${st(nv).lb}${reason?"（"+reason+"）":""}`,e:"note",key:"st_"+Date.now()});
-  closeModal();render();toast("狀態已更新並記錄");}
+  syncCustomerToRepo(no);
+  closeModal();render();toast("狀態已更新並寫入雲端");}
 function openAssign(no){if(!(CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor")){toast("歸屬由主管分配");return;}
 const team=myTeamIds();team.delete(CURRENT_USER.id);
 const cust=DATA.customers.find(x=>x.no===no);
@@ -2660,7 +2661,7 @@ function restoreAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c
 function deleteAiTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.aiTodos||!c.aiTodos[i])return;c.aiTodos.splice(i,1);persistCust(no);sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions,aiLastAt:c.aiLastAt})});render();toast("已刪除");}
 function addAutoTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.autoTodos||!c.autoTodos[i])return;const t=c.autoTodos[i].t;c.autoTodos=c.autoTodos.filter((x,j)=>j!==i);c.aiTodos=c.aiTodos||[];c.aiTodos.unshift({t,done:false,ts:Date.now(),manual:true});addClientAudit(no,"新增待辦","",t,"AI 建議");persistCust(no);render();toast("已新增待辦");}
 function dismissAutoTodo(no,i){const c=DATA.customers.find(x=>x.no===no);if(!c||!c.autoTodos||!c.autoTodos[i])return;c.autoTodos=c.autoTodos.filter((x,j)=>j!==i);persistCust(no);render();toast("已忽略");}
-function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;i.value="";render();toast("待辦已新增");}
+function addTodo(no){const i=document.getElementById("newtodo");if(!i.value)return;const c=DATA.customers.find(x=>x.no===no);c.todo=(c.todo||0)+1;persistCust(no);syncCustomerToRepo(no);i.value="";render();toast("待辦已新增並寫入雲端");}
 const FILEBASE="https://uscrm26.github.io/bcd/";
 let QMAP={};
 let IMGMAP={};
