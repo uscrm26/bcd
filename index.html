@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l68";
+  var V="v20261102l69";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1412,9 +1412,11 @@ R.dashboard=()=>{
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+  <div class="panel"><div class="sec-title">最近待辦事項</div>${recentTodos()}</div>
   <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:280px;overflow-y:auto">${DATA.mailboxes.map(b=>{const mc=DATA.customers.find(c=>c.name&&b.nm&&(c.name===b.nm||c.name.startsWith(b.nm)||b.nm.startsWith(c.name)));return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${mc?`#${mc.no}`:"Kevin W"}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div>
-  <div class="panel"><div class="sec-title">最近待辦事項</div>${recentTodos()}</div></div>`;
+  </div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
 const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">${CURRENT_LANG==="en"?"View":"查看"}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">${CURRENT_LANG==="en"?"To-do":"待辦"}</button><button onclick="event.stopPropagation();openNote('${c.no}')">${CURRENT_LANG==="en"?"Note":"跟進"}</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})"><div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>${CURRENT_LANG==="en"?"Owner":"法人"}</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do "+c.todo:"待辦 "+c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">${CURRENT_LANG==="en"?"Due $":"待收 ¥"}${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${CURRENT_LANG==="en"?"Mailbox ":"信箱 "}${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
