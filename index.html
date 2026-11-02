@@ -520,15 +520,17 @@ async function loadPersisted(){
   try{
     // 先从 localStorage 加载新建但云端可能没保存成功的客户
     const allSaved=JSON.parse(localStorage.getItem("bcd_all_cust")||"{}");
-    const cloudEINs=new Set(DATA.customers.map(c=>c.ein));
+    const cloudEINs=new Set(DATA.customers.map(c=>String(c.ein||"")));
+    const cleanedSaved={};
     Object.keys(allSaved).forEach(no=>{
+      const sc=allSaved[no];
       const exists=DATA.customers.find(x=>String(x.no)===String(no));
-      if(!exists){
-        const sc=allSaved[no];
-        if(sc.ein&&cloudEINs.has(sc.ein))return; // 同EIN已在雲端，跳過舊記錄
-        DATA.customers.unshift(sc);
-      }
+      if(exists)return; // 已在雲端，跳過
+      if(sc.ein&&cloudEINs.has(String(sc.ein)))return; // 同EIN已在雲端，跳過舊記錄
+      cleanedSaved[no]=sc;
+      DATA.customers.unshift(sc);
     });
+    localStorage.setItem("bcd_all_cust",JSON.stringify(cleanedSaved));
     const saved=JSON.parse(localStorage.getItem("bcd_cust_override")||"{}");
     Object.keys(saved).forEach(no=>{const c=DATA.customers.find(x=>String(x.no)===String(no));if(c){const sv=saved[no];Object.assign(c,sv);if(!sv.reviewReport)delete c.reviewReport;if(!sv.fileInsights||!sv.fileInsights.length)delete c.fileInsights;}});
     DATA.timeline=DATA.timeline||{};
