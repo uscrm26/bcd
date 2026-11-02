@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l40";
+  var V="v20261102l41";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -686,7 +686,7 @@ function closeModal(){document.getElementById("modal").classList.remove("show");
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){
-  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;const vl=document.getElementById("verTagLogin");if(vl)vl.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
+  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
