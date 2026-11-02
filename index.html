@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l64";
+  var V="v20261102l65";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -599,8 +599,9 @@ async function loadRepoData(){
       const savedAI={};
       (DATA.customers||[]).forEach(c=>{savedAI[c.no]={aiLastAt:c.aiLastAt,aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions};});
       ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
-      // 自動修復雙重編碼亂碼
-      const fixMoj=function(s){if(typeof s!=="string"||!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++){const ch=s.charCodeAt(i);if(ch>255)return s;bytes.push(ch);}const d=new TextDecoder("utf-8",{fatal:false});return d.decode(new Uint8Array(bytes));}catch(e){return s;}};
+      // 自動修復多重編碼亂碼（可能三重編碼，需迭代修復）
+      const fixOnce=function(s){if(typeof s!=="string"||!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++){const ch=s.charCodeAt(i);if(ch>255)return s;bytes.push(ch);}return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
+      const fixMoj=function(s){if(typeof s!=="string"||!s)return s;let prev="",cur=s,guard=0;while(cur!==prev&&guard<5){prev=cur;cur=fixOnce(prev);guard++;}return cur;};
       const fixDeep=function(o){if(Array.isArray(o))return o.map(fixDeep);if(o&&typeof o==="object"){for(const k in o)o[k]=fixDeep(o[k]);return o;}return fixMoj(o);};
       fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);fixDeep(DATA.finance);
       // 恢复 AI 状态
