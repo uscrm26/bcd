@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261102l59";
+  var V="v20261102l60";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2104,7 +2104,7 @@ return `<div style="margin-bottom:12px;padding:10px 16px;background:linear-gradi
 <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
   <div style="flex:0 0 220px;width:220px">
   <div onclick="${ph?`openModalImg('${ph}',${no})`:''}" title="${T.dl}" style="width:220px;height:260px;border-radius:14px;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:${ph?'pointer':'default'}">
-    ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">${T.dl}<br>${T.nophoto}</div>`}
+    ${ph?`<img src="${ph}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.innerHTML='<div style=&quot;text-align:center;color:var(--dim);font-size:13px;line-height:1.8;padding:20px&quot;>🗄️<br>${L==='en'?'Database updating,<br>please check back later.':L==='cn'?'数据库正在更新中，<br>请稍后查看。':'資料庫正在更新中，<br>請稍後查看。'}</div>'">`:`<div style="text-align:center;color:var(--dim);font-size:12px;line-height:1.7">${T.dl}<br>${T.nophoto}</div>`}
   </div>
   <div style="margin-top:10px;width:220px;padding:12px 14px;min-height:120px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px">
     <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:4px">${L==='en'?'AI Status':L==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
