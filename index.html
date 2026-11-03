@@ -566,7 +566,20 @@ async function loadRepoData(){
   try{
     window._dbg=[];window._dbg.push("start");
     const cb="?cb="+Date.now();
-    const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"+cb,{cache:"no-store"}),fetch("mailboxes.json"+cb,{cache:"no-store"}),fetch("dbboard/data.json"+cb,{cache:"no-store"}),fetch("files.json"+cb,{cache:"no-store"}),fetch("brokers.json"+cb,{cache:"no-store"}),fetch("sent_log.json"+cb,{cache:"no-store"})]);
+    const _steps=[];
+    async function _f(url,label){
+      if(window._updDbg)window._updDbg("fetching "+label);
+      const r=await fetch(url,{cache:"no-store"});
+      _steps.push(label+":"+r.status);
+      if(window._updDbg)window._updDbg(_steps.join(" | "));
+      return r;
+    }
+    const emRes=await _f("emails.json"+cb,"emails");
+    const mbRes=await _f("mailboxes.json"+cb,"mb");
+    const dbRes=await _f("dbboard/data.json"+cb,"data");
+    const fiRes=await _f("files.json"+cb,"files");
+    const bkRes=await _f("brokers.json"+cb,"brokers");
+    const slRes=await _f("sent_log.json"+cb,"sent");
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
