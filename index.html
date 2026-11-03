@@ -624,12 +624,12 @@ async function loadRepoData(){
     render();
     fillLoginStats();
     Promise.all([
-      xhrGet("mailboxes.json"+cb),
-      xhrGet("sent_log.json"+cb),
-      xhrGet("files.json"+cb),
-      xhrGet("emails.json"+cb),
-      xhrGet("brokers.json"+cb),
-      xhrGet("attachments.json"+cb)
+      xhrGet("mailboxes.json"+cb).catch(()=>null),
+      xhrGet("sent_log.json"+cb).catch(()=>null),
+      xhrGet("files.json"+cb).catch(()=>null),
+      xhrGet("emails.json"+cb).catch(()=>null),
+      xhrGet("brokers.json"+cb).catch(()=>null),
+      xhrGet("attachments.json"+cb).catch(()=>null)
     ]).then(([mb,sl,fi,em,bk,att])=>{
       if(Array.isArray(att))DATA.attachments=att;
       else if(att&&Array.isArray(att.attachments))DATA.attachments=att.attachments;
