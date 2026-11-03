@@ -3076,7 +3076,7 @@ async function refreshOneMailbox(no){
   const tok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
   let win=document.getElementById("mailSyncWin");if(win)win.remove();
   win=document.createElement("div");win.id="mailSyncWin";
-  win.style.cssText="position:fixed;bottom:"+floatNext()+"px;right:20px;width:480px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
+  win.style.cssText="position:fixed;bottom:20px;right:20px;width:480px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
   const t={
     title:langT("郵箱同步","邮箱同步","Mailbox Sync"),
     starting:langT("正在觸發後台巡查…","正在触发后台巡查…","Triggering background patrol…"),
