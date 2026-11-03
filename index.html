@@ -1285,7 +1285,7 @@ function recentTodos(){
 function statusPie(){
  const rows=[
   ["var(--acc)","處理中",countBy("new")+countBy("collect")+countBy("form")+countBy("submit")],
-  ["var(--ok)","已出單",countBy("done")],
+  ["var(--ok)","已出單",countBy("done")+countBy("paid")],
   ["var(--err)","待補件",countBy("supply")],
   ["var(--warn)","已收報價",countBy("quote")],
   ["#8b5cf6","等待審核",countBy("confirm")],
