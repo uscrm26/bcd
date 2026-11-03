@@ -563,9 +563,25 @@ function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").le
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function refreshData(){
-  toast('正在從線上更新數據');
-  await loadRepoData();
-  toast('已更新 '+DATA.customers.length+' 個客戶');
+  const btn=event?event.target:null;
+  if(btn){btn.disabled=true;btn.textContent="更新中...";}
+  const oldCount=DATA.customers.length;
+  const oldUnread=(DATA.emails||[]).filter(e=>e.unread).length;
+  toast('正在從線上更新數據...');
+  try{
+    await loadRepoData();
+    await loadPersisted();
+    await loadPinned();
+    render();
+    const newCount=DATA.customers.length;
+    const newUnread=(DATA.emails||[]).filter(e=>e.unread).length;
+    let msg='已更新 '+newCount+' 個客戶';
+    if(newUnread>oldUnread)msg+='，新增 '+ (newUnread-oldUnread) +' 封未讀郵件';
+    toast(msg,'ok');
+  }catch(e){
+    toast('更新失敗：'+e.message,'err');
+  }
+  if(btn){btn.disabled=false;btn.textContent="系統一鍵更新";}
 }
 async function loadRepoData(){
   const cb="?cb="+Date.now();
@@ -1446,7 +1462,7 @@ R.dashboard=()=>{
     [custs,T.b],
     [unread.filter(e=>!e.done).length,T.c]
   ];
-  return `<h1>總覽看板</h1>
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h1 style="margin:0">總覽看板</h1><button class="btn" style="background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600" onclick="refreshData()">系統一鍵更新</button></div>
   <div class="row r4">
     ${cards.map(x=>`<div class="stat" style="cursor:pointer" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
   </div>
