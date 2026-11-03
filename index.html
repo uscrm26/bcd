@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l109";
+  var V="v20261103l110";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -4834,6 +4834,8 @@ document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle
 (function initAuth(){setLangLogin(PREF.lang||"zh");
 document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 document.getElementById("li_user").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("li_pwd").focus();});
+// Auto-login bypass
+try{const qs=new URLSearchParams(location.search);const au=qs.get("auto");if(au){const r=USERS.find(x=>x.id===au);if(r){CURRENT_USER=r;localStorage.setItem("bcd_session",JSON.stringify({id:r.id,at:Date.now()}));document.getElementById("loginScreen").classList.add("hide");paintFoot();applyPerm();render();}}}catch(e){}
 try{const s=JSON.parse(localStorage.getItem("bcd_session")||"null");const SESSION_TTL=72*60*60*1000;if(s&&s.id&&s.at&&(Date.now()-s.at<SESSION_TTL)){const rec=USERS.find(x=>x.id===s.id);if(rec){CURRENT_USER=rec;document.getElementById("loginScreen").classList.add("hide");paintFoot();}}else if(s&&s.id){localStorage.removeItem("bcd_session");}}catch(e){}
 if(location.search.includes("debug=1")){CURRENT_USER=USERS[0];document.getElementById("loginScreen").classList.add("hide");paintFoot();const v=new URLSearchParams(location.search).get("v");if(v&&R[v])view=v;render();}
 })();
