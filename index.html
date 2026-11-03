@@ -564,11 +564,13 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   try{
+    console.log("loadRepoData start");
     const cb="?cb="+Date.now();
     const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"+cb,{cache:"no-store"}),fetch("mailboxes.json"+cb,{cache:"no-store"}),fetch("dbboard/data.json"+cb,{cache:"no-store"}),fetch("files.json"+cb,{cache:"no-store"}),fetch("brokers.json"+cb,{cache:"no-store"}),fetch("sent_log.json"+cb,{cache:"no-store"})]);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
+    console.log("data loaded, customers:", db?db.customers?.length:"db null");
     const fi=fiRes.ok?await fiRes.json():null;
     const bk=bkRes.ok?await bkRes.json():null;
     DATA.sent=slRes.ok?await slRes.json():[];
@@ -637,6 +639,7 @@ async function loadRepoData(){
       DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
     }
     await loadPinned();
+    console.log("DATA.customers before render:", DATA.customers.length);
     render();fillLoginStats();
   }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
 }
