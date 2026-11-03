@@ -3214,7 +3214,7 @@ async function refreshOneMailbox(no){
             if(newFiles>0)say(t.newFile(newFiles));
             if(j.conclusion==="success"){say(t.finish,"#22c55e");}
             else{say(langT("巡查已結束，可能無新郵件或郵箱連線異常。","巡查已结束，可能无新邮件或邮箱连线异常。","Patrol finished; may be no new mail or mailbox connection issue."),"#ffb454");}
-            say("巡查完成，請按 Cmd+Shift+R 刷新頁面查看最新數據","var(--mut)");
+            say(langT("若有新郵件，請點擊左導覽列底部「系統刷新」查看新數據。","若有新邮件，请点击左导航列底部「系统刷新」查看新数据。","If you have new emails, click 'System Refresh' at the bottom of the left sidebar to see latest data."),"var(--mut)");
           }catch(e){say(t.reloadErr,"#ef4444");}
           return;
         }else{
