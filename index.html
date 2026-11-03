@@ -608,7 +608,7 @@ async function loadRepoData(){
       xhrGet("emails.json"+cb),
       xhrGet("brokers.json"+cb)
     ]).then(([mb,sl,fi,em,bk])=>{
-      if(mb)DATA.mailboxes=mb;
+      if(mb)DATA.mailboxes=Array.isArray(mb)?mb:(mb.mailboxes||[]);
       if(Array.isArray(sl))DATA.sent=sl;
       if(fi&&typeof fi==="object")DATA.files=fi;
       if(Array.isArray(em)&&em.length){
