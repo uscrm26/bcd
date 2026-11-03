@@ -563,53 +563,23 @@ function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").le
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
-  try{
-    window._dbg=[];window._dbg.push("start");
-    const cb="?cb="+Date.now();
-    const _steps=[];
-    async function _f(url,label){
-      if(window._updDbg)window._updDbg("fetching "+label);
+  const cb="?cb="+Date.now();
+  async function safeFetch(url,label,fallback){
+    try{
       const ctrl=new AbortController();
-      const to=setTimeout(()=>ctrl.abort(),10000);
-      try{
-        const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});
-        clearTimeout(to);
-        _steps.push(label+":"+r.status);
-        if(window._updDbg)window._updDbg(_steps.join(" | "));
-        return r;
-      }catch(e){
-        clearTimeout(to);
-        _steps.push(label+":ERR");
-        if(window._updDbg)window._updDbg(_steps.join(" | "));
-        return {ok:false,json:async()=>null};
-      }
+      const to=setTimeout(()=>ctrl.abort(),15000);
+      const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});
+      clearTimeout(to);
+      if(!r.ok)return fallback;
+      return await r.json();
+    }catch(e){
+      return fallback;
     }
-    const mbRes=await _f("mailboxes.json"+cb,"mb");
-    const dbRes=await _f("dbboard/data.json"+cb,"data");
-    const slRes=await _f("sent_log.json"+cb,"sent");
-    const fiRes=await _f("files.json"+cb,"files");
-    const emRes=await _f("emails.json"+cb,"emails");
-    const bkRes=await _f("brokers.json"+cb,"brokers");
-    if(window._updDbg)window._updDbg("parsing em");
-    const em=emRes.ok?await emRes.json():[];
-    if(window._updDbg)window._updDbg("parsing mb");
-    const mb=mbRes.ok?await mbRes.json():null;
-    if(window._updDbg)window._updDbg("parsing db");
-    const db=dbRes.ok?await dbRes.json():null;
-    if(window._updDbg)window._updDbg("parsed db: "+(db?db.customers?.length:"null"));
-    if(window._updDbg)window._updDbg("parsing fi");
-    const fi=fiRes.ok?await fiRes.json():null;
-    if(window._updDbg)window._updDbg("parsing bk");
-    const bk=bkRes.ok?await bkRes.json():null;
-    if(window._updDbg)window._updDbg("parsing sent");
-    DATA.sent=slRes.ok?await slRes.json():[];
-    if(window._updDbg)window._updDbg("entering db block");
+  }
+  try{
+    const db=await safeFetch("dbboard/data.json"+cb,"data",null);
     if(db){
-      if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;
-      window._updDbg("assigned customers: "+DATA.customers.length);
-      localStorage.removeItem("bcd_customers");
-      localStorage.removeItem("bcd_data");
-    }else{window._updDbg("customers condition failed: isArray="+Array.isArray(db.customers)+" len="+db.customers?.length);}
+      if(Array.isArray(db.customers)&&db.customers.length)DATA.customers=db.customers;
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
       if(db.finance)DATA.finance=db.finance;
@@ -619,59 +589,33 @@ async function loadRepoData(){
       if(db.archive)DATA.archive=db.archive;
       if(db.notes)DATA.notes=db.notes;
     }
-    if(Array.isArray(bk)&&bk.length){
-      BROKERS.length=0;
-      bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
-    }
-    DATA.files=DATA.files||{};
+    const mb=await safeFetch("mailboxes.json"+cb,"mb",null);
+    if(mb)DATA.mailboxes=mb;
+    const sl=await safeFetch("sent_log.json"+cb,"sent",[]);
+    if(Array.isArray(sl))DATA.sent=sl;
+    const fi=await safeFetch("files.json"+cb,"files",null);
     if(fi&&typeof fi==="object")DATA.files=fi;
+    const em=await safeFetch("emails.json"+cb,"emails",[]);
     if(Array.isArray(em)&&em.length){
       const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
       DATA.emails=em.map(x=>{
         const t=fmtMailDate(x.date);
         return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
       });
-      // 建立客户邮箱域名库，邮件按client标签和邮箱域名双重关联客户编号
-      window._mailCustMap={};
-      (DATA.customers||[]).forEach(c=>{
-        if(c.mail&&c.mail.indexOf("@")>0){
-          const dom=c.mail.split("@")[1].toLowerCase();
-          window._mailCustMap[dom]=c.no;
-        }
-        if(c.name){
-          const short=c.name.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").toLowerCase();
-          if(short)window._mailCustMap["name:"+short]=c.no;
-        }
-      });
     }
-    if(mb&&Array.isArray(mb.mailboxes)){
-      const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
-      DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
-    }
-    if(db){
-      // 保存云端恢复的 AI 状态，避免被 data.json 覆盖
-      const savedAI={};
-      (DATA.customers||[]).forEach(c=>{savedAI[c.no]={aiLastAt:c.aiLastAt,aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions};});
-      ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
-      // 自動修復多重編碼亂碼（可能三重編碼，需迭代修復）
-      const fixOnce=function(s){if(typeof s!=="string"||!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++){const ch=s.charCodeAt(i);if(ch>255)return s;bytes.push(ch);}return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
-      const fixMoj=function(s){if(typeof s!=="string"||!s)return s;let prev="",cur=s,guard=0;while(cur!==prev&&guard<5){prev=cur;cur=fixOnce(prev);guard++;}return cur;};
-      const fixDeep=function(o){if(Array.isArray(o))return o.map(fixDeep);if(o&&typeof o==="object"){for(const k in o)o[k]=fixDeep(o[k]);return o;}return fixMoj(o);};
-      fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);fixDeep(DATA.finance);
-      // 恢复 AI 状态
-      (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
-      // 雲端載入後補齊缺漏的 4 位 sysId，已有編號原樣保留
-      normalizeSysId();
-    }
-    if(db&&Array.isArray(db.daily)&&db.daily.length){
-      const _fixMojibake=s=>{if(!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++)bytes.push(s.charCodeAt(i)&0xff);const d=new TextDecoder("utf-8",{fatal:false});return d.decode(new Uint8Array(bytes));}catch(e){return s;}};
-      const remoteLogs=db.daily.map(x=>({t:x.date||"",c:_fixMojibake(x.work||""),o:_fixMojibake(x.output||"")}));
-      DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
+    const bk=await safeFetch("brokers.json"+cb,"brokers",[]);
+    if(Array.isArray(bk)&&bk.length){
+      BROKERS.length=0;
+      bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
     }
     await loadPinned();
-    window._updDbg("before render: DATA.customers="+DATA.customers.length);
-    render();fillLoginStats();
-  }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
+    render();
+    fillLoginStats();
+  }catch(e){
+    console.error("loadRepoData error:",e);
+    var ve=document.getElementById("view");
+    if(ve)ve.innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">數據加載失敗: '+e.message+'</div>';
+  }
 }
 function fillLoginStats(){const a=document.getElementById("lv_active");const d=document.getElementById("lv_done");const m=document.getElementById("lv_mail");if(!a)return;const st=DATA.statuses||{};const on=[...new Set(Object.values(st))].filter(s=>s&&s!=="done"&&s!=="reject"&&s!=="hold").length;const dn=Object.values(st).filter(s=>s==="done").length;a.textContent=on||"0";d.textContent=dn||"0";m.textContent=Array.isArray(DATA.emails)?DATA.emails.length:"0";}
 // ===== Supabase 直連動態保存（publishable key 公開可曝，寫入走現有表）=====
@@ -4948,12 +4892,7 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
-var _db=document.createElement("div");
-_db.style.cssText="position:fixed;top:5px;right:5px;background:#222;color:#0f0;padding:6px 10px;font-size:11px;z-index:99999;border-radius:4px;font-family:monospace";
-_db.textContent="DBG: boot";
-document.body.appendChild(_db);
-window._updDbg=function(s){_db.textContent="DBG: "+s;};
-(async()=>{window._updDbg("before load");await loadRepoData();window._updDbg("after load: "+(window._dbg||[]).join(" | "));try{loadPersisted();}catch(e){}await loadSB();})();
+(async()=>{await loadRepoData();try{loadPersisted();}catch(e){}await loadSB();})();
 if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
