@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261103l110";
+  var V="v20261103l111";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -2697,8 +2697,6 @@ function resolveFile(p,no){
   if(QMAP[dec])return QMAP[dec].replace(/^http:\/\//i,"https://");
   // GitHub Pages: files in docs/clients/{folder}/
   if(no&&CLIENT_FOLDERS[String(no)])return FILEBASE+"clients/"+CLIENT_FOLDERS[String(no)]+"/"+encodeURIComponent(dec);
-  return FILEBASE+p;
-}
   // 副檔名不一致：本來記 .png 實際是 .jpg，本地 img/ 優先，避免被七牛 HTTP 混合內容擋掉
   var jpg=dec.replace(/\.(png|jpeg)$/i,".jpg");
   if(IMGMAP[jpg])return FILEBASE+IMGMAP[jpg];
