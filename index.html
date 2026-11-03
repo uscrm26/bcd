@@ -1245,6 +1245,13 @@ function dashScopeList(){
   return DATA.customers;
 }
 function hoursSince(tm){
+  if(!tm)return 999;
+  // Try ISO format first
+  const iso=new Date(String(tm));
+  if(!isNaN(iso.getTime())){
+    const now=new Date();
+    return (now.getTime()-iso.getTime())/3600e3;
+  }
   const m=String(tm).match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return 999;
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
   const curMin=(bj.getUTCMonth()+1)*372+bj.getUTCDate()*1440+bj.getUTCHours()*60+bj.getUTCMinutes();
@@ -1257,7 +1264,7 @@ function followUpAlerts(){
   DATA.customers.forEach(c=>{
     if(["hold","reject","done"].includes(c.status))return;
     const tl=(DATA.timeline||{})[c.no]||[];
-    let last=tl[0]?tl[0].tm:"";
+    let last=tl[0]?(tl[0].tm||tl[0].t||""):"";
     if(!last){const cd=CUST_CREATED[c.no]||"10/31";last=cd+" 12:00";}
     const h=hoursSince(last);
     const isNewMail=(DATA.emails||[]).some(e=>e.unread&&e.c===c.name.split(" ")[0]);
@@ -1267,7 +1274,7 @@ function followUpAlerts(){
   const top=rows.slice(0,10);
   return `<div style="font-size:11px;color:var(--mut);margin:6px 0 10px">最久未跟進前 10 名</div>`+top.map((r,i)=>{
     const ph=phSrc(r.c.no);
-    const lastTxt=r.last?((r.last.e==="email"?"📧 ":"")+esc(r.last.tt||"")):"尚無更新（依新增時間起算）";
+    const lastTxt=r.last?((r.last.e==="email"||r.last.type==="outbound"?"📧 ":"")+esc(r.last.tt||r.last.txt||"")):"尚無更新（依新增時間起算）";
     return `<div onclick="openCust('${r.c.no}')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg2)">
       <span style="font-size:11px;color:var(--dim);width:16px">${i+1}</span>
       <img src="${ph}" onerror="this.style.display='none'" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
@@ -1277,6 +1284,13 @@ function followUpAlerts(){
 }
 function recentTodos(){
   const all=[];
+  // From top-level DATA.todos
+  (DATA.todos||[]).forEach(t=>{
+    if(t.done)return;
+    const c=(DATA.customers||[]).find(x=>x.name&&t.client&&(x.name===t.client||x.name.startsWith(t.client)));
+    all.push({cust:t.client||"",no:c?c.no:"",txt:t.tag||"",ts:t.ts||Date.now()});
+  });
+  // Also from customer aiTodos if present
   (DATA.customers||[]).forEach(c=>{
     (c.aiTodos||[]).forEach(t=>{
       if(!t.done&&!t.superseded) all.push({cust:c.name,no:c.no,txt:t.t,ts:t.ts||0});
