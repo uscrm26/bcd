@@ -1,5 +1,15 @@
 [
   {
+    "client": 3,
+    "from": "horaciolsanchez@olivewareinc.com",
+    "to": "allison@auroracustomsbrokerage.com",
+    "subject": "Re: new CA importer, bond question",
+    "date": "Wed, 04 Nov 2026 02:35:56 +0800",
+    "body": "Hi Allison, Thanks for following up. We're located in Carlsbad, California. Our address is 2725 Jefferson St. Ste 6, Carlsbad, CA 92008. We're a newly formed LLC looking to import consumer goods from Asia, primarily small electronics and home accessories. We expect around 3 to 5 shipments per year, with an estimated value between $20,000 and $50,000 per shipment to start. Could you please advise on your continuous bond rates and what's needed to get set up? Best regards, Horacio L Sanchez, Oliveware LLC",
+    "read": true,
+    "sent": true
+  },
+  {
     "client": "Immunora",
     "from": "noreply@zipments.io",
     "subject": "Continue onboarding with BorderBuddy",
