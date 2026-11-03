@@ -4822,10 +4822,10 @@ document.getElementById("lh_title").textContent=L.t;
 document.getElementById("lh_sub").textContent=L.s;
 document.getElementById("ll_user").textContent=L.u;
 document.getElementById("ll_pwd").textContent=L.p;
-document.getElementById("li_user").placeholder=L.up;
-document.getElementById("li_pwd").placeholder=L.pp;
+var _lu=document.getElementById("li_user");if(_lu)_lu.placeholder=L.up;
+var _lp=document.getElementById("li_pwd");if(_lp)_lp.placeholder=L.pp;
 document.getElementById("slideText").textContent=L.slide||L.b;
-document.getElementById("li_agree_txt").innerHTML=L.agree;
+var _lat=document.getElementById("li_agree_txt");if(_lat)_lat.innerHTML=L.agree;
 document.getElementById("li_foot").textContent=L.foot;
 document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
