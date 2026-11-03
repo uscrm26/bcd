@@ -4833,16 +4833,13 @@ agree:'I have read and agree to the <a href="#" onclick="event.preventDefault();
 foot:"Authorized personnel only",ver:"System Build: "}
 };
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;
-document.getElementById("lh_title").textContent=L.t;
-document.getElementById("lh_sub").textContent=L.s;
-document.getElementById("ll_user").textContent=L.u;
-document.getElementById("ll_pwd").textContent=L.p;
+function _set(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
+_set("lh_title",L.t);_set("lh_sub",L.s);_set("ll_user",L.u);_set("ll_pwd",L.p);
 var _lu=document.getElementById("li_user");if(_lu)_lu.placeholder=L.up;
 var _lp=document.getElementById("li_pwd");if(_lp)_lp.placeholder=L.pp;
-document.getElementById("slideText").textContent=L.slide||L.b;
+_set("slideText",L.slide||L.b);
 var _lat=document.getElementById("li_agree_txt");if(_lat)_lat.innerHTML=L.agree;
-document.getElementById("li_foot").textContent=L.foot;
-document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
+_set("li_foot",L.foot);_set("verTagLogin",L.ver+APP_VER);
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function(){
   // Auto-reload if URL has ?update=1
