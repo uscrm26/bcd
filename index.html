@@ -4840,6 +4840,13 @@ var _lat=document.getElementById("li_agree_txt");if(_lat)_lat.innerHTML=L.agree;
 document.getElementById("li_foot").textContent=L.foot;
 document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
+(function(){
+  // Auto-reload if URL has ?update=1
+  if(location.search.includes("update=1")){
+    localStorage.removeItem("bcd_session");
+    location.href="?";
+  }
+})();
 (function initAuth(){setLangLogin(PREF.lang||"zh");
 document.getElementById("li_pwd").addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();});
 document.getElementById("li_user").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("li_pwd").focus();});
