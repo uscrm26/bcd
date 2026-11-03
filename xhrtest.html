@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>XHR Test</title></head>
+<body style="background:#1a1a1a;color:#fff;padding:20px;font-family:monospace">
+<div id="s">starting...</div>
+<script>
+var s=document.getElementById("s");
+s.textContent="sending XHR";
+var xhr=new XMLHttpRequest();
+xhr.open("GET","dbboard/data.json?cb="+Date.now(),true);
+xhr.timeout=15000;
+xhr.onload=function(){
+  s.textContent="loaded: "+xhr.status+" len="+xhr.responseText.length;
+  try{var d=JSON.parse(xhr.responseText);s.textContent+=" customers="+d.customers.length;}catch(e){s.textContent+=" parse err";}
+};
+xhr.onerror=function(){s.textContent="error";};
+xhr.ontimeout=function(){s.textContent="timeout";};
+xhr.send();
+</script></body></html>
