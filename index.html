@@ -365,6 +365,7 @@ tr:hover td{background:#1a2130}
     <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
     <a data-v="polling"><span class="ic">◷</span>巡查排程</a>
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
+    <div style="margin:12px 8px 0"><button id="navRefreshBtn" class="btn small" style="width:100%;background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600" onclick="refreshData()">系統刷新</button></div>
   </nav>
   <div class="foot">
     <div class="user-row" style="cursor:pointer" onclick="openSwitchUser()">
@@ -563,8 +564,8 @@ function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").le
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function refreshData(){
-  const btn=event?event.target:null;
-  if(btn){btn.disabled=true;btn.textContent="更新中...";}
+  const btn=document.getElementById("navRefreshBtn");
+  if(btn){btn.disabled=true;btn.textContent="刷新中...";}
   const oldCount=DATA.customers.length;
   const oldUnread=(DATA.emails||[]).filter(e=>e.unread).length;
   toast('正在從線上更新數據...');
@@ -581,7 +582,12 @@ async function refreshData(){
   }catch(e){
     toast('更新失敗：'+e.message,'err');
   }
-  if(btn){btn.disabled=false;btn.textContent="系統一鍵更新";}
+  if(btn){btn.disabled=false;btn.textContent=navRefreshLabel();}
+}
+function navRefreshLabel(){
+  if(CURRENT_LANG==="en")return "Refresh";
+  if(CURRENT_LANG==="cn")return "系统刷新";
+  return "系統刷新";
 }
 async function loadRepoData(){
   const cb="?cb="+Date.now();
@@ -1462,7 +1468,7 @@ R.dashboard=()=>{
     [custs,T.b],
     [unread.filter(e=>!e.done).length,T.c]
   ];
-  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h1 style="margin:0">總覽看板</h1><button class="btn" style="background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600" onclick="refreshData()">系統一鍵更新</button></div>
+  return `<h1>總覽看板</h1>
   <div class="row r4">
     ${cards.map(x=>`<div class="stat" style="cursor:pointer" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
   </div>
@@ -2167,12 +2173,21 @@ function openOwnerPicker(){
   document.body.appendChild(box);
 }
 let PINNED={};
-async function loadPinned(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json?cb="+Date.now(),{cache:"no-store"});if(r.ok)PINNED=await r.json();}catch(e){PINNED={};}}
+async function loadPinned(){
+  // Load from localStorage first
+  try{const local=localStorage.getItem("bcd_pinned");if(local)PINNED=JSON.parse(local);}catch(e){PINNED={};}
+  // Then try to load from GitHub
+  try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json?cb="+Date.now(),{cache:"no-store"});if(r.ok){const remote=await r.json();PINNED=remote;localStorage.setItem("bcd_pinned",JSON.stringify(remote));}}catch(e){}
+}
 async function togglePin(no){
   const me=CURRENT_USER.id;
   if(!PINNED[me])PINNED[me]=[];
   const i=PINNED[me].indexOf(no);
-  if(i>=0)PINNED[me].splice(i,1);else PINNED[me].unshift(no);
+  if(i>=0){PINNED[me].splice(i,1);toast("已取消置頂");}
+  else{PINNED[me].unshift(no);toast("已置頂");}
+  // Save to localStorage immediately
+  localStorage.setItem("bcd_pinned",JSON.stringify(PINNED));
+  // Try to save to GitHub
   try{
     const tok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
     const meta=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/pinned.json",{headers:{Authorization:"token "+tok}});
@@ -2180,7 +2195,7 @@ async function togglePin(no){
     if(meta.ok){const m=await meta.json();sha=m.sha;}
     const body={message:"更新置頂",content:btoa(unescape(encodeURIComponent(JSON.stringify(PINNED)))),...(sha?{sha}:{})};
     await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/pinned.json",{method:"PUT",headers:{Authorization:"token "+tok,"Content-Type":"application/json"},body:JSON.stringify(body)});
-  }catch(e){console.warn("pin save fail",e);}
+  }catch(e){console.warn("pin save to GitHub failed, saved locally",e);}
   refreshCustList();
 }
 function isPinned(no){const me=CURRENT_USER.id;return PINNED[me]&&PINNED[me].includes(no);}
