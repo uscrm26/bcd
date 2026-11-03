@@ -4918,11 +4918,12 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
-(async()=>{await loadRepoData();
 var _db=document.createElement("div");
 _db.style.cssText="position:fixed;top:5px;right:5px;background:#222;color:#0f0;padding:6px 10px;font-size:11px;z-index:99999;border-radius:4px;font-family:monospace";
-_db.textContent="DBG: "+(window._dbg||[]).join(" | ");
-document.body.appendChild(_db);try{loadPersisted();}catch(e){}await loadSB();})();
+_db.textContent="DBG: boot";
+document.body.appendChild(_db);
+window._updDbg=function(s){_db.textContent="DBG: "+s;};
+(async()=>{window._updDbg("before load");await loadRepoData();window._updDbg("after load: "+(window._dbg||[]).join(" | "));try{loadPersisted();}catch(e){}await loadSB();})();
 if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
