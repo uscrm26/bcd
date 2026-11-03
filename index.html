@@ -599,10 +599,10 @@ async function loadRepoData(){
     DATA.sent=slRes.ok?await slRes.json():[];
     if(db){
       if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;
-      // 清除舊本地數據，強制使用線上數據
+      window._updDbg("assigned customers: "+DATA.customers.length);
       localStorage.removeItem("bcd_customers");
       localStorage.removeItem("bcd_data");
-    }
+    }else{window._updDbg("customers condition failed: isArray="+Array.isArray(db.customers)+" len="+db.customers?.length);}
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
       if(db.finance)DATA.finance=db.finance;
@@ -662,7 +662,7 @@ async function loadRepoData(){
       DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
     }
     await loadPinned();
-    window._dbg.push("DATA:"+DATA.customers.length);
+    window._updDbg("before render: DATA.customers="+DATA.customers.length);
     render();fillLoginStats();
   }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
 }
