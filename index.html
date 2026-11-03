@@ -590,10 +590,13 @@ async function loadRepoData(){
     const fiRes=await _f("files.json"+cb,"files");
     const emRes=await _f("emails.json"+cb,"emails");
     const bkRes=await _f("brokers.json"+cb,"brokers");
+    if(window._updDbg)window._updDbg("parsing em");
     const em=emRes.ok?await emRes.json():[];
+    if(window._updDbg)window._updDbg("parsing mb");
     const mb=mbRes.ok?await mbRes.json():null;
+    if(window._updDbg)window._updDbg("parsing db");
     const db=dbRes.ok?await dbRes.json():null;
-    window._dbg.push("db:"+(db?db.customers?.length:"null"));
+    if(window._updDbg)window._updDbg("parsed db: "+(db?db.customers?.length:"null"));
     const fi=fiRes.ok?await fiRes.json():null;
     const bk=bkRes.ok?await bkRes.json():null;
     DATA.sent=slRes.ok?await slRes.json():[];
