@@ -1604,5 +1604,12 @@
     "client": 98,
     "body_preview": "Cold outreach round 2 to info@nitusa.com",
     "batch": "batch2_20261104"
+  },
+  {
+    "from": "jessicakeyates@huntingtoningallsindustries.live",
+    "to": "service@borderbuddy.com",
+    "subject": "Re: New U.S. Importer - Account Setup & Annual Bond",
+    "body_preview": "BorderBuddy account setup inquiry",
+    "client": 61
   }
 ]
