@@ -608,7 +608,10 @@ async function loadRepoData(){
       xhrGet("emails.json"+cb),
       xhrGet("brokers.json"+cb)
     ]).then(([mb,sl,fi,em,bk])=>{
-      if(mb)DATA.mailboxes=Array.isArray(mb)?mb:(mb.mailboxes||[]);
+      if(mb){
+      var _mb=Array.isArray(mb)?mb:(mb.mailboxes||[]);
+      DATA.mailboxes=_mb.map(b=>({nm:b.client||b.nm||"",em:b.email||b.em||"",st:b.st||"ok",unread:b.unread||0,owner:b.owner||""}));
+    }
       if(Array.isArray(sl))DATA.sent=sl;
       if(fi&&typeof fi==="object")DATA.files=fi;
       if(Array.isArray(em)&&em.length){
