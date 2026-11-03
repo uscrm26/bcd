@@ -564,17 +564,20 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   const cb="?cb="+Date.now();
-  async function safeFetch(url,label,fallback){
-    try{
-      const ctrl=new AbortController();
-      const to=setTimeout(()=>ctrl.abort(),30000);
-      const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});
-      clearTimeout(to);
-      if(!r.ok)return fallback;
-      return await r.json();
-    }catch(e){
-      return fallback;
-    }
+  function safeFetch(url,label,fallback){
+    return new Promise(resolve=>{
+      const xhr=new XMLHttpRequest();
+      xhr.open("GET",url,true);
+      xhr.timeout=20000;
+      xhr.onload=function(){
+        if(xhr.status===200){
+          try{resolve(JSON.parse(xhr.responseText));}catch(e){resolve(fallback);}
+        }else resolve(fallback);
+      };
+      xhr.onerror=()=>resolve(fallback);
+      xhr.ontimeout=()=>resolve(fallback);
+      xhr.send();
+    });
   }
   try{
     const db=await safeFetch("dbboard/data.json"+cb,"data",null);
