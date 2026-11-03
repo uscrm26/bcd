@@ -572,6 +572,17 @@ async function loadRepoData(){
     const fi=fiRes.ok?await fiRes.json():null;
     const bk=bkRes.ok?await bkRes.json():null;
     DATA.sent=slRes.ok?await slRes.json():[];
+    if(db){
+      if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;}
+      if(db.timeline)DATA.timeline=db.timeline;
+      if(db.statuses)DATA.statuses=db.statuses;
+      if(db.finance)DATA.finance=db.finance;
+      if(db.policy)DATA.policy=db.policy;
+      if(db.companyDocs)DATA.companyDocs=db.companyDocs;
+      if(db.todos)DATA.todos=db.todos;
+      if(db.archive)DATA.archive=db.archive;
+      if(db.notes)DATA.notes=db.notes;
+    }
     if(Array.isArray(bk)&&bk.length){
       BROKERS.length=0;
       bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
