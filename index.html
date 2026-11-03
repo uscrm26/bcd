@@ -3077,6 +3077,7 @@ async function refreshOneMailbox(no){
   let win=document.getElementById("mailSyncWin");if(win)win.remove();
   win=document.createElement("div");win.id="mailSyncWin";
   win.style.cssText="position:fixed;bottom:20px;right:20px;width:480px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
+  win.dataset.defBottom="20px";win.dataset.defRight="20px";
   const t={
     title:langT("郵箱同步","邮箱同步","Mailbox Sync"),
     starting:langT("正在觸發後台巡查…","正在触发后台巡查…","Triggering background patrol…"),
@@ -3094,8 +3095,30 @@ async function refreshOneMailbox(no){
     finish:langT("完成！你可以關閉此視窗。","完成！你可以关闭此窗口。","Done! You can close this window."),
     reloadErr:langT("數據重載失敗，請手動刷新","数据重载失败，请手动刷新","Data reload failed, please refresh manually")
   };
-  win.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">${t.title}</span><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
+  win.innerHTML=`<div class="dragbar" style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;cursor:move"><span style="font-size:13px;font-weight:700">${t.title}</span><span style="display:flex;gap:6px;align-items:center"><button onclick="(function(w){w.style.bottom=w.dataset.defBottom;w.style.right=w.dataset.defRight;w.style.left='';w.style.top='';})(this.closest('#mailSyncWin'))" title="歸位" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer">⤓</button><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></span></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
   document.body.appendChild(win);
+  // Drag functionality
+  (function(w){
+    const bar=w.querySelector(".dragbar");
+    let sx,sy,sr,sb,dragging=false;
+    bar.addEventListener("mousedown",function(e){
+      dragging=true;
+      const rect=w.getBoundingClientRect();
+      sx=e.clientX;sy=e.clientY;
+      sr=window.innerWidth-rect.right;sb=window.innerHeight-rect.bottom;
+      w.style.right="";w.style.bottom="";
+      w.style.left=rect.left+"px";w.style.top=rect.top+"px";
+      e.preventDefault();
+    });
+    document.addEventListener("mousemove",function(e){
+      if(!dragging)return;
+      const nx=e.clientX-sx,ny=e.clientY-sy;
+      w.style.left=(w.offsetLeft+nx)+"px";
+      w.style.top=(w.offsetTop+ny)+"px";
+      sx=e.clientX;sy=e.clientY;
+    });
+    document.addEventListener("mouseup",function(){dragging=false;});
+  })(win);
   const log=document.getElementById("mbProgress");
   const spinner='<span class="spin"></span>';
   const say=(html,cl,id)=>{let d=id?document.getElementById(id):null;if(!d){d=document.createElement("div");d.style.cssText="margin-bottom:6px;color:"+(cl||"var(--text)");if(id)d.id=id;log.appendChild(d);}d.innerHTML=html;log.scrollTop=log.scrollHeight;return d;};
