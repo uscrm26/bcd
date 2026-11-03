@@ -573,7 +573,11 @@ async function loadRepoData(){
     const bk=bkRes.ok?await bkRes.json():null;
     DATA.sent=slRes.ok?await slRes.json():[];
     if(db){
-      if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;}
+      if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;
+      // 清除舊本地數據，強制使用線上數據
+      localStorage.removeItem("bcd_customers");
+      localStorage.removeItem("bcd_data");
+    }
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
       if(db.finance)DATA.finance=db.finance;
