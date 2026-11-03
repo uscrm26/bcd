@@ -562,6 +562,11 @@ function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").le
 // ===== GitHub JSON 數據層：同倉讀取，不依賴 Supabase、不需要數據庫密碼 =====
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
+async function refreshData(){
+  toast('正在從線上更新數據');
+  await loadRepoData();
+  toast('已更新 '+DATA.customers.length+' 個客戶');
+}
 async function loadRepoData(){
   const cb="?cb="+Date.now();
   function xhrGet(url){
@@ -1424,7 +1429,10 @@ R.dashboard=()=>{
   <div style="display:flex;flex-direction:column;gap:10px">
   <div class="panel"><div class="sec-title">最近待辦事項</div>${recentTodos()}</div>
   <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:280px;overflow-y:auto">${DATA.mailboxes.map(b=>{const mc=DATA.customers.find(c=>c.name&&b.nm&&(c.name===b.nm||c.name.startsWith(b.nm)||b.nm.startsWith(c.name)));return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${mc?`#${mc.no}`:"Kevin W"}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
-  <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div>
+  <div style="margin-top:10px;display:flex;gap:8px">
+<button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button>
+<button class="btn small" onclick="refreshData()">更新數據</button>
+</div></div>
   </div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
