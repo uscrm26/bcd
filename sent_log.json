@@ -1,5 +1,14 @@
 [
   {
+    "to": "emily@bluebirdchb.com",
+    "from": "horaciolsanchez@olivewareinc.com",
+    "subject": "Re: first-time importer, who do I talk to?",
+    "date": "Wed, 04 Nov 2026 03:01:53 +0800",
+    "client": 3,
+    "body_preview": "Sending signed POA, first shipment expected soon",
+    "attachment": "Oliveware_Bluebird_POA_Filled.pdf"
+  },
+  {
     "to": "allison@auroracustomsbrokerage.com",
     "from": "horaciolsanchez@olivewareinc.com",
     "subject": "Re: new CA importer, bond question",
