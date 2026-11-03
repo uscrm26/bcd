@@ -1246,11 +1246,12 @@ function dashScopeList(){
 }
 function hoursSince(tm){
   if(!tm)return 999;
-  // Try ISO format first
-  const iso=new Date(String(tm));
-  if(!isNaN(iso.getTime())){
-    const now=new Date();
-    return (now.getTime()-iso.getTime())/3600e3;
+  // ISO format: contains "T" and dashes like 2026-11-02T23:30:00+08:00
+  if(typeof tm==="string"&&/^\d{4}-\d{2}-\d{2}T/.test(tm)){
+    const iso=new Date(tm);
+    if(!isNaN(iso.getTime())){
+      return (Date.now()-iso.getTime())/3600e3;
+    }
   }
   const m=String(tm).match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return 999;
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
