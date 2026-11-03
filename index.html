@@ -2830,16 +2830,19 @@ function docList(no){
     return `<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
       ${inner}
       <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
+      ${insight&&insight.filled===true?`<span style="display:inline-block;font-size:9px;font-weight:700;color:#16a34a;background:#16a34a22;border-radius:4px;padding:1px 6px;margin-top:2px">已填寫</span>`:""}
+      ${insight&&insight.filled===false?`<span style="display:inline-block;font-size:9px;font-weight:700;color:#dc2626;background:#dc262622;border-radius:4px;padding:1px 6px;margin-top:2px">未填寫</span>`:""}
       ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
       ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
       <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div>
       </div></div>`;}
   const L=CURRENT_LANG;
-  const D={zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件"},cn:{general:"客户资料",app:"申请文件档案",all:"全部",img:"照片",doc:"文件",total:"份，点档案可直接预览。",upload:"⬆ 上传文件",manage:"管理文件夹",appFiles:"申请文件",photos:"照片",files:"份",noApp:"尚无申请文件",noAtt:"尚无附件"},en:{general:"Client Docs",app:"Application Docs",all:"All",img:"Photos",doc:"Files",total:"files, click to preview.",upload:"⬆ Upload Files",manage:"Manage Folders",appFiles:"Application Docs",photos:"Photos",files:"files",noApp:"No application docs yet",noAtt:"No attachments yet"}}[L]||{zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件"}};
+  const D={zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件",mail:"電子郵件附件",filled:"已填寫",blank:"未填寫"},cn:{general:"客户资料",app:"申请文件档案",all:"全部",img:"照片",doc:"文件",total:"份，点档案可直接预览。",upload:"⬆ 上传文件",manage:"管理文件夹",appFiles:"申请文件",photos:"照片",files:"份",noApp:"尚无申请文件",noAtt:"尚无附件",mail:"电子邮件附件",filled:"已填写",blank:"未填写"},en:{general:"Client Docs",app:"Application Docs",all:"All",img:"Photos",doc:"Files",total:"files, click to preview.",upload:"⬆ Upload Files",manage:"Manage Folders",appFiles:"Application Docs",photos:"Photos",files:"files",noApp:"No application docs yet",noAtt:"No attachments yet",mail:"Email Attachments",filled:"Filled",blank:"Blank"}}[L]||{zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件",mail:"電子郵件附件",filled:"已填寫",blank:"未填寫"}};
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div style="display:flex;gap:6px">
     <button class="btn small" style="${attSubTab==='general'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='general';render()">${D.general}</button>
     <button class="btn small" style="${attSubTab==='app'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='app';render()">${D.app}</button>
+    <button class="btn small" style="${attSubTab==='mail'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='mail';render()">${D.mail}</button>
   </div>
   <div style="display:flex;gap:6px">
     <button class="btn small att-f" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">${D.all}</button>
@@ -2852,6 +2855,19 @@ function docList(no){
     :(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(f=>card(f)).join("")}</div>`:"")}
   ${attSubTab==='general'
     ?(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.doc} ${docs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(f=>card(f)).join("")}</div>`:"")
+    :""}
+  ${attSubTab==='mail'
+    ?(()=>{
+        const cname=(DATA.customers.find(x=>String(x.no)===String(no))||{}).name||"";
+        const cshort=cname.toLowerCase().split(" ")[0];
+        const mailAtts=(DATA.attachments||[]).filter(a=>{
+          const cn=(a.client||"").toLowerCase();
+          return cn===cname.toLowerCase()||(cshort&&cn.includes(cshort));
+        });
+        return mailAtts.length
+          ?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.mail} ${mailAtts.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${mailAtts.map(a=>card({name:a.filename||a.nm,path:a.path,uploader:a.date||"郵件附件"})).join("")}</div>`
+          :`<div class='empty'>${D.noAtt}</div>`;
+      })()
     :""}
   </div>
   ${!localList.length?`<div class='empty'>${D.noAtt}</div>`:""}
