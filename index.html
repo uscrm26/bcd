@@ -2098,9 +2098,9 @@ async function syncCustomerToRepo(no){
   try{
     const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
     const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
-    const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{headers:{Authorization:"token "+ghtok}});
-    const meta=await metaR.json();
-    const dj=JSON.parse(new TextDecoder("utf-8").decode(Uint8Array.from(atob((meta.content||"").replace(/\n/g,"")),b=>b)));
+    // Read from raw URL (file >1MB, Contents API returns no content)
+    const dr=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/data.json?cb="+Date.now(),{cache:"no-store"});
+    const dj=await dr.json();
     const cs=dj.customers=dj.customers||[];
     const idx=cs.findIndex(x=>String(x.no)===String(no));
     if(idx<0)cs.push(c);
@@ -2116,9 +2116,24 @@ async function syncCustomerToRepo(no){
       if(c.sysId&&!t.sysId)t.sysId=c.sysId;
       if(c.memberPhoto)t.memberPhoto=c.memberPhoto;
       if(c.status)t.status=c.status;
+      if(c.timeline)t.timeline=c.timeline;
     }
+    // Also update timeline if present
+    if(DATA.timeline&&DATA.timeline[no])dj.timeline=dj.timeline||{};
+    if(DATA.timeline&&DATA.timeline[no])dj.timeline[no]=DATA.timeline[no];
     const b=JSON.stringify(dj);
-    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"更新客戶 "+no,content:btoa(unescape(encodeURIComponent(b))),sha:meta.sha})});
+    // Write via Git Data API for large files
+    const blobRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/blobs",{method:"POST",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({content:btoa(unescape(encodeURIComponent(b))),encoding:"base64"})});
+    const blob=await blobRes.json();
+    const refRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/refs/heads/main",{headers:{Authorization:"token "+ghtok}});
+    const ref=await refRes.json();
+    const commitRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/commits/"+ref.object.sha,{headers:{Authorization:"token "+ghtok}});
+    const commit=await commitRes.json();
+    const treeRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/trees",{method:"POST",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({base_tree:commit.tree.sha,tree:[{path:"dbboard/data.json",mode:"100644",type:"blob",sha:blob.sha}]})});
+    const tree=await treeRes.json();
+    const newCommitRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/commits",{method:"POST",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"更新客戶 "+no,path:"dbboard/data.json",tree:tree.sha,parents:[ref.object.sha]})});
+    const newCommit=await newCommitRes.json();
+    await fetch("https://api.github.com/repos/uscrm26/bcd/git/refs/heads/main",{method:"PATCH",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({sha:newCommit.sha,force:false})});
   }catch(e){console.warn("syncCustomerToRepo",e);}
 }
 
