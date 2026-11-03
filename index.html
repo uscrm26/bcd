@@ -564,13 +564,13 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   try{
-    console.log("loadRepoData start");
+    window._dbg=[];window._dbg.push("start");
     const cb="?cb="+Date.now();
     const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"+cb,{cache:"no-store"}),fetch("mailboxes.json"+cb,{cache:"no-store"}),fetch("dbboard/data.json"+cb,{cache:"no-store"}),fetch("files.json"+cb,{cache:"no-store"}),fetch("brokers.json"+cb,{cache:"no-store"}),fetch("sent_log.json"+cb,{cache:"no-store"})]);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
-    console.log("data loaded, customers:", db?db.customers?.length:"db null");
+    window._dbg.push("db:"+(db?db.customers?.length:"null"));
     const fi=fiRes.ok?await fiRes.json():null;
     const bk=bkRes.ok?await bkRes.json():null;
     DATA.sent=slRes.ok?await slRes.json():[];
@@ -639,7 +639,7 @@ async function loadRepoData(){
       DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
     }
     await loadPinned();
-    console.log("DATA.customers before render:", DATA.customers.length);
+    window._dbg.push("DATA:"+DATA.customers.length);
     render();fillLoginStats();
   }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
 }
@@ -4918,7 +4918,11 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
-(async()=>{await loadRepoData();try{loadPersisted();}catch(e){}await loadSB();})();
+(async()=>{await loadRepoData();
+var _db=document.createElement("div");
+_db.style.cssText="position:fixed;top:5px;right:5px;background:#222;color:#0f0;padding:6px 10px;font-size:11px;z-index:99999;border-radius:4px;font-family:monospace";
+_db.textContent="DBG: "+(window._dbg||[]).join(" | ");
+document.body.appendChild(_db);try{loadPersisted();}catch(e){}await loadSB();})();
 if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
