@@ -2814,34 +2814,60 @@ function custMailbox(no){
 }
 
 function docList(no){
+  const cname=(DATA.customers.find(x=>String(x.no)===String(no))||{}).name||"";
+  const cshort=cname.toLowerCase().split(" ")[0];
+  // Merge files.json + attachments.json into unified list
   const rawList=(DATA.files||{})[no]||[];
-  const seen=new Set();const localList=[];
-  for(const f of rawList){const k=f.path||f.name||f.nm||"";if(seen.has(k))continue;seen.add(k);localList.push(f);}
-  const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
-  const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
-  // 申請文件：PDF 且文件名包含關鍵字
   const appRe=/(bond|application|form|POA|financial|personal|credit|authorization|release|customs|請書|申請|表格|授權|財務)/i;
-  const appFiles=localList.filter(f=>appRe.test(f.name||f.nm||""));
-  const generalFiles=localList.filter(f=>!appRe.test(f.name||f.nm||""));
+  const seen=new Set();const allFiles=[];
+  for(const f of rawList){
+    const k=f.path||f.name||f.nm||"";if(seen.has(k))continue;seen.add(k);
+    const nm=f.name||f.nm||"";
+    f.cat=f.cat||(appRe.test(nm)?"app":"client");
+    allFiles.push(f);
+  }
+  // Add email attachments
+  const mailAtts=(DATA.attachments||[]).filter(a=>{
+    const cn=(a.client||"").toLowerCase();
+    return cn===cname.toLowerCase()||(cshort&&cn.includes(cshort));
+  });
+  for(const a of mailAtts){
+    const k=a.path||a.filename||"";if(seen.has(k))continue;seen.add(k);
+    allFiles.push({name:a.filename||a.nm,path:a.path,uploader:a.date||"郵件",cat:"email"});
+  }
   const attSubTab=window._attSub||"general";
-  function card(f,showMailLink){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
+  const tabMap={general:"client",app:"app",mail:"email"};
+  const filterCat=tabMap[attSubTab]||"client";
+  const tabFiles=allFiles.filter(f=>f.cat===filterCat);
+  const imgs=tabFiles.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
+  const docs=tabFiles.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
+  function card(f){const nm=f.name||f.nm||"未命名檔案";const up=f.uploader||f.by||"系統管理員";
     const insight=((DATA.customers.find(x=>String(x.no)===String(no))||{}).fileInsights||[]).find(x=>x.file===nm);
     const url=resolveFile(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
     const inner=isImg
       ? `<img src="${url}" data-path="${encodeURIComponent(f.path||'')}" style="width:100%;height:110px;object-fit:cover;border-radius:8px 8px 0 0;background:#222" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}">`
       : `<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg2);border-radius:8px 8px 0 0">${/\.pdf$/i.test(nm)?"📄":"📎"}</div>`;
+    const catLabels={client:"客戶資料",app:"申請文件",email:"郵件附件"};
+    const catColors={client:"#3b82f6",app:"#8b5cf6",email:"#06b6d4"};
+    const cp=f.path||"";
     return `<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
       ${inner}
-      <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
-      ${insight&&insight.filled===true?`<span style="display:inline-block;font-size:9px;font-weight:700;color:#16a34a;background:#16a34a22;border-radius:4px;padding:1px 6px;margin-top:2px">已填寫</span>`:""}
-      ${insight&&insight.filled===false?`<span style="display:inline-block;font-size:9px;font-weight:700;color:#dc2626;background:#dc262622;border-radius:4px;padding:1px 6px;margin-top:2px">未填寫</span>`:""}
-      ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
-      ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
-      <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div>
+      <div style="padding:8px 10px">
+        <div style="display:flex;gap:4px;align-items:center;margin-bottom:2px">
+          <span style="display:inline-block;font-size:9px;font-weight:700;color:${catColors[f.cat]||'#666'};background:${catColors[f.cat]||'#666'}22;border-radius:4px;padding:1px 6px">${catLabels[f.cat]||f.cat||""}</span>
+          ${insight&&insight.filled===true?`<span style="font-size:9px;font-weight:700;color:#16a34a;background:#16a34a22;border-radius:4px;padding:1px 6px">已填寫</span>`:""}
+          ${insight&&insight.filled===false?`<span style="font-size:9px;font-weight:700;color:#dc2626;background:#dc262622;border-radius:4px;padding:1px 6px">未填寫</span>`:""}
+        </div>
+        <div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
+        ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
+        ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
+        <div style="display:flex;gap:4px;margin-top:6px" onclick="event.stopPropagation()">
+          <button class="btn small" style="font-size:10px;padding:2px 8px" onclick="moveFileDialog('${no}','${encodeURIComponent(cp)}','${esc(nm).replace(/'/g,"\\'")}')">移動</button>
+        </div>
       </div></div>`;}
   const L=CURRENT_LANG;
-  const D={zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件",mail:"電子郵件附件",filled:"已填寫",blank:"未填寫"},cn:{general:"客户资料",app:"申请文件档案",all:"全部",img:"照片",doc:"文件",total:"份，点档案可直接预览。",upload:"⬆ 上传文件",manage:"管理文件夹",appFiles:"申请文件",photos:"照片",files:"份",noApp:"尚无申请文件",noAtt:"尚无附件",mail:"电子邮件附件",filled:"已填写",blank:"未填写"},en:{general:"Client Docs",app:"Application Docs",all:"All",img:"Photos",doc:"Files",total:"files, click to preview.",upload:"⬆ Upload Files",manage:"Manage Folders",appFiles:"Application Docs",photos:"Photos",files:"files",noApp:"No application docs yet",noAtt:"No attachments yet",mail:"Email Attachments",filled:"Filled",blank:"Blank"}}[L]||{zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件",mail:"電子郵件附件",filled:"已填寫",blank:"未填寫"}};
+  const D={zh:{general:"客戶資料",app:"申請文件檔案",mail:"電子郵件附件",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",photos:"照片",noApp:"尚無申請文件",noAtt:"尚無附件"},cn:{general:"客户资料",app:"申请文件档案",mail:"电子邮件附件",all:"全部",img:"照片",doc:"文件",total:"份，点档案可直接预览。",upload:"⬆ 上传文件",manage:"管理文件夹",photos:"照片",noApp:"尚无申请文件",noAtt:"尚无附件"},en:{general:"Client Docs",app:"Application Docs",mail:"Email Attachments",all:"All",img:"Photos",doc:"Files",total:"files, click to preview.",upload:"⬆ Upload Files",manage:"Manage Folders",photos:"Photos",noApp:"No application docs yet",noAtt:"No attachments yet"}}[L]||{zh:{general:"客戶資料",app:"申請文件檔案",mail:"電子郵件附件",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",photos:"照片",noApp:"尚無申請文件",noAtt:"尚無附件"}};
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div style="display:flex;gap:6px">
     <button class="btn small" style="${attSubTab==='general'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='general';render()">${D.general}</button>
@@ -2849,36 +2875,82 @@ function docList(no){
     <button class="btn small" style="${attSubTab==='mail'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='mail';render()">${D.mail}</button>
   </div>
   <div style="display:flex;gap:6px">
-    <button class="btn small att-f" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">${D.all}</button>
-    <button class="btn small att-f" data-f="img" onclick="setAttFilter('img')">${D.img}</button>
-    <button class="btn small att-f" data-f="doc" onclick="setAttFilter('doc')">${D.doc}</button>
+    <button class="btn small" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">${D.all}</button>
+    <button class="btn small" data-f="img" onclick="setAttFilter('img')">${D.img}</button>
+    <button class="btn small" data-f="doc" onclick="setAttFilter('doc')">${D.doc}</button>
   </div></div>
   <div id="attGrid" style="max-height:380px;overflow-y:auto;padding-right:4px">
-  ${attSubTab==='app'
-    ?(appFiles.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.appFiles} ${appFiles.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${appFiles.map(f=>card(f)).join("")}</div>`:`<div class='empty'>${D.noApp}</div>`)
-    :attSubTab==='general'
-    ?(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(f=>card(f)).join("")}</div>`:"")
-    :""}
-  ${attSubTab==='general'
-    ?(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.doc} ${docs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(f=>card(f)).join("")}</div>`:"")
-    :""}
-  ${attSubTab==='mail'
-    ?(()=>{
-        const cname=(DATA.customers.find(x=>String(x.no)===String(no))||{}).name||"";
-        const cshort=cname.toLowerCase().split(" ")[0];
-        const mailAtts=(DATA.attachments||[]).filter(a=>{
-          const cn=(a.client||"").toLowerCase();
-          return cn===cname.toLowerCase()||(cshort&&cn.includes(cshort));
-        });
-        return mailAtts.length
-          ?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.mail} ${mailAtts.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${mailAtts.map(a=>card({name:a.filename||a.nm,path:a.path,uploader:a.date||"郵件附件"})).join("")}</div>`
-          :`<div class='empty'>${D.noAtt}</div>`;
-      })()
-    :""}
+  ${tabFiles.length
+    ?(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px">${imgs.map(f=>card(f)).join("")}</div>`:"")
+    +(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.doc} ${docs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px">${docs.map(f=>card(f)).join("")}</div>`:"")
+    :`<div class='empty'>${D.noAtt}</div>`}
   </div>
-  ${!localList.length?`<div class='empty'>${D.noAtt}</div>`:""}
-  <div style="margin-top:10px;font-size:11px;color:var(--dim)">${localList.length} ${D.total}</div>
-  <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">${D.manage}</button><button class="btn primary" onclick="pickUpload('${no}')">${D.upload}</button></div>`;
+  <div style="margin-top:10px;font-size:11px;color:var(--dim)">${tabFiles.length} ${D.total}</div>
+  <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">${D.manage}</button><button class="btn primary" onclick="openUploadDialog('${no}')">${D.upload}</button></div>`;
+}
+function moveFileDialog(no,encPath,nm){
+  const path=decodeURIComponent(encPath);
+  const labels={client:"客戶資料",app:"申請文件檔案",email:"電子郵件附件"};
+  const opts=Object.entries(labels).map(([k,v])=>`<button class="btn small" style="margin:4px" onclick="doMoveFile('${no}','${encPath}','${k}')">${v}</button>`).join("");
+  showModal(`<h3>移動檔案</h3><p style="font-size:12px;color:var(--mut);margin:8px 0">${esc(nm)}</p><p style="font-size:12px;margin:8px 0">移動到：</p><div style="display:flex;flex-wrap:wrap">${opts}</div>`);
+}
+async function doMoveFile(no,encPath,newCat){
+  const path=decodeURIComponent(encPath);
+  const fl=(DATA.files||{})[no]||[];
+  let found=false;
+  for(const f of fl){if((f.path||"")===path){f.cat=newCat;found=true;}}
+  if(!found){toast("此檔案在郵件附件中，無法移動");closeModal();return;}
+  try{
+    const owner=(DATA.customers.find(x=>String(x.no)===String(no))||{}).owner||"";
+    const ghToken=(window._ghToken||"").replace(/\s/g,"");
+    if(ghToken){
+      const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{headers:{Authorization:"token "+ghToken}});
+      const j=await r.json();
+      const data=JSON.parse(decodeURIComponent(escape(atob(j.content))));
+      if(data[no]){for(const f of data[no]){if((f.path||"")===path){f.cat=newCat;}}}
+      await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{method:"PUT",headers:{Authorization:"token "+ghToken,"Content-Type":"application/json"},body:JSON.stringify({message:"move file to "+newCat,content:btoa(unescape(encodeURIComponent(JSON.stringify(data)))),sha:j.sha})});
+    }
+  }catch(e){}
+  closeModal();render();toast("已移動");
+}
+function openUploadDialog(no){
+  showModal(`<h3>上傳檔案</h3>
+  <div id="dropZone" style="border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;margin:12px 0;cursor:pointer" onclick="document.getElementById('upInput').click()">
+    <div style="font-size:36px;margin-bottom:8px">📁</div>
+    <div style="font-size:14px;color:var(--tx)">點擊選擇或拖拽檔案到此</div>
+    <div style="font-size:11px;color:var(--mut);margin-top:4px">PDF, JPG, PNG, 最多 20MB</div>
+  </div>
+  <input type="file" id="upInput" multiple style="display:none">
+  <div style="margin:12px 0"><div style="font-size:12px;margin-bottom:6px">分類：</div>
+    <label style="display:block;margin:4px 0;font-size:13px"><input type="radio" name="upCat" value="client" checked> 客戶資料</label>
+    <label style="display:block;margin:4px 0;font-size:13px"><input type="radio" name="upCat" value="app"> 申請文件檔案</label>
+    <label style="display:block;margin:4px 0;font-size:13px"><input type="radio" name="upCat" value="email"> 電子郵件附件</label>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+    <button class="btn" onclick="closeModal()">取消</button>
+    <button class="btn primary" onclick="confirmUpload('${no}')">上傳</button>
+  </div>`);
+  const dz=document.getElementById("dropZone");
+  dz.ondragover=e=>{e.preventDefault();dz.style.borderColor="var(--acc)";};
+  dz.ondragleave=()=>{dz.style.borderColor="var(--line)";};
+  dz.ondrop=e=>{e.preventDefault();dz.style.borderColor="var(--line)";
+    const inp=document.getElementById("upInput");
+    const dt=new DataTransfer();for(const f of e.dataTransfer.files)dt.items.add(f);inp.files=dt.files;
+    dz.querySelector("div:nth-child(2)").textContent=e.dataTransfer.files.length+" 個檔案已選擇";
+  };
+}
+async function confirmUpload(no){
+  const inp=document.getElementById("upInput");
+  const files=Array.from(inp.files||[]);if(!files.length){toast("請先選擇檔案");return;}
+  const cat=document.querySelector('input[name="upCat"]:checked').value;
+  closeModal();
+  const c=DATA.customers.find(x=>String(x.no)===String(no));
+  await enhancedUploadAnalyze(no,c,files);
+  // Mark cat on uploaded files
+  const fl=(DATA.files||{})[no]||[];
+  const recent=fl.slice(-files.length);
+  for(const f of recent)f.cat=cat;
+  render();
 }
 function setMemberPhoto(no,nm){
   const fl=(DATA.files||{})[no]||[];
