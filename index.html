@@ -569,17 +569,27 @@ async function loadRepoData(){
     const _steps=[];
     async function _f(url,label){
       if(window._updDbg)window._updDbg("fetching "+label);
-      const r=await fetch(url,{cache:"no-store"});
-      _steps.push(label+":"+r.status);
-      if(window._updDbg)window._updDbg(_steps.join(" | "));
-      return r;
+      const ctrl=new AbortController();
+      const to=setTimeout(()=>ctrl.abort(),10000);
+      try{
+        const r=await fetch(url,{cache:"no-store",signal:ctrl.signal});
+        clearTimeout(to);
+        _steps.push(label+":"+r.status);
+        if(window._updDbg)window._updDbg(_steps.join(" | "));
+        return r;
+      }catch(e){
+        clearTimeout(to);
+        _steps.push(label+":ERR");
+        if(window._updDbg)window._updDbg(_steps.join(" | "));
+        return {ok:false,json:async()=>null};
+      }
     }
-    const emRes=await _f("emails.json"+cb,"emails");
     const mbRes=await _f("mailboxes.json"+cb,"mb");
     const dbRes=await _f("dbboard/data.json"+cb,"data");
-    const fiRes=await _f("files.json"+cb,"files");
-    const bkRes=await _f("brokers.json"+cb,"brokers");
     const slRes=await _f("sent_log.json"+cb,"sent");
+    const fiRes=await _f("files.json"+cb,"files");
+    const emRes=await _f("emails.json"+cb,"emails");
+    const bkRes=await _f("brokers.json"+cb,"brokers");
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
     const db=dbRes.ok?await dbRes.json():null;
