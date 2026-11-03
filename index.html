@@ -579,7 +579,15 @@ async function loadRepoData(){
   }
   try{
     const db=await xhrGet("dbboard/data.json"+cb);
+    function fixOnce(s){try{return decodeURIComponent(escape(s));}catch(e){return s;}}
+    function fixDeep(o){
+      if(typeof o==="string"){var p="",n=o;while(p!==n&&(n.includes("Ã")||n.includes("Â")||n.includes("ç"))){p=n;n=fixOnce(p);}return n;}
+      if(Array.isArray(o))return o.map(fixDeep);
+      if(o&&typeof o==="object"){for(var k in o)o[k]=fixDeep(o[k]);}
+      return o;
+    }
     if(db){
+      try{fixDeep(db);}catch(e){}
       if(Array.isArray(db.customers)&&db.customers.length)DATA.customers=db.customers;
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
