@@ -2888,11 +2888,20 @@ function docList(no){
   <div style="margin-top:10px;font-size:11px;color:var(--dim)">${tabFiles.length} ${D.total}</div>
   <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">${D.manage}</button><button class="btn primary" onclick="openUploadDialog('${no}')">${D.upload}</button></div>`;
 }
+function _simpleModal(html){
+  let old=document.getElementById('_sm');if(old)old.remove();
+  const d=document.createElement('div');d.id='_sm';
+  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center';
+  d.innerHTML='<div style="background:var(--bg,#1a1a2e);border-radius:12px;padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;color:var(--tx,#eee)">'+html+'</div>';
+  d.onclick=e=>{if(e.target===d)d.remove();};
+  document.body.appendChild(d);
+}
+function closeModal(){const d=document.getElementById('_sm');if(d)d.remove();}
 function moveFileDialog(no,encPath,nm){
   const path=decodeURIComponent(encPath);
   const labels={client:"客戶資料",app:"申請文件檔案",email:"電子郵件附件"};
   const opts=Object.entries(labels).map(([k,v])=>`<button class="btn small" style="margin:4px" onclick="doMoveFile('${no}','${encPath}','${k}')">${v}</button>`).join("");
-  showModal(`<h3>移動檔案</h3><p style="font-size:12px;color:var(--mut);margin:8px 0">${esc(nm)}</p><p style="font-size:12px;margin:8px 0">移動到：</p><div style="display:flex;flex-wrap:wrap">${opts}</div>`);
+  _simpleModal(`<h3>移動檔案</h3><p style="font-size:12px;color:var(--mut);margin:8px 0">${esc(nm)}</p><p style="font-size:12px;margin:8px 0">移動到：</p><div style="display:flex;flex-wrap:wrap">${opts}</div>`);
 }
 async function doMoveFile(no,encPath,newCat){
   const path=decodeURIComponent(encPath);
@@ -2914,7 +2923,7 @@ async function doMoveFile(no,encPath,newCat){
   closeModal();render();toast("已移動");
 }
 function openUploadDialog(no){
-  showModal(`<h3>上傳檔案</h3>
+  _simpleModal(`<h3>上傳檔案</h3>
   <div id="dropZone" style="border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;margin:12px 0;cursor:pointer" onclick="document.getElementById('upInput').click()">
     <div style="font-size:36px;margin-bottom:8px">📁</div>
     <div style="font-size:14px;color:var(--tx)">點擊選擇或拖拽檔案到此</div>
