@@ -2856,7 +2856,9 @@ function docList(no){
   <div id="attGrid" style="max-height:380px;overflow-y:auto;padding-right:4px">
   ${attSubTab==='app'
     ?(appFiles.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.appFiles} ${appFiles.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${appFiles.map(f=>card(f)).join("")}</div>`:`<div class='empty'>${D.noApp}</div>`)
-    :(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(f=>card(f)).join("")}</div>`:"")}
+    :attSubTab==='general'
+    ?(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(f=>card(f)).join("")}</div>`:"")
+    :""}
   ${attSubTab==='general'
     ?(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.doc} ${docs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(f=>card(f)).join("")}</div>`:"")
     :""}
