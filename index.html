@@ -597,9 +597,13 @@ async function loadRepoData(){
     if(window._updDbg)window._updDbg("parsing db");
     const db=dbRes.ok?await dbRes.json():null;
     if(window._updDbg)window._updDbg("parsed db: "+(db?db.customers?.length:"null"));
+    if(window._updDbg)window._updDbg("parsing fi");
     const fi=fiRes.ok?await fiRes.json():null;
+    if(window._updDbg)window._updDbg("parsing bk");
     const bk=bkRes.ok?await bkRes.json():null;
+    if(window._updDbg)window._updDbg("parsing sent");
     DATA.sent=slRes.ok?await slRes.json():[];
+    if(window._updDbg)window._updDbg("entering db block");
     if(db){
       if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;
       window._updDbg("assigned customers: "+DATA.customers.length);
