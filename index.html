@@ -564,23 +564,16 @@ function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const b
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
 async function loadRepoData(){
   const cb="?cb="+Date.now();
-  function safeFetch(url,label,fallback){
-    return new Promise(resolve=>{
-      const xhr=new XMLHttpRequest();
-      xhr.open("GET",url,true);
-      xhr.timeout=20000;
-      xhr.onload=function(){
-        if(xhr.status===200){
-          try{resolve(JSON.parse(xhr.responseText));}catch(e){resolve(fallback);}
-        }else resolve(fallback);
-      };
-      xhr.onerror=()=>resolve(fallback);
-      xhr.ontimeout=()=>resolve(fallback);
-      xhr.send();
+  function xhrGet(url){
+    return new Promise(res=>{
+      const x=new XMLHttpRequest();
+      x.open("GET",url,true);x.timeout=20000;
+      x.onload=()=>{try{res(JSON.parse(x.responseText));}catch(e){res(null);}};
+      x.onerror=()=>res(null);x.ontimeout=()=>res(null);x.send();
     });
   }
   try{
-    const db=await safeFetch("dbboard/data.json"+cb,"data",null);
+    const db=await xhrGet("dbboard/data.json"+cb);
     if(db){
       if(Array.isArray(db.customers)&&db.customers.length)DATA.customers=db.customers;
       if(db.timeline)DATA.timeline=db.timeline;
@@ -592,32 +585,36 @@ async function loadRepoData(){
       if(db.archive)DATA.archive=db.archive;
       if(db.notes)DATA.notes=db.notes;
     }
-    const mb=await safeFetch("mailboxes.json"+cb,"mb",null);
-    if(mb)DATA.mailboxes=mb;
-    const sl=await safeFetch("sent_log.json"+cb,"sent",[]);
-    if(Array.isArray(sl))DATA.sent=sl;
-    const fi=await safeFetch("files.json"+cb,"files",null);
-    if(fi&&typeof fi==="object")DATA.files=fi;
-    const em=await safeFetch("emails.json"+cb,"emails",[]);
-    if(Array.isArray(em)&&em.length){
-      const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
-      DATA.emails=em.map(x=>{
-        const t=fmtMailDate(x.date);
-        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
-      });
-    }
-    const bk=await safeFetch("brokers.json"+cb,"brokers",[]);
-    if(Array.isArray(bk)&&bk.length){
-      BROKERS.length=0;
-      bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
-    }
-    await loadPinned();
+    try{await loadPinned();}catch(e){}
     render();
     fillLoginStats();
+    Promise.all([
+      xhrGet("mailboxes.json"+cb),
+      xhrGet("sent_log.json"+cb),
+      xhrGet("files.json"+cb),
+      xhrGet("emails.json"+cb),
+      xhrGet("brokers.json"+cb)
+    ]).then(([mb,sl,fi,em,bk])=>{
+      if(mb)DATA.mailboxes=mb;
+      if(Array.isArray(sl))DATA.sent=sl;
+      if(fi&&typeof fi==="object")DATA.files=fi;
+      if(Array.isArray(em)&&em.length){
+        const done=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
+        DATA.emails=em.map(x=>{
+          const t=fmtMailDate(x.date);
+          return{c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t,unread:!x.read&&!done[t],done:!!x.done||!!done[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
+        });
+      }
+      if(Array.isArray(bk)&&bk.length){
+        BROKERS.length=0;
+        bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
+      }
+      render();
+      fillLoginStats();
+    });
   }catch(e){
-    console.error("loadRepoData error:",e);
-    var ve=document.getElementById("view");
-    if(ve)ve.innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">數據加載失敗: '+e.message+'</div>';
+    var v=document.getElementById("view");
+    if(v)v.innerHTML='<div style="color:#ff6b6b;padding:30px">數據加載失敗: '+e.message+'</div>';
   }
 }
 function fillLoginStats(){const a=document.getElementById("lv_active");const d=document.getElementById("lv_done");const m=document.getElementById("lv_mail");if(!a)return;const st=DATA.statuses||{};const on=[...new Set(Object.values(st))].filter(s=>s&&s!=="done"&&s!=="reject"&&s!=="hold").length;const dn=Object.values(st).filter(s=>s==="done").length;a.textContent=on||"0";d.textContent=dn||"0";m.textContent=Array.isArray(DATA.emails)?DATA.emails.length:"0";}
@@ -4895,11 +4892,7 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
-var _li=document.createElement("div");
-_li.style.cssText="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:#333;color:#aaa;padding:8px 16px;border-radius:6px;font-size:12px;z-index:9999";
-_li.textContent="正在連接線上數據";
-document.body.appendChild(_li);
-(async()=>{await loadRepoData();_li.textContent="已更新 "+DATA.customers.length+" 個客戶";setTimeout(()=>_li.remove(),3000);try{loadPersisted();}catch(e){}await loadSB();})();
+(async()=>{await loadRepoData();try{loadPersisted();}catch(e){}await loadSB();})();
 if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
