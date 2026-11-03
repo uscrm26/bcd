@@ -2,6 +2,21 @@
   {
     "client": 3,
     "from": "horaciolsanchez@olivewareinc.com",
+    "to": "emily@bluebirdchb.com",
+    "subject": "Re: first-time importer, who do I talk to?",
+    "date": "Wed, 04 Nov 2026 03:01:56 +0800",
+    "body": "Attached signed Import Packet for Oliveware LLC. First shipment expected soon. Please open account and set up continuous bond.",
+    "read": true,
+    "sent": true,
+    "atts": [
+      {
+        "name": "Oliveware_Bluebird_POA_Filled.pdf"
+      }
+    ]
+  },
+  {
+    "client": 3,
+    "from": "horaciolsanchez@olivewareinc.com",
     "to": "allison@auroracustomsbrokerage.com",
     "subject": "Re: new CA importer, bond question",
     "date": "Wed, 04 Nov 2026 02:35:56 +0800",
