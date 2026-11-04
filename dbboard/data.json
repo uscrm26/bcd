@@ -1513,7 +1513,12 @@
       "notes": "已發 15 封開發信，2 家 broker 回覆",
       "dl_exp": "2027-09-25",
       "submitted_count": 0,
-      "timeline": []
+      "timeline": [
+        {
+          "t": "2026-11-04 23:45",
+          "e": "收到 BorderBuddy Katrina Account Setup 郵件，需填POA電子表單+Annual Bond Application，bond $640/年"
+        }
+      ]
     },
     {
       "no": "8",
@@ -1583,7 +1588,12 @@
       "address": "135 N VICTORY BLVD BURBANK, CA 91502",
       "notes": "RPS Joe Allen 已收到申請資料，正在審核，$50k bond",
       "submitted_count": 1,
-      "timeline": []
+      "timeline": [
+        {
+          "t": "2026-11-04 23:45",
+          "e": "回覆 D&B Kristy：詢問所需文件、處理時間、是否有額外經紀費用"
+        }
+      ]
     },
     {
       "no": "69",
@@ -1642,6 +1652,10 @@
         {
           "t": "2026-11-04 22:50",
           "e": "回覆 Bluefenix：確認使用 Bluefenix 作為報關行，詢問下一步流程"
+        },
+        {
+          "t": "2026-11-04 23:45",
+          "e": "回覆 D&B Kristy：詢問所需文件、處理時間、是否有額外經紀費用"
         }
       ]
     },
