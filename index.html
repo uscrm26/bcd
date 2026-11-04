@@ -615,7 +615,6 @@ async function loadRepoData(){
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
     // 新郵件到來時自動推斷狀態
-    autoInferStatus();
       if(db.finance)DATA.finance=db.finance;
       if(db.policy)DATA.policy=db.policy;
       if(db.companyDocs)DATA.companyDocs=db.companyDocs;
@@ -760,43 +759,6 @@ function closeModal(){document.getElementById("modal").classList.remove("show");
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 
-// 根據新郵件內容自動推斷客戶狀態
-function autoInferStatus(){
-  if(!DATA.emails||!DATA.customers)return;
-  const changed=[];
-  DATA.customers.forEach(c=>{
-    const domain=c.mail?c.mail.split("@")[1].toLowerCase():"";
-    if(!domain)return;
-    const custMails=DATA.emails.filter(e=>(e.from||"").toLowerCase().includes(domain)||(e.to||"").toLowerCase().includes(domain));
-    if(!custMails.length)return;
-    // 看最近5封來自broker的郵件
-    const incoming=custMails.filter(e=>!(e.from||"").toLowerCase().includes(domain)).slice(0,5);
-    let newStatus=null;
-    incoming.forEach(m=>{
-      const text=((m.sub||"")+" "+(m.body||"")).toLowerCase();
-      if(/bond has been issued|bond issued|bond is active|continuous bond activated|you are all set|your bond is active/i.test(text))newStatus="done";
-      else if(/rejected|declined|we cannot offer|unfortunately we are unable/i.test(text))newStatus=newStatus||"reject";
-      else if(/payment received|thank you for your payment|we have received your payment|invoice paid/i.test(text))newStatus=newStatus||"paid";
-      else if(/quote|premium|rate is|the cost is|fee is/i.test(text)&&!newStatus)newStatus="quote";
-      else if(/please provide|we need|additional docs|missing information|please send|can you send/i.test(text)&&!newStatus)newStatus="supply";
-      else if(/application received|we have received your|reviewing your application|underwriting/i.test(text)&&!newStatus)newStatus="broker";
-      else if(/poa|power of attorney|bond application|credit release|financial statement/i.test(text)&&!newStatus&&c.submitted_count>0)newStatus="broker";
-    });
-    // 冷啟動回信但沒提交過 → reply
-    if(!newStatus&&custMails.length>0&&!c.submitted_count){
-      const hasReply=custMails.some(e=>!(e.from||"").toLowerCase().includes(domain));
-      if(hasReply&&c.status==="new")newStatus="reply";
-    }
-    if(newStatus&&c.status!==newStatus&&!["done","reject","hold"].includes(c.status)){
-      c.status=newStatus;
-      changed.push(c.name+" → "+(DATA.statuses.find(s=>s.id===newStatus)||{}).lb);
-    }
-  });
-  if(changed.length){
-    console.log("Auto status updates:",changed);
-    changed.forEach(n=>toast("狀態自動更新："+n));
-  }
-}
 
 function render(){
   const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
@@ -3421,6 +3383,34 @@ async function confirmNote(no){
     await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+gtok,"Content-Type":"application/json"},body:JSON.stringify({message:"add note "+no,content:b64,sha:meta.sha})});
   }catch(e){console.warn("data.json note:",e);}
   closeModal();render();toast("跟進記錄已保存");
+  // AI 分析這條備註，建議狀態
+  suggestStatusFromNote(no,tt+" "+txZh);
+}
+
+async function suggestStatusFromNote(no,noteText){
+  const cust=DATA.customers.find(x=>x.no===String(no)||x.no===no);if(!cust)return;
+  const curStatus=st(cust.status).lb;
+  try{
+    const statusList=DATA.statuses.map(s=>s.lb).join("/");
+    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"你是Customs Bond業務助手。根據用戶剛寫的跟進備註，判斷這個客戶的業務狀態應該是哪個。只返回狀態名稱，不要其他文字。狀態選項："+statusList+"。如果備註內容不足以判斷，返回「不確定」。"},{role:"user",content:"客戶："+cust.name+"\n目前狀態："+curStatus+"\n備註："+noteText}],max_tokens:50})});
+    const j=await r.json();
+    const suggested=j.choices[0].message.content.trim();
+    if(!suggested||suggested==="不確定")return;
+    const sRec=DATA.statuses.find(s=>s.lb===suggested);
+    if(!sRec||sRec.id===cust.status)return;
+    // 彈出確認
+    openModal('<h3>AI 狀態建議</h3><div style="font-size:14px;line-height:1.8;margin:10px 0">AI 根據這條跟進記錄，建議將狀態從「'+esc(curStatus)+」改為「'+esc(suggested)+'」。</div><div class="mrow"><button class="btn" onclick="closeModal()">取消，保留原狀態</button><button class="btn primary" onclick="confirmSuggestStatus(\''+no+'\',\''+sRec.id+'\')">確認更新</button></div>');
+  }catch(e){console.warn("status suggest:",e);}
+}
+
+function confirmSuggestStatus(no,newStatus){
+  const cust=DATA.customers.find(x=>x.no===String(no)||x.no===no);if(!cust)return;
+  const old=st(cust.status).lb;
+  cust.status=newStatus;
+  addClientAudit(no,"狀態更新",old,st(newStatus).lb,"AI 根據備註建議");
+  persistCust(no);
+  closeModal();render();
+  toast("狀態已更新為："+st(newStatus).lb);
 }
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
@@ -3985,20 +3975,28 @@ function applyAiAnalysis(no){
   const res=document.getElementById("aiResult_"+no);if(!res)return;
   let j={};try{j=JSON.parse(res.dataset.json||"{}");}catch(e){}
   const cust=DATA.customers.find(x=>x.no===no);if(!cust)return;
-  if(j.status_suggest){
-    const stRec=DATA.statuses.find(s=>s.lb===j.status_suggest);
-    if(stRec){const old=st(cust.status).lb;cust.status=stRec.id;addClientAudit(no,"狀態更新",old,j.status_suggest,"AI 建議");}
-  }
+  // 待辦自動寫入
   if(j.next_actions&&j.next_actions.length){
     cust.aiTodos=cust.aiTodos||[];
     cust.aiSuggestions=j.next_actions.map(a=>({t:a,added:false,ignored:false}));
   }
-  // 自动写入，不用手动确认
   const cust2=DATA.customers.find(x=>x.no===no);
   if(cust2){cust2.aiLastAt=Date.now();persistCust(no);}
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:cust.aiTodos||[],aiSuggestions:cust.aiSuggestions||[],aiLastAt:cust.aiLastAt})});
   res.style.display="none";
-  render();toast("AI 分析完成，已保存到雲端");
+  render();
+  // 狀態建議需要用戶確認
+  if(j.status_suggest){
+    const stRec=DATA.statuses.find(s=>s.lb===j.status_suggest);
+    if(stRec&&stRec.id!==cust.status){
+      const old=st(cust.status).lb;
+      openModal('<h3>AI 狀態建議</h3><div style="font-size:14px;line-height:1.8;margin:10px 0">AI 根據郵件和檔案分析，建議將狀態從「'+esc(old)+'」改為「'+esc(j.status_suggest)+'」。</div><div class="mrow"><button class="btn" onclick="closeModal()">取消，保留原狀態</button><button class="btn primary" onclick="confirmSuggestStatus(\''+no+'\',\''+stRec.id+'\')">確認更新</button></div>');
+    } else {
+      toast("AI 分析完成，狀態無需變更");
+    }
+  } else {
+    toast("AI 分析完成");
+  }
 }
 // ===== 批量 AI 分析 =====
 function batchDayKey(){
