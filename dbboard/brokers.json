@@ -5,7 +5,7 @@
     "m": "emily@bluebirdchb.com",
     "l": "跟進中",
     "tag": "quote",
-    "reason": "需手寫簽名，不接受電子打印簽名；POA 已提交待客戶列印簽名"
+    "reason": "需手寫簽名，不接受電子打印簽名；手簽POA已提交(11/04)"
   },
   {
     "n": "A1 Worldwide",
@@ -46,5 +46,21 @@
     "l": "待回覆",
     "tag": "quote",
     "reason": "報價 980"
+  },
+  {
+    "n": "D&B Customs Brokers",
+    "a": "—",
+    "m": "—",
+    "l": "已報價",
+    "tag": "quote",
+    "reason": "報價 1690 美元/年，保額 5 萬；客戶認為偏貴暫不推進"
+  },
+  {
+    "n": "Home Depot bounce addresses",
+    "a": "退信",
+    "m": "多個地址退信",
+    "l": "退信",
+    "tag": "reject",
+    "reason": "5封退信，地址無效"
   }
 ]
