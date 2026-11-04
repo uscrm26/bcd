@@ -3399,7 +3399,7 @@ async function suggestStatusFromNote(no,noteText){
     const sRec=DATA.statuses.find(s=>s.lb===suggested);
     if(!sRec||sRec.id===cust.status)return;
     // 彈出確認
-    openModal('<h3>AI 狀態建議</h3><div style="font-size:14px;line-height:1.8;margin:10px 0">AI 根據這條跟進記錄，建議將狀態從「'+esc(curStatus)+」改為「'+esc(suggested)+'」。</div><div class="mrow"><button class="btn" onclick="closeModal()">取消，保留原狀態</button><button class="btn primary" onclick="confirmSuggestStatus(\''+no+'\',\''+sRec.id+'\')">確認更新</button></div>');
+    openModal('<h3>AI 狀態建議</h3><div style="font-size:14px;line-height:1.8;margin:10px 0">AI 根據這條跟進記錄，建議將狀態從「'+esc(curStatus)+'」改為「'+esc(suggested)+'」。</div><div class="mrow"><button class="btn" onclick="closeModal()">取消，保留原狀態</button><button class="btn primary" onclick="confirmSuggestStatus(\''+no+'\',\''+sRec.id+'\')">確認更新</button></div>');
   }catch(e){console.warn("status suggest:",e);}
 }
 
