@@ -633,7 +633,7 @@ async function loadRepoData(){
       xhrGet("sent_log.json"+cb).catch(()=>null),
       xhrGet("files.json"+cb).catch(()=>null),
       xhrGet("emails.json"+cb).catch(()=>null),
-      xhrGet("brokers.json"+cb).catch(()=>null),
+      xhrGet("dbboard/brokers.json"+cb).catch(()=>null),
       xhrGet("attachments.json"+cb).catch(()=>null)
     ]).then(([mb,sl,fi,em,bk,att])=>{
       if(Array.isArray(att))DATA.attachments=att;
