@@ -1530,8 +1530,8 @@
       "notes": "SPG Anova Marine 已確認 Type 1 $50k，待填申請表",
       "timeline": [
         {
-          "date": "2026-11-04",
-          "event": "Confirmed Type 1 only to Paloma at SPG Anova. $50k total."
+          "t": "2026-11-04 22:50",
+          "e": "回覆 SPG Anova Paloma：確認只需要 Type 1 連續進口 bond，金額 $50,000，不需要 Type 3"
         }
       ],
       "submitted_count": 1
