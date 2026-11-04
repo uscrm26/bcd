@@ -1290,7 +1290,8 @@ function hoursSince(tm){
   const thatMin=(+m[1])*372+(+m[2])*1440+(+m[3])*60+(+m[4]);
   return (curMin-thatMin)/60;
 }
-function setDashScope(m){window._dashScope=m;document.getElementById("ds_all").style.background=m==="all"?"var(--acc)":"var(--bg2)";document.getElementById("ds_all").style.color=m==="all"?"#fff":"var(--text)";document.getElementById("ds_mine").style.background=m==="mine"?"var(--acc)":"var(--bg2)";document.getElementById("ds_mine").style.color=m==="mine"?"#fff":"var(--text)";render();}
+window._dashScope=localStorage.getItem("bcd_dashScope")||"mine";
+function setDashScope(m){window._dashScope=m;try{localStorage.setItem("bcd_dashScope",m);}catch(e){}document.getElementById("ds_all").style.background=m==="all"?"var(--acc)":"var(--bg2)";document.getElementById("ds_all").style.color=m==="all"?"#fff":"var(--text)";document.getElementById("ds_mine").style.background=m==="mine"?"var(--acc)":"var(--bg2)";document.getElementById("ds_mine").style.color=m==="mine"?"#fff":"var(--text)";render();}
 function followUpAlerts(){
   const rows=[];
   DATA.customers.forEach(c=>{
