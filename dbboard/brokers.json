@@ -1,0 +1,50 @@
+[
+  {
+    "n": "Bluebird CHB",
+    "a": "Emily Fiscus",
+    "m": "emily@bluebirdchb.com",
+    "l": "跟進中",
+    "tag": "quote",
+    "reason": "需手寫簽名，不接受電子打印簽名；POA 已提交待客戶列印簽名"
+  },
+  {
+    "n": "A1 Worldwide",
+    "a": "Angely Arias",
+    "m": "angely@a1wwl.com",
+    "l": "跟進中",
+    "tag": "quote",
+    "reason": "要求填 POA 開戶"
+  },
+  {
+    "n": "RPS",
+    "a": "Joe Allen",
+    "m": "joe_allen@rpsins.com",
+    "l": "補件中",
+    "tag": "supply",
+    "reason": "要求財務文件"
+  },
+  {
+    "n": "SuretyOne",
+    "a": "Underwriter",
+    "m": "StaffUnderwriters@SuretyOne.com",
+    "l": "已出單",
+    "tag": "done",
+    "reason": "Lennar 已提交申請"
+  },
+  {
+    "n": "Just Your Broker",
+    "a": "Jermeale Lewis-Johnson",
+    "m": "hello@justyourbroker.com",
+    "l": "已關閉",
+    "tag": "reject",
+    "reason": "婉拒"
+  },
+  {
+    "n": "Alpha Customhouse",
+    "a": "—",
+    "m": "—",
+    "l": "待回覆",
+    "tag": "quote",
+    "reason": "報價 980"
+  }
+]
