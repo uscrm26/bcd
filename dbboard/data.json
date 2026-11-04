@@ -1470,7 +1470,13 @@
       "created": "2026-11-01",
       "address": "2725 JEFFERSON ST. STE 6 CARLSBAD, CA 92008",
       "notes": "BorderBuddy POA 已完成簽署，2026-11-04，狀態 active",
-      "submitted_count": 2
+      "submitted_count": 3,
+      "timeline": [
+        {
+          "date": "11/04",
+          "action": "已將手寫簽名POA寄回Bluebird CHB，附簽署完成的Import Packet PDF；等待客戶提供商業發票和ISF資料後開bond"
+        }
+      ]
     },
     {
       "no": "5",
