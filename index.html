@@ -728,6 +728,7 @@ async function loadSB(){
   render();
 }
 const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];
+function subCount(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return 0;if(c.submitted_count!=null)return c.submitted_count;return (c.brokers_submitted||[]).length;}
 function dlStatus(c){
   if(!c.dl_exp)return {lb:c.dl||"正常",warn:false,expired:false};
   const exp=new Date(c.dl_exp+"T00:00:00");
@@ -762,7 +763,7 @@ const ENMAP={
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
 "開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status","客戶檢視":"Customer View","卡片檢視":"Card View","表格檢視":"Table View","每日工作記錄":"Daily Log",
 "已收報價":"Quoted","待補件":"Pending Docs","已出單":"Closed","擱置":"On Hold","待回覆":"Awaiting Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused",
-"新線索":"New Lead","資料收集中":"Collecting Info","待填申請表":"Form Pending","待提交Broker":"Broker Submission Pending","Broker要求補件":"Docs Requested by Broker","報價已收到":"Quote Received","等待客戶確認":"Awaiting Client Confirmation","Bond已出單":"Bond Issued","申請被拒":"Rejected","擱置暫停":"Suspended",
+"新線索":"New Lead","等待客戶補充資料":"Waiting for Client Docs","待填寫申請":"Form to Fill","等待報關行回覆":"Awaiting Broker Reply","等待報關行審核":"Awaiting Broker Review","待補充申請文件":"Additional Docs Needed","收到報價":"Quote Received","財務已付款":"Paid","已獲擔保文件":"Bond Issued","擱置暫停":"Suspended","申請被拒":"Rejected","已綁定電郵":"Email Bound","未綁定電郵":"No Email Bound","已向":"Submitted to ","家報關行遞交申請":" brokers",
 "收集中":"Collecting","待填表":"Form Pending","待提交":"Pending Submission",
 "處理中":"In Progress","已讀":"Read","已連線":"Connected","失敗":"Failed","成功":"Success",
 "待辦":"To-do","跟進":"Follow-up","匯出":"Export","內部參考":"Internal Ref","法人":"Owner","駕照":"License","信箱":"Email","過期":"Expired",
@@ -1488,7 +1489,7 @@ R.dashboard=()=>{
   </div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">${CURRENT_LANG==="en"?"View":"查看"}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">${CURRENT_LANG==="en"?"To-do":"待辦"}</button><button onclick="event.stopPropagation();openNote('${c.no}')">${CURRENT_LANG==="en"?"Note":"跟進"}</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})"><div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>${CURRENT_LANG==="en"?"Owner":"法人"}</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do "+c.todo:"待辦 "+c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">${CURRENT_LANG==="en"?"Due $":"待收 ¥"}${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${CURRENT_LANG==="en"?"Mailbox ":"信箱 "}${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">${CURRENT_LANG==="en"?"View":"查看"}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">${CURRENT_LANG==="en"?"To-do":"待辦"}</button><button onclick="event.stopPropagation();openNote('${c.no}')">${CURRENT_LANG==="en"?"Note":"跟進"}</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})"><div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>${CURRENT_LANG==="en"?"Owner":"法人"}</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do "+c.todo:"待辦 "+c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">${CURRENT_LANG==="en"?"Due $":"待收 ¥"}${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${c.mail?(CURRENT_LANG==="en"?"Email bound":"已綁定電郵"):(CURRENT_LANG==="en"?"No email":"未綁定電郵")}</span><span class="badge">${CURRENT_LANG==="en"?"Brokers submitted: "+subCount(c.no):"已向 "+subCount(c.no)+" 家報關行遞交申請"}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 R.worklog=()=>`<h1>工作通知</h1>
@@ -2238,7 +2239,7 @@ function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);const 
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}</span><span class="badge">${c.mail?"已綁定電郵":"未綁定電郵"}</span><span class="badge">已向 ${subCount(c.no)} 家報關行遞交申請</span></div></div></div>`;}
 function monthLabel(dt){const d=new Date(dt);if(CURRENT_LANG==="en"){return d.toLocaleDateString("en-US",{month:"short"})+" "+d.getFullYear();}return d.getFullYear()+"年"+(d.getMonth()+1)+"月";}
 function custGridHTML(){
   const list=custFiltered();
@@ -2911,7 +2912,7 @@ function _simpleModal(html){
   d.onclick=e=>{if(e.target===d)d.remove();};
   document.body.appendChild(d);
 }
-function closeModal(){const d=document.getElementById('_sm');if(d)d.remove();}
+function closeSubModal(){const d=document.getElementById('_sm');if(d)d.remove();}
 function moveFileDialog(no,encPath,nm){
   const path=decodeURIComponent(encPath);
   const labels={client:"客戶資料",app:"申請文件檔案",email:"電子郵件附件"};
