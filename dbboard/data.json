@@ -1406,7 +1406,8 @@
       "address": "4410 SAN JUAN AVE FAIR OAKS, CA 95628",
       "notes": "3 家 broker 回覆",
       "dl_exp": "2030-03-03",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     },
     {
       "no": "90",
@@ -1423,7 +1424,8 @@
       "created": "2026-11-01",
       "address": "340 E 2ND ST STE 401 LOS ANGELES, CA 90012",
       "notes": "已發 15 封冷啟動信，0 回覆",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     },
     {
       "no": "98",
@@ -1439,7 +1441,8 @@
       "address": "2 E COLORADO BLVD PASADENA, CA 91105",
       "notes": "已發 15 封冷啟動信，0 回覆",
       "dl_exp": "2027-01-01",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     },
     {
       "no": "2",
@@ -1455,7 +1458,8 @@
       "address": "12759 POWAY RD STE 202 POWAY, CA 92064",
       "notes": "已付款 BorderBuddy，等 bond 出單",
       "phone": "(347) 697-0347",
-      "submitted_count": 1
+      "submitted_count": 1,
+      "timeline": []
     },
     {
       "no": "3",
@@ -1491,7 +1495,8 @@
       "created": "2026-11-01",
       "address": "11111 W OLYMPIC BLVD STE 201 LOS ANGELES, CA 90064",
       "notes": "hold，不跟進",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     },
     {
       "no": "7",
@@ -1507,7 +1512,8 @@
       "address": "349 N LA CIENEGA BLVD WEST HOLLYWOOD, CA 90048",
       "notes": "已發 15 封開發信，2 家 broker 回覆",
       "dl_exp": "2027-09-25",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     },
     {
       "no": "8",
@@ -1543,7 +1549,8 @@
       "created": "2026-11-01",
       "address": "5199 E PACIFIC COAST HWY STE 312N LONG BEACH, CA 90804",
       "notes": "BorderBuddy POA 已提交，1 家 broker 回覆 6 封退信",
-      "submitted_count": 1
+      "submitted_count": 1,
+      "timeline": []
     },
     {
       "no": "64",
@@ -1559,7 +1566,8 @@
       "address": "22939 HAWTHORNE BLVD UNIT 311 TORRANCE, CA 90505",
       "notes": "不是被拒，不跟進",
       "dl_exp": "2027-05-20",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     },
     {
       "no": "66",
@@ -1574,7 +1582,8 @@
       "created": "2026-11-01",
       "address": "135 N VICTORY BLVD BURBANK, CA 91502",
       "notes": "RPS Joe Allen 已收到申請資料，正在審核，$50k bond",
-      "submitted_count": 1
+      "submitted_count": 1,
+      "timeline": []
     },
     {
       "no": "69",
@@ -1589,7 +1598,13 @@
       "created": "2026-11-01",
       "address": "21663 BRIAN LN STE C SONORA, CA 95370",
       "notes": "BorderBuddy POA 已提交，1 家 broker 回覆",
-      "submitted_count": 2
+      "submitted_count": 2,
+      "timeline": [
+        {
+          "t": "2026-11-04 22:50",
+          "e": "回覆 Gallagher Linda Corbett：提供商品 HT Code 8517.62.0090、原產國中國、1托盤120kg、貨值$45,000、預計12月中出貨"
+        }
+      ]
     },
     {
       "no": "71",
@@ -1605,7 +1620,8 @@
       "address": "757 S UNION AVE LOS ANGELES, CA 90017",
       "notes": "BorderBuddy POA 已提交，已發 15 封 0 回覆",
       "dl_exp": "2029-02-16",
-      "submitted_count": 1
+      "submitted_count": 1,
+      "timeline": []
     },
     {
       "no": "73",
@@ -1621,7 +1637,13 @@
       "address": "2615 E 67TH ST STE B LONG BEACH, CA 90805",
       "notes": "3 家 broker 回覆",
       "dl_exp": "2050-12-18",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": [
+        {
+          "t": "2026-11-04 22:50",
+          "e": "回覆 Bluefenix：確認使用 Bluefenix 作為報關行，詢問下一步流程"
+        }
+      ]
     },
     {
       "no": "75",
@@ -1662,7 +1684,8 @@
       "created": "2026-11-01",
       "aiStatus": "ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ·ÃÂÃÂÃÂÃÂ²ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
       "aiAnalyzedAt": "2026-11-01T19:20:33.973Z",
-      "submitted_count": 0
+      "submitted_count": 0,
+      "timeline": []
     }
   ],
   "finance": {
