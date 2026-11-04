@@ -1342,13 +1342,17 @@ function recentTodos(){
 }
 function statusPie(){
  const rows=[
-  ["var(--acc)","處理中",countBy("new")+countBy("collect")+countBy("form")+countBy("submit")],
-  ["var(--ok)","已出單",countBy("done")+countBy("paid")],
-  ["var(--err)","待補件",countBy("supply")],
-  ["var(--warn)","已收報價",countBy("quote")],
-  ["#8b5cf6","等待審核",countBy("confirm")],
-  ["#ef4444","已拒絕",countBy("reject")],
-  ["#555","擱置",countBy("hold")],
+  ["#3b82f6","等待報關行審核",countBy("broker")],
+  ["#60a5fa","等待報關行回覆",countBy("reply")],
+  ["#f59e0b","待填寫申請",countBy("form")],
+  ["#fbbf24","等待客戶補充資料",countBy("pending_client")],
+  ["#9ca3af","新線索",countBy("new")],
+  ["#f97316","待補充文件",countBy("supply")],
+  ["#eab308","收到報價",countBy("quote")],
+  ["#84cc16","財務已付款",countBy("paid")],
+  ["#22c55e","已獲擔保文件",countBy("done")],
+  ["#6b7280","擱置暫停",countBy("hold")],
+  ["#ef4444","申請被拒",countBy("reject")],
  ];
  const total=rows.reduce((a,r)=>a+r[2],0)||1;
  const R=54,C=2*Math.PI*R;let off=0;
@@ -1358,8 +1362,8 @@ function statusPie(){
  <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
  <div style="flex:1;min-width:160px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">${rows.map(r=>`<div style="display:flex;align-items:center;font-size:12px;padding:2px 0"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px;flex-shrink:0"></span><span style="flex:1;color:var(--mut)">${r[1]}</span><b style="color:var(--txt)">${r[2]}</b></div>`).join("")}</div>
  </div>${followUpAlerts()}`;}
-function funnel(){const seq=["new","collect","form","submit","quote","done"];
-const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
+function funnel(){const seq=["new","pending_client","form","reply","broker","supply","quote","paid","done"];
+const stmap={"new":"新線索","pending_client":"等待補料","form":"待填表","reply":"等回覆","broker":"等審核","supply":"待補件","quote":"已報價","paid":"已付款","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
 function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canViewCust(c.no)).map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
