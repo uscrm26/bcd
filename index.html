@@ -3576,7 +3576,7 @@ function mailActionClick(e){
   return "closeModal();openReply('"+e.t+"')";
 }
 function mailOwnerClient(e){
-  const cn=(e.c||"").trim();
+  const cn=String(e.c||"").trim();
   let cust=DATA.customers.find(x=>x.name&&(x.name===cn||x.name.startsWith(cn)||(cn&&x.name.includes(cn))));
   if(!cust&&cn){
     const mb=(DATA.mailboxes||[]).find(m=>m.nm===cn);
