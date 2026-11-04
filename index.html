@@ -614,6 +614,13 @@ async function loadRepoData(){
       if(Array.isArray(db.customers)&&db.customers.length)DATA.customers=db.customers;
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
+// 自動一致性檢查：已提交申請但狀態還是新線索的，自動升級為等待審核
+DATA.customers.forEach(c=>{
+  const sc=(c.submitted_count!=null)?c.submitted_count:(c.brokers_submitted||[]).length;
+  if(sc>0 && (c.status==='new'||c.status==='form'||c.status==='pending_client')){
+    c.status='broker';
+  }
+});
       if(db.finance)DATA.finance=db.finance;
       if(db.policy)DATA.policy=db.policy;
       if(db.companyDocs)DATA.companyDocs=db.companyDocs;
