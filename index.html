@@ -598,7 +598,7 @@ async function loadRepoData(){
   function xhrGet(url){
     return new Promise(res=>{
       const x=new XMLHttpRequest();
-      x.open("GET",url,true);x.timeout=20000;
+      x.open("GET",url,true);x.timeout=60000;
       x.onload=()=>{try{res(JSON.parse(x.responseText));}catch(e){res(null);}};
       x.onerror=()=>res(null);x.ontimeout=()=>res(null);x.send();
     });
@@ -654,7 +654,7 @@ async function loadRepoData(){
       }
       if(Array.isArray(bk)&&bk.length){
         BROKERS.length=0;
-        bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",sn:x.sn||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||"",score:x.score||70,grade:x.grade||"B",special:x.special||false,addr:x.addr||""});});
+        bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",sn:x.sn||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||"",notes:x.notes||null,score:x.score||70,grade:x.grade||"B",special:x.special||false,addr:x.addr||""});});
       }
       render();
       fillLoginStats();
