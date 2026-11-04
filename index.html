@@ -2363,10 +2363,64 @@ function pickBroker(i){
  const email=b.c||b.m;if(email&&email!=="—"){closeModal();const no=window._sendNo;if(no)sendAsCustomer(no,email);toast("已選："+b.n+" <"+email+">");}
 }
 function randomBroker(){
- const avail=BROKERS.map((b,i)=>({b,i})).filter(x=>{const e=x.b.c||x.b.m;return e&&e!=="—";});
- if(!avail.length){toast("沒有可用經紀人");return;}
- const pick=avail[Math.floor(Math.random()*avail.length)];
+ // 加權隨機選擇：先過濾，再按等級權重抽
+ const all=BROKERS.map((b,i)=>({b,i})).filter(x=>{
+   const e=x.b.c||x.b.m;
+   if(!e||e==="—")return false; // 必須有Email
+   if(x.b.tag==="reject"||/拒絕|婉拒|不可用/.test(x.b.l||""))return false; // 排除已拒絕
+   return true;
+ });
+ if(!all.length){toast("沒有可用經紀人");return;}
+ // 按等級分組
+ const gradeWeight=g=>{
+   if(!g)return 1;
+   if(g.startsWith("A")||g.startsWith("B+"))return 3;
+   if(g==="B")return 1;
+   if(g==="B-")return 0.3;
+   return 0.05; // C以下
+ };
+ // 緊急降級：優先選B+以上，不夠降B，再降B-，最後C
+ let pool=all.filter(x=>{const g=x.b.grade||"B";return g.startsWith("A")||g.startsWith("B+");});
+ let level="B+以上";
+ if(!pool.length){pool=all.filter(x=>(x.b.grade||"B")==="B");level="B";}
+ if(!pool.length){pool=all.filter(x=>(x.b.grade||"B")==="B-");level="B-";}
+ if(!pool.length){pool=all;level="C+";}
+ // 加權抽樣
+ const weighted=[];
+ pool.forEach(x=>{const w=Math.round(gradeWeight(x.b.grade)*10);for(let j=0;j<w;j++)weighted.push(x);});
+ const pick=weighted[Math.floor(Math.random()*weighted.length)];
+ toast("已選："+pick.b.n+"（"+level+"池，"+(pick.b.grade||"B")+"級）");
  pickBroker(pick.i);
+}
+function showScoreHistory(i){
+ const b=BROKERS[i];
+ const hist=b.scoreHistory||[];
+ let rows=hist.length?hist.map(h=>`<div style="padding:8px;border-bottom:1px solid var(--line);font-size:12px"><span style="color:${h.delta>0?'#4ade80':'#f87171'}">${h.delta>0?'+':''}${h.delta}分</span> ｜ ${esc(h.reason||"")} <span style="color:var(--mut);float:right">${esc(h.who||"")} ${esc(h.date||"")}</span></div>`).join(""):'<div style="color:var(--mut);text-align:center;padding:20px">暫無評分記錄</div>';
+ openModal(`<h3>評分歷史 ｜ ${esc(b.n)}</h3><div style="margin-bottom:10px;font-size:13px">當前分數：<b>${b.score||70}</b> ｜ 等級：<b style="color:${(b.grade||"B").startsWith('A')?'#4ade80':(b.grade||"B").startsWith('B')?'#60a5fa':'#f87171'}">${b.grade||"B"}</b></div><div style="max-height:300px;overflow-y:auto">${rows}</div><div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">關閉</button></div>`);
+}
+function adjustScore(i){
+ const b=BROKERS[i];
+ const isSuper=CURRENT_USER&&CURRENT_USER.role==="super_admin";
+ openModal(`<h3>調整評分 ｜ ${esc(b.n)}</h3>
+ <div style="font-size:13px;margin-bottom:10px">當前：<b>${b.score||70}</b>分 ｜ <b style="color:${(b.grade||"B").startsWith('A')?'#4ade80':(b.grade||"B").startsWith('B')?'#60a5fa':'#f87171'}">${b.grade||"B"}</b></div>
+ <div class="fg"><label>調整分數（最多±10分，需填理由）</label><input id="adj_delta" type="number" value="0" min="-10" max="10" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:14px"></div>
+ <div class="fg"><label>理由</label><input id="adj_reason" placeholder="例如：首次回覆很快 / 3封無回覆" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px"></div>
+ ${isSuper?`<div class="fg"><label>手動改等級（僅主管）</label><select id="adj_grade" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px"><option value="">不改</option><option>A+</option><option>A</option><option>A-</option><option>B+</option><option>B</option><option>B-</option><option>C+</option><option>C</option><option>C-</option></select></div>`:'<div style="font-size:11px;color:var(--mut);margin:8px 0">只有主管可以修改等級，Operator只能加減分</div>'}
+ <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="doAdjustScore(${i})">確認調整</button></div>`);
+}
+function doAdjustScore(i){
+ const delta=parseInt(document.getElementById("adj_delta").value)||0;
+ const reason=document.getElementById("adj_reason").value.trim();
+ const gradeEl=document.getElementById("adj_grade");
+ const newGrade=gradeEl?gradeEl.value:"";
+ if(Math.abs(delta)>10){toast("最多加減10分");return;}
+ if(delta!==0&&!reason){toast("必須填理由");return;}
+ const b=BROKERS[i];
+ b.score=Math.max(0,Math.min(100,(b.score||70)+delta));
+ if(!b.scoreHistory)b.scoreHistory=[];
+ b.scoreHistory.push({delta,reason,who:(CURRENT_USER||{}).name||"unknown",date:new Date().toISOString().slice(0,10)});
+ if(newGrade&&(CURRENT_USER||{}).role==="super_admin"){b.grade=newGrade;}
+ closeModal();render();toast("評分已更新："+b.score+"分");
 }
 function matchBroker(){
  const v=(document.getElementById("sc_to")||{}).value||"";
@@ -4478,8 +4532,8 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
  <td><span class="tag ${s[1]}">${s[0]}</span>${b.grade?'<div style="margin-top:4px;font-size:12px;font-weight:700;color:'+(b.grade.startsWith('A')?'#4ade80':b.grade.startsWith('B')?'#60a5fa':'#f87171')+'">'+b.grade+'</div>':''}</td>
  <td style="max-width:300px;font-size:12px;color:var(--mut)"><span class="brk-short">${esc(short)}${longr?"…":""}</span>${longr?`<a style="color:var(--acc);cursor:pointer;margin-left:6px" onclick="event.stopPropagation();const f=this.parentElement.querySelector('.brk-full');const show=f.style.display==='none';f.style.display=show?'block':'none';this.textContent=show?'收起':'展開'">展開</a>`:""}<div class="brk-full" style="display:none;margin-top:4px;color:var(--tx)">${esc(fullReason)}</div></td>
  <td style="text-align:center">${pr}</td>
- <td><button class="btn small" onclick="event.stopPropagation();editBrokerNote(${i})">備註</button></td>
- ${canManage()?`<td><button class="btn small" onclick="event.stopPropagation();delBroker(${i})">移除</button></td>`:""}</tr>
+ <td><button class="btn small" onclick="event.stopPropagation();editBrokerNote(${i})">備註</button><button class="btn small" style="margin-left:4px" onclick="event.stopPropagation();showScoreHistory(${i})">評分</button></td>
+ ${canManage()?`<td><button class="btn small" onclick="event.stopPropagation();adjustScore(${i})">調分</button> <button class="btn small" onclick="event.stopPropagation();delBroker(${i})">移除</button></td>`:""}</tr>
  <tr id="bk_thread_${i}" style="display:none"><td colspan="${canManage()?7:6}" style="background:var(--bg2);padding:12px"><div style="font-size:12px;color:var(--mut);margin-bottom:8px">與此經紀的往來記錄，共 ${list.length} 封，點上面行可收起</div>
  ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--card)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}
  </td></tr>`;}
