@@ -1471,7 +1471,8 @@ R.dashboard=()=>{
   const unread=(DATA.emails||[]).filter(e=>e.unread);
   const custs=new Set(unread.map(e=>e.c).filter(Boolean)).size;
   // 本月已獲擔保文件 = status=done 的客戶數 / 全部可見客戶數
-  const myCusts=DATA.customers.filter(c=>canViewCust(c.no));
+  let myCusts=DATA.customers.filter(c=>canViewCust(c.no));
+  if(window._dashScope==="mine"){myCusts=myCusts.filter(c=>ownerMap[c.no]===CURRENT_USER.id);}
   const doneCount=myCusts.filter(c=>c.status==="done"||st(c.status).lb==="已出單").length;
   const totalCount=myCusts.length;
   const doneLabel=CURRENT_LANG==="en"?"Bonds Issued":CURRENT_LANG==="cn"?"已出单客户":"已出單客戶";
