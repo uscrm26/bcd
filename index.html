@@ -1362,7 +1362,10 @@ function statusPie(){
   ["#6b7280","擱置暫停",countBy("hold")],
   ["#ef4444","申請被拒",countBy("reject")],
  ];
- const total=rows.reduce((a,r)=>a+r[2],0)||1;
+ // 總數直接用實際可見客戶數，不靠加總
+ let visibleCusts=DATA.customers.filter(c=>canViewCust(c.no));
+ if(window._dashScope==="mine")visibleCusts=visibleCusts.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
+ const total=visibleCusts.length||1;
  const R=54,C=2*Math.PI*R;let off=0;
  const segs=rows.filter(r=>r[2]>0).map(r=>{
    const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
