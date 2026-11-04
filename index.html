@@ -2814,10 +2814,10 @@ function custMailbox(no){
   const cname=c.name||"";
   const cshort=cname.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").trim().toLowerCase();
   const all=(DATA.emails||[]).filter(e=>{
-    if(e.c===cname)return true;
-    if(cshort&&e.c&&e.c.toLowerCase().includes(cshort))return true;
-    if(cshort&&e.from&&e.from.toLowerCase().includes(cshort))return true;
-    if(c.mail&&e.from&&e.from.toLowerCase().includes(c.mail.split("@")[0].toLowerCase().replace(/[._]/g,"")))return true;
+    if(String(e.c)===cname)return true;
+    if(cshort&&e.c&&String(e.c).toLowerCase().includes(cshort))return true;
+    if(cshort&&e.from&&String(e.from).toLowerCase().includes(cshort))return true;
+    if(c.mail&&e.from&&String(e.from).toLowerCase().includes(c.mail.split("@")[0].toLowerCase().replace(/[._]/g,"")))return true;
     return false;
   }).sort((a,b)=>(b.t||"").localeCompare(a.t||""));
   return `<div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
