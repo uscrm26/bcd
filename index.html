@@ -4463,7 +4463,8 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
  const lock=(s[0]==="不可用"||s[0]==="已用過·靠後");
  // 把公司名裡的（退休轉介：xxx）剝到備註
  let cleanN=b.n||"";let tagNote="";const m=cleanN.match(/[（(]([^）)]*轉介[^）)]*)[）)]/);if(m){tagNote=m[1]+"；";cleanN=cleanN.replace(m[0],"").trim();}
- const fullReason=tagNote+(b.reason||"");
+ const _note = b.notes ? (b.notes[CURRENT_LANG] || b.notes.zh || b.reason || "") : (b.reason || "");
+ const fullReason=tagNote+_note;
  const short=fullReason.slice(0,40);const longr=fullReason.length>40;
  const domain=(b.c||"").includes("@")?((b.c||"").split("@")[1]||""):"";
  const nmKey=(cleanN||"").toLowerCase().trim();
