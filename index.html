@@ -1224,13 +1224,14 @@ const NOTIFS=[
 {who:"系統",t:"10/30 04:00",txt:"郵件同步完成：15 個信箱，新信 2 封",unread:false,goto:"queue"}
 ];
 function renderNotifs(){const me=CURRENT_USER.nm;const mine=NOTIFS.filter(n=>n.who===me||n.who==="系統");const subs=NOTIFS.filter(n=>n.who!==me&&n.who!=="系統");
-const item=n=>`<div class="ditem ${n.unread?"unread":""}" onclick="openNotif('${n.goto}')"><span class="who">${esc(n.who)}</span><div class="tx"><div class="tt">${esc(n.txt)}</div><div class="tm">${n.t}</div></div></div>`;
+const item=n=>`<div class="ditem ${n.unread?"unread":""}" onclick="openNotif('${n.goto}')"><span class="who">${esc(n.who)}</span><div class="tx"><div class="tt">${esc(n.txt)}</div><div class="tm">${n.t}</div></div><span class="dismiss" onclick="event.stopPropagation();dismissNotif(this)" style="margin-left:8px;cursor:pointer;color:var(--mut);font-size:16px;flex-shrink:0">✕</span></div>`;
 const body=document.getElementById("notifBody");
 body.innerHTML=(mine.length?`<div class="dgroup">本人相關</div>`+mine.map(item).join(""):"")+(subs.length?`<div class="dgroup">下屬業務</div>`+subs.map(item).join(""):"");}
 function openBell(){renderNotifs();document.getElementById("notifDrawer").classList.add("show");}
 function closeDrawer(){document.getElementById("notifDrawer").classList.remove("show");}
 function openNotif(g){closeDrawer();goto(g);}
 function markAllRead(){NOTIFS.forEach(n=>n.unread=false);renderNotifs();toast("已全部標為已讀");}
+function dismissNotif(el){const div=el.closest(".ditem");if(div){const idx=Array.from(div.parentNode.children).indexOf(div);const all=document.querySelectorAll("#notifBody .ditem");if(all[idx]){all[idx].remove();}}const i=NOTIFS.findIndex(n=>n.txt===div?.querySelector(".tt")?.textContent);if(i>=0)NOTIFS.splice(i,1);updateBadges();}
 function addNotif(who,txt,goto){NOTIFS.unshift({who,txt,t:nowBJ(),unread:true,goto:goto||"customer"});}
 document.getElementById("bellBtn").onclick=openBell;
 
@@ -1253,7 +1254,7 @@ function syncMailNotifs(){
     seen.add(key);
     const cust=mailOwnerClient(e);
     const co=brokerCo(e.from);
-    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name+" ":""}Received email from ${co}: ${e.sub}`,t:e.date||nowBJ(),unread:true,goto:"queue",_key:key});
+    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name:"未知客戶"} 收到 ${co||"新"} 來信：${e.sub}`,t:e.date||nowBJ(),unread:true,goto:"queue",_key:key});
   });
 }
 // 更新導航紅點與鈴鐺未讀數
@@ -3587,7 +3588,7 @@ list.forEach((e,idx)=>{
  const open=window._openMail===e.t;
  const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t]||!!e.auto_interp;
  const tags=(hasZH?"<span class='tag t-blue' style='margin-left:6px'>已翻譯</span>":"")+(hasIP?"<span class='tag t-green' style='margin-left:6px'>已解讀</span>":"");
- const _cust=(DATA.customers||[]).find(x=>x.name&&e.c&&x.name.startsWith(e.c.split(" ")[0]));
+ const _ec=String(e.c||"");const _cust=(DATA.customers||[]).find(x=>x.name&&_ec&&x.name.startsWith(_ec.split(" ")[0]));
  const _ph=_cust?phSrc(_cust.no):"";
  const _t=e.t.replace(/'/g,"\\'");
  html+=`<tr style="${open?"background:rgba(99,102,241,.08)":e.unread?"background:rgba(255,93,108,.06)":""}"><td style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleMailRow('${_t}')"><img src="${_ph}" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover"><span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.c)}</span></td><td style="font-size:11px;cursor:pointer" onclick="toggleMailRow('${_t}')">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')">${esc(e.sub)}${tags}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')"><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')">${e.t}</td><td><button class="btn small" onclick="event.stopPropagation();openReply('${e.t}')">回覆</button><button class="btn small" onclick="event.stopPropagation();toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
@@ -4264,7 +4265,7 @@ async function genReplyDraft(kind){
   const box=document.getElementById("replyBody");
   if(box){box.value="AI 撰寫中...";}
   const e=REPLY_EMAIL;
-  const cust=DATA.customers.find(c=>c.name===e.c||c.name.startsWith(e.c.split(" ")[0]));
+  const _ec2=String(e.c||"");const cust=DATA.customers.find(c=>c.name===e.c||(_ec2&&c.name.startsWith(_ec2.split(" ")[0])));
   const hist=(DATA.emails||[]).filter(x=>x.c===e.c).slice(0,5).map(x=>"From: "+x.from+"\nSubject: "+x.sub+"\n"+(x.body||"").slice(0,500)).join("\n---\n");
   const kindMap={short:"簡短得體回覆",biz:"商務專業跟進",ask:"禮貌地追問缺失資料"};
   const sys=`你是美國海關bond業務公司的回覆助理。根據往來郵件和客戶資料，撰寫一封英文回覆郵件。
