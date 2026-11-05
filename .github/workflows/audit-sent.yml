@@ -1,4 +1,4 @@
-name: backfill-sent
+name: audit-sent
 on:
   workflow_dispatch:
 jobs:
@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Backfill Sent folders
+      - name: Run sent audit
         env:
           MAIL_PWD: ${{ secrets.MAIL_PWD }}
-        run: python3 backfill_sent.py
+        run: python3 check_sent.py
