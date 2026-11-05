@@ -1,0 +1,12 @@
+name: fetch-unread
+on:
+  workflow_dispatch:
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch unread
+        env:
+          MAIL_PWD: ${{ secrets.MAIL_PWD }}
+        run: python3 fetch_unread.py
