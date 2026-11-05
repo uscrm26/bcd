@@ -1254,7 +1254,13 @@ function syncMailNotifs(){
     seen.add(key);
     const cust=mailOwnerClient(e);
     const co=brokerCo(e.from);
-    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name:"未知客戶"} 收到 ${co||"新"} 來信：${e.sub}`,t:e.date||nowBJ(),unread:true,goto:"queue",_key:key});
+    let summary;
+    if(e.auto_interp){
+      summary=e.auto_interp.split("\n")[0].replace(/^[【\[](.*?)[】\]]/,"$1").slice(0,120);
+    } else {
+      summary=(e.sub||"").slice(0,80);
+    }
+    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name:"未知客戶"}｜${co||"新來信"}：${summary}`,t:e.date||nowBJ(),unread:true,goto:"queue",_key:key});
   });
 }
 // 更新導航紅點與鈴鐺未讀數
