@@ -3540,7 +3540,13 @@ R.queue=()=>`<h1>電子郵件信箱</h1>
 </div>
 <div class="search"><input id="q_search" placeholder="搜尋收件人 / 主題" oninput="renderQueueTable()"><select id="q_filter" onchange="renderQueueTable()"><option value="">全部</option><option value="unread">未處理</option><option value="read">已處理</option></select><button class="btn primary" onclick="toast('新建草稿')">新建外發草稿</button></div>
 <div id="custAvatarBar" style="display:flex;gap:10px;align-items:center;overflow-x:auto;padding:8px 2px;margin-bottom:10px;border-bottom:1px solid var(--line)"></div>
-<div id="inboxPane"><table style="width:100%;table-layout:fixed"><colgroup><col style="width:16%"><col style="width:24%"><col style="width:30%"><col style="width:9%"><col style="width:11%"><col style="width:10%"></colgroup><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody"></tbody></table></div>
+<div id="inboxPane"><table style="width:100%;table-layout:fixed"><colgroup><col style="width:16%"><col style="width:24%"><col style="width:30%"><col style="width:9%"><col style="width:11%"><col style="width:10%"></colgroup><thead><tr style="cursor:pointer">
+<th onclick="setMailSort('from')" style="cursor:pointer">寄件信箱</th>
+<th onclick="setMailSort('to')" style="cursor:pointer">收件人</th>
+<th onclick="setMailSort('subj')" style="cursor:pointer">主題</th>
+<th>狀態</th>
+<th onclick="setMailSort('t')" style="cursor:pointer">時間</th>
+<th>操作</th></tr></thead><tbody id="qtbody"></tbody></table></div>
 <div id="sentPane" style="display:none"><div class="empty" style="padding:40px">發件箱：已外發郵件將自動記錄在此，目前尚無發送記錄</div></div>`;
 function setMailTab(btn){window._mailTab=btn.dataset.mt;document.querySelectorAll("#mailTabs .btn").forEach(b=>b.style.background=(b===btn?"var(--acc)":""));document.getElementById("inboxPane").style.display=window._mailTab==="inbox"?"":"none";document.getElementById("sentPane").style.display=window._mailTab==="sent"?"":"none";}
 function renderCustAvatarBar(){
@@ -3574,6 +3580,7 @@ function renderCustAvatarBar(){
 }
 function setMailCustFilter(no){window._mailCust=(window._mailCust===no?"":no);renderCustAvatarBar();renderQueueTable();}
 
+function setMailSort(k){if(window._mailSortKey===k){window._mailSortDir=window._mailSortDir==="asc"?"desc":"asc";}else{window._mailSortKey=k;window._mailSortDir="desc";}renderQueueTable();}
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";const cf=window._mailCust||"";
 let custDom="";
  if(cf){const c=DATA.customers.find(x=>x.no===cf);if(c&&c.mail)custDom=c.mail.split("@")[1].toLowerCase();}
@@ -3586,7 +3593,13 @@ let custDom="";
    if(fl==="read"&&e.unread)return false;
    if(cf){const cc=DATA.customers.find(x=>String(x.no)===String(cf));if(cc){const nm=(cc.name||"").toLowerCase();const ec=(e.c||"").toLowerCase();const dom=cc.mail?cc.mail.split("@")[1].toLowerCase():"";const from=(e.from||"").toLowerCase();const to=(e.to||"").toLowerCase();const body=(e.body||"").toLowerCase();const nm0=(nm.split(" ")[0]||"");const byClient=!!ec&&(nm.includes(ec)||ec.includes(nm0)||nm.startsWith(ec)||ec===nm);const byDomain=!!dom&&(from.includes(dom)||to.includes(dom)||body.includes(dom));if(!byClient&&!byDomain)return false;}}
    return true;});
-list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
+const sortKey=window._mailSortKey||"t";const sortDir=window._mailSortDir||"desc";
+list=list.slice().sort((a,b)=>{
+  const av=sortKey==="t"?(a.t||""):sortKey==="subj"?(a.sub||""):sortKey==="from"?(a.from||""):"";
+  const bv=sortKey==="t"?(b.t||""):sortKey==="subj"?(b.sub||""):sortKey==="from"?(b.from||""):"";
+  if(sortDir==="asc")return av<bv?-1:av>bv?1:0;
+  return av<bv?1:av>bv?-1:0;
+});
 window._qlist=list;
 const tb=document.getElementById("qtbody");if(!tb)return;
 let html="";
