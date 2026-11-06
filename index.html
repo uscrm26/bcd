@@ -83,12 +83,12 @@ body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
 @keyframes bootFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){#bootLoader *{animation:none!important}}
 /* ===== 歸檔包：資料夾形態卡片 ===== */
-.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;margin-top:8px}
-.arch-card{position:relative;margin-top:14px;display:flex;flex-direction:column;align-items:center;text-align:center;
-  background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
-  border-radius:4px 14px 14px 14px;padding:26px 16px 18px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
-.arch-card::before{content:"";position:absolute;top:-14px;left:0;width:96px;height:16px;
-  background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:8px}
+.arch-card{position:relative;margin-top:12px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-top:none;
+  border-radius:2px 10px 12px 12px;padding:22px 14px 16px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.arch-card::before{content:"";position:absolute;top:-13px;left:0;width:84px;height:14px;
+  background:var(--card2);border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0}
 .arch-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.4);border-color:var(--acc)}
 .arch-photo{width:64px;height:64px;border-radius:14px;object-fit:cover;margin-bottom:12px;
   box-shadow:0 6px 16px rgba(0,0,0,.35);background:var(--bg2)}
@@ -111,7 +111,7 @@ body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
 .ast-pop:after{content:"";position:absolute;top:100%;left:24px;border:6px solid transparent;border-top-color:var(--line)}
 .ast-wrap:hover .ast-pop{display:block}
 /* 已出單慶賀高卡 */
-.issued-card{position:relative;flex:0 0 30%;min-width:230px;border-radius:16px;padding:22px 22px 18px;
+.issued-card{position:relative;flex:0 0 26%;min-width:210px;border-radius:16px;padding:22px 22px 18px;
   background:linear-gradient(160deg,#16243a 0%,#131a26 60%,#10151f 100%);border:1px solid rgba(124,192,255,.28);
   overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 50px rgba(0,0,0,.45)}
 .iss-glow{position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;
@@ -120,6 +120,8 @@ body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
 .iss-vl{font-size:52px;font-weight:800;color:#fff;line-height:1.1;margin:6px 0 2px;position:relative}
 .iss-vl span{font-size:22px;font-weight:600;color:var(--mut)}
 .iss-tg{font-size:12px;color:#7fd1a0;position:relative}
+.iss-inc{position:relative;margin-top:10px;font-size:11.5px;color:var(--mut)}
+.iss-inc b{color:#fff;font-size:15px;margin-left:4px}
 .done-avatars{margin-top:auto;padding-top:16px;display:flex;align-items:center}
 .done-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #1c2b40;margin-left:-10px;
   box-shadow:0 6px 18px rgba(74,158,255,.35)}
@@ -270,8 +272,10 @@ tr:hover td{background:#1a2130}
 .t-red{background:rgba(255,93,108,.14);color:var(--err);border:1px solid #5a2b34}
 .t-gray{background:rgba(132,148,167,.14);color:var(--mut);border:1px solid #333c4c}
 /* client card */
-.ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.15s;position:relative;display:flex;gap:14px;align-items:stretch}
-.ccard:hover{border-color:#2f4a6e;transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.ccard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;transition:.18s;position:relative;display:flex;gap:14px;align-items:stretch;overflow:hidden}
+.ccard:hover{border-color:#3a5d8a;transform:translateY(-3px) scale(1.015);box-shadow:0 12px 32px rgba(0,0,0,.45)}
+.ccard:before{content:"";position:absolute;inset:0;background:radial-gradient(320px circle at var(--mx,50%) var(--my,30%),rgba(74,158,255,.10),transparent 60%);opacity:0;transition:.2s;pointer-events:none}
+.ccard:hover:before{opacity:1}
 .cphoto{width:100px;align-self:stretch;border-radius:10px;object-fit:cover;flex-shrink:0;border:2px solid var(--line);background:#1a2230;display:block}
 .ccard .cbody{flex:1;min-width:0;padding-bottom:34px;position:relative}
 .ccard .top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
@@ -1765,11 +1769,15 @@ R.dashboard=()=>{
   }
   // 左側高大慶賀卡：已出單
   const doneStack=doneList.slice(0,3).map(c=>`<img class="done-avatar" src="${phSrc(c.no)}" title="${esc(c.name)}" onerror="this.style.visibility='hidden'">`).join("");
+  // 本月預計收入：已出單客戶已結清款項
+  const expIncome=doneList.reduce((s,c)=>s+((fin[c.no]||[]).filter(f=>f.status==="paid").reduce((a,f)=>a+(+f.amount||0),0)),0);
+  const issIncLb=CURRENT_LANG==="en"?"Expected revenue this month":CURRENT_LANG==="cn"?"本月预计收入":"本月預計收入";
   const issuedCard=`<div class="issued-card">
     <div class="iss-glow"></div>
     <div class="iss-lb">${doneLabel}</div>
     <div class="iss-vl">${doneCount}<span> / ${totalCount}</span></div>
     <div class="iss-tg">${CURRENT_LANG==="en"?"Bonds obtained this month":"本月已獲擔保文件"}</div>
+    <div class="iss-inc">${issIncLb} <b>$${expIncome.toLocaleString()}</b></div>
     <div class="done-avatars">${doneStack||'<div style="color:var(--mut);font-size:12px">尚無</div>'}</div>
   </div>`;
   // 付款上下結構卡
@@ -3028,7 +3036,9 @@ function phSrc(no){
   const fl=(DATA.files||{})[no]||[];
   const portrait=fl.find(f=>/法人照片|人像|人頭|member.?photo|headshot/i.test(f.name||f.nm||""));
   if(portrait)return resolveFile(portrait.path||"");
-  return "";
+  // 無照片：回傳首字母佔位 SVG，避免裂圖
+  const nm=(c&&c.member||"?").trim()[0]||"?";
+  return "data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" rx="12" fill="#223047"/><text x="60" y="74" font-size="48" fill="#7cc0ff" text-anchor="middle" font-family="sans-serif">${nm}</text></svg>`);
 }
 const CLIENT_FOLDERS={
   "2":"Immunora-Bio","3":"Oliveware","5":"Pebblehome","7":"Sageware","8":"Nervaqon",
@@ -4769,13 +4779,16 @@ function delFile(no,name){if(CURRENT_USER.role!=="super_admin"){toast("僅超級
   addAudit("刪除檔案",no+" / "+name);render();openDocFolder(no);toast("已刪除");}
 R.archive=()=>{
   const L=CURRENT_LANG;
-  const list=DATA.customers.filter(c=>canViewCust(c.no));
+  const q=(window._ARCH_Q||"").toLowerCase();
+  const all=DATA.customers.filter(c=>canViewCust(c.no));
+  const list=q?all.filter(c=>[c.no,c.name,c.member,c.mail,c.ein].join(" ").toLowerCase().includes(q)):all;
+  const ph=L==='en'?'Search by No. / email / company / member / EIN':(L==='cn'?'搜索编号 / 邮箱 / 公司 / 法人 / EIN':'搜索編號 / 郵箱 / 公司 / 法人 / EIN');
   return `<h1>${L==='en'?'Archives':(L==='cn'?'归档包':'歸檔包')}</h1>
-  <div style="font-size:13px;color:var(--mut);margin-bottom:8px">${L==='en'?'Download a complete data bundle per customer as JSON. Files are listed with their cloud URLs.':(L==='cn'?'为每个客户下载完整数据包（JSON格式）。附件列出云端链接。':'為每個客戶下載完整數據包（JSON格式）。附件列出雲端連結。')}</div>
+  <div style="font-size:13px;color:var(--mut);margin-bottom:10px">${L==='en'?'Download a complete data bundle per customer as JSON. Files are listed with their cloud URLs.':(L==='cn'?'为每个客户下载完整数据包（JSON格式）。附件列出云端链接。':'為每個客戶下載完整數據包（JSON格式）。附件列出雲端連結。')}</div>
+  <div class="searchbar" style="margin-bottom:14px"><input id="archSearch" placeholder="${ph}" value="${esc(q)}" oninput="window._ARCH_Q=this.value;render();const el=document.getElementById('archSearch');el.focus();el.setSelectionRange(el.value.length,el.value.length)"></div>
   <div class="arch-grid">${list.map(c=>{
     const files=(DATA.files||{})[c.no]||[];
     const ph=phSrc(c.no);
-    const owner=CURRENT_USER.role==="super_admin"?(" · "+(ownerMap[c.no]||"")):"";
     return `<div class="arch-card">
       <img class="arch-photo" src="${ph}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
       <div class="arch-no">#${c.no}</div>
@@ -4783,7 +4796,7 @@ R.archive=()=>{
       <div class="arch-meta">${L==='en'?files.length+' files':'共 '+files.length+' 份檔案'}</div>
       <button class="btn primary small" onclick="genArchive('${c.no}')">${L==='en'?'Generate / Download':'產生 / 下載'}</button>
     </div>`;
-  }).join("")}</div>`;
+  }).join("")||'<div class="empty">'+(L==='en'?'No match':'無符合結果')+'</div>'}</div>`;
 };
 
 R.learn=()=>{
@@ -4798,8 +4811,13 @@ R.learn=()=>{
   const desc2=L==='en'?'Full walkthrough of every feature in UCRM, from login to daily workflow.':(L==='cn'?'UCRM 全功能操作说明，从登入到日常工作流程一步步讲。':'UCRM 全功能操作說明，從登入到日常工作流程一步步講。');
   const desc3=L==='en'?'How to guide clients through financial statement preparation, with 10 real case examples.':(L==='cn'?'教客户怎么填财务报表，十个不同行业真实案例逐项说明。':'教客戶怎麼填財務報表，十個不同行業真實案例逐項說明。');
   const desc4=L==='en'?'What 9 documents to collect from each client, and how to verify identity and company info.':(L==='cn'?'每个客户要收哪九份文件，怎么核对身份与公司资料真伪。':'每個客戶要收哪九份文件，怎麼核對身份與公司資料真偽。');
-  return `<h1>${t}</h1>
-  <div style="font-size:13px;color:var(--mut);margin-bottom:20px">${sub}</div>
+  const lq=(window._LEARN_Q||"").toLowerCase();
+  const ph=L==='en'?'Search training content...':(L==='cn'?'搜索培训内容...':'搜尋培訓內容…');
+  return `<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+  <h1 style="margin:0">${t}</h1>
+  <div class="searchbar" style="width:320px"><input placeholder="${ph}" value="${esc(lq)}" oninput="window._LEARN_Q=this.value;render();const el=document.querySelector('.searchbar input');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}"></div>
+  </div>
+  <div style="font-size:13px;color:var(--mut);margin:10px 0 20px">${sub}</div>
   <div style="display:flex;gap:20px;flex-wrap:wrap">
     <div onclick="openLearn('broker')" style="width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 2px 12px rgba(0,0,0,.2);transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
       <div style="width:100%;height:340px;background:#fff;overflow:hidden"><img src="docs/learning/cover-broker-01.png" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#34495e,#5d6d7e)';this.remove()"></div>
@@ -5536,7 +5554,12 @@ function initConnStatus(){
   div.style.cssText="position:fixed;bottom:20px;right:20px;z-index:9998;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:pointer";
   div.innerHTML=`<span class="dot" style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></span><span class="txt">連接中...</span>`;
   div.onclick=()=>location.reload();
+  const refreshTxt=()=>CURRENT_LANG==='en'?"Refresh system":(CURRENT_LANG==='cn'?"刷新系统":"重新整理");
+  div.addEventListener("mouseenter",()=>{const t=div.querySelector(".txt");t.dataset.orig=t.textContent;t.textContent=refreshTxt();});
+  div.addEventListener("mouseleave",()=>{const t=div.querySelector(".txt");if(t.dataset.orig)t.textContent=t.dataset.orig;});
   document.body.appendChild(div);
+  // 卡片聚光跟隨滑鼠
+  document.addEventListener("mousemove",e=>{const c=e.target.closest&&e.target.closest(".ccard");if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px");});
 }
 function setConnStatus(state,text){
   const el=document.getElementById("connStatus");if(!el)return;
