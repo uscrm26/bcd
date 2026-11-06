@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106z1920";
+  var V="v20261106aa1925";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1471,7 +1471,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106Z";
+const APP_VER="20261106AA";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -1482,10 +1482,10 @@ function genVersionCode(){
 }
 function copyVersionCode(){
   const code=genVersionCode();
-  const txt="UCRM版本："+code+"\n瀏覽器："+navigator.userAgent.slice(0,100)+"\n時間："+new Date().toISOString();
+  const txt="服務端版本："+APP_VER+"\n用戶版本編碼："+code+"\n瀏覽器："+navigator.userAgent.slice(0,100)+"\n時間："+new Date().toISOString();
   const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();
-  try{document.execCommand("copy");toast("✅ 版本編碼已複製："+code);}
-  catch(e){prompt("複製失敗，請手動複製：",code);}
+  try{document.execCommand("copy");toast("✅ 版本信息已複製");}
+  catch(e){prompt("複製失敗，請手動複製：",txt);}
   document.body.removeChild(ta);
 }
 function openModalImg(src,no){if(no===undefined||no===null)no=curCust;
