@@ -677,51 +677,6 @@ async function loadRepoData(){
     }).catch(()=>{});
   }catch(e){console.error("loadRepoData error:",e);throw e;}
 }
-      DATA.emails=em.map(x=>{
-        const t=fmtMailDate(x.date);
-        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
-      });
-      // 建立客户邮箱域名库，邮件按client标签和邮箱域名双重关联客户编号
-      window._mailCustMap={};
-      (DATA.customers||[]).forEach(c=>{
-        if(c.mail&&c.mail.indexOf("@")>0){
-          const dom=c.mail.split("@")[1].toLowerCase();
-          window._mailCustMap[dom]=c.no;
-        }
-        if(c.name){
-          const short=c.name.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").toLowerCase();
-          if(short)window._mailCustMap["name:"+short]=c.no;
-        }
-      });
-    }
-    if(mb&&Array.isArray(mb.mailboxes)){
-      const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
-      DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
-    }
-    if(db){
-      // 保存云端恢复的 AI 状态，避免被 data.json 覆盖
-      const savedAI={};
-      (DATA.customers||[]).forEach(c=>{savedAI[c.no]={aiLastAt:c.aiLastAt,aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions};});
-      ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
-      // 自動修復多重編碼亂碼（可能三重編碼，需迭代修復）
-      const fixOnce=function(s){if(typeof s!=="string"||!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++){const ch=s.charCodeAt(i);if(ch>255)return s;bytes.push(ch);}return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
-      const fixMoj=function(s){if(typeof s!=="string"||!s)return s;let prev="",cur=s,guard=0;while(cur!==prev&&guard<5){prev=cur;cur=fixOnce(prev);guard++;}return cur;};
-      const fixDeep=function(o){if(Array.isArray(o))return o.map(fixDeep);if(o&&typeof o==="object"){for(const k in o)o[k]=fixDeep(o[k]);return o;}return fixMoj(o);};
-      fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);fixDeep(DATA.finance);
-      // 恢复 AI 状态
-      (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
-      // 雲端載入後補齊缺漏的 4 位 sysId，已有編號原樣保留
-      normalizeSysId();
-    }
-    if(db&&Array.isArray(db.daily)&&db.daily.length){
-      const _fixMojibake=s=>{if(!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++)bytes.push(s.charCodeAt(i)&0xff);const d=new TextDecoder("utf-8",{fatal:false});return d.decode(new Uint8Array(bytes));}catch(e){return s;}};
-      const remoteLogs=db.daily.map(x=>({t:x.date||"",c:_fixMojibake(x.work||""),o:_fixMojibake(x.output||"")}));
-      DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
-    }
-    await loadPinned();
-    render();fillLoginStats();
-  }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
-}
 function fillLoginStats(){const a=document.getElementById("lv_active");const d=document.getElementById("lv_done");const m=document.getElementById("lv_mail");if(!a)return;const st=DATA.statuses||{};const on=[...new Set(Object.values(st))].filter(s=>s&&s!=="done"&&s!=="reject"&&s!=="hold").length;const dn=Object.values(st).filter(s=>s==="done").length;a.textContent=on||"0";d.textContent=dn||"0";m.textContent=Array.isArray(DATA.emails)?DATA.emails.length:"0";}
 // ===== Supabase 直連動態保存（publishable key 公開可曝，寫入走現有表）=====
 const SB={url:"https://xlcyumbyqcwedqwpspzs.supabase.co",key:"sb_publishable_FlQqq0Zg6PgO_bJ9FuLGWw_MdgpYpe5"};
