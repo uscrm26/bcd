@@ -940,14 +940,17 @@ async function loadSB(){
   render();
 }
 const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];
+const STATUS_LB={new:{zh:"新線索",en:"New lead",cn:"新线索"},pending_client:{zh:"等待客戶補充資料",en:"Awaiting client docs",cn:"等待客户补充资料"},form:{zh:"待填寫申請",en:"Form pending",cn:"待填写申请"},reply:{zh:"等待報關行回覆",en:"Awaiting broker reply",cn:"等待报关行回复"},broker:{zh:"等待報關行審核",en:"Broker under review",cn:"等待报关行审核"},supply:{zh:"待補充申請文件",en:"Docs pending",cn:"待补充申请文件"},quote:{zh:"收到報價",en:"Quoted",cn:"已收到报价"},paid:{zh:"財務已付款",en:"Paid",cn:"财务已付款"},done:{zh:"已獲擔保文件",en:"Bond issued",cn:"已获担保文件"},hold:{zh:"擱置暫停",en:"On hold",cn:"搁置暂停"},reject:{zh:"申請被拒",en:"Rejected",cn:"申请被拒"}};
+function statusLb(id){const m=STATUS_LB[id];if(!m)return (st(id)||{}).lb||id;const k=CURRENT_LANG==="en"?"en":CURRENT_LANG==="cn"?"cn":"zh";return m[k]||m.zh;}
 function dlStatus(c){
-  if(!c.dl_exp)return {lb:c.dl||"正常",warn:false,expired:false};
+  const L=CURRENT_LANG==="en"?{ok:"Valid",exp:"Expired",soon:"Expires within 90 days"}:CURRENT_LANG==="cn"?{ok:"有效",exp:"已过期",soon:"90天内过期"}:{ok:"有效",exp:"已過期",soon:"90天內過期"};
+  if(!c.dl_exp)return {lb:c.dl||L.ok,warn:false,expired:false};
   const exp=new Date(c.dl_exp+"T00:00:00");
   const now=new Date();
   const diff=(exp-now)/86400e3;
-  if(diff<0)return {lb:"已過期",warn:true,expired:true,exp:c.dl_exp};
-  if(diff<90)return {lb:`90天內過期`,warn:true,expired:false,exp:c.dl_exp};
-  return {lb:"正常",warn:false,expired:false,exp:c.dl_exp};
+  if(diff<0)return {lb:L.exp,warn:true,expired:true,exp:c.dl_exp};
+  if(diff<90)return {lb:L.soon,warn:true,expired:false,exp:c.dl_exp};
+  return {lb:L.ok,warn:false,expired:false,exp:c.dl_exp};
 }
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 const fixMoji=s=>{if(!s||typeof s!=="string")return s;try{const bytes=[];for(let i=0;i<s.length;i++)bytes.push(s.charCodeAt(i)&0xff);return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
@@ -1697,7 +1700,6 @@ async function runBulkTranslate(target){
   closeModal();render();
 }
 function statusPie(){
-  const STATUS_LB={new:{zh:"新線索",en:"New lead",cn:"新线索"},pending_client:{zh:"等待客戶補充資料",en:"Awaiting client docs",cn:"等待客户补充资料"},form:{zh:"待填寫申請",en:"Form pending",cn:"待填写申请"},reply:{zh:"等待報關行回覆",en:"Awaiting broker reply",cn:"等待报关行回复"},broker:{zh:"等待報關行審核",en:"Broker under review",cn:"等待报关行审核"},supply:{zh:"待補充申請文件",en:"Docs pending",cn:"待补充申请文件"},quote:{zh:"收到報價",en:"Quoted",cn:"已收到报价"},paid:{zh:"財務已付款",en:"Paid",cn:"财务已付款"},done:{zh:"已獲擔保文件",en:"Bond issued",cn:"已获担保文件"},hold:{zh:"擱置暫停",en:"On hold",cn:"搁置暂停"},reject:{zh:"申請被拒",en:"Rejected",cn:"申请被拒"}};
   const all=(DATA.statuses||[]);
   const pal=["#3b82f6","#f59e0b","#9ca3af","#eab308","#22c55e","#ef4444","#8b5cf6","#06b6d4","#ec4899","#6366f1","#84cc16","#f97316","#14b8a6","#a855f7","#64748b"];
   const rows=all.map((s,i)=>{
@@ -2502,35 +2504,37 @@ async function syncCustomerToRepo(no){
 let custTab="info";let curCust="93";
 function openCust(no){if(!canViewCust(no)){toast("你沒有權限查看這位客戶");return;}curCust=no;custTab="info";view="customer";render();window.scrollTo(0,0);}
 R.customer=()=>{
+  const T=CURRENT_LANG==="en"?{title:"Customers",back:"Back to list",del:"Delete customer",search:"Search No. / Company / Owner / EIN",allSt:"All statuses",add:"Add customer",exp:"Export CSV",ai:"AI batch analyze",card:"Card view",table:"Table view",mine:"My clients only",all:"All clients",sub:"Assigned subordinates",sel:n=>n+" selected",open:"Open",sysId:"Ref",no:"#",comp:"Company",member:"Owner",ein:"EIN",st:"Status",own:"Owner",ops:"Actions",empty:"No matching customers"}:CURRENT_LANG==="cn"?{title:"客户管理",back:"返回客户列表",del:"删除客户",search:"搜索编号 / 公司名 / 法人 / EIN",allSt:"全部状态",add:"新增客户",exp:"导出 CSV",ai:"AI 批量解读客户",card:"卡片视图",table:"表格视图",mine:"仅显示自己的客户",all:"显示所有客户",sub:"显示指定下线",sel:n=>"已选 "+n+" 人",open:"打开",sysId:"编号",no:"#",comp:"公司",member:"法人",ein:"EIN",st:"状态",own:"负责人",ops:"操作",empty:"无符合客户"}:{title:"客戶管理",back:"返回客戶列表",del:"刪除客戶",search:"搜尋編號 / 公司名 / 法人 / EIN",allSt:"全部狀態",add:"新增客戶",exp:"匯出 CSV",ai:"AI 批量解讀客戶",card:"卡片檢視",table:"表格檢視",mine:"僅顯示自己的客戶",all:"顯示所有客戶",sub:"顯示指定下線",sel:n=>"已選 "+n+" 人",open:"打開",sysId:"編號",no:"#",comp:"公司",member:"法人",ein:"EIN",st:"狀態",own:"負責人",ops:"操作",empty:"無符合客戶"};
   if(curCust){const c=DATA.customers.find(x=>x.no===curCust);
-  return `<h1>客戶管理</h1>
+  return `<h1>${T.title}</h1>
   <div style="display:flex;justify-content:space-between;align-items:center">
-  <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
-  <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
+  <button class="btn small" onclick="curCust=null;custTab='info';render()">← ${T.back}</button>
+  <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">${T.del}</button>
   </div>
   <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"><div class="panel" style="margin-bottom:0"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="margin-bottom:0"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div>${custSub(curCust)}</div></div></div>`;}
-  return `<h1>客戶管理</h1>
-  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px">
-    <input style="flex:0 0 320px;max-width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--txt);font-size:13px;outline:none" placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()">
-    <select style="background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;color:var(--txt);font-size:13px;outline:none;cursor:pointer" onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
-    ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
-    <button class="btn" onclick="exportCustCsv()">匯出 CSV</button>
-    ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">AI 批量解讀客戶</button>`:""}
+  return `<h1>${T.title}</h1>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:nowrap;margin-bottom:10px;overflow-x:auto">
+    <input style="flex:0 0 200px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--txt);font-size:13px;outline:none" placeholder="${T.search}" oninput="window._cs=this.value;refreshCustList()">
+    <select style="flex:0 0 auto;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--txt);font-size:13px;outline:none;cursor:pointer" onchange="window._cst=this.value;refreshCustList()"><option value="">${T.allSt}</option>${DATA.statuses.map(s=>`<option value="${s.id}">${statusLb(s.id)}</option>`).join("")}</select>
+    ${canManage()?`<button class="btn primary" onclick="openNewCust()">${T.add}</button>`:""}
+    <button class="btn" onclick="exportCustCsv()">${T.exp}</button>
+    ${CURRENT_USER.aiBatch!==false?`<button class="btn" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;border-color:transparent" onclick="batchAIAnalyze()">${T.ai}</button>`:""}
   </div>
-  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">📇 卡片檢視</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">📋 表格檢視</button>
+  <div class="switch" style="margin:10px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button class="${listMode==='card'?'on':''}" onclick="listMode='card';render()">${T.card}</button><button class="${listMode==='table'?'on':''}" onclick="listMode='table';render()">${T.table}</button>
   <span style="width:1px;height:20px;background:var(--line);margin:0 4px"></span>
-  <button class="${(window._ownerFilter||'me')==='me'?'on':''}" onclick="window._ownerFilter='me';window._selOwners=[];refreshCustList();render()">僅顯示自己的客戶</button>
-  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='all'?'on':''}" onclick="window._ownerFilter='all';refreshCustList();render()">顯示所有客戶</button>`:""}
-  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='sub'?'on':''}" onclick="window._ownerFilter='sub';openOwnerPicker();render()">顯示指定下線</button>`:""}
-  ${window._ownerFilter==='sub'&&(CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin')?`<span style="font-size:13px;color:var(--mut)">已選 ${(window._selOwners||[]).length} 人</span>`:""}
+  <button class="${(window._ownerFilter||'me')==='me'?'on':''}" onclick="window._ownerFilter='me';window._selOwners=[];refreshCustList();render()">${T.mine}</button>
+  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='all'?'on':''}" onclick="window._ownerFilter='all';refreshCustList();render()">${T.all}</button>`:""}
+  ${CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin'?`<button class="${window._ownerFilter==='sub'?'on':''}" onclick="window._ownerFilter='sub';openOwnerPicker();render()">${T.sub}</button>`:""}
+  ${window._ownerFilter==='sub'&&(CURRENT_USER.role==='admin'||CURRENT_USER.role==='super_admin')?`<span style="font-size:13px;color:var(--mut)">${T.sel((window._selOwners||[]).length)}</span>`:""}
   </div>
   <div id="custListArea">${listMode==='card'?custGridHTML():custTableHTML()}</div>`;
 };
 let listMode="card";
 function custTableHTML(){
   const list=custFiltered().filter(c=>canViewCust(c.no));
-  return `<table><thead><tr><th>系統編號</th><th>內部序號</th><th>公司</th><th>法人</th><th>EIN</th><th>狀態</th><th>負責人</th><th>操作</th></tr></thead><tbody>
-  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td><div style="display:flex;align-items:center;gap:8px"><img src="${phSrc(c.no)}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--line)"><span>${esc(c.member)}</span></div></td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${s.lb}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">打開</button></td></tr>`;}).join("")||"<tr><td colspan='8' class='empty'>無符合客戶</td></tr>"}
+  const T=CURRENT_LANG==="en"?{sysId:"Ref",no:"#",comp:"Company",member:"Owner",ein:"EIN",st:"Status",own:"Owner",ops:"Actions",open:"Open",empty:"No matching customers"}:CURRENT_LANG==="cn"?{sysId:"编号",no:"#",comp:"公司",member:"法人",ein:"EIN",st:"状态",own:"负责人",ops:"操作",open:"打开",empty:"无符合客户"}:{sysId:"編號",no:"#",comp:"公司",member:"法人",ein:"EIN",st:"狀態",own:"負責人",ops:"操作",open:"打開",empty:"無符合客戶"};
+  return `<table><thead><tr><th>${T.sysId}</th><th>${T.no}</th><th>${T.comp}</th><th>${T.member}</th><th>${T.ein}</th><th>${T.st}</th><th>${T.own}</th><th>${T.ops}</th></tr></thead><tbody>
+  ${list.map(c=>{const s=st(c.status);return `<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td style="font-weight:700;color:var(--acc2)">${c.sysId}</td><td>#${c.no}</td><td>${esc(c.name)}</td><td><div style="display:flex;align-items:center;gap:8px"><img src="${phSrc(c.no)}" onerror="this.style.display='none'" style="width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--line)"><span>${esc(c.member)}</span></div></td><td style="font-size:11px">${esc(c.ein)}</td><td><span class="tag ${s.cl}">${statusLb(c.status)}</span></td><td>${esc(ownerName(c.no))}</td><td><button class="btn small" onclick="event.stopPropagation();openCust('${c.no}')">${T.open}</button></td></tr>`;}).join("")||`<tr><td colspan='8' class='empty'>${T.empty}</td></tr>`}
   </tbody></table>`;
 }
 function refreshCustList(){const el=document.getElementById("custListArea");if(el)el.innerHTML=listMode==='card'?custGridHTML():custTableHTML();}
@@ -2590,11 +2594,11 @@ function custFiltered(){
   }).sort((a,b)=>(pinnedSet.has(b.no)?1:0)-(pinnedSet.has(a.no)?1:0));
 }
 function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);const sl=s.lb||"";const isHold=sl.includes("擱置")||sl.includes("暫停")||c.status==="hold";const isReject=sl.includes("被拒")||c.status==="reject";const isDone=sl.includes("已出單")||sl.includes("Bond已出")||sl==="完成"||c.status==="done";let borderStyle="";if(isHold){borderStyle="border:2px solid #e74c3c;box-shadow:0 0 12px rgba(231,76,60,0.25);filter:grayscale(0.7);opacity:0.7;";}else if(isReject){borderStyle="border:2px solid #f39c12;box-shadow:0 0 12px rgba(243,156,18,0.25);";}else if(isDone){borderStyle="border:2px solid #27ae60;box-shadow:0 0 12px rgba(39,174,96,0.25);";}else if(pinned){borderStyle="border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);";}return `<div class="ccard" style="${borderStyle}" onclick="openCust('${c.no}')">
-  <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${pinned?'background:#d4a017;color:#fff;border-color:#d4a017;':''}">${pinned?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
+  <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${pinned?'background:#d4a017;color:#fff;border-color:#d4a017;':''}">${pinned?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">${CURRENT_LANG==="en"?"To-do":CURRENT_LANG==="cn"?"待办":"待辦"}</button><button onclick="event.stopPropagation();openNote('${c.no}')">${CURRENT_LANG==="en"?"Follow-up":CURRENT_LANG==="cn"?"跟进":"跟進"}</button></div>
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
-  <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
+  <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${statusLb(c.status)}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}
+  <div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do":CURRENT_LANG==="cn"?"待办":"待辦"} ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">${CURRENT_LANG==="en"?"License":CURRENT_LANG==="cn"?"驾照":"駕照"} ${dlStatus(c).lb}</span><span class="badge">${CURRENT_LANG==="en"?"Mailbox":CURRENT_LANG==="cn"?"邮箱":"信箱"} ${esc(c.mail)}</span></div></div></div>`;}
 function monthLabel(dt){const d=new Date(dt);if(CURRENT_LANG==="en"){return d.toLocaleDateString("en-US",{month:"short"})+" "+d.getFullYear();}return d.getFullYear()+"年"+(d.getMonth()+1)+"月";}
 function custGridHTML(){
   const list=custFiltered();
@@ -2602,7 +2606,7 @@ function custGridHTML(){
   const rest=list.filter(c=>!isPinned(c.no));
   let html="";
   if(pinned.length){
-    html+=`<div style="font-size:14px;font-weight:700;color:#d4a017;margin:16px 0 8px">置頂</div>`;
+    html+=`<div style="font-size:14px;font-weight:700;color:#d4a017;margin:16px 0 8px">${CURRENT_LANG==="en"?"Pinned":CURRENT_LANG==="cn"?"置顶":"置頂"}</div>`;
     html+=`<div class="row r3">${pinned.map(custCardHTML).join("")}</div>`;
   }
   // Group rest by month
