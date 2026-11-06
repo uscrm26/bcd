@@ -745,7 +745,7 @@ async function loadSB(){
   Object.values(DATA.timeline).forEach(arr=>arr.sort((a,b)=>String(b.t||"").localeCompare(String(a.t||""))));
   render();
 }
-const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];
+const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0]||{lb:"",cl:"t-gray"};
 function dlStatus(c){
   if(!c.dl_exp)return {lb:c.dl||"正常",warn:false,expired:false};
   const exp=new Date(c.dl_exp+"T00:00:00");
