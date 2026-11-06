@@ -34,5 +34,14 @@
     "created": "2026-10-30 03:35",
     "source": "assistant",
     "synced": true
+  },
+  {
+    "id": "note-0005",
+    "scope": "client",
+    "target": "Sageware",
+    "text": "Tom Vaughan 從佛羅里達州 Dolphin Brokerage 回覆，因為地理位置和時差問題婉拒，建議客戶在加州當地找報關行。不用標記為已拒絕，這只是broker個人不接，繼續找其他加州broker開發。",
+    "created": "2026-11-06 21:50",
+    "source": "assistant",
+    "synced": true
   }
 ]
