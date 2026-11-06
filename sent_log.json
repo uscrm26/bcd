@@ -1618,5 +1618,14 @@
     "subject": "Re: New U.S. Importer - Account Setup & Annual Bond",
     "body_preview": "BorderBuddy account setup inquiry - Laureate Education",
     "client": 71
+  },
+  {
+    "from": "tvaughan.dolphin@gmail.com",
+    "to": "jaliarthomas@sagewareinc.com",
+    "subject": "Re: Continuous Customs Bond — Sageware LLC",
+    "body_preview": "Tom Vaughan from Dolphin Brokerage in West Palm Beach FL declined due to geographic distance and time difference with West Hollywood CA, recommended finding a local California broker between LA and SF.",
+    "client": 7,
+    "date": "2026-11-06T21:21:03.322810+08:00",
+    "direction": "incoming"
   }
 ]
