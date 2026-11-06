@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106m1810";
+  var V="v20261106n1815";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1389,7 +1389,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106M";
+const APP_VER="20261106N";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -5104,10 +5104,36 @@ ${mine.length?mine.map(c=>`<div class="logrow"><span class="c">#${c.no} ${esc(c.
 <div class="sec-title">本人操作記錄（${mineAudit.length}）</div>
 ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.action)} ${esc(a.detail)}</span></div>`).join(""):"<div class='empty'>尚無操作記錄</div>"}
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
-// 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
-render();
-(async()=>{await loadRepoData();try{loadPersisted();}catch(e){}await loadSB();})();
-if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["主工作區","郵件往來","文件與學習","營運管理","系統設置"],en:["MAIN WORKSPACE","EMAIL","FILES & LEARN","OPERATIONS","SYSTEM"],cn:["主工作区","邮件往来","文件与学习","营运管理","系统设置"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
+// 初次渲染：先顯示加載中，等數據全部加載完再渲染
+(function showBootLoader(){
+  const boot=document.createElement("div");
+  boot.id="bootLoader";
+  boot.style.cssText="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px";
+  boot.innerHTML='<div style="width:48px;height:48px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite"></div><div style="color:var(--mut);font-size:14px">正在加載數據...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(boot);
+})();
+(async()=>{
+  try{
+    await loadRepoData();
+    try{loadPersisted();}catch(e){}
+    await loadSB();
+  }catch(e){console.error("init data load error:",e);}
+  render();
+  const bl=document.getElementById("bootLoader");if(bl)bl.remove();
+  if(PREF.lang&&PREF.lang!=="zh"){
+    const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;
+    if(L){
+      const navs=document.querySelectorAll(".nav a");
+      L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});
+      const grpMap={zh:["主工作區","郵件往來","文件與學習","營運管理","系統設置"],en:["MAIN WORKSPACE","EMAIL","FILES & LEARN","OPERATIONS","SYSTEM"],cn:["主工作区","邮件往来","文件与学习","营运管理","系统设置"]};
+      document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});
+      const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;
+      const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";
+      const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;
+      render();
+    }
+  }
+})();
 </script>
 </body>
 </html>
