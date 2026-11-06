@@ -1142,6 +1142,7 @@ const menu=document.getElementById("langMenu");if(menu)menu.classList.remove("sh
 render();
 if(key==="cn")simplifyPage();
 applyPerm();
+if(typeof paintFoot==="function")paintFoot();
 toast("語言已切換為 "+L.label);}
 document.addEventListener("click",e=>{const m=document.getElementById("langMenu");if(m&&!e.target.closest(".lang"))m.classList.remove("show");});
 let _oc=null;
@@ -1604,11 +1605,12 @@ function followUpAlerts(){
       <div style="font-size:10px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${lastTxt}</div></div>
       <span style="font-size:10px;color:${r.h>40?"var(--err)":"var(--warn)"};flex-shrink:0">${Math.round(r.h)}h</span></div>`;}).join("");
 }
+function pickTxt(zh,cn,en){if(CURRENT_LANG==="en")return en||zh;if(CURRENT_LANG==="cn")return cn||zh;return zh;}
 function recentTodos(){
   const all=[];
   (DATA.customers||[]).forEach(c=>{
     (c.aiTodos||[]).forEach(t=>{
-      if(!t.done&&!t.superseded) all.push({cust:c.name,no:c.no,txt:t.t,ts:t.ts||0});
+      if(!t.done&&!t.superseded) all.push({cust:c.name,no:c.no,txt:pickTxt(t.t,t.tCn,t.tEn),ts:t.ts||0});
     });
   });
   all.sort((a,b)=>(a.ts||0)-(b.ts||0));
@@ -1626,6 +1628,55 @@ function recentTodos(){
   <table style="width:100%;font-size:12px"><thead><tr><th style="text-align:left;padding:4px 6px;color:var(--mut);font-weight:400">客戶</th><th style="text-align:left;padding:4px 6px;color:var(--mut);font-weight:400">待辦事項</th><th style="text-align:right;padding:4px 6px;color:var(--mut);font-weight:400">已等候</th></tr></thead><tbody>
   ${top.map(r=>`<tr style="border-top:1px solid var(--line);cursor:pointer" onclick="openCust('${r.no}')"><td style="padding:6px;color:var(--acc);font-weight:600;white-space:nowrap">#${r.no} ${esc(r.cust)}</td><td style="padding:6px;color:var(--txt)">${esc(r.txt)}</td><td style="padding:6px;text-align:right;color:var(--mut);white-space:nowrap">${fmtAgo(r.ts)}</td></tr>`).join("")}
   </tbody></table></div>`;
+}
+function collectNotesNeedingTranslation(){
+  const items=[];
+  (DATA.customers||[]).forEach(c=>{
+    (c.aiTodos||[]).forEach((t,i)=>{
+      if(!t.done&&!t.superseded&&t.t){items.push({type:"todo",no:c.no,cust:c.name,obj:t,key:"tEn",keyCn:"tCn",src:t.t});}
+    });
+  });
+  Object.keys(DATA.timeline||{}).forEach(no=>{
+    (DATA.timeline[no]||[]).forEach((t,i)=>{
+      if(t.e==="note"&&t.tx){items.push({type:"tl",no,cust:(DATA.customers.find(c=>String(c.no)===String(no))||{}).name||no,obj:t,key:"txEn",keyCn:"txCn",src:t.tx});}
+    });
+  });
+  return items;
+}
+async function openTranslateNotes(){
+  const items=collectNotesNeedingTranslation();
+  const needEn=items.filter(x=>!x.obj[x.key]);
+  const needCn=items.filter(x=>!x.obj[x.keyCn]);
+  openModal(`<h3>${CURRENT_LANG==="en"?"Translate notes to bilingual fields":CURRENT_LANG==="cn"?"批量翻译备注":"批量翻譯備註"}</h3>
+  <p style="font-size:13px;color:var(--mut);margin-bottom:14px">${CURRENT_LANG==="en"?`Found ${items.length} notes. ${needEn.length} missing English, ${needCn.length} missing Simplified Chinese. Translated text is saved into the English / Simplified fields so English and Simplified UI modes show the correct language.`:`共 ${items.length} 條備註，其中 ${needEn.length} 條缺英文、${needCn.length} 條缺簡中。翻譯結果會寫入對應語言欄位，英文與簡體模式即時顯示。`}</p>
+  <div class="mrow">
+    <button class="btn primary" id="trEnBtn" onclick="runBulkTranslate('en')">${CURRENT_LANG==="en"?"Translate all to English":"全部翻譯至英文"}</button>
+    <button class="btn primary" id="trCnBtn" onclick="runBulkTranslate('cn')">${CURRENT_LANG==="en"?"Translate all to Simplified Chinese":"全部翻譯至簡體中文"}</button>
+  </div>`);
+}
+async function runBulkTranslate(target){
+  const items=collectNotesNeedingTranslation();
+  const key=target==="en"?"tEn":"tCn";
+  const need=items.filter(x=>!x.obj[key]);
+  if(!need.length){toast(CURRENT_LANG==="en"?"All notes already have translation":"全部已齊全");return;}
+  const btn=document.getElementById(target==="en"?"trEnBtn":"trCnBtn");
+  if(btn)btn.disabled=true;
+  const llm=getNewLLM();
+  if(!llm.key){toast("請先在系統管理頁填入新 LLM Key");return;}
+  let done=0,fail=0;
+  for(let i=0;i<need.length;i++){
+    const it=need[i];
+    try{
+      const r=await fetch(llm.baseURL+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+llm.key},body:JSON.stringify({model:llm.model,messages:[{role:"system",content:target==="en"?"Translate the following Chinese note into professional, business-grade English. Return ONLY the English translation, no quotes, no explanation.":"將下列繁體中文備註翻譯為簡體中文，用詞符合內陸商務用語。只返回翻譯結果，不要解釋。"},{role:"user",content:it.src}],max_tokens:400})});
+      const j=await r.json();
+      const out=(j.choices&&j.choices[0]&&j.choices[0].message&&j.choices[0].message.content||"").trim();
+      if(out){it.obj[key]=out;done++;}else{fail++;}
+    }catch(e){fail++;}
+    if(btn)btn.textContent=`${done}/${need.length}`;
+  }
+  await saveDataJson();
+  toast(`完成 ${done} 條翻譯${fail?`，失敗 ${fail}`:""}`);
+  closeModal();render();
 }
 function statusPie(){
   const all=(DATA.statuses||[]);
@@ -1804,7 +1855,7 @@ R.dashboard=()=>{
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
   <div style="display:flex;flex-direction:column;gap:10px">
-  <div class="panel"><div class="sec-title">最近待辦事項</div>${recentTodos()}</div>
+  <div class="panel"><div class="sec-title" style="display:flex;justify-content:space-between;align-items:center">${CURRENT_LANG==="en"?"Recent To-dos":CURRENT_LANG==="cn"?"最近待办事项":"最近待辦事項"}<button class="btn small" title="批量翻譯備註" onclick="openTranslateNotes()" style="padding:3px 10px;font-size:11px">${CURRENT_LANG==="en"?"Translate":CURRENT_LANG==="cn"?"翻译":"翻譯"}</button></div>${recentTodos()}</div>
   <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:280px;overflow-y:auto">${DATA.mailboxes.map(b=>{const mc=DATA.customers.find(c=>c.name&&b.nm&&(c.name===b.nm||c.name.startsWith(b.nm)||b.nm.startsWith(c.name)));return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${mc?`#${mc.no}`:"Kevin W"}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
   <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div>
   </div></div>`;
@@ -2959,7 +3010,7 @@ function tl(no){const ts=DATA.timeline[no]||[];const icon={email:"📩",note:"�
   <button class="btn small" style="${f==='ai'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='ai';render()">AI 記錄</button>
   <button class="btn small" style="${f==='note'?'background:var(--acc);color:#fff':''}" onclick="window._tlFilter='note';render()">備註</button>
  </div>
- <div style="flex:1;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:`openTlNote('${esc(t.tt||"")}','${esc(t.tx||"")}')`}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.who||t.src||"")}${t.act==="note"?(CURRENT_LANG==="en"?" manually added note":CURRENT_LANG==="cn"?" 手动添加备注":" 手動添加備註"):""}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(t.tx||"")}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
+ <div style="flex:1;overflow-y:auto">${filtered.slice(0,50).map((t,idx)=>`<div class="tli e-${t.e}" style="cursor:pointer;padding:10px 10px 10px 14px;border-left:3px solid ${t.e==='ai'?'#8b5cf6':'var(--line)'};${t.e==='ai'?'background:rgba(139,92,246,.05)':''};position:relative" onclick="${t.key&&t.key.startsWith('m_')?`openMailDetail('${t.tm}')`:`openTlNote('${esc(t.tt||"")}','${esc(t.tx||"")}')`}">${CURRENT_USER.role==="super_admin"&&t.key&&!t.key.startsWith("m_")?`<button class="btn small" style="position:absolute;top:6px;right:6px;font-size:10px;color:#ef4444;border-color:#ef4444;padding:1px 8px" onclick="event.stopPropagation();confirmDeleteTl('${no}','${t.key}')">刪除</button>`:""}<span class="src">${icon[t.e]||"📩"} ${esc(t.who||t.src||"")}${t.act==="note"?(CURRENT_LANG==="en"?" manually added note":CURRENT_LANG==="cn"?" 手动添加备注":" 手動添加備註"):""}</span><div class="tt">${esc(t.tt||"")}</div><div class="tm">${esc(t.tm||"")}${t.tm?" ｜ 美東 "+convET(t.tm):""}</div><div class="tx">${esc(pickTxt(t.tx,t.txCn,t.tEn))}</div></div>`).join("")||"<div class='empty'>尚無時間線事件</div>"}</div>
 `;}
 function openTlNote(tt,tx){openModal(`<h3>${esc(tt)}</h3><div style="font-size:13px;line-height:1.8;max-height:50vh;overflow:auto;white-space:pre-wrap">${esc(tx)||"（無內容）"}</div><div class="mrow"><button class="btn primary" onclick="closeModal()">關閉</button></div>`);}
 function confirmDeleteTl(no,key){
@@ -5138,7 +5189,7 @@ function renderAiModelsList(){const box=document.getElementById("aimodels_list")
 <span style="font-size:11px;color:var(--mut);text-align:right">已用 ${fmtTok(u.total)} tokens<br>${u.calls||0} 次呼叫</span>
 <button class="btn" style="padding:2px 8px;font-size:12px" onclick="if(confirm('刪除這個模型？')){AIMODELS.splice(${i},1);renderAiModelsList();}">刪</button></div>`;}).join("");}
 async function saveAiModels(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("aimodels_msg");if(!tok){msg.textContent="請先填上面的 GitHub Token";return;}const n=document.getElementById("aim_name").value.trim();const ep=document.getElementById("aim_ep").value.trim();if(ep){AIMODELS.push({name:n||ep,endpoint:ep,account:"185 手機方舟帳號",enabled:true,note:"手動新增"});document.getElementById("aim_name").value="";document.getElementById("aim_ep").value="";}const body=JSON.stringify(AIMODELS,null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新 AI 模型清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存到 GitHub，下次巡查生效";toast("模型清單已更新");loadAiModels();}catch(e){msg.textContent="儲存失敗："+e;}}
-function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
+function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=(CURRENT_LANG==="en"&&CURRENT_USER.role==="super_admin")?"Super Admin":(CURRENT_LANG==="cn"&&CURRENT_USER.role==="super_admin")?"Super Admin":(ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role);if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
 function openSettings(){
   const curTz=PREF.tz||0;
   const curTz2=(PREF.tz2===undefined?-1:PREF.tz2);
