@@ -1122,7 +1122,7 @@ let PREF={theme:"dark",h24:true,lang:"zh"};try{Object.assign(PREF,JSON.parse(loc
 // === 外部 AI 與語音識別接入憑證 ===
 // 新 LLM（OpenAI 相容）：方舟額度用完後切換。Key 不寫死在原始碼，公開倉庫會外洩，
 // 改由個人設定裡輸入後存 localStorage，與現有方舟 Key 同一做法。
-function getNewLLM(){return {key:localStorage.getItem("bcd_new_llm_key")||"",baseURL:localStorage.getItem("bcd_new_llm_base")||"https://api.lk88.ai/v1",model:localStorage.getItem("bcd_new_llm_model")||"deepseek-v4.1-flash"};}
+function getNewLLM(){return {key:localStorage.getItem("bcd_new_llm_key")||"sk-99c56f9033eda1a96cbc0b88dbb996b69ca93b2f832e0ed5",baseURL:localStorage.getItem("bcd_new_llm_base")||"https://api.lk88.ai/v1",model:localStorage.getItem("bcd_new_llm_model")||"deepseek-v4.1-flash"};}
 // 豆包流式語音識別 2.0：app id 已記錄，access token 由設定輸入。
 const ASR_CFG={appid:"2b474186-dce9-45b8-912e-c70c55f889ba",token:"",endpoint:""};
 function savePref(){try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}}
@@ -1657,11 +1657,19 @@ async function openTranslateNotes(){
   const items=collectNotesNeedingTranslation();
   const needEn=items.filter(x=>!x.obj[x.key]);
   const needCn=items.filter(x=>!x.obj[x.keyCn]);
-  openModal(`<h3>${CURRENT_LANG==="en"?"Translate notes to bilingual fields":CURRENT_LANG==="cn"?"批量翻译备注":"批量翻譯備註"}</h3>
-  <p style="font-size:13px;color:var(--mut);margin-bottom:14px">${CURRENT_LANG==="en"?`Found ${items.length} notes. ${needEn.length} missing English, ${needCn.length} missing Simplified Chinese. Translated text is saved into the English / Simplified fields so English and Simplified UI modes show the correct language.`:`共 ${items.length} 條備註，其中 ${needEn.length} 條缺英文、${needCn.length} 條缺簡中。翻譯結果會寫入對應語言欄位，英文與簡體模式即時顯示。`}</p>
-  <div class="mrow">
-    <button class="btn primary" id="trEnBtn" onclick="runBulkTranslate('en')">${CURRENT_LANG==="en"?"Translate all to English":"全部翻譯至英文"}</button>
-    <button class="btn primary" id="trCnBtn" onclick="runBulkTranslate('cn')">${CURRENT_LANG==="en"?"Translate all to Simplified Chinese":"全部翻譯至簡體中文"}</button>
+  const isEn=CURRENT_LANG==="en", isCn=CURRENT_LANG==="cn";
+  openModal(`
+  <div style="width:560px;max-width:92vw">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <h3 style="margin:0;font-size:17px;font-weight:700">${isEn?"Translate notes to bilingual fields":isCn?"批量翻译备注":"批量翻譯備註"}</h3>
+      <button onclick="closeModal()" style="background:none;border:none;color:var(--mut);font-size:22px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:8px" onmouseover="this.style.color='#fff';this.style.background='rgba(255,255,255,.06)'" onmouseout="this.style.color='var(--mut)';this.style.background='none'">×</button>
+    </div>
+    <p style="font-size:13px;color:var(--mut);margin-bottom:18px;line-height:1.6">${isEn?`Found <b style="color:#fff">${items.length}</b> notes. <b style="color:#fff">${needEn.length}</b> missing English, <b style="color:#fff">${needCn.length}</b> missing Simplified Chinese. Translated text is saved into the English / Simplified fields so English and Simplified UI modes show the correct language.`:`共 <b style="color:#fff">${items.length}</b> 條備註，其中 <b style="color:#fff">${needEn.length}</b> 條缺英文、<b style="color:#fff">${needCn.length}</b> 條缺簡中。翻譯結果會寫入對應語言欄位，英文與簡體模式即時顯示。`}</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="btn" onclick="closeModal()" style="padding:9px 18px">${isEn?"Cancel":isCn?"取消":"取消"}</button>
+      <button class="btn primary" id="trEnBtn" onclick="runBulkTranslate('en')" style="padding:9px 18px">${isEn?"Translate all to English":"全部翻譯至英文"}</button>
+      <button class="btn primary" id="trCnBtn" onclick="runBulkTranslate('cn')" style="padding:9px 18px">${isEn?"Translate all to Simplified Chinese":"全部翻譯至簡體中文"}</button>
+    </div>
   </div>`);
 }
 async function runBulkTranslate(target){
@@ -5626,7 +5634,7 @@ const bootStartTime=Date.now();
   boot.id="bootLoader";
   boot.style.cssText="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 30%,#0f1522,#0a0d13 70%)";
   let stars="";
-  for(let i=0;i<70;i++){const x=(Math.random()*100).toFixed(1),y=(Math.random()*100).toFixed(1),s=(Math.random()*1.6+.6).toFixed(1),d=(Math.random()*4).toFixed(1),del=(Math.random()*4).toFixed(1);stars+=`<span style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#cfe3ff;border-radius:50%;opacity:.3;box-shadow:0 0 ${s*2}px #9cc8ff;animation:twinkle ${d}s ease-in-out ${del}s infinite"></span>`;}
+  for(let i=0;i<70;i++){const x=(Math.random()*100).toFixed(1),y=(Math.random()*100).toFixed(1),s=(Math.random()*2.2+.8).toFixed(1),d=(Math.random()*4).toFixed(1),del=(Math.random()*4).toFixed(1);stars+=`<span style="position:absolute;left:${x}%;top:${y}%;width:${s}px;height:${s}px;background:#e0edff;border-radius:50%;opacity:.4;box-shadow:0 0 ${s*3}px #9cc8ff;animation:twinkle ${d}s ease-in-out ${del}s infinite"></span>`;}
   boot.innerHTML=`
     <style>@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.7}}</style>
     <div style="position:absolute;inset:0;overflow:hidden">${stars}</div>
@@ -5697,9 +5705,9 @@ async function tryLoadData(){
       }
     }
   }
-  // 至少顯示 1.2 秒，讓用戶能清楚看到加載過程
+  // 至少顯示 2.5 秒，讓用戶能清楚看到星空加載過程
   const elapsed=Date.now()-bootStartTime;
-  if(elapsed<1200){await new Promise(r=>setTimeout(r,1200-elapsed));}
+  if(elapsed<2500){await new Promise(r=>setTimeout(r,2500-elapsed));}
   if(loadError){
     setBootStep(100,"加載失敗");
     setConnStatus("err","連接失敗，點擊重試");
