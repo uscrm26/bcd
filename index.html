@@ -4807,16 +4807,16 @@ function aiSave(){
   if(el)el.textContent=aiT().savedAt+" "+aiSavedAt;
   addAudit("AI文檔草稿",aiDocType+" #"+(aiSel.no||""));
 }
-// 每次隨機抽一份設計簡報，確保每份文檔版面都不同
+// 每次隨機抽一種排版，配色字體固定 Times New Roman 黑白
 const AI_DESIGNS=[
-  {palette:"deep navy #0f2a4a background, ivory #f8f5ec cards, gold #b8893a accent",font:"Georgia serif, classic banking statement feel",layout:"two-column ledger table with hairline rules, numbered sections"},
-  {palette:"warm cream #f5efe0 background, charcoal #1f2937 text, terracotta #c2410c accent",font:"system sans-serif, modern minimal",layout:"card grid with rounded corners, big hero numbers, soft shadows"},
-  {palette:"slate #1e293b background, off-white #f1f5f9 panels, teal #0d9488 accent",font:"'Courier New' monospace, bureaucratic form feel",layout:"boxed form fields with dashed borders, monospaced totals"},
-  {palette:"paper white #ffffff background, black #111 text, single red #b91c1c accent rule",font:"'Times New Roman' serif, newspaper feel",layout:"newspaper two-column columns, ruled tables, small caps headers"},
-  {palette:"forest #1a3a2f background, parchment #f3ecd9 text, brass #9c7a3c accent",font:"Garamond serif, old-world ledger",layout:"ornate bordered sections, wax-seal style totals box"},
-  {palette:"light gray #eef1f5 background, white cards, indigo #4f46e5 accent",font:"system sans, modern fintech dashboard",layout:"KPI stat tiles on top, compact table below, pill badges"},
-  {palette:"ivory #faf7f0 background, walnut #3f2d1e text, sage #6b7f5e accent",font:"Palatino serif, understated estate document",layout:"left margin annotations, wide ruled lines, centered seal"},
-  {palette:"charcoal #222 background, #fafafa text, amber #d97706 accent",font:"system sans, dark mode financial report",layout:"full-bleed dark sections, glowing total row, tabular numbers"}
+  {layout:"classic two-column ledger table with hairline rules, numbered sections, bold underlined section headers"},
+  {layout:"KPI summary tiles on top in black bordered boxes, then compact ruled table below, right-aligned amounts"},
+  {layout:"boxed form fields with dashed borders, monospaced tabular totals, centered title block"},
+  {layout:"newspaper two-column columns, ruled tables, small caps centered headers, thin vertical divider"},
+  {layout:"bordered ornamental sections, bold totals box, left margin annotations, signature block at bottom right"},
+  {layout:"clean single-column list with dotted leader lines between label and amount, no table borders"},
+  {layout:"sectioned blocks with bold section titles and horizontal rules, indentation for sub-items, large bold totals"},
+  {layout:"landscape-style grid of labeled cells with thin black borders, header row shaded light gray, compact spacing"}
 ];
 function aiPickDesign(){return AI_DESIGNS[Math.floor(Math.random()*AI_DESIGNS.length)];}
 function aiLocalFill(){
@@ -4838,8 +4838,8 @@ async function aiFill(){
     const personaTxt=JSON.stringify(aiPersona);
     const custTxt=JSON.stringify({no:c.no,name:c.name,member:c.member,ein:c.ein,mail:c.mail,status:(c.status||"")});
     const docName=aiDocType==="pfs"?"PERSONAL FINANCIAL STATEMENT":"CUSTOMS CONTINUOUS BOND APPLICATION";
-    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". The document must look professional and printable. CRITICAL: the layout, typography, color scheme and section arrangement must strictly follow the design brief below. Include realistic, internally-consistent numbers for the persona. Vary the structure each time. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
-    const prompt="Design brief (must follow exactly):\nPalette: "+design.palette+"\nTypography: "+design.font+"\nLayout: "+design.layout+"\n\nCustomer data: "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now.";
+    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". STRICT STYLE: black text on white background, Times New Roman serif font, no colors except black/white/light gray. The ONLY thing that varies is the layout structure per the brief. Include realistic, internally-consistent numbers for the persona. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
+    const prompt="Layout brief (must follow exactly, all black and white, Times New Roman):\n"+design.layout+"\n\nCustomer data: "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now.";
     const out=await callAI(sys,prompt);
     if(out){
       let body=out.trim().replace(/^```(?:html)?\s*/i,"").replace(/```\s*$/,"");
@@ -4860,24 +4860,25 @@ function aiLocalDocHTML(c,d){
   const inc=aiLocalFill._inc||125, scale=aiLocalFill._scale||1;
   const cash=Math.round(25*scale),stocks=Math.round(35*scale),home=Math.round(420*scale),ppe=Math.round(30*scale),ira=Math.round(65*scale);
   const credit=Math.round(7*scale),mort=Math.round(265*scale);
-  const tA=cash+stocks+home+ppe+ira,tL=credit+mort,tI=inc*1000;
-  const colors=d.palette.split(",");
-  const bg=colors[0].split(" ")[1]||"#fff",fg=colors[1].split(" ")[1]||"#111",acc=colors[2].split(" ")[1]||"#333";
-  return `<div style="background:${bg};color:${fg};padding:36px;font-family:${d.font};max-width:760px;margin:0 auto">
-    <div style="border-bottom:3px solid ${acc};padding-bottom:14px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end">
-      <div><div style="font-size:11px;letter-spacing:3px;color:${acc};font-weight:700">UCRM UNDERWRITING</div>
-      <h2 style="margin:6px 0 0;font-size:24px">${aiDocType==='pfs'?'Personal Financial Statement':'Customs Bond Application'}</h2></div>
-      <div style="text-align:right;font-size:12px">${esc(c.name||'')}<br>${esc(c.member||'')}<br>${esc(c.ein?'EIN '+c.ein:'')}</div>
+  const tA=cash+stocks+home+ppe+ira,tL=credit+mort;
+  const F="'Times New Roman',Times,serif";
+  const items=[["Cash",cash],["Stocks & bonds",stocks],["Home",home],["Personal property",ppe],["IRA",ira]];
+  const tableRows=items.map(r=>`<tr><td style="padding:5px 2px;border-bottom:1px solid #000">${r[0]}</td><td style="padding:5px 2px;border-bottom:1px solid #000;text-align:right">$${r[1].toLocaleString()}</td></tr>`).join("");
+  return `<div style="background:#fff;color:#000;padding:40px;font-family:${F};max-width:760px;margin:0 auto;font-size:14px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:10px;letter-spacing:3px">U C R M</div>
+      <h2 style="margin:8px 0;font-size:20px;text-decoration:underline">${aiDocType==='pfs'?'Personal Financial Statement':'Customs Bond Application'}</h2>
+      <div style="font-size:12px;margin-top:4px">${esc(c.name||'')} · ${esc(c.member||'')}${esc(c.ein?' · EIN '+c.ein:'')}</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px">
-      <div style="background:${acc}11;border-left:3px solid ${acc};padding:12px"><div style="font-size:11px;color:${acc};font-weight:700">TOTAL ASSETS</div><div style="font-size:26px;font-weight:800">$${tA.toLocaleString()}</div></div>
-      <div style="background:${acc}11;border-left:3px solid ${acc};padding:12px"><div style="font-size:11px;color:${acc};font-weight:700">NET WORTH</div><div style="font-size:26px;font-weight:800">$${(tA-tL).toLocaleString()}</div></div>
+    <div style="display:flex;justify-content:space-between;border-top:2px solid #000;border-bottom:1px solid #000;padding:10px 0;margin-bottom:16px">
+      <div><div style="font-size:10px">TOTAL ASSETS</div><div style="font-size:22px;font-weight:bold">$${tA.toLocaleString()}</div></div>
+      <div style="text-align:right"><div style="font-size:10px">NET WORTH</div><div style="font-size:22px;font-weight:bold">$${(tA-tL).toLocaleString()}</div></div>
     </div>
     <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <tr style="background:${acc};color:#fff"><th style="padding:7px;text-align:left">Asset</th><th style="padding:7px;text-align:right">Amount</th></tr>
-      ${[["Cash",cash],["Stocks & bonds",stocks],["Home",home],["Personal property",ppe],["IRA",ira]].map(r=>`<tr style="border-bottom:1px solid ${fg}22"><td style="padding:6px">${r[0]}</td><td style="padding:6px;text-align:right">$${r[1].toLocaleString()}</td></tr>`).join("")}
+      <tr><th style="text-align:left;padding:6px 2px;border-bottom:2px solid #000">Asset</th><th style="text-align:right;padding:6px 2px;border-bottom:2px solid #000">Amount</th></tr>
+      ${tableRows}
     </table>
-    <p style="margin-top:18px;font-size:11px;opacity:.7">Generated ${new Date().toLocaleDateString()}. Figures are estimates for underwriting preview.</p>
+    <p style="margin-top:24px;font-size:10px">Generated ${new Date().toLocaleDateString()}. Figures are estimates for underwriting review.</p>
   </div>`;
 }
 function aiReset(){aiDraft=aiBlankDraft();aiGenHtml="";aiDesignSeed="";aiSave();render();}
@@ -4943,10 +4944,6 @@ R.ai=()=>{
         <button class="${aiSigType==='draw'?'on':''}" onclick="aiSetSig('draw')">${T.sigDraw}</button>
         <button class="${aiSigType==='upload'?'on':''}" onclick="aiSetSig('upload')">${T.sigUp}</button>
       </div>
-    </div>
-    <div class="ai-llm" id="aiLLMPill">
-      <span class="ai-llm-dot ${aiLLMState==='ok'?'ok':aiLLMState==='fallback'?'fb':aiLLMState==='loading'?'load':''}"></span>
-      <span>${aiLLMState==='ok'?(CURRENT_LANG==='en'?'LLM connected':'LLM 已連接'):aiLLMState==='fallback'?(CURRENT_LANG==='en'?'LLM offline, local fill':'LLM 離線 本地填表'):aiLLMState==='loading'?(CURRENT_LANG==='en'?'Contacting LLM…':'LLM 連線中…'):(CURRENT_LANG==='en'?'LLM ready':'LLM 待命中')}</span>
     </div>
     <div class="ai-side-actions">
       <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()">${AI_IC.spark}${T.aiFill}</button>
