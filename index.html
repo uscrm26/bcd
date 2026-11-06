@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106p1825";
+  var V="v20261106q1830";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -298,8 +298,10 @@ tr:hover td{background:#1a2130}
 .login-lang button{background:var(--bg2);border:1px solid var(--line);color:var(--mut);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
 .login-lang button.on{color:var(--acc);border-color:var(--acc)}
 .doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
-.doc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;cursor:pointer;transition:transform .15s,border-color .15s}
-.doc-card:hover{transform:translateY(-3px);border-color:var(--acc)}
+.doc-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 12px 12px;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;opacity:0;transform:translateY(12px)}
+.doc-card:hover{transform:translateY(-4px);border-color:var(--acc);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
+.card-animate{animation:cardIn .35s ease forwards}
 .doc-ava{width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--acc);font-weight:800;font-size:30px;margin-bottom:10px}
 .doc-ava img{width:100%;height:100%;object-fit:cover}
 .doc-nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -748,7 +750,15 @@ function closeModal(){document.getElementById("modal").classList.remove("show");
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){
-  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();injectMicButtons();}
+  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();injectMicButtons();staggerCards();
+}
+function staggerCards(){
+  const cards=document.querySelectorAll("#view .doc-card, #view .panel, #view .ccard, #view .lcard");
+  cards.forEach((c,i)=>{
+    c.classList.add("card-animate");
+    c.style.animationDelay=(i*0.05)+"s";
+  });
+}
 
 // === 語音輸入 ===
 let _sr=null;
@@ -1394,7 +1404,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106P";
+const APP_VER="20261106Q";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
