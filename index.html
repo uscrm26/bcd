@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106f1730";
+  var V="v20261106g1740";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -26,9 +26,6 @@
 })();
 </script>
 <title>UCRM｜美國進口客戶關係管理系統</title>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <link rel="icon" href="favicon-32.png">
 <style>
 :root{
@@ -167,7 +164,6 @@ tr:hover td{background:#1a2130}
 .t-blue{background:rgba(74,158,255,.14);color:var(--acc2);border:1px solid #2b4a70}
 .t-green{background:rgba(63,202,138,.14);color:var(--ok);border:1px solid #23583f}
 .t-amber{background:rgba(255,180,84,.14);color:var(--warn);border:1px solid #5a4527}
-.t-gold{background:rgba(255,200,60,.18);color:#ffd166;border:1px solid #6b5420}
 .t-red{background:rgba(255,93,108,.14);color:var(--err);border:1px solid #5a2b34}
 .t-gray{background:rgba(132,148,167,.14);color:var(--mut);border:1px solid #333c4c}
 /* client card */
@@ -362,6 +358,7 @@ tr:hover td{background:#1a2130}
     <div class="grp">檔案</div>
     <a data-v="doc"><span class="ic">▤</span>文件中心</a>
     <a data-v="archive"><span class="ic">▦</span>歸檔包</a>
+    <a data-v="learn"><span class="ic">📖</span>學習檔案</a>
     <div class="grp">系統</div>
     <a data-v="worklog"><span class="ic">✎</span>工作通知</a>
     <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
@@ -369,7 +366,6 @@ tr:hover td{background:#1a2130}
     <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
     <a data-v="polling"><span class="ic">◷</span>巡查排程</a>
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
-    <div style="margin:12px 8px 0"><button id="navRefreshBtn" class="btn small" style="width:100%;background:var(--acc);color:#fff;border-color:var(--acc);font-weight:600" onclick="refreshData()">系統刷新</button></div>
   </nav>
   <div class="foot">
     <div class="user-row" style="cursor:pointer" onclick="openSwitchUser()">
@@ -494,7 +490,7 @@ const USERS=[
 {id:"ryanfan",nm:"Ryan F",pwd:"5467",role:"operator",parent:"kevinyama",active:true,lastLogin:"",avatar:"R",aiMail:true,aiBatch:true,aiFollow:true,perms:{dashboard:true,customer:true,broker:true,ai:true,mailbox:false,queue:true,doc:true,archive:true,github:false,system:false}}
 ];
 const ROLE_LB={super_admin:"超級管理員",supervisor:"主管",operator:"業務員"};
-const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",worklog:"工作通知",worklog_admin:"系統工作記錄",commission:"佣金記錄",github:"GitHub 備份",system:"系統管理",polling:"巡查排程",webmail:"信箱登入"};
+const PERM_LABELS={dashboard:"總覽看板",customer:"客戶管理",broker:"經紀資源池",ai:"AI 表單助手",mailbox:"信箱配置",queue:"電子郵件",doc:"文件中心",archive:"歸檔包",learn:"學習檔案",worklog:"工作通知",worklog_admin:"系統工作記錄",commission:"佣金記錄",github:"GitHub 備份",system:"系統管理",polling:"巡查排程",webmail:"信箱登入"};
 let CURRENT_USER=USERS[0];
 const ownerMap={"93":"kevinyama","89":"kevinyama","90":"kevinyama","98":"kevinyama","2":"kevinyama","3":"kevinyama","5":"kevinyama","7":"kevinyama","8":"kevinyama","61":"kevinyama","64":"kevinyama","66":"kevinyama","69":"kevinyama","71":"kevinyama","73":"kevinyama","75":"kevinyama"};
 const clientAudit={};
@@ -567,57 +563,20 @@ function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").le
 // ===== GitHub JSON 數據層：同倉讀取，不依賴 Supabase、不需要數據庫密碼 =====
 function fmtMailDate(s){try{const d=new Date(s);if(isNaN(d))return s||"";const bj=new Date(d.getTime()+8*3600e3);const f=x=>String(x).padStart(2,"0");return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;}catch(e){return s||"";}}
 function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase();if(/quote|premium|保費|underwriter|bond lead|報價|报价/i.test(s))return"quote";if(/reject|declin|婉拒|unable to|cannot|won.t|don.t/i.test(s))return"reject";if(/invoice|補件|document|material|財務|financial|form|table|要求|needed|missing/i.test(s))return"supply";return"info";}
-async function refreshData(){
-  const btn=document.getElementById("navRefreshBtn");
-  if(btn){btn.disabled=true;btn.textContent="刷新中...";}
-  const oldCount=DATA.customers.length;
-  const oldUnread=(DATA.emails||[]).filter(e=>e.unread).length;
-  toast('正在從線上更新數據...');
-  try{
-    await loadRepoData();
-    await loadPersisted();
-    await loadPinned();
-    render();
-    const newCount=DATA.customers.length;
-    const newUnread=(DATA.emails||[]).filter(e=>e.unread).length;
-    let msg='已更新 '+newCount+' 個客戶';
-    if(newUnread>oldUnread)msg+='，新增 '+ (newUnread-oldUnread) +' 封未讀郵件';
-    toast(msg,'ok');
-  }catch(e){
-    toast('更新失敗：'+e.message,'err');
-  }
-  if(btn){btn.disabled=false;btn.textContent=navRefreshLabel();}
-}
-function navRefreshLabel(){
-  if(CURRENT_LANG==="en")return "Refresh";
-  if(CURRENT_LANG==="cn")return "系统刷新";
-  return "系統刷新";
-}
 async function loadRepoData(){
-  const cb="?cb="+Date.now();
-  function xhrGet(url){
-    return new Promise(res=>{
-      const x=new XMLHttpRequest();
-      x.open("GET",url,true);x.timeout=60000;
-      x.onload=()=>{try{res(JSON.parse(x.responseText));}catch(e){res(null);}};
-      x.onerror=()=>res(null);x.ontimeout=()=>res(null);x.send();
-    });
-  }
   try{
-    const db=await xhrGet("dbboard/data.json"+cb);
-    function fixOnce(s){try{return decodeURIComponent(escape(s));}catch(e){return s;}}
-    function fixDeep(o){
-      if(typeof o==="string"){var p="",n=o;for(var i=0;i<5;i++){var r=fixOnce(n);if(r===n)break;n=r;}return n;}
-      if(Array.isArray(o)){for(var i=0;i<o.length;i++)o[i]=fixDeep(o[i]);return o;}
-      if(o&&typeof o==="object"){for(var k in o)o[k]=fixDeep(o[k]);}
-      return o;
-    }
+    const cb="?cb="+Date.now();
+    const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"+cb,{cache:"no-store"}),fetch("mailboxes.json"+cb,{cache:"no-store"}),fetch("dbboard/data.json"+cb,{cache:"no-store"}),fetch("files.json"+cb,{cache:"no-store"}),fetch("brokers.json"+cb,{cache:"no-store"}),fetch("sent_log.json"+cb,{cache:"no-store"})]);
+    const em=emRes.ok?await emRes.json():[];
+    const mb=mbRes.ok?await mbRes.json():null;
+    const db=dbRes.ok?await dbRes.json():null;
+    const fi=fiRes.ok?await fiRes.json():null;
+    const bk=bkRes.ok?await bkRes.json():null;
+    DATA.sent=slRes.ok?await slRes.json():[];
     if(db){
-      try{fixDeep(db);}catch(e){}
-      if(Array.isArray(db.customers)&&db.customers.length)DATA.customers=db.customers;
+      if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;}
       if(db.timeline)DATA.timeline=db.timeline;
       if(db.statuses)DATA.statuses=db.statuses;
-    // 新郵件到來時自動推斷狀態
       if(db.finance)DATA.finance=db.finance;
       if(db.policy)DATA.policy=db.policy;
       if(db.companyDocs)DATA.companyDocs=db.companyDocs;
@@ -625,44 +584,58 @@ async function loadRepoData(){
       if(db.archive)DATA.archive=db.archive;
       if(db.notes)DATA.notes=db.notes;
     }
-    try{await loadPinned();}catch(e){}
-    render();
-    fillLoginStats();
-    Promise.all([
-      xhrGet("mailboxes.json"+cb).catch(()=>null),
-      xhrGet("sent_log.json"+cb).catch(()=>null),
-      xhrGet("files.json"+cb).catch(()=>null),
-      xhrGet("emails.json"+cb).catch(()=>null),
-      xhrGet("dbboard/brokers.json"+cb).catch(()=>null),
-      xhrGet("attachments.json"+cb).catch(()=>null)
-    ]).then(([mb,sl,fi,em,bk,att])=>{
-      if(Array.isArray(att))DATA.attachments=att;
-      else if(att&&Array.isArray(att.attachments))DATA.attachments=att.attachments;
-      else DATA.attachments=[];
-      if(mb){
-      var _mb=Array.isArray(mb)?mb:(mb.mailboxes||[]);
-      DATA.mailboxes=_mb.map(b=>({nm:b.client||b.nm||"",em:b.email||b.em||"",st:b.st||"ok",unread:b.unread||0,owner:b.owner||""}));
+    if(Array.isArray(bk)&&bk.length){
+      BROKERS.length=0;
+      bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
     }
-      if(Array.isArray(sl))DATA.sent=sl;
-      if(fi&&typeof fi==="object")DATA.files=fi;
-      if(Array.isArray(em)&&em.length){
-        const done=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
-        DATA.emails=em.map(x=>{
-          const t=fmtMailDate(x.date);
-          return{c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t,unread:!x.read&&!done[t],done:!!x.done||!!done[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
-        });
-      }
-      if(Array.isArray(bk)&&bk.length){
-        BROKERS.length=0;
-        bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",sn:x.sn||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||"",notes:x.notes||null,score:x.score||70,grade:x.grade||"B",special:x.special||false,addr:x.addr||""});});
-      }
-      render();
-      fillLoginStats();
-    });
-  }catch(e){
-    var v=document.getElementById("view");
-    if(v)v.innerHTML='<div style="color:#ff6b6b;padding:30px">數據加載失敗: '+e.message+'</div>';
-  }
+    DATA.files=DATA.files||{};
+    if(fi&&typeof fi==="object")DATA.files=fi;
+    if(Array.isArray(em)&&em.length){
+      const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
+      DATA.emails=em.map(x=>{
+        const t=fmtMailDate(x.date);
+        return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
+      });
+      // 建立客户邮箱域名库，邮件按client标签和邮箱域名双重关联客户编号
+      window._mailCustMap={};
+      (DATA.customers||[]).forEach(c=>{
+        if(c.mail&&c.mail.indexOf("@")>0){
+          const dom=c.mail.split("@")[1].toLowerCase();
+          window._mailCustMap[dom]=c.no;
+        }
+        if(c.name){
+          const short=c.name.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").toLowerCase();
+          if(short)window._mailCustMap["name:"+short]=c.no;
+        }
+      });
+    }
+    if(mb&&Array.isArray(mb.mailboxes)){
+      const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
+      DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
+    }
+    if(db){
+      // 保存云端恢复的 AI 状态，避免被 data.json 覆盖
+      const savedAI={};
+      (DATA.customers||[]).forEach(c=>{savedAI[c.no]={aiLastAt:c.aiLastAt,aiTodos:c.aiTodos,aiSuggestions:c.aiSuggestions};});
+      ["customers","statuses","timeline","finance","policy","companyDocs","todos","archive"].forEach(k=>{ if(db[k]!==undefined) DATA[k]=db[k]; });
+      // 自動修復多重編碼亂碼（可能三重編碼，需迭代修復）
+      const fixOnce=function(s){if(typeof s!=="string"||!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++){const ch=s.charCodeAt(i);if(ch>255)return s;bytes.push(ch);}return new TextDecoder("utf-8",{fatal:false}).decode(new Uint8Array(bytes));}catch(e){return s;}};
+      const fixMoj=function(s){if(typeof s!=="string"||!s)return s;let prev="",cur=s,guard=0;while(cur!==prev&&guard<5){prev=cur;cur=fixOnce(prev);guard++;}return cur;};
+      const fixDeep=function(o){if(Array.isArray(o))return o.map(fixDeep);if(o&&typeof o==="object"){for(const k in o)o[k]=fixDeep(o[k]);return o;}return fixMoj(o);};
+      fixDeep(DATA.statuses);fixDeep(DATA.customers);fixDeep(DATA.timeline);fixDeep(DATA.finance);
+      // 恢复 AI 状态
+      (DATA.customers||[]).forEach(c=>{if(savedAI[c.no]){Object.assign(c,savedAI[c.no]);}});
+      // 雲端載入後補齊缺漏的 4 位 sysId，已有編號原樣保留
+      normalizeSysId();
+    }
+    if(db&&Array.isArray(db.daily)&&db.daily.length){
+      const _fixMojibake=s=>{if(!s)return s;try{const bytes=[];for(let i=0;i<s.length;i++)bytes.push(s.charCodeAt(i)&0xff);const d=new TextDecoder("utf-8",{fatal:false});return d.decode(new Uint8Array(bytes));}catch(e){return s;}};
+      const remoteLogs=db.daily.map(x=>({t:x.date||"",c:_fixMojibake(x.work||""),o:_fixMojibake(x.output||"")}));
+      DATA.logs=remoteLogs.concat(DATA.logs.filter(l=>l._local));
+    }
+    await loadPinned();
+    render();fillLoginStats();
+  }catch(e){console.error("loadRepoData error:",e,e.stack);document.getElementById("view").innerHTML='<div style="color:#ff6b6b;padding:30px;font-size:14px">渲染錯誤: '+e.message+'<br><pre style="font-size:11px;opacity:.7">'+(e.stack||'')+'</pre></div>';}
 }
 function fillLoginStats(){const a=document.getElementById("lv_active");const d=document.getElementById("lv_done");const m=document.getElementById("lv_mail");if(!a)return;const st=DATA.statuses||{};const on=[...new Set(Object.values(st))].filter(s=>s&&s!=="done"&&s!=="reject"&&s!=="hold").length;const dn=Object.values(st).filter(s=>s==="done").length;a.textContent=on||"0";d.textContent=dn||"0";m.textContent=Array.isArray(DATA.emails)?DATA.emails.length:"0";}
 // ===== Supabase 直連動態保存（publishable key 公開可曝，寫入走現有表）=====
@@ -733,7 +706,6 @@ async function loadSB(){
   render();
 }
 const st=id=>DATA.statuses.find(x=>x.id===id)||DATA.statuses[0];
-function subCount(no){const c=DATA.customers.find(x=>x.no===no);if(!c)return 0;if(c.submitted_count!=null)return c.submitted_count;return (c.brokers_submitted||[]).length;}
 function dlStatus(c){
   if(!c.dl_exp)return {lb:c.dl||"正常",warn:false,expired:false};
   const exp=new Date(c.dl_exp+"T00:00:00");
@@ -757,20 +729,60 @@ function aiLog(msg,kind){const p=document.getElementById("aiLogPanel");if(!p)ret
 function aiLogDone(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("done");const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"處理完成";}
 function toggleAiLog(){const b=document.getElementById("aiLogBody");if(!b)return;const hid=b.style.display==="none";b.style.display=hid?"block":"none";const m=document.getElementById("aiLogMin");if(m)m.textContent=hid?"✕":"+";}
 function closeAiLog(){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.remove("open");const b=document.getElementById("aiLogBody");if(b)b.style.display="block";const m=document.getElementById("aiLogMin");if(m)m.textContent="✕";}
-function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();}
+function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();setTimeout(injectMicButtons,50);}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
-
-
 function render(){
-  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
+  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();injectMicButtons();}
+
+// === 語音輸入 ===
+let _sr=null;
+function injectMicButtons(){
+  document.querySelectorAll('textarea, input[type="text"], input[type="search"], input:not([type])').forEach(el=>{
+    if(el.dataset.micBound)return;
+    el.dataset.micBound="1";
+    const wrap=document.createElement("div");
+    wrap.style.cssText="position:relative;display:inline-block;width:100%";
+    el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
+    el.style.width="100%";el.style.paddingRight="36px";
+    const btn=document.createElement("button");
+    btn.type="button";btn.innerHTML="🎤";
+    btn.style.cssText="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;opacity:.5";
+    btn.title=CURRENT_LANG==="en"?"Voice input":(CURRENT_LANG==="cn"?"语音输入":"語音輸入");
+    btn.onclick=(e)=>{e.preventDefault();toggleMic(el,btn);};
+    wrap.appendChild(btn);
+  });
+}
+function toggleMic(el,btn){
+  if(_sr&&_sr._active){_sr.stop();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("瀏覽器不支持語音識別，請用 Chrome");return;}
+  const sr=new SR();
+  sr.continuous=true;sr.interimResults=true;
+  sr.lang=CURRENT_LANG==="cn"?"zh-CN":(CURRENT_LANG==="en"?"en-US":"zh-HK");
+  const orig=el.value;
+  sr.onresult=(e)=>{
+    let fin="",inter="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)fin+=e.results[i][0].transcript;
+      else inter+=e.results[i][0].transcript;
+    }
+    el.value=orig+fin+inter;
+    el.dispatchEvent(new Event("input",{bubbles:true}));
+  };
+  sr.onend=()=>{btn.style.opacity=".5";btn.style.background="";_sr=null;};
+  sr.onerror=(e)=>{btn.style.opacity=".5";btn.style.background="";_sr=null;};
+  sr._active=true;_sr=sr;
+  btn.style.opacity="1";btn.style.background="#ef4444";btn.style.borderRadius="50%";
+  sr.start();
+}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
 "開發信漏斗":"Outreach Funnel","處理中狀態分佈":"Active Status Breakdown","郵件同步狀態":"Mail Sync Status","客戶檢視":"Customer View","卡片檢視":"Card View","表格檢視":"Table View","每日工作記錄":"Daily Log",
 "已收報價":"Quoted","待補件":"Pending Docs","已出單":"Closed","擱置":"On Hold","待回覆":"Awaiting Reply","需動作":"Action Needed","完成":"Done","暫停":"Paused",
-"新線索":"New Lead","等待客戶補充資料":"Waiting for Client Docs","待填寫申請":"Form to Fill","等待報關行回覆":"Awaiting Broker Reply","等待報關行審核":"Awaiting Broker Review","待補充申請文件":"Additional Docs Needed","收到報價":"Quote Received","財務已付款":"Paid","已獲擔保文件":"Bond Issued","擱置暫停":"Suspended","申請被拒":"Rejected","已綁定電郵":"Email Bound","未綁定電郵":"No Email Bound","已向":"Submitted to ","家報關行遞交申請":" brokers",
+"新線索":"New Lead","資料收集中":"Collecting Info","待填申請表":"Form Pending","待提交Broker":"Broker Submission Pending","Broker要求補件":"Docs Requested by Broker","報價已收到":"Quote Received","等待客戶確認":"Awaiting Client Confirmation","Bond已出單":"Bond Issued","申請被拒":"Rejected","擱置暫停":"Suspended",
 "收集中":"Collecting","待填表":"Form Pending","待提交":"Pending Submission",
 "處理中":"In Progress","已讀":"Read","已連線":"Connected","失敗":"Failed","成功":"Success",
 "待辦":"To-do","跟進":"Follow-up","匯出":"Export","內部參考":"Internal Ref","法人":"Owner","駕照":"License","信箱":"Email","過期":"Expired",
@@ -1224,14 +1236,13 @@ const NOTIFS=[
 {who:"系統",t:"10/30 04:00",txt:"郵件同步完成：15 個信箱，新信 2 封",unread:false,goto:"queue"}
 ];
 function renderNotifs(){const me=CURRENT_USER.nm;const mine=NOTIFS.filter(n=>n.who===me||n.who==="系統");const subs=NOTIFS.filter(n=>n.who!==me&&n.who!=="系統");
-const item=n=>`<div class="ditem ${n.unread?"unread":""}" onclick="openNotif('${n.goto}')"><span class="who">${esc(n.who)}</span><div class="tx"><div class="tt">${esc(n.txt)}</div><div class="tm">${n.t}</div></div><span class="dismiss" onclick="event.stopPropagation();dismissNotif(this)" style="margin-left:8px;cursor:pointer;color:var(--mut);font-size:16px;flex-shrink:0">✕</span></div>`;
+const item=n=>`<div class="ditem ${n.unread?"unread":""}" onclick="openNotif('${n.goto}')"><span class="who">${esc(n.who)}</span><div class="tx"><div class="tt">${esc(n.txt)}</div><div class="tm">${n.t}</div></div></div>`;
 const body=document.getElementById("notifBody");
 body.innerHTML=(mine.length?`<div class="dgroup">本人相關</div>`+mine.map(item).join(""):"")+(subs.length?`<div class="dgroup">下屬業務</div>`+subs.map(item).join(""):"");}
 function openBell(){renderNotifs();document.getElementById("notifDrawer").classList.add("show");}
 function closeDrawer(){document.getElementById("notifDrawer").classList.remove("show");}
 function openNotif(g){closeDrawer();goto(g);}
 function markAllRead(){NOTIFS.forEach(n=>n.unread=false);renderNotifs();toast("已全部標為已讀");}
-function dismissNotif(el){const div=el.closest(".ditem");if(div){const idx=Array.from(div.parentNode.children).indexOf(div);const all=document.querySelectorAll("#notifBody .ditem");if(all[idx]){all[idx].remove();}}const i=NOTIFS.findIndex(n=>n.txt===div?.querySelector(".tt")?.textContent);if(i>=0)NOTIFS.splice(i,1);updateBadges();}
 function addNotif(who,txt,goto){NOTIFS.unshift({who,txt,t:nowBJ(),unread:true,goto:goto||"customer"});}
 document.getElementById("bellBtn").onclick=openBell;
 
@@ -1254,13 +1265,7 @@ function syncMailNotifs(){
     seen.add(key);
     const cust=mailOwnerClient(e);
     const co=brokerCo(e.from);
-    let summary;
-    if(e.auto_interp){
-      summary=e.auto_interp.split("\n")[0].replace(/^[【\[](.*?)[】\]]/,"$1").slice(0,120);
-    } else {
-      summary=(e.sub||"").slice(0,80);
-    }
-    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name:"未知客戶"}｜${co||"新來信"}：${summary}`,t:e.date||nowBJ(),unread:true,goto:"queue",_key:key});
+    NOTIFS.unshift({who:cust?ownerName(cust.no):"系統",txt:`${cust?cust.name+" ":""}Received email from ${co}: ${e.sub}`,t:e.date||nowBJ(),unread:true,goto:"queue",_key:key});
   });
 }
 // 更新導航紅點與鈴鐺未讀數
@@ -1286,28 +1291,19 @@ function dashScopeList(){
   return DATA.customers;
 }
 function hoursSince(tm){
-  if(!tm)return 999;
-  // ISO format: contains "T" and dashes like 2026-11-02T23:30:00+08:00
-  if(typeof tm==="string"&&/^\d{4}-\d{2}-\d{2}T/.test(tm)){
-    const iso=new Date(tm);
-    if(!isNaN(iso.getTime())){
-      return (Date.now()-iso.getTime())/3600e3;
-    }
-  }
   const m=String(tm).match(/(\d+)\/(\d+)\s+(\d+):(\d+)/);if(!m)return 999;
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
   const curMin=(bj.getUTCMonth()+1)*372+bj.getUTCDate()*1440+bj.getUTCHours()*60+bj.getUTCMinutes();
   const thatMin=(+m[1])*372+(+m[2])*1440+(+m[3])*60+(+m[4]);
   return (curMin-thatMin)/60;
 }
-window._dashScope=localStorage.getItem("bcd_dashScope")||"mine";
-function setDashScope(m){window._dashScope=m;try{localStorage.setItem("bcd_dashScope",m);}catch(e){}document.getElementById("ds_all").style.background=m==="all"?"var(--acc)":"var(--bg2)";document.getElementById("ds_all").style.color=m==="all"?"#fff":"var(--text)";document.getElementById("ds_mine").style.background=m==="mine"?"var(--acc)":"var(--bg2)";document.getElementById("ds_mine").style.color=m==="mine"?"#fff":"var(--text)";render();}
+function setDashScope(m){window._dashScope=m;document.getElementById("ds_all").style.background=m==="all"?"var(--acc)":"var(--bg2)";document.getElementById("ds_all").style.color=m==="all"?"#fff":"var(--text)";document.getElementById("ds_mine").style.background=m==="mine"?"var(--acc)":"var(--bg2)";document.getElementById("ds_mine").style.color=m==="mine"?"#fff":"var(--text)";render();}
 function followUpAlerts(){
   const rows=[];
   DATA.customers.forEach(c=>{
     if(["hold","reject","done"].includes(c.status))return;
     const tl=(DATA.timeline||{})[c.no]||[];
-    let last=tl[0]?(tl[0].tm||tl[0].t||""):"";
+    let last=tl[0]?tl[0].tm:"";
     if(!last){const cd=CUST_CREATED[c.no]||"10/31";last=cd+" 12:00";}
     const h=hoursSince(last);
     const isNewMail=(DATA.emails||[]).some(e=>e.unread&&e.c===c.name.split(" ")[0]);
@@ -1317,7 +1313,7 @@ function followUpAlerts(){
   const top=rows.slice(0,10);
   return `<div style="font-size:11px;color:var(--mut);margin:6px 0 10px">最久未跟進前 10 名</div>`+top.map((r,i)=>{
     const ph=phSrc(r.c.no);
-    const lastTxt=r.last?((r.last.e==="email"||r.last.type==="outbound"?"📧 ":"")+esc(r.last.tt||r.last.txt||"")):"尚無更新（依新增時間起算）";
+    const lastTxt=r.last?((r.last.e==="email"?"📧 ":"")+esc(r.last.tt||"")):"尚無更新（依新增時間起算）";
     return `<div onclick="openCust('${r.c.no}')" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:8px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:var(--bg2)">
       <span style="font-size:11px;color:var(--dim);width:16px">${i+1}</span>
       <img src="${ph}" onerror="this.style.display='none'" style="width:36px;height:36px;border-radius:8px;object-fit:cover;flex-shrink:0">
@@ -1327,13 +1323,6 @@ function followUpAlerts(){
 }
 function recentTodos(){
   const all=[];
-  // From top-level DATA.todos
-  (DATA.todos||[]).forEach(t=>{
-    if(t.done)return;
-    const c=(DATA.customers||[]).find(x=>x.name&&t.client&&(x.name===t.client||x.name.startsWith(t.client)));
-    all.push({cust:t.client||"",no:c?c.no:"",txt:t.tag||"",ts:t.ts||Date.now()});
-  });
-  // Also from customer aiTodos if present
   (DATA.customers||[]).forEach(c=>{
     (c.aiTodos||[]).forEach(t=>{
       if(!t.done&&!t.superseded) all.push({cust:c.name,no:c.no,txt:t.t,ts:t.ts||0});
@@ -1356,32 +1345,23 @@ function recentTodos(){
   </tbody></table></div>`;
 }
 function statusPie(){
- const rows=[
-  ["#3b82f6","等待報關行審核",countBy("broker")],
-  ["#60a5fa","等待報關行回覆",countBy("reply")],
-  ["#f59e0b","待填寫申請",countBy("form")],
-  ["#fbbf24","等待客戶補充資料",countBy("pending_client")],
-  ["#9ca3af","新線索",countBy("new")],
-  ["#f97316","待補充文件",countBy("supply")],
-  ["#eab308","收到報價",countBy("quote")],
-  ["#84cc16","財務已付款",countBy("paid")],
-  ["#22c55e","已獲擔保文件",countBy("done")],
-  ["#6b7280","擱置暫停",countBy("hold")],
-  ["#ef4444","申請被拒",countBy("reject")],
- ];
- // 總數直接用實際可見客戶數，不靠加總
- let visibleCusts=DATA.customers.filter(c=>canViewCust(c.no));
- if(window._dashScope==="mine")visibleCusts=visibleCusts.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
- const total=visibleCusts.length||1;
- const R=54,C=2*Math.PI*R;let off=0;
- const segs=rows.filter(r=>r[2]>0).map(r=>{
-   const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
- return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
- <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
- <div style="flex:1;min-width:160px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">${rows.map(r=>`<div style="display:flex;align-items:center;font-size:12px;padding:2px 0"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px;flex-shrink:0"></span><span style="flex:1;color:var(--mut)">${r[1]}</span><b style="color:var(--txt)">${r[2]}</b></div>`).join("")}</div>
- </div>${followUpAlerts()}`;}
-function funnel(){const seq=["new","pending_client","form","reply","broker","supply","quote","paid","done"];
-const stmap={"new":"新線索","pending_client":"等待補料","form":"待填表","reply":"等回覆","broker":"等審核","supply":"待補件","quote":"已報價","paid":"已付款","done":"已出單"};
+  const all=(DATA.statuses||[]);
+  const pal=["#3b82f6","#f59e0b","#9ca3af","#eab308","#22c55e","#ef4444","#8b5cf6","#06b6d4","#ec4899","#6366f1","#84cc16","#f97316","#14b8a6","#a855f7","#64748b"];
+  const rows=all.map((s,i)=>{
+    let list=DATA.customers.filter(c=>c.status===s.id);
+    if(window._dashScope==="mine")list=list.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
+    return [s.color||pal[i%pal.length],s.label||s.id,list.length];
+  }).filter(r=>r[2]>0||r[1]);
+  const total=rows.reduce((a,r)=>a+r[2],0)||1;
+  const R=54,C=2*Math.PI*R;let off=0;
+  const segs=rows.filter(r=>r[2]>0).map(r=>{
+    const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
+  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+  <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
+  <div style="flex:1;min-width:160px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">${rows.map(r=>`<div style="display:flex;align-items:center;font-size:12px;padding:2px 0"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px;flex-shrink:0"></span><span style="flex:1;color:var(--mut)">${r[1]}</span><b style="color:var(--txt)">${r[2]}</b></div>`).join("")}</div>
+  </div>${followUpAlerts()}`;}
+function funnel(){const seq=["new","collect","form","submit","quote","done"];
+const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
 function cardGrid(){return `<div class="row r3">`+DATA.customers.filter(c=>canViewCust(c.no)).map(c=>{const s=st(c.status);return `<div class="ccard" onclick="openCust('${c.no}')">
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
@@ -1397,7 +1377,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261101I";
+const APP_VER="20261106G";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -1485,8 +1465,7 @@ R.dashboard=()=>{
   const unread=(DATA.emails||[]).filter(e=>e.unread);
   const custs=new Set(unread.map(e=>e.c).filter(Boolean)).size;
   // 本月已獲擔保文件 = status=done 的客戶數 / 全部可見客戶數
-  let myCusts=DATA.customers.filter(c=>canViewCust(c.no));
-  if(window._dashScope==="mine"){myCusts=myCusts.filter(c=>ownerMap[c.no]===CURRENT_USER.id);}
+  const myCusts=DATA.customers.filter(c=>canViewCust(c.no));
   const doneCount=myCusts.filter(c=>c.status==="done"||st(c.status).lb==="已出單").length;
   const totalCount=myCusts.length;
   const doneLabel=CURRENT_LANG==="en"?"Bonds Issued":CURRENT_LANG==="cn"?"已出单客户":"已出單客戶";
@@ -1505,14 +1484,11 @@ R.dashboard=()=>{
   <div style="display:flex;flex-direction:column;gap:10px">
   <div class="panel"><div class="sec-title">最近待辦事項</div>${recentTodos()}</div>
   <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:280px;overflow-y:auto">${DATA.mailboxes.map(b=>{const mc=DATA.customers.find(c=>c.name&&b.nm&&(c.name===b.nm||c.name.startsWith(b.nm)||b.nm.startsWith(c.name)));return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${mc?`#${mc.no}`:"Kevin W"}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
-  <div style="margin-top:10px;display:flex;gap:8px">
-<button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button>
-<button class="btn small" onclick="refreshData()">更新數據</button>
-</div></div>
+  <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div>
   </div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
-const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">${CURRENT_LANG==="en"?"View":"查看"}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">${CURRENT_LANG==="en"?"To-do":"待辦"}</button><button onclick="event.stopPropagation();openNote('${c.no}')">${CURRENT_LANG==="en"?"Note":"跟進"}</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})"><div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>${CURRENT_LANG==="en"?"Owner":"法人"}</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do "+c.todo:"待辦 "+c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">${CURRENT_LANG==="en"?"Due $":"待收 ¥"}${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${c.mail?(CURRENT_LANG==="en"?"Email bound":"已綁定電郵"):(CURRENT_LANG==="en"?"No email":"未綁定電郵")}</span><span class="badge">${CURRENT_LANG==="en"?"Brokers submitted: "+subCount(c.no):"已向 "+subCount(c.no)+" 家報關行遞交申請"}</span></div></div></div>`;}).join("")):``;
+const html=cardMode==="card"?(list.map(c=>{const stt=st(c.status);const fin=(DATA.finance||{})[c.no]||[];const dueAmt=fin.filter(f=>f.status!=="paid").reduce((a,f)=>a+f.amount,0);return `<div class="ccard" onclick="openCust('${c.no}')"><div class="quick"><button onclick="event.stopPropagation();openCust('${c.no}')">${CURRENT_LANG==="en"?"View":"查看"}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">${CURRENT_LANG==="en"?"To-do":"待辦"}</button><button onclick="event.stopPropagation();openNote('${c.no}')">${CURRENT_LANG==="en"?"Note":"跟進"}</button></div><img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})"><div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${stt.cl}">${stt.lb}</span></div><div class="meta"><b>${CURRENT_LANG==="en"?"Owner":"法人"}</b> ${esc(c.member)}</div><div class="foots">${c.todo?`<span class="tag t-red">${CURRENT_LANG==="en"?"To-do "+c.todo:"待辦 "+c.todo}</span>`:""}${dueAmt?`<span class="tag t-amber">${CURRENT_LANG==="en"?"Due $":"待收 ¥"}${dueAmt.toLocaleString()}</span>`:""}<span class="badge">${CURRENT_LANG==="en"?"Mailbox ":"信箱 "}${esc(c.mail)}</span></div></div></div>`;}).join("")):``;
 document.getElementById("custArea").innerHTML=cardMode==="card"?`<div class="row r3">${html||"<div class='empty'>無符合客戶</div>"}</div>`:(html||"<div class='empty'>無符合客戶</div>");}
 function addLog(){const i=document.getElementById("manualLog");if(!i.value)return;DATA.logs.unshift({t:nowBJ(),c:i.value,o:"已存"});i.value="";render();toast("工作記錄已新增");}
 R.worklog=()=>`<h1>工作通知</h1>
@@ -2122,9 +2098,9 @@ async function syncCustomerToRepo(no){
   try{
     const ghtok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
     const c=DATA.customers.find(x=>String(x.no)===String(no));if(!c)return;
-    // Read from raw URL (file >1MB, Contents API returns no content)
-    const dr=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/data.json?cb="+Date.now(),{cache:"no-store"});
-    const dj=await dr.json();
+    const metaR=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{headers:{Authorization:"token "+ghtok}});
+    const meta=await metaR.json();
+    const dj=JSON.parse(new TextDecoder("utf-8").decode(Uint8Array.from(atob((meta.content||"").replace(/\n/g,"")),b=>b)));
     const cs=dj.customers=dj.customers||[];
     const idx=cs.findIndex(x=>String(x.no)===String(no));
     if(idx<0)cs.push(c);
@@ -2140,24 +2116,9 @@ async function syncCustomerToRepo(no){
       if(c.sysId&&!t.sysId)t.sysId=c.sysId;
       if(c.memberPhoto)t.memberPhoto=c.memberPhoto;
       if(c.status)t.status=c.status;
-      if(c.timeline)t.timeline=c.timeline;
     }
-    // Also update timeline if present
-    if(DATA.timeline&&DATA.timeline[no])dj.timeline=dj.timeline||{};
-    if(DATA.timeline&&DATA.timeline[no])dj.timeline[no]=DATA.timeline[no];
     const b=JSON.stringify(dj);
-    // Write via Git Data API for large files
-    const blobRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/blobs",{method:"POST",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({content:btoa(unescape(encodeURIComponent(b))),encoding:"base64"})});
-    const blob=await blobRes.json();
-    const refRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/refs/heads/main",{headers:{Authorization:"token "+ghtok}});
-    const ref=await refRes.json();
-    const commitRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/commits/"+ref.object.sha,{headers:{Authorization:"token "+ghtok}});
-    const commit=await commitRes.json();
-    const treeRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/trees",{method:"POST",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({base_tree:commit.tree.sha,tree:[{path:"dbboard/data.json",mode:"100644",type:"blob",sha:blob.sha}]})});
-    const tree=await treeRes.json();
-    const newCommitRes=await fetch("https://api.github.com/repos/uscrm26/bcd/git/commits",{method:"POST",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"更新客戶 "+no,path:"dbboard/data.json",tree:tree.sha,parents:[ref.object.sha]})});
-    const newCommit=await newCommitRes.json();
-    await fetch("https://api.github.com/repos/uscrm26/bcd/git/refs/heads/main",{method:"PATCH",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({sha:newCommit.sha,force:false})});
+    await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+ghtok,"Content-Type":"application/json"},body:JSON.stringify({message:"更新客戶 "+no,content:btoa(unescape(encodeURIComponent(b))),sha:meta.sha})});
   }catch(e){console.warn("syncCustomerToRepo",e);}
 }
 
@@ -2171,7 +2132,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;height:calc(100vh - 160px);overflow:hidden"><div class="panel" style="margin-bottom:0;overflow:visible;max-height:100%;overflow-y:auto"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="margin-bottom:0;display:flex;flex-direction:column;overflow:hidden;height:100%"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="flex:1;overflow-y:auto;min-height:0">${custSub(curCust)}</div></div></div>`;}
+  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;height:calc(100vh - 220px);min-height:500px"><div class="panel" style="margin-bottom:0;overflow-y:auto"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="margin-bottom:0;display:flex;flex-direction:column;overflow:hidden"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="flex:1;overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
@@ -2216,21 +2177,12 @@ function openOwnerPicker(){
   document.body.appendChild(box);
 }
 let PINNED={};
-async function loadPinned(){
-  // Load from localStorage first
-  try{const local=localStorage.getItem("bcd_pinned");if(local)PINNED=JSON.parse(local);}catch(e){PINNED={};}
-  // Then try to load from GitHub
-  try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json?cb="+Date.now(),{cache:"no-store"});if(r.ok){const remote=await r.json();PINNED=remote;localStorage.setItem("bcd_pinned",JSON.stringify(remote));}}catch(e){}
-}
+async function loadPinned(){try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/pinned.json?cb="+Date.now(),{cache:"no-store"});if(r.ok)PINNED=await r.json();}catch(e){PINNED={};}}
 async function togglePin(no){
   const me=CURRENT_USER.id;
   if(!PINNED[me])PINNED[me]=[];
   const i=PINNED[me].indexOf(no);
-  if(i>=0){PINNED[me].splice(i,1);toast("已取消置頂");}
-  else{PINNED[me].unshift(no);toast("已置頂");}
-  // Save to localStorage immediately
-  localStorage.setItem("bcd_pinned",JSON.stringify(PINNED));
-  // Try to save to GitHub
+  if(i>=0)PINNED[me].splice(i,1);else PINNED[me].unshift(no);
   try{
     const tok=localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
     const meta=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/pinned.json",{headers:{Authorization:"token "+tok}});
@@ -2238,7 +2190,7 @@ async function togglePin(no){
     if(meta.ok){const m=await meta.json();sha=m.sha;}
     const body={message:"更新置頂",content:btoa(unescape(encodeURIComponent(JSON.stringify(PINNED)))),...(sha?{sha}:{})};
     await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/pinned.json",{method:"PUT",headers:{Authorization:"token "+tok,"Content-Type":"application/json"},body:JSON.stringify(body)});
-  }catch(e){console.warn("pin save to GitHub failed, saved locally",e);}
+  }catch(e){console.warn("pin save fail",e);}
   refreshCustList();
 }
 function isPinned(no){const me=CURRENT_USER.id;return PINNED[me]&&PINNED[me].includes(no);}
@@ -2257,12 +2209,12 @@ function custFiltered(){
     return true;
   }).sort((a,b)=>(pinnedSet.has(b.no)?1:0)-(pinnedSet.has(a.no)?1:0));
 }
-function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);const sl=s.lb||"";const isHold=sl.includes("擱置")||sl.includes("暫停")||c.status==="hold";const isReject=sl.includes("被拒")||c.status==="reject";const isDone=sl.includes("已出單")||sl.includes("Bond已出")||sl==="完成"||c.status==="done";const isReview=sl.includes("等待報關行審核")||sl.includes("等待Broker")||sl.includes("已提交");let borderStyle="";if(isReview){borderStyle="border:2px solid #3b82f6;box-shadow:0 0 12px rgba(59,130,246,0.25);";}if(isHold){borderStyle="border:2px solid #e74c3c;box-shadow:0 0 12px rgba(231,76,60,0.25);filter:grayscale(0.7);opacity:0.7;";}else if(isReject){borderStyle="border:2px solid #f39c12;box-shadow:0 0 12px rgba(243,156,18,0.25);";}else if(isDone){borderStyle="border:2px solid #27ae60;box-shadow:0 0 12px rgba(39,174,96,0.25);";}else if(pinned){borderStyle="border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);";}return `<div class="ccard" style="${borderStyle}" onclick="openCust('${c.no}')">
+function custCardHTML(c){const s=st(c.status);const pinned=isPinned(c.no);const sl=s.lb||"";const isHold=sl.includes("擱置")||sl.includes("暫停")||c.status==="hold";const isReject=sl.includes("被拒")||c.status==="reject";const isDone=sl.includes("已出單")||sl.includes("Bond已出")||sl==="完成"||c.status==="done";let borderStyle="";if(isHold){borderStyle="border:2px solid #e74c3c;box-shadow:0 0 12px rgba(231,76,60,0.25);filter:grayscale(0.7);opacity:0.7;";}else if(isReject){borderStyle="border:2px solid #f39c12;box-shadow:0 0 12px rgba(243,156,18,0.25);";}else if(isDone){borderStyle="border:2px solid #27ae60;box-shadow:0 0 12px rgba(39,174,96,0.25);";}else if(pinned){borderStyle="border:2px solid #d4a017;box-shadow:0 0 12px rgba(212,160,23,0.3);";}return `<div class="ccard" style="${borderStyle}" onclick="openCust('${c.no}')">
   <div class="quick"><button onclick="event.stopPropagation();togglePin('${c.no}')" style="${pinned?'background:#d4a017;color:#fff;border-color:#d4a017;':''}">${pinned?'★':'☆'}</button><button onclick="event.stopPropagation();openTodo('${c.no}')">待辦</button><button onclick="event.stopPropagation();openNote('${c.no}')">跟進</button></div>
   <img class="cphoto" src="${phSrc(c.no)}" onerror="this.style.visibility='hidden'" onclick="event.stopPropagation();openModalImg('${phSrc(c.no)}',${c.no})">
   <div class="cbody"><div class="top"><div><span style="display:inline-block;background:var(--bg2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;color:var(--mut);margin-bottom:4px">${CURRENT_LANG==="en"?"Internal ref":"內部參考編號"} <span style="color:var(--acc);font-weight:700">#${c.no}</span></span><div class="nm">${esc(c.name)}</div></div><span class="tag ${s.cl}">${s.lb}</span></div>
   <div class="meta"><b>法人</b> ${esc(c.member)}<br><b>EIN</b> ${esc(c.ein)}</div>
-  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}</span><span class="badge">${c.mail?"已綁定電郵":"未綁定電郵"}</span><span class="badge">已向 ${subCount(c.no)} 家報關行遞交申請</span></div></div></div>`;}
+  <div class="foots">${c.todo?`<span class="tag t-red">待辦 ${c.todo}</span>`:""}<span class="badge ${dlStatus(c).warn?"warn":""}">駕照${dlStatus(c).lb}</span><span class="badge">信箱 ${esc(c.mail)}</span></div></div></div>`;}
 function monthLabel(dt){const d=new Date(dt);if(CURRENT_LANG==="en"){return d.toLocaleDateString("en-US",{month:"short"})+" "+d.getFullYear();}return d.getFullYear()+"年"+(d.getMonth()+1)+"月";}
 function custGridHTML(){
   const list=custFiltered();
@@ -2373,64 +2325,10 @@ function pickBroker(i){
  const email=b.c||b.m;if(email&&email!=="—"){closeModal();const no=window._sendNo;if(no)sendAsCustomer(no,email);toast("已選："+b.n+" <"+email+">");}
 }
 function randomBroker(){
- // 加權隨機選擇：先過濾，再按等級權重抽
- const all=BROKERS.map((b,i)=>({b,i})).filter(x=>{
-   const e=x.b.c||x.b.m;
-   if(!e||e==="—")return false; // 必須有Email
-   if(x.b.tag==="reject"||/拒絕|婉拒|不可用/.test(x.b.l||""))return false; // 排除已拒絕
-   return true;
- });
- if(!all.length){toast("沒有可用經紀人");return;}
- // 按等級分組
- const gradeWeight=g=>{
-   if(!g)return 1;
-   if(g.startsWith("A")||g.startsWith("B+"))return 3;
-   if(g==="B")return 1;
-   if(g==="B-")return 0.3;
-   return 0.05; // C以下
- };
- // 緊急降級：優先選B+以上，不夠降B，再降B-，最後C
- let pool=all.filter(x=>{const g=x.b.grade||"B";return g.startsWith("A")||g.startsWith("B+");});
- let level="B+以上";
- if(!pool.length){pool=all.filter(x=>(x.b.grade||"B")==="B");level="B";}
- if(!pool.length){pool=all.filter(x=>(x.b.grade||"B")==="B-");level="B-";}
- if(!pool.length){pool=all;level="C+";}
- // 加權抽樣
- const weighted=[];
- pool.forEach(x=>{const w=Math.round(gradeWeight(x.b.grade)*10);for(let j=0;j<w;j++)weighted.push(x);});
- const pick=weighted[Math.floor(Math.random()*weighted.length)];
- toast("已選："+pick.b.n+"（"+level+"池，"+(pick.b.grade||"B")+"級）");
+ const avail=BROKERS.map((b,i)=>({b,i})).filter(x=>{const e=x.b.c||x.b.m;return e&&e!=="—";});
+ if(!avail.length){toast("沒有可用經紀人");return;}
+ const pick=avail[Math.floor(Math.random()*avail.length)];
  pickBroker(pick.i);
-}
-function showScoreHistory(i){
- const b=BROKERS[i];
- const hist=b.scoreHistory||[];
- let rows=hist.length?hist.map(h=>`<div style="padding:8px;border-bottom:1px solid var(--line);font-size:12px"><span style="color:${h.delta>0?'#4ade80':'#f87171'}">${h.delta>0?'+':''}${h.delta}分</span> ｜ ${esc(h.reason||"")} <span style="color:var(--mut);float:right">${esc(h.who||"")} ${esc(h.date||"")}</span></div>`).join(""):'<div style="color:var(--mut);text-align:center;padding:20px">暫無評分記錄</div>';
- openModal(`<h3>評分歷史 ｜ ${esc(b.n)}</h3><div style="margin-bottom:10px;font-size:13px">當前分數：<b>${b.score||70}</b> ｜ 等級：<b style="color:${(b.grade||"B").startsWith('A')?'#4ade80':(b.grade||"B").startsWith('B')?'#60a5fa':'#f87171'}">${b.grade||"B"}</b></div><div style="max-height:300px;overflow-y:auto">${rows}</div><div class="mrow" style="margin-top:12px"><button class="btn" onclick="closeModal()">關閉</button></div>`);
-}
-function adjustScore(i){
- const b=BROKERS[i];
- const isSuper=CURRENT_USER&&CURRENT_USER.role==="super_admin";
- openModal(`<h3>調整評分 ｜ ${esc(b.n)}</h3>
- <div style="font-size:13px;margin-bottom:10px">當前：<b>${b.score||70}</b>分 ｜ <b style="color:${(b.grade||"B").startsWith('A')?'#4ade80':(b.grade||"B").startsWith('B')?'#60a5fa':'#f87171'}">${b.grade||"B"}</b></div>
- <div class="fg"><label>調整分數（最多±10分，需填理由）</label><input id="adj_delta" type="number" value="0" min="-10" max="10" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:14px"></div>
- <div class="fg"><label>理由</label><input id="adj_reason" placeholder="例如：首次回覆很快 / 3封無回覆" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px;font-size:13px"></div>
- ${isSuper?`<div class="fg"><label>手動改等級（僅主管）</label><select id="adj_grade" style="width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px"><option value="">不改</option><option>A+</option><option>A</option><option>A-</option><option>B+</option><option>B</option><option>B-</option><option>C+</option><option>C</option><option>C-</option></select></div>`:'<div style="font-size:11px;color:var(--mut);margin:8px 0">只有主管可以修改等級，Operator只能加減分</div>'}
- <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="doAdjustScore(${i})">確認調整</button></div>`);
-}
-function doAdjustScore(i){
- const delta=parseInt(document.getElementById("adj_delta").value)||0;
- const reason=document.getElementById("adj_reason").value.trim();
- const gradeEl=document.getElementById("adj_grade");
- const newGrade=gradeEl?gradeEl.value:"";
- if(Math.abs(delta)>10){toast("最多加減10分");return;}
- if(delta!==0&&!reason){toast("必須填理由");return;}
- const b=BROKERS[i];
- b.score=Math.max(0,Math.min(100,(b.score||70)+delta));
- if(!b.scoreHistory)b.scoreHistory=[];
- b.scoreHistory.push({delta,reason,who:(CURRENT_USER||{}).name||"unknown",date:new Date().toISOString().slice(0,10)});
- if(newGrade&&(CURRENT_USER||{}).role==="super_admin"){b.grade=newGrade;}
- closeModal();render();toast("評分已更新："+b.score+"分");
 }
 function matchBroker(){
  const v=(document.getElementById("sc_to")||{}).value||"";
@@ -2878,10 +2776,10 @@ function custMailbox(no){
   const cname=c.name||"";
   const cshort=cname.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").trim().toLowerCase();
   const all=(DATA.emails||[]).filter(e=>{
-    if(String(e.c)===cname)return true;
-    if(cshort&&e.c&&String(e.c).toLowerCase().includes(cshort))return true;
-    if(cshort&&e.from&&String(e.from).toLowerCase().includes(cshort))return true;
-    if(c.mail&&e.from&&String(e.from).toLowerCase().includes(c.mail.split("@")[0].toLowerCase().replace(/[._]/g,"")))return true;
+    if(e.c===cname)return true;
+    if(cshort&&e.c&&e.c.toLowerCase().includes(cshort))return true;
+    if(cshort&&e.from&&e.from.toLowerCase().includes(cshort))return true;
+    if(c.mail&&e.from&&e.from.toLowerCase().includes(c.mail.split("@")[0].toLowerCase().replace(/[._]/g,"")))return true;
     return false;
   }).sort((a,b)=>(b.t||"").localeCompare(a.t||""));
   return `<div style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center">
@@ -2907,152 +2805,53 @@ function custMailbox(no){
 }
 
 function docList(no){
-  const cname=(DATA.customers.find(x=>String(x.no)===String(no))||{}).name||"";
-  const cshort=cname.toLowerCase().split(" ")[0];
-  // Merge files.json + attachments.json into unified list
   const rawList=(DATA.files||{})[no]||[];
+  const seen=new Set();const localList=[];
+  for(const f of rawList){const k=f.path||f.name||f.nm||"";if(seen.has(k))continue;seen.add(k);localList.push(f);}
+  const imgs=localList.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
+  const docs=localList.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
+  // 申請文件：PDF 且文件名包含關鍵字
   const appRe=/(bond|application|form|POA|financial|personal|credit|authorization|release|customs|請書|申請|表格|授權|財務)/i;
-  const seen=new Set();const allFiles=[];
-  for(const f of rawList){
-    const k=f.path||f.name||f.nm||"";if(seen.has(k))continue;seen.add(k);
-    const nm=f.name||f.nm||"";
-    f.cat=f.cat||(appRe.test(nm)?"app":"client");
-    allFiles.push(f);
-  }
-  // Add email attachments
-  const mailAtts=(DATA.attachments||[]).filter(a=>{
-    const cn=(a.client||"").toLowerCase();
-    return cn===cname.toLowerCase()||(cshort&&cn.includes(cshort));
-  });
-  for(const a of mailAtts){
-    const k=a.path||a.filename||"";if(seen.has(k))continue;seen.add(k);
-    allFiles.push({name:a.filename||a.nm,path:a.path,uploader:a.date||"郵件",cat:"email"});
-  }
+  const appFiles=localList.filter(f=>appRe.test(f.name||f.nm||""));
+  const generalFiles=localList.filter(f=>!appRe.test(f.name||f.nm||""));
   const attSubTab=window._attSub||"general";
-  const tabMap={general:"client",app:"app",mail:"email"};
-  const filterCat=tabMap[attSubTab]||"client";
-  const tabFiles=allFiles.filter(f=>f.cat===filterCat);
-  const imgs=tabFiles.filter(f=>/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
-  const docs=tabFiles.filter(f=>!/\.(jpe?g|png|webp)$/i.test(f.name||f.nm||""));
-  function card(f){const nm=f.name||f.nm||"未命名檔案";const up=f.uploader||f.by||"系統管理員";
+  function card(f,showMailLink){const nm=f.name||f.nm||"未命名檔案";const dt=f.date||f.dt||"";const up=f.uploader||f.by||"系統管理員";
     const insight=((DATA.customers.find(x=>String(x.no)===String(no))||{}).fileInsights||[]).find(x=>x.file===nm);
     const url=resolveFile(f.path||"");
     const isImg=/\.(jpe?g|png|webp)$/i.test(nm);
     const inner=isImg
       ? `<img src="${url}" data-path="${encodeURIComponent(f.path||'')}" style="width:100%;height:110px;object-fit:cover;border-radius:8px 8px 0 0;background:#222" onerror="if(!this.dataset.r){this.dataset.r=1;this.src=resolveFile(decodeURIComponent(this.dataset.path));}else{this.remove();}">`
       : `<div style="height:110px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg2);border-radius:8px 8px 0 0">${/\.pdf$/i.test(nm)?"📄":"📎"}</div>`;
-    const catLabels={client:"客戶資料",app:"申請文件",email:"郵件附件"};
-    const catColors={client:"#3b82f6",app:"#8b5cf6",email:"#06b6d4"};
-    const cp=f.path||"";
     return `<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--bg2);cursor:pointer" onclick="${isImg?`openModalImg('${url}')`:`window.open('${url}')`}">
       ${inner}
-      <div style="padding:8px 10px">
-        <div style="display:flex;gap:4px;align-items:center;margin-bottom:2px">
-          <span style="display:inline-block;font-size:9px;font-weight:700;color:${catColors[f.cat]||'#666'};background:${catColors[f.cat]||'#666'}22;border-radius:4px;padding:1px 6px">${catLabels[f.cat]||f.cat||""}</span>
-          ${insight&&insight.filled===true?`<span style="font-size:9px;font-weight:700;color:#16a34a;background:#16a34a22;border-radius:4px;padding:1px 6px">已填寫</span>`:""}
-          ${insight&&insight.filled===false?`<span style="font-size:9px;font-weight:700;color:#dc2626;background:#dc262622;border-radius:4px;padding:1px 6px">未填寫</span>`:""}
-        </div>
-        <div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
-        ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
-        ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
-        <div style="display:flex;gap:4px;margin-top:6px" onclick="event.stopPropagation()">
-          <button class="btn small" style="font-size:10px;padding:2px 8px" onclick="moveFileDialog('${no}','${encodeURIComponent(cp)}','${esc(nm).replace(/'/g,"\\'")}')">移動</button>
-        </div>
+      <div style="padding:8px 10px"><div style="font-size:12px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(nm)}">${esc(nm)}</div>
+      ${insight?`<div style="font-size:10px;color:#8b5cf6;margin-top:3px">${esc(insight.type||"")}${insight.via==="vision"?" · 掃描辨識":""}</div>`:""}
+      ${insight&&insight.summary?`<div style="font-size:10px;color:var(--mut);margin-top:3px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${esc(insight.summary)}</div>`:""}
+      <div style="font-size:10px;color:var(--mut);margin-top:2px">${esc(up)}</div>
       </div></div>`;}
   const L=CURRENT_LANG;
-  const D={zh:{general:"客戶資料",app:"申請文件檔案",mail:"電子郵件附件",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",photos:"照片",noApp:"尚無申請文件",noAtt:"尚無附件"},cn:{general:"客户资料",app:"申请文件档案",mail:"电子邮件附件",all:"全部",img:"照片",doc:"文件",total:"份，点档案可直接预览。",upload:"⬆ 上传文件",manage:"管理文件夹",photos:"照片",noApp:"尚无申请文件",noAtt:"尚无附件"},en:{general:"Client Docs",app:"Application Docs",mail:"Email Attachments",all:"All",img:"Photos",doc:"Files",total:"files, click to preview.",upload:"⬆ Upload Files",manage:"Manage Folders",photos:"Photos",noApp:"No application docs yet",noAtt:"No attachments yet"}}[L]||{zh:{general:"客戶資料",app:"申請文件檔案",mail:"電子郵件附件",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",photos:"照片",noApp:"尚無申請文件",noAtt:"尚無附件"}};
+  const D={zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件"},cn:{general:"客户资料",app:"申请文件档案",all:"全部",img:"照片",doc:"文件",total:"份，点档案可直接预览。",upload:"⬆ 上传文件",manage:"管理文件夹",appFiles:"申请文件",photos:"照片",files:"份",noApp:"尚无申请文件",noAtt:"尚无附件"},en:{general:"Client Docs",app:"Application Docs",all:"All",img:"Photos",doc:"Files",total:"files, click to preview.",upload:"⬆ Upload Files",manage:"Manage Folders",appFiles:"Application Docs",photos:"Photos",files:"files",noApp:"No application docs yet",noAtt:"No attachments yet"}}[L]||{zh:{general:"客戶資料",app:"申請文件檔案",all:"全部",img:"照片",doc:"文件",total:"份，點檔案可直接預覽。",upload:"⬆ 上傳文件",manage:"管理資料夾",appFiles:"申請文件",photos:"照片",files:"份",noApp:"尚無申請文件",noAtt:"尚無附件"}};
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
   <div style="display:flex;gap:6px">
     <button class="btn small" style="${attSubTab==='general'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='general';render()">${D.general}</button>
     <button class="btn small" style="${attSubTab==='app'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='app';render()">${D.app}</button>
-    <button class="btn small" style="${attSubTab==='mail'?'background:var(--acc);color:#fff':''}" onclick="window._attSub='mail';render()">${D.mail}</button>
   </div>
   <div style="display:flex;gap:6px">
-    <button class="btn small" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">${D.all}</button>
-    <button class="btn small" data-f="img" onclick="setAttFilter('img')">${D.img}</button>
-    <button class="btn small" data-f="doc" onclick="setAttFilter('doc')">${D.doc}</button>
+    <button class="btn small att-f" data-f="all" style="background:var(--acc);color:#fff" onclick="setAttFilter('all')">${D.all}</button>
+    <button class="btn small att-f" data-f="img" onclick="setAttFilter('img')">${D.img}</button>
+    <button class="btn small att-f" data-f="doc" onclick="setAttFilter('doc')">${D.doc}</button>
   </div></div>
   <div id="attGrid" style="max-height:380px;overflow-y:auto;padding-right:4px">
-  ${tabFiles.length
-    ?(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-bottom:14px">${imgs.map(f=>card(f)).join("")}</div>`:"")
-    +(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.doc} ${docs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px">${docs.map(f=>card(f)).join("")}</div>`:"")
-    :`<div class='empty'>${D.noAtt}</div>`}
+  ${attSubTab==='app'
+    ?(appFiles.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.appFiles} ${appFiles.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">${appFiles.map(f=>card(f)).join("")}</div>`:`<div class='empty'>${D.noApp}</div>`)
+    :(imgs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.photos} ${imgs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px" data-group="img">${imgs.map(f=>card(f)).join("")}</div>`:"")}
+  ${attSubTab==='general'
+    ?(docs.length?`<div style="font-size:12px;color:var(--mut);margin:8px 0">${D.doc} ${docs.length}</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" data-group="doc">${docs.map(f=>card(f)).join("")}</div>`:"")
+    :""}
   </div>
-  <div style="margin-top:10px;font-size:11px;color:var(--dim)">${tabFiles.length} ${D.total}</div>
-  <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">${D.manage}</button><button class="btn primary" onclick="openUploadDialog('${no}')">${D.upload}</button></div>`;
-}
-function _simpleModal(html){
-  let old=document.getElementById('_sm');if(old)old.remove();
-  const d=document.createElement('div');d.id='_sm';
-  d.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center';
-  d.innerHTML='<div style="background:var(--bg,#1a1a2e);border-radius:12px;padding:24px;max-width:420px;width:90%;max-height:80vh;overflow-y:auto;color:var(--tx,#eee)">'+html+'</div>';
-  d.onclick=e=>{if(e.target===d)d.remove();};
-  document.body.appendChild(d);
-}
-function closeSubModal(){const d=document.getElementById('_sm');if(d)d.remove();}
-function moveFileDialog(no,encPath,nm){
-  const path=decodeURIComponent(encPath);
-  const labels={client:"客戶資料",app:"申請文件檔案",email:"電子郵件附件"};
-  const opts=Object.entries(labels).map(([k,v])=>`<button class="btn small" style="margin:4px" onclick="doMoveFile('${no}','${encPath}','${k}')">${v}</button>`).join("");
-  _simpleModal(`<h3>移動檔案</h3><p style="font-size:12px;color:var(--mut);margin:8px 0">${esc(nm)}</p><p style="font-size:12px;margin:8px 0">移動到：</p><div style="display:flex;flex-wrap:wrap">${opts}</div>`);
-}
-async function doMoveFile(no,encPath,newCat){
-  const path=decodeURIComponent(encPath);
-  const fl=(DATA.files||{})[no]||[];
-  let found=false;
-  for(const f of fl){if((f.path||"")===path){f.cat=newCat;found=true;}}
-  if(!found){toast("此檔案在郵件附件中，無法移動");closeModal();return;}
-  try{
-    const owner=(DATA.customers.find(x=>String(x.no)===String(no))||{}).owner||"";
-    const ghToken=(window._ghToken||"").replace(/\s/g,"");
-    if(ghToken){
-      const r=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{headers:{Authorization:"token "+ghToken}});
-      const j=await r.json();
-      const data=JSON.parse(decodeURIComponent(escape(atob(j.content))));
-      if(data[no]){for(const f of data[no]){if((f.path||"")===path){f.cat=newCat;}}}
-      await fetch("https://api.github.com/repos/uscrm26/bcd/contents/files.json",{method:"PUT",headers:{Authorization:"token "+ghToken,"Content-Type":"application/json"},body:JSON.stringify({message:"move file to "+newCat,content:btoa(unescape(encodeURIComponent(JSON.stringify(data)))),sha:j.sha})});
-    }
-  }catch(e){}
-  closeModal();render();toast("已移動");
-}
-function openUploadDialog(no){
-  _simpleModal(`<h3>上傳檔案</h3>
-  <div id="dropZone" style="border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;margin:12px 0;cursor:pointer" onclick="document.getElementById('upInput').click()">
-    <div style="font-size:36px;margin-bottom:8px">📁</div>
-    <div style="font-size:14px;color:var(--tx)">點擊選擇或拖拽檔案到此</div>
-    <div style="font-size:11px;color:var(--mut);margin-top:4px">PDF, JPG, PNG, 最多 20MB</div>
-  </div>
-  <input type="file" id="upInput" multiple style="display:none">
-  <div style="margin:12px 0"><div style="font-size:12px;margin-bottom:6px">分類：</div>
-    <label style="display:block;margin:4px 0;font-size:13px"><input type="radio" name="upCat" value="client" checked> 客戶資料</label>
-    <label style="display:block;margin:4px 0;font-size:13px"><input type="radio" name="upCat" value="app"> 申請文件檔案</label>
-    <label style="display:block;margin:4px 0;font-size:13px"><input type="radio" name="upCat" value="email"> 電子郵件附件</label>
-  </div>
-  <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
-    <button class="btn" onclick="closeModal()">取消</button>
-    <button class="btn primary" onclick="confirmUpload('${no}')">上傳</button>
-  </div>`);
-  const dz=document.getElementById("dropZone");
-  dz.ondragover=e=>{e.preventDefault();dz.style.borderColor="var(--acc)";};
-  dz.ondragleave=()=>{dz.style.borderColor="var(--line)";};
-  dz.ondrop=e=>{e.preventDefault();dz.style.borderColor="var(--line)";
-    const inp=document.getElementById("upInput");
-    const dt=new DataTransfer();for(const f of e.dataTransfer.files)dt.items.add(f);inp.files=dt.files;
-    dz.querySelector("div:nth-child(2)").textContent=e.dataTransfer.files.length+" 個檔案已選擇";
-  };
-}
-async function confirmUpload(no){
-  const inp=document.getElementById("upInput");
-  const files=Array.from(inp.files||[]);if(!files.length){toast("請先選擇檔案");return;}
-  const cat=document.querySelector('input[name="upCat"]:checked').value;
-  closeModal();
-  const c=DATA.customers.find(x=>String(x.no)===String(no));
-  await enhancedUploadAnalyze(no,c,files);
-  // Mark cat on uploaded files
-  const fl=(DATA.files||{})[no]||[];
-  const recent=fl.slice(-files.length);
-  for(const f of recent)f.cat=cat;
-  render();
+  ${!localList.length?`<div class='empty'>${D.noAtt}</div>`:""}
+  <div style="margin-top:10px;font-size:11px;color:var(--dim)">${localList.length} ${D.total}</div>
+  <div style="margin-top:14px;display:flex;gap:10px"><button class="btn" onclick="goDocCenter('${no}')">${D.manage}</button><button class="btn primary" onclick="pickUpload('${no}')">${D.upload}</button></div>`;
 }
 function setMemberPhoto(no,nm){
   const fl=(DATA.files||{})[no]||[];
@@ -3303,8 +3102,7 @@ async function refreshOneMailbox(no){
   const tok=["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");
   let win=document.getElementById("mailSyncWin");if(win)win.remove();
   win=document.createElement("div");win.id="mailSyncWin";
-  win.style.cssText="position:fixed;bottom:20px;right:20px;width:480px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
-  win.dataset.defBottom="20px";win.dataset.defRight="20px";
+  win.style.cssText="position:fixed;bottom:"+floatNext()+"px;right:20px;width:480px;max-height:480px;background:var(--bg);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.4);z-index:9999;overflow:hidden;display:flex;flex-direction:column";
   const t={
     title:langT("郵箱同步","邮箱同步","Mailbox Sync"),
     starting:langT("正在觸發後台巡查…","正在触发后台巡查…","Triggering background patrol…"),
@@ -3322,30 +3120,8 @@ async function refreshOneMailbox(no){
     finish:langT("完成！你可以關閉此視窗。","完成！你可以关闭此窗口。","Done! You can close this window."),
     reloadErr:langT("數據重載失敗，請手動刷新","数据重载失败，请手动刷新","Data reload failed, please refresh manually")
   };
-  win.innerHTML=`<div class="dragbar" style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;cursor:move"><span style="font-size:13px;font-weight:700">${t.title}</span><span style="display:flex;gap:6px;align-items:center"><button onclick="(function(w){w.style.bottom=w.dataset.defBottom;w.style.right=w.dataset.defRight;w.style.left='';w.style.top='';})(this.closest('#mailSyncWin'))" title="歸位" style="background:none;border:none;color:var(--mut);font-size:14px;cursor:pointer">⤓</button><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></span></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
+  win.innerHTML=`<div style="padding:12px 16px;background:var(--bg2);border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">${t.title}</span><button onclick="this.closest('#mailSyncWin').remove()" style="background:none;border:none;color:var(--mut);font-size:16px;cursor:pointer">×</button></div><div id="mbProgress" style="padding:14px 16px;font-size:12px;line-height:1.8;flex:1;overflow-y:auto"></div>`;
   document.body.appendChild(win);
-  // Drag functionality
-  (function(w){
-    const bar=w.querySelector(".dragbar");
-    let sx,sy,sr,sb,dragging=false;
-    bar.addEventListener("mousedown",function(e){
-      dragging=true;
-      const rect=w.getBoundingClientRect();
-      sx=e.clientX;sy=e.clientY;
-      sr=window.innerWidth-rect.right;sb=window.innerHeight-rect.bottom;
-      w.style.right="";w.style.bottom="";
-      w.style.left=rect.left+"px";w.style.top=rect.top+"px";
-      e.preventDefault();
-    });
-    document.addEventListener("mousemove",function(e){
-      if(!dragging)return;
-      const nx=e.clientX-sx,ny=e.clientY-sy;
-      w.style.left=(w.offsetLeft+nx)+"px";
-      w.style.top=(w.offsetTop+ny)+"px";
-      sx=e.clientX;sy=e.clientY;
-    });
-    document.addEventListener("mouseup",function(){dragging=false;});
-  })(win);
   const log=document.getElementById("mbProgress");
   const spinner='<span class="spin"></span>';
   const say=(html,cl,id)=>{let d=id?document.getElementById(id):null;if(!d){d=document.createElement("div");d.style.cssText="margin-bottom:6px;color:"+(cl||"var(--text)");if(id)d.id=id;log.appendChild(d);}d.innerHTML=html;log.scrollTop=log.scrollHeight;return d;};
@@ -3390,7 +3166,7 @@ async function refreshOneMailbox(no){
             if(newFiles>0)say(t.newFile(newFiles));
             if(j.conclusion==="success"){say(t.finish,"#22c55e");}
             else{say(langT("巡查已結束，可能無新郵件或郵箱連線異常。","巡查已结束，可能无新邮件或邮箱连线异常。","Patrol finished; may be no new mail or mailbox connection issue."),"#ffb454");}
-            say(langT("若有新郵件，請點擊左導覽列底部「系統刷新」查看新數據。","若有新邮件，请点击左导航列底部「系统刷新」查看新数据。","If you have new emails, click 'System Refresh' at the bottom of the left sidebar to see latest data."),"var(--mut)");
+            (async()=>{try{await loadRepoData();render();}catch(e2){say(t.reloadErr,"#ef4444");}})();
           }catch(e){say(t.reloadErr,"#ef4444");}
           return;
         }else{
@@ -3452,34 +3228,6 @@ async function confirmNote(no){
     await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/data.json",{method:"PUT",headers:{Authorization:"token "+gtok,"Content-Type":"application/json"},body:JSON.stringify({message:"add note "+no,content:b64,sha:meta.sha})});
   }catch(e){console.warn("data.json note:",e);}
   closeModal();render();toast("跟進記錄已保存");
-  // AI 分析這條備註，建議狀態
-  suggestStatusFromNote(no,tt+" "+txZh);
-}
-
-async function suggestStatusFromNote(no,noteText){
-  const cust=DATA.customers.find(x=>x.no===String(no)||x.no===no);if(!cust)return;
-  const curStatus=st(cust.status).lb;
-  try{
-    const statusList=DATA.statuses.map(s=>s.lb).join("/");
-    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"你是Customs Bond業務助手。根據用戶剛寫的跟進備註，判斷這個客戶的業務狀態應該是哪個。只返回狀態名稱，不要其他文字。狀態選項："+statusList+"。如果備註內容不足以判斷，返回「不確定」。"},{role:"user",content:"客戶："+cust.name+"\n目前狀態："+curStatus+"\n備註："+noteText}],max_tokens:50})});
-    const j=await r.json();
-    const suggested=j.choices[0].message.content.trim();
-    if(!suggested||suggested==="不確定")return;
-    const sRec=DATA.statuses.find(s=>s.lb===suggested);
-    if(!sRec||sRec.id===cust.status)return;
-    // 彈出確認
-    openModal('<h3>AI 狀態建議</h3><div style="font-size:14px;line-height:1.8;margin:10px 0">AI 根據這條跟進記錄，建議將狀態從「'+esc(curStatus)+'」改為「'+esc(suggested)+'」。</div><div class="mrow"><button class="btn" onclick="closeModal()">取消，保留原狀態</button><button class="btn primary" onclick="confirmSuggestStatus(\''+no+'\',\''+sRec.id+'\')">確認更新</button></div>');
-  }catch(e){console.warn("status suggest:",e);}
-}
-
-function confirmSuggestStatus(no,newStatus){
-  const cust=DATA.customers.find(x=>x.no===String(no)||x.no===no);if(!cust)return;
-  const old=st(cust.status).lb;
-  cust.status=newStatus;
-  addClientAudit(no,"狀態更新",old,st(newStatus).lb,"AI 根據備註建議");
-  persistCust(no);
-  closeModal();render();
-  toast("狀態已更新為："+st(newStatus).lb);
 }
 function openTodo(no){openModal(`<h3>新增待辦 ｜ 客戶 ${no}</h3><div class="fg"><label>待辦標題</label><input placeholder="輸入待辦"></div><div class="fg"><label>截止時間</label><input placeholder="2026-11-02"></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="closeModal();toast('待辦已新增')">建立</button></div>`);}
 // ===== 郵件頁 =====
@@ -3540,13 +3288,7 @@ R.queue=()=>`<h1>電子郵件信箱</h1>
 </div>
 <div class="search"><input id="q_search" placeholder="搜尋收件人 / 主題" oninput="renderQueueTable()"><select id="q_filter" onchange="renderQueueTable()"><option value="">全部</option><option value="unread">未處理</option><option value="read">已處理</option></select><button class="btn primary" onclick="toast('新建草稿')">新建外發草稿</button></div>
 <div id="custAvatarBar" style="display:flex;gap:10px;align-items:center;overflow-x:auto;padding:8px 2px;margin-bottom:10px;border-bottom:1px solid var(--line)"></div>
-<div id="inboxPane"><table style="width:100%;table-layout:fixed"><colgroup><col style="width:16%"><col style="width:24%"><col style="width:30%"><col style="width:9%"><col style="width:11%"><col style="width:10%"></colgroup><thead><tr style="cursor:pointer">
-<th onclick="setMailSort('from')" style="cursor:pointer">寄件信箱</th>
-<th onclick="setMailSort('to')" style="cursor:pointer">收件人</th>
-<th onclick="setMailSort('subj')" style="cursor:pointer">主題</th>
-<th>狀態</th>
-<th onclick="setMailSort('t')" style="cursor:pointer">時間</th>
-<th>操作</th></tr></thead><tbody id="qtbody"></tbody></table></div>
+<div id="inboxPane"><table style="width:100%;table-layout:fixed"><colgroup><col style="width:16%"><col style="width:24%"><col style="width:30%"><col style="width:9%"><col style="width:11%"><col style="width:10%"></colgroup><thead><tr><th>寄件信箱</th><th>收件人</th><th>主題</th><th>狀態</th><th>時間</th><th>操作</th></tr></thead><tbody id="qtbody"></tbody></table></div>
 <div id="sentPane" style="display:none"><div class="empty" style="padding:40px">發件箱：已外發郵件將自動記錄在此，目前尚無發送記錄</div></div>`;
 function setMailTab(btn){window._mailTab=btn.dataset.mt;document.querySelectorAll("#mailTabs .btn").forEach(b=>b.style.background=(b===btn?"var(--acc)":""));document.getElementById("inboxPane").style.display=window._mailTab==="inbox"?"":"none";document.getElementById("sentPane").style.display=window._mailTab==="sent"?"":"none";}
 function renderCustAvatarBar(){
@@ -3580,7 +3322,6 @@ function renderCustAvatarBar(){
 }
 function setMailCustFilter(no){window._mailCust=(window._mailCust===no?"":no);renderCustAvatarBar();renderQueueTable();}
 
-function setMailSort(k){if(window._mailSortKey===k){window._mailSortDir=window._mailSortDir==="asc"?"desc":"asc";}else{window._mailSortKey=k;window._mailSortDir="desc";}renderQueueTable();}
 function renderQueueTable(){const f=(document.getElementById("q_search")||{}).value||"";const fl=(document.getElementById("q_filter")||{}).value||"";const cf=window._mailCust||"";
 let custDom="";
  if(cf){const c=DATA.customers.find(x=>x.no===cf);if(c&&c.mail)custDom=c.mail.split("@")[1].toLowerCase();}
@@ -3593,13 +3334,7 @@ let custDom="";
    if(fl==="read"&&e.unread)return false;
    if(cf){const cc=DATA.customers.find(x=>String(x.no)===String(cf));if(cc){const nm=(cc.name||"").toLowerCase();const ec=(e.c||"").toLowerCase();const dom=cc.mail?cc.mail.split("@")[1].toLowerCase():"";const from=(e.from||"").toLowerCase();const to=(e.to||"").toLowerCase();const body=(e.body||"").toLowerCase();const nm0=(nm.split(" ")[0]||"");const byClient=!!ec&&(nm.includes(ec)||ec.includes(nm0)||nm.startsWith(ec)||ec===nm);const byDomain=!!dom&&(from.includes(dom)||to.includes(dom)||body.includes(dom));if(!byClient&&!byDomain)return false;}}
    return true;});
-const sortKey=window._mailSortKey||"t";const sortDir=window._mailSortDir||"desc";
-list=list.slice().sort((a,b)=>{
-  const av=sortKey==="t"?(a.t||""):sortKey==="subj"?(a.sub||""):sortKey==="from"?(a.from||""):"";
-  const bv=sortKey==="t"?(b.t||""):sortKey==="subj"?(b.sub||""):sortKey==="from"?(b.from||""):"";
-  if(sortDir==="asc")return av<bv?-1:av>bv?1:0;
-  return av<bv?1:av>bv?-1:0;
-});
+list=list.slice().sort((a,b)=>(b.unread===a.unread?0:b.unread?1:-1));
 window._qlist=list;
 const tb=document.getElementById("qtbody");if(!tb)return;
 let html="";
@@ -3607,7 +3342,7 @@ list.forEach((e,idx)=>{
  const open=window._openMail===e.t;
  const hasZH=!!ZH_CACHE[e.t];const hasIP=!!INTERP_CACHE[e.t]||!!e.auto_interp;
  const tags=(hasZH?"<span class='tag t-blue' style='margin-left:6px'>已翻譯</span>":"")+(hasIP?"<span class='tag t-green' style='margin-left:6px'>已解讀</span>":"");
- const _ec=String(e.c||"");const _cust=(DATA.customers||[]).find(x=>x.name&&_ec&&x.name.startsWith(_ec.split(" ")[0]));
+ const _cust=(DATA.customers||[]).find(x=>x.name&&e.c&&x.name.startsWith(e.c.split(" ")[0]));
  const _ph=_cust?phSrc(_cust.no):"";
  const _t=e.t.replace(/'/g,"\\'");
  html+=`<tr style="${open?"background:rgba(99,102,241,.08)":e.unread?"background:rgba(255,93,108,.06)":""}"><td style="display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleMailRow('${_t}')"><img src="${_ph}" onerror="this.style.display='none'" style="width:32px;height:32px;border-radius:50%;object-fit:cover"><span style="font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.c)}</span></td><td style="font-size:11px;cursor:pointer" onclick="toggleMailRow('${_t}')">${esc(e.from)}</td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')">${esc(e.sub)}${tags}${e.done?"<span class='tag t-gray' style='margin-left:6px'>無需處理</span>":""}</td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')"><span class="tag ${e.unread?"t-red":"t-gray"}">${e.unread?"未處理":"已處理"}</span></td><td style="cursor:pointer" onclick="toggleMailRow('${_t}')">${e.t}</td><td><button class="btn small" onclick="event.stopPropagation();openReply('${e.t}')">回覆</button><button class="btn small" onclick="event.stopPropagation();toggleDone('${e.t}')">${e.done?"復原":"無需處理"}</button></td></tr>`;
@@ -3653,7 +3388,7 @@ function mailActionClick(e){
   return "closeModal();openReply('"+e.t+"')";
 }
 function mailOwnerClient(e){
-  const cn=String(e.c||"").trim();
+  const cn=(e.c||"").trim();
   let cust=DATA.customers.find(x=>x.name&&(x.name===cn||x.name.startsWith(cn)||(cn&&x.name.includes(cn))));
   if(!cust&&cn){
     const mb=(DATA.mailboxes||[]).find(m=>m.nm===cn);
@@ -4002,17 +3737,15 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
 
 【業務規則】
 - 客戶從建檔日起 10 個日曆日內必須出 bond，超期視為滯後。
-- 新線索 = 還沒發冷啟動開發信，也沒提交過任何申請。
-- 等待客戶補充資料 = 客戶那邊缺資料，在等客戶提供。
-- 待填寫申請 = 表格在手裡，我們要填。
-- 等待報關行回覆 = 已發冷啟動信給報關行，等對方回覆。
-- 等待報關行審核 = 已提交 POA 或申請表給報關行，等對方審核。
-- 待補充申請文件 = 報關行退回來要求補交文件。
-- 收到報價 = 報關行給了 quote，等客戶決定付不付。
-- 財務已付款 = 客戶已付款，等 bond 出單。
-- 已獲擔保文件 = bond 已下，完成。
-- 擱置暫停 = 暫時不跟進。
-- 申請被拒 = 報關行拒絕。
+- 新線索 = 還沒發冷啟動開發信。
+- 等待啟動 = 已發冷啟動信，等客戶回覆。
+- 客戶回了 = 資料收集中。
+- 缺資料要客戶補 = 等待客戶補交資料。
+- 已交資料要我們準備 = 待填申請表 / 待回覆郵件。
+- 已提交給海關擔保文件經紀（Broker）= 等待報關行審核。
+- 收到經紀報價 = 收到報價。
+- 客戶已付款 = 財務已付款。
+- bond 已下 = 已獲擔保文件。
 - 發出郵件超過 48 小時未回，建議追一封。
 - 付款後 3-5 個工作天沒下 bond，建議主動問經紀進度。
 
@@ -4020,7 +3753,7 @@ ${recentMails.map((m,i)=>"["+(i+1)+"] "+m.t+" "+m.from+"｜"+m.sub+"\n"+(m.body|
 嚴格輸出 JSON，不要加 markdown 或說明文字。同時提供繁體中文、簡體中文、英文三個版本：
 {
 "summary_zh_hk":"繁體中文一句話總結","summary_zh_cn":"簡體中文一句話總結","summary_en":"English one-sentence summary",
-"status_suggest":"建議狀態，必須用以下之一：新線索/等待客戶補充資料/待填寫申請/等待報關行回覆/等待報關行審核/待補充申請文件/收到報價/財務已付款/已獲擔保文件/擱置暫停/申請被拒",
+"status_suggest":"建議狀態，必須用以下之一：新線索/等待啟動/資料收集中/等待客戶補交資料/待填申請表/待回覆郵件/等待報關行審核/收到報價/財務已付款/已獲擔保文件/擱置暫停",
 "next_actions":["待辦1","待辦2","待辦3"],
 "risk":"風險點或緊急提醒，沒有就空字串"
 }
@@ -4057,28 +3790,20 @@ function applyAiAnalysis(no){
   const res=document.getElementById("aiResult_"+no);if(!res)return;
   let j={};try{j=JSON.parse(res.dataset.json||"{}");}catch(e){}
   const cust=DATA.customers.find(x=>x.no===no);if(!cust)return;
-  // 待辦自動寫入
+  if(j.status_suggest){
+    const stRec=DATA.statuses.find(s=>s.lb===j.status_suggest);
+    if(stRec){const old=st(cust.status).lb;cust.status=stRec.id;addClientAudit(no,"狀態更新",old,j.status_suggest,"AI 建議");}
+  }
   if(j.next_actions&&j.next_actions.length){
     cust.aiTodos=cust.aiTodos||[];
     cust.aiSuggestions=j.next_actions.map(a=>({t:a,added:false,ignored:false}));
   }
+  // 自动写入，不用手动确认
   const cust2=DATA.customers.find(x=>x.no===no);
   if(cust2){cust2.aiLastAt=Date.now();persistCust(no);}
   sbReq("audit_logs","POST",{account_id:CURRENT_USER.id,display_name:CURRENT_USER.nm,action:"cust_state",target_client:String(no),detail:JSON.stringify({aiTodos:cust.aiTodos||[],aiSuggestions:cust.aiSuggestions||[],aiLastAt:cust.aiLastAt})});
   res.style.display="none";
-  render();
-  // 狀態建議需要用戶確認
-  if(j.status_suggest){
-    const stRec=DATA.statuses.find(s=>s.lb===j.status_suggest);
-    if(stRec&&stRec.id!==cust.status){
-      const old=st(cust.status).lb;
-      openModal('<h3>AI 狀態建議</h3><div style="font-size:14px;line-height:1.8;margin:10px 0">AI 根據郵件和檔案分析，建議將狀態從「'+esc(old)+'」改為「'+esc(j.status_suggest)+'」。</div><div class="mrow"><button class="btn" onclick="closeModal()">取消，保留原狀態</button><button class="btn primary" onclick="confirmSuggestStatus(\''+no+'\',\''+stRec.id+'\')">確認更新</button></div>');
-    } else {
-      toast("AI 分析完成，狀態無需變更");
-    }
-  } else {
-    toast("AI 分析完成");
-  }
+  render();toast("AI 分析完成，已保存到雲端");
 }
 // ===== 批量 AI 分析 =====
 function batchDayKey(){
@@ -4284,7 +4009,7 @@ async function genReplyDraft(kind){
   const box=document.getElementById("replyBody");
   if(box){box.value="AI 撰寫中...";}
   const e=REPLY_EMAIL;
-  const _ec2=String(e.c||"");const cust=DATA.customers.find(c=>c.name===e.c||(_ec2&&c.name.startsWith(_ec2.split(" ")[0])));
+  const cust=DATA.customers.find(c=>c.name===e.c||c.name.startsWith(e.c.split(" ")[0]));
   const hist=(DATA.emails||[]).filter(x=>x.c===e.c).slice(0,5).map(x=>"From: "+x.from+"\nSubject: "+x.sub+"\n"+(x.body||"").slice(0,500)).join("\n---\n");
   const kindMap={short:"簡短得體回覆",biz:"商務專業跟進",ask:"禮貌地追問缺失資料"};
   const sys=`你是美國海關bond業務公司的回覆助理。根據往來郵件和客戶資料，撰寫一封英文回覆郵件。
@@ -4523,10 +4248,9 @@ async function permanentDeleteCust(i){
 
 // ===== Broker 池 / 轉介 / 公式文檔 =====
 let BROKERS=[
-{n:"Bluebird CHB",a:"Emily Fiscus",c:"emily@bluebirdchb.com",m:"—",l:"跟進中",tag:"quote",reason:"需手寫簽名，不接受電子打印簽名；POA 已提交待客戶列印簽名"},
 {n:"A1 Worldwide",a:"Angely Arias",c:"angely@a1wwl.com",m:"—",l:"跟進中",tag:"quote",reason:"要求填 POA 開戶"},
 {n:"RPS",a:"Joe Allen",c:"joe_allen@rpsins.com",m:"—",l:"補件中",tag:"supply",reason:"要求財務文件"},
-{n:"SuretyOne",a:"Underwriter",c:"StaffUnderwriters@SuretyOne.com",m:"—",l:"已出單",tag:"done",reason:"Lennar 已提交申請"},
+{n:"SuretyOne",a:"Underwriter",c:"StaffUnderwriters@SuretyOne.com",m:"—",l:"已報價",tag:"quote",reason:"Bond lead time 確認"},
 {n:"Just Your Broker",a:"Jermeale Lewis-Johnson",c:"hello@justyourbroker.com",m:"—",l:"已關閉",tag:"reject",reason:"婉拒"},
 {n:"Alpha Customhouse",a:"—",c:"—",m:"—",l:"待回覆",tag:"quote",reason:"報價 980"}
 ];
@@ -4540,8 +4264,7 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
  const lock=(s[0]==="不可用"||s[0]==="已用過·靠後");
  // 把公司名裡的（退休轉介：xxx）剝到備註
  let cleanN=b.n||"";let tagNote="";const m=cleanN.match(/[（(]([^）)]*轉介[^）)]*)[）)]/);if(m){tagNote=m[1]+"；";cleanN=cleanN.replace(m[0],"").trim();}
- const _note = b.notes ? (b.notes[CURRENT_LANG] || b.notes.zh || b.reason || "") : (b.reason || "");
- const fullReason=tagNote+_note;
+ const fullReason=tagNote+(b.reason||"");
  const short=fullReason.slice(0,40);const longr=fullReason.length>40;
  const domain=(b.c||"").includes("@")?((b.c||"").split("@")[1]||""):"";
  const nmKey=(cleanN||"").toLowerCase().trim();
@@ -4551,12 +4274,12 @@ function bkRow(b,i){const s=bkStatus(b);const pr=s[0]==="成交過·可複用"?"
    if(nmKey.length>=3&&s.includes(nmKey))return true;
    return false;
  });
- return `<tr style="cursor:pointer" onclick="const t=document.getElementById('bk_thread_${i}');const show=t.style.display==='none';t.style.display=show?'table-row':'none'"><td style="max-width:260px"><div style="font-weight:700;font-size:13px">${esc(cleanN)}${b.special?'<span style="font-size:10px;background:linear-gradient(135deg,#8b6914,#b8860b);color:#fef3c7;padding:2px 8px;border-radius:6px;margin-left:6px;font-weight:600">★ Special</span>':''}</div><div style="font-size:11px;color:var(--mut);margin-top:3px">#${esc(b.sn||'—')} ｜ ${esc(b.a)}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${maskEmail(b.c,lock)}</div></td>
- <td><span class="tag ${s[1]}">${s[0]}</span>${b.grade?'<div style="margin-top:4px;font-size:12px;font-weight:700;color:'+(b.grade.startsWith('A')?'#4ade80':b.grade.startsWith('B')?'#60a5fa':'#f87171')+'">'+b.grade+'</div>':''}</td>
- <td style="max-width:300px;font-size:12px;color:var(--mut)"><span class="brk-short">${esc(short)}${longr?"…":""}</span>${longr?`<a style="color:var(--acc);cursor:pointer;margin-left:6px" onclick="event.stopPropagation();const f=this.parentElement.querySelector('.brk-full');const show=f.style.display==='none';f.style.display=show?'block':'none';this.textContent=show?'收起':'展開'">展開</a>`:""}<div class="brk-full" style="display:none;margin-top:4px;color:var(--tx)">${esc(fullReason)}</div></td>
+ return `<tr style="cursor:pointer" onclick="const t=document.getElementById('bk_thread_${i}');const show=t.style.display==='none';t.style.display=show?'table-row':'none'"><td style="max-width:280px"><div style="font-weight:700;font-size:13px">${esc(cleanN)}</div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(b.a)}</div><div style="font-size:11px;color:var(--dim);margin-top:2px">${maskEmail(b.c,lock)}</div></td>
+ <td><span class="tag ${s[1]}">${s[0]}</span></td>
+ <td style="max-width:340px;font-size:12px;color:var(--mut)"><span class="brk-short">${esc(short)}${longr?"…":""}</span>${longr?`<a style="color:var(--acc);cursor:pointer;margin-left:6px" onclick="event.stopPropagation();const f=this.parentElement.querySelector('.brk-full');const show=f.style.display==='none';f.style.display=show?'block':'none';this.textContent=show?'收起':'展開'">展開</a>`:""}<div class="brk-full" style="display:none;margin-top:4px;color:var(--tx)">${esc(fullReason)}</div></td>
  <td style="text-align:center">${pr}</td>
- <td><button class="btn small" onclick="event.stopPropagation();editBrokerNote(${i})">備註</button><button class="btn small" style="margin-left:4px" onclick="event.stopPropagation();showScoreHistory(${i})">評分</button></td>
- ${canManage()?`<td><button class="btn small" onclick="event.stopPropagation();adjustScore(${i})">調分</button> <button class="btn small" onclick="event.stopPropagation();delBroker(${i})">移除</button></td>`:""}</tr>
+ <td><button class="btn small" onclick="event.stopPropagation();editBrokerNote(${i})">備註</button></td>
+ ${canManage()?`<td><button class="btn small" onclick="event.stopPropagation();delBroker(${i})">移除</button></td>`:""}</tr>
  <tr id="bk_thread_${i}" style="display:none"><td colspan="${canManage()?7:6}" style="background:var(--bg2);padding:12px"><div style="font-size:12px;color:var(--mut);margin-bottom:8px">與此經紀的往來記錄，共 ${list.length} 封，點上面行可收起</div>
  ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--card)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}
  </td></tr>`;}
@@ -4567,11 +4290,11 @@ function openBrokerMails(mail,name){const domain=(mail||"").includes("@")?((mail
  openModal(`<h3>與 ${esc(name)} 的往來郵件</h3><div style="font-size:12px;color:var(--mut);margin-bottom:10px">共 ${list.length} 封，發信與回覆會自動累積在此</div>
  ${list.length?list.map(e=>`<div style="padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--bg2)"><div style="font-size:13px"><b>${esc(e.sub)}</b></div><div style="font-size:11px;color:var(--mut);margin-top:3px">${esc(e.from)} ｜ ${e.t}</div></div>`).join(""):`<div class='empty'>尚無往來記錄，之後發信或收到回覆會自動出現在這裡</div>`}`);}
 function brokerPool(){const cols=canManage()?7:6;return `<div class="search"><input id="bk_search" placeholder="搜尋經紀 / 聯絡人 / 信箱" oninput="filterBroker(this.value)"><select onchange="window._bkf=this.value;filterBroker(window._bkq||'')"><option value="">全部狀態</option><option value="可聯繫">可聯繫</option><option value="成交過·可複用">成交過·可複用</option><option value="已用過·靠後">已用過·靠後</option><option value="不可用">不可用</option></select><button class="btn primary" onclick="exportBrokerXlsx()">⬇ 匯出 Excel</button>${canManage()?`<button class="btn" onclick="openAddBroker()">＋ 新增資源</button>`:""}</div>
-<div style="font-size:12px;color:var(--mut);margin:8px 0">共 ${BROKERS.length} 筆，輸入關鍵字或狀態篩選</div>
+<div style="font-size:12px;color:var(--mut);margin:8px 0">共 ${BROKERS.length} 筆，預覽前 100 筆，輸入關鍵字或狀態篩選查看全部</div>
 <table><thead><tr><th style="min-width:240px">經紀公司／聯絡人／信箱</th><th>可用狀態</th><th>備註</th><th>優先級</th><th>個人備註</th>${canManage()?"<th>操作</th>":""}</tr></thead><tbody id="bk_body">
 ${BROKERS.slice(0,100).map((b,i)=>bkRow(b,i)).join("")}
 </tbody></table>`;}
-function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.map((b,i)=>({b,i})).filter(x=>{const s=bkStatus(x.b)[0];return(!f||(x.b.n+x.b.a+x.b.c+x.b.sn).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(x=>bkRow(x.b,x.i)).join("")||`<tr><td colspan='${canManage()?7:6}' class='empty'>無符合</td></tr>`;}
+function filterBroker(f){window._bkq=f;const st=window._bkf||"";const list=BROKERS.map((b,i)=>({b,i})).filter(x=>{const s=bkStatus(x.b)[0];return(!f||(x.b.n+x.b.a+x.b.c).toLowerCase().includes(f.toLowerCase()))&&(!st||s===st);});document.getElementById("bk_body").innerHTML=list.map(x=>bkRow(x.b,x.i)).join("")||`<tr><td colspan='${canManage()?6:5}' class='empty'>無符合</td></tr>`;}
 function openAddBroker(){openModal(`<h3>新增經紀資源</h3><div class="form-grid"><div class="fg"><label>經紀公司</label><input id="ab_n"></div><div class="fg"><label>聯絡人</label><input id="ab_a"></div><div class="fg full"><label>信箱</label><input id="ab_c"></div><div class="fg"><label>可用狀態</label><select id="ab_tag"><option value="quote">可聯繫</option><option value="deal">成交過·可複用</option><option value="used">已用過·靠後</option><option value="reject">不可用</option></select></div><div class="fg"><label>備註 / AI 參考</label><input id="ab_r"></div></div><div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="addBroker()">新增</button></div>`);}
 function addBroker(){const n=document.getElementById("ab_n").value.trim();if(!n){toast("請填經紀公司名稱");return;}const tag=document.getElementById("ab_tag").value;const l=tag==="reject"?"不可用":tag==="deal"?"成交過":tag==="used"?"已用過":"待聯繫";BROKERS.push({n,a:document.getElementById("ab_a").value||"—",c:document.getElementById("ab_c").value||"—",m:"—",l,tag,reason:document.getElementById("ab_r").value||""});addAudit("新增經紀資源",n);closeModal();render();toast("資源已加入列表");}
 function delBroker(i){const b=BROKERS[i];BROKERS.splice(i,1);addAudit("移除經紀資源",b.n);render();toast("已從列表移除");}
@@ -4776,6 +4499,108 @@ R.archive=()=>{
     </div>`;
   }).join("")}</div>`;
 };
+
+R.learn=()=>{
+  const L=CURRENT_LANG;
+  const t=L==='en'?'Learning Library':(L==='cn'?'学习档案':'學習檔案');
+  const sub=L==='en'?'Internal training documents. Click a card to view in-browser. No download.':(L==='cn'?'内部培训文件。点击卡片在线预览，不可下载。':'內部培訓文件。點卡片在線預覽，不可下載。');
+  const title1=L==='en'?'Broker FAQ & Outreach Training':(L==='cn'?'开发性经纪常见提问手册':'開發性經紀常見提問手冊');
+  const title2=L==='en'?'UCRM System User Guide':(L==='cn'?'UCRM 系统操作手册':'UCRM 系統操作手冊');
+  const title3=L==='en'?'Financial Statement Guide':(L==='cn'?'客户财务报表填写指引':'客戶財務報表填寫指引');
+  const title4=L==='en'?'Application & ID Verification':(L==='cn'?'申请表填写与资料核对':'申請表填寫與資料核對');
+  const desc1=L==='en'?'14 pages · 12 email samples · 3 languages':(L==='cn'?'14页 · 12个邮件范例 · 3种语言':'14頁 · 12個郵件範例 · 3種語言');
+  const desc2=L==='en'?'16 chapters · full walkthrough · 3 languages':(L==='cn'?'16个章节 · 完整操作说明 · 3种语言':'16個章節 · 完整操作說明 · 3種語言');
+  const desc3=L==='en'?'10 case samples · PFS walkthrough · 3 languages':(L==='cn'?'10个案例 · 逐项填写说明 · 3种语言':'10個案例 · 逐欄填寫說明 · 3種語言');
+  const desc4=L==='en'?'9 documents · ID verification · 3 languages':(L==='cn'?'9份文件 · 身份核对流程 · 3种语言':'9份文件 · 身份核對流程 · 3種語言');
+  return `<h1>${t}</h1>
+  <div style="font-size:13px;color:var(--mut);margin-bottom:20px">${sub}</div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap">
+    <div onclick="openLearn('broker')" style="width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 2px 12px rgba(0,0,0,.2);transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+      <div style="width:100%;height:340px;background:#fff;overflow:hidden"><img src="docs/learning/cover-broker-01.png" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#34495e,#5d6d7e)';this.remove()"></div>
+      <div style="padding:14px">
+        <div style="font-weight:700;font-size:14px">${title1}</div>
+        <div style="font-size:12px;color:var(--mut);margin-top:4px">${desc1}</div>
+      </div>
+    </div>
+    <div onclick="openLearn('ucrm')" style="width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 2px 12px rgba(0,0,0,.2);transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+      <div style="width:100%;height:340px;background:#fff;overflow:hidden"><img src="docs/learning/cover-ucrm-1.png" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#1a5276,#2980b9)';this.remove()"></div>
+      <div style="padding:14px">
+        <div style="font-weight:700;font-size:14px">${title2}</div>
+        <div style="font-size:12px;color:var(--mut);margin-top:4px">${desc2}</div>
+      </div>
+    </div>
+    <div onclick="openLearn('financial')" style="width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 2px 12px rgba(0,0,0,.2);transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+      <div style="width:100%;height:340px;background:#fff;overflow:hidden"><img src="docs/learning/cover-financial-01.png" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#2c3e50,#2980b9)';this.remove()"></div>
+      <div style="padding:14px">
+        <div style="font-weight:700;font-size:14px">${title3}</div>
+        <div style="font-size:12px;color:var(--mut);margin-top:4px">${desc3}</div>
+      </div>
+    </div>
+    <div onclick="openLearn('application')" style="width:240px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 2px 12px rgba(0,0,0,.2);transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+      <div style="width:100%;height:340px;background:#fff;overflow:hidden"><img src="docs/learning/cover-application-01.png" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.background='linear-gradient(135deg,#7f8c8d,#95a5a6)';this.remove()"></div>
+      <div style="padding:14px">
+        <div style="font-weight:700;font-size:14px">${title4}</div>
+        <div style="font-size:12px;color:var(--mut);margin-top:4px">${desc4}</div>
+      </div>
+    </div>
+  </div>`;
+};
+
+let learnCurrentDoc='broker';
+function openLearn(doc){
+  const L=CURRENT_LANG;
+  learnCurrentDoc=doc||'broker';
+  const files={
+    broker:{tc:'docs/learning/broker-faq-tc.pdf',sc:'docs/learning/broker-faq-sc.pdf',en:'docs/learning/broker-faq-en.pdf'},
+    ucrm:{tc:'docs/learning/ucrm-guide-tc.pdf',sc:'docs/learning/ucrm-guide-sc.pdf',en:'docs/learning/ucrm-guide-en.pdf'},
+    financial:{tc:'docs/learning/financial-guide-tc.pdf',sc:'docs/learning/financial-guide-sc.pdf',en:'docs/learning/financial-guide-en.pdf'},
+    application:{tc:'docs/learning/application-guide-tc.pdf',sc:'docs/learning/application-guide-sc.pdf',en:'docs/learning/application-guide-en.pdf'}
+  };
+  const titles={
+    broker:L==='en'?'Broker FAQ Training':(L==='cn'?'开发性经纪常见提问手册':'開發性經紀常見提問手冊'),
+    ucrm:L==='en'?'UCRM System User Guide':(L==='cn'?'UCRM 系统操作手册':'UCRM 系統操作手冊'),
+    financial:L==='en'?'Financial Statement Guide':(L==='cn'?'客户财务报表填写指引':'客戶財務報表填寫指引'),
+    application:L==='en'?'Application & ID Verification':(L==='cn'?'申请表填写与资料核对':'申請表填寫與資料核對')
+  };
+  const langs=[
+    {code:'tc',label:'繁體中文'},
+    {code:'sc',label:'简体中文'},
+    {code:'en',label:'English'}
+  ];
+  const def=CURRENT_LANG==='cn'?'sc':(CURRENT_LANG==='en'?'en':'tc');
+  let m=document.getElementById('learnModal');
+  if(!m){
+    m=document.createElement('div');m.id='learnModal';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+    document.body.appendChild(m);
+  }
+  m.innerHTML=`<div style="background:var(--bg);width:90vw;height:90vh;border-radius:12px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line)">
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-weight:700">${titles[learnCurrentDoc]}</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        ${langs.map(l=>`<button class="btn small" data-lang="${l.code}" onclick="switchLearn('${l.code}')" style="${l.code===def?'background:var(--acc);color:#fff':''}">${l.label}</button>`).join('')}
+        <button class="btn small" onclick="document.getElementById('learnModal').remove()">✕</button>
+      </div>
+    </div>
+    <iframe id="learnFrame" src="${files[learnCurrentDoc][def]}" style="flex:1;border:none;width:100%;background:#fff"></iframe>
+  </div>`;
+}
+function switchLearn(code){
+  const files={
+    broker:{tc:'docs/learning/broker-faq-tc.pdf',sc:'docs/learning/broker-faq-sc.pdf',en:'docs/learning/broker-faq-en.pdf'},
+    ucrm:{tc:'docs/learning/ucrm-guide-tc.pdf',sc:'docs/learning/ucrm-guide-sc.pdf',en:'docs/learning/ucrm-guide-en.pdf'},
+    financial:{tc:'docs/learning/financial-guide-tc.pdf',sc:'docs/learning/financial-guide-sc.pdf',en:'docs/learning/financial-guide-en.pdf'},
+    application:{tc:'docs/learning/application-guide-tc.pdf',sc:'docs/learning/application-guide-sc.pdf',en:'docs/learning/application-guide-en.pdf'}
+  };
+  document.getElementById('learnFrame').src=files[learnCurrentDoc][code];
+  document.querySelectorAll('#learnModal button[data-lang]').forEach(b=>{
+    if(b.dataset.lang===code){b.style.background='var(--acc)';b.style.color='#fff';}
+    else{b.style.background='';b.style.color='';}
+  });
+}
+
 function genArchive(no){
   const c=DATA.customers.find(x=>x.no===no);if(!c)return;
   const files=(DATA.files||{})[no]||[];
@@ -5183,13 +5008,16 @@ agree:'I have read and agree to the <a href="#" onclick="event.preventDefault();
 foot:"Authorized personnel only",ver:"System Build: "}
 };
 function setLangLogin(k){CURRENT_LANG=k;PREF.lang=k;savePref();const L=LLANG[k];if(!L)return;
-function _set(id,val){var el=document.getElementById(id);if(el)el.textContent=val;}
-_set("lh_title",L.t);_set("lh_sub",L.s);_set("ll_user",L.u);_set("ll_pwd",L.p);
+document.getElementById("lh_title").textContent=L.t;
+document.getElementById("lh_sub").textContent=L.s;
+document.getElementById("ll_user").textContent=L.u;
+document.getElementById("ll_pwd").textContent=L.p;
 var _lu=document.getElementById("li_user");if(_lu)_lu.placeholder=L.up;
 var _lp=document.getElementById("li_pwd");if(_lp)_lp.placeholder=L.pp;
-_set("slideText",L.slide||L.b);
+document.getElementById("slideText").textContent=L.slide||L.b;
 var _lat=document.getElementById("li_agree_txt");if(_lat)_lat.innerHTML=L.agree;
-_set("li_foot",L.foot);_set("verTagLogin",L.ver+APP_VER);
+document.getElementById("li_foot").textContent=L.foot;
+document.getElementById("verTagLogin").textContent=L.ver+APP_VER;
 document.querySelectorAll("#loginLang button").forEach((b,i)=>b.classList.toggle("on",["zh","cn","en"][i]===k));}
 (function(){
   // Auto-reload if URL has ?update=1
