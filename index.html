@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106l1805";
+  var V="v20261106m1810";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -750,14 +750,17 @@ let _sr=null;
 function injectMicButtons(){
   document.querySelectorAll('textarea, input[type="text"], input[type="search"], input:not([type])').forEach(el=>{
     if(el.dataset.micBound)return;
+    // 登錄頁面的輸入框不加語音按鈕
+    if(el.closest('#loginScreen'))return;
     el.dataset.micBound="1";
     const wrap=document.createElement("div");
     wrap.style.cssText="position:relative;display:inline-block;width:100%";
     el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
     el.style.width="100%";el.style.paddingRight="36px";
     const btn=document.createElement("button");
-    btn.type="button";btn.innerHTML="🎤";
-    btn.style.cssText="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;opacity:.5";
+    btn.type="button";
+    btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+    btn.style.cssText="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;opacity:.5;color:var(--mut)";
     btn.title=CURRENT_LANG==="en"?"Voice input":(CURRENT_LANG==="cn"?"语音输入":"語音輸入");
     btn.onclick=(e)=>{e.preventDefault();toggleMic(el,btn);};
     wrap.appendChild(btn);
@@ -1386,7 +1389,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106L";
+const APP_VER="20261106M";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
