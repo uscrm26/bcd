@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106t1845";
+  var V="v20261106u1850";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1413,7 +1413,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106T";
+const APP_VER="20261106U";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -5201,9 +5201,9 @@ function setBootStep(pct,text){
     setBootStep(95,"即將完成...");
   }catch(e){console.error("init data load error:",e);}
   render();
-  // 至少顯示 600ms，避免閃屏
+  // 至少顯示 1.2 秒，讓用戶能清楚看到加載過程
   const elapsed=Date.now()-bootStartTime;
-  if(elapsed<600){await new Promise(r=>setTimeout(r,600-elapsed));}
+  if(elapsed<1200){await new Promise(r=>setTimeout(r,1200-elapsed));}
   setBootStep(100,"加載完成");
   setTimeout(()=>{const bl=document.getElementById("bootLoader");if(bl)bl.remove();},200);
   if(PREF.lang&&PREF.lang!=="zh"){
