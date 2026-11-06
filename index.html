@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106aa1925";
+  var V="v20261106ab1930";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1471,7 +1471,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106AA";
+const APP_VER="20261106AB";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -2295,7 +2295,8 @@ function custFiltered(){
   const q=(window._cs||"").toLowerCase(),stf=window._cst||"";
   const me=CURRENT_USER.id;
   const pinnedSet=new Set(PINNED[me]||[]);
-  const of=window._ownerFilter||"me";
+  const isAdmin=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
+  const of=isAdmin?(window._ownerFilter||"all"):"me";
   const subIds=new Set(window._selOwners||[]);
   return DATA.customers.filter(c=>{
     if(!canViewCust(c.no))return false;
