@@ -358,6 +358,7 @@ tr:hover td{background:#1a2130}
     <div class="grp">檔案</div>
     <a data-v="doc"><span class="ic">▤</span>文件中心</a>
     <a data-v="archive"><span class="ic">▦</span>歸檔包</a>
+    <a data-v="learn"><span class="ic">📖</span>學習檔案</a>
     <div class="grp">系統</div>
     <a data-v="worklog"><span class="ic">✎</span>工作通知</a>
     <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
@@ -4458,6 +4459,61 @@ R.archive=()=>{
     </div>`;
   }).join("")}</div>`;
 };
+
+R.learn=()=>{
+  const t=L==='en'?'Learning Library':(L==='cn'?'学习档案':'學習檔案');
+  const sub=L==='en'?'Internal training documents. Click a card to view in-browser. No download.':(L==='cn'?'内部培训文件。点击卡片在线预览，不可下载。':'內部培訓文件。點卡片在線預覽，不可下載。');
+  const title=L==='en'?'Broker FAQ & Outreach Training':(L==='cn'?'开发性经纪常见提问手册':'開發性經紀常見提問手冊');
+  return `<h1>${t}</h1>
+  <div style="font-size:13px;color:var(--mut);margin-bottom:20px">${sub}</div>
+  <div style="display:flex;gap:20px;flex-wrap:wrap">
+    <div onclick="openLearn()" style="width:280px;cursor:pointer;border-radius:12px;overflow:hidden;background:var(--panel);box-shadow:0 2px 12px rgba(0,0,0,.2);transition:transform .2s" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+      <div style="width:100%;height:360px;background:linear-gradient(135deg,#34495e,#5d6d7e);display:flex;align-items:center;justify-content:center">
+        <svg width="100" height="100" viewBox="0 0 24 24" fill="rgba(255,255,255,.35)"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      </div>
+      <div style="padding:14px">
+        <div style="font-weight:700;font-size:14px">${title}</div>
+        <div style="font-size:12px;color:var(--mut);margin-top:4px">${L==='en'?'14 pages · 12 email samples · 3 languages':(L==='cn'?'14页 · 12个邮件范例 · 3种语言':'14頁 · 12個郵件範例 · 3種語言')}</div>
+      </div>
+    </div>
+  </div>`;
+};
+
+function openLearn(){
+  const langs=[
+    {code:'tc',label:L==='cn'?'繁體中文':'繁體中文',file:'docs/learning/broker-faq-tc.pdf'},
+    {code:'sc',label:L==='cn'?'简体中文':'简体中文',file:'docs/learning/broker-faq-sc.pdf'},
+    {code:'en',label:'English',file:'docs/learning/broker-faq-en.pdf'}
+  ];
+  const def=CURRENT_LANG==='cn'?'sc':(CURRENT_LANG==='en'?'en':'tc');
+  let m=document.getElementById('learnModal');
+  if(!m){
+    m=document.createElement('div');m.id='learnModal';
+    m.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center';
+    document.body.appendChild(m);
+  }
+  m.innerHTML=`<div style="background:var(--bg);width:90vw;height:90vh;border-radius:12px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--line)">
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-weight:700">${L==='en'?'Broker FAQ Training':(L==='cn'?'开发性经纪常见提问手册':'開發性經紀常見提問手冊')}</span>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        ${langs.map(l=>`<button class="btn small" data-lang="${l.code}" onclick="switchLearn('${l.code}')" style="${l.code===def?'background:var(--acc);color:#fff':''}">${l.label}</button>`).join('')}
+        <button class="btn small" onclick="document.getElementById('learnModal').remove()">✕</button>
+      </div>
+    </div>
+    <iframe id="learnFrame" src="${langs.find(l=>l.code===def).file}" style="flex:1;border:none;width:100%;background:#fff"></iframe>
+  </div>`;
+}
+function switchLearn(code){
+  const files={tc:'docs/learning/broker-faq-tc.pdf',sc:'docs/learning/broker-faq-sc.pdf',en:'docs/learning/broker-faq-en.pdf'};
+  document.getElementById('learnFrame').src=files[code];
+  document.querySelectorAll('#learnModal button[data-lang]').forEach(b=>{
+    if(b.dataset.lang===code){b.style.background='var(--acc)';b.style.color='#fff';}
+    else{b.style.background='';b.style.color='';}
+  });
+}
+
 function genArchive(no){
   const c=DATA.customers.find(x=>x.no===no);if(!c)return;
   const files=(DATA.files||{})[no]||[];
