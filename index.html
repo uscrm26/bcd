@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106af2000";
+  var V="v20261106ag2010";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -610,33 +610,73 @@ function guessMailType(x){const s=((x.subject||"")+" "+(x.body||"")).toLowerCase
 async function loadRepoData(){
   try{
     const cb="?cb="+Date.now();
-    const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"+cb,{cache:"no-store"}),fetch("mailboxes.json"+cb,{cache:"no-store"}),fetch("dbboard/data.json"+cb,{cache:"no-store"}),fetch("files.json"+cb,{cache:"no-store"}),fetch("brokers.json"+cb,{cache:"no-store"}),fetch("sent_log.json"+cb,{cache:"no-store"})]);
-    if(!dbRes.ok)throw new Error("核心數據文件 dbboard/data.json 加載失敗，狀態碼 "+dbRes.status);
-    const em=emRes.ok?await emRes.json():[];
-    const mb=mbRes.ok?await mbRes.json():null;
-    const db=await dbRes.json();
-    const fi=fiRes.ok?await fiRes.json():null;
-    const bk=bkRes.ok?await bkRes.json():null;
-    DATA.sent=slRes.ok?await slRes.json():[];
-    if(db){
-      if(Array.isArray(db.customers)&&db.customers.length){DATA.customers=db.customers;}
-      if(db.timeline)DATA.timeline=db.timeline;
-      if(db.statuses)DATA.statuses=db.statuses;
-      if(db.finance)DATA.finance=db.finance;
-      if(db.policy)DATA.policy=db.policy;
-      if(db.companyDocs)DATA.companyDocs=db.companyDocs;
-      if(db.todos)DATA.todos=db.todos;
-      if(db.archive)DATA.archive=db.archive;
-      if(db.notes)DATA.notes=db.notes;
-    }
-    if(Array.isArray(bk)&&bk.length){
-      BROKERS.length=0;
-      bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
-    }
-    DATA.files=DATA.files||{};
-    if(fi&&typeof fi==="object")DATA.files=fi;
-    if(Array.isArray(em)&&em.length){
-      const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
+    // 先加載核心小文件：客戶列表和狀態，快速渲染頁面
+    const [custRes,statRes]=await Promise.all([fetch("dbboard/customers.json"+cb,{cache:"no-store"}),fetch("dbboard/statuses.json"+cb,{cache:"no-store"})]);
+    if(!custRes.ok)throw new Error("客戶數據文件加載失敗，狀態碼 "+custRes.status);
+    const custs=await custRes.json();
+    if(Array.isArray(custs)&&custs.length)DATA.customers=custs;
+    if(statRes.ok){DATA.statuses=await statRes.json();}
+    
+    // 後台並行加載其他數據文件，不阻塞頁面渲染
+    Promise.all([
+      fetch("emails.json"+cb,{cache:"no-store"}),
+      fetch("mailboxes.json"+cb,{cache:"no-store"}),
+      fetch("files.json"+cb,{cache:"no-store"}),
+      fetch("brokers.json"+cb,{cache:"no-store"}),
+      fetch("sent_log.json"+cb,{cache:"no-store"}),
+      fetch("dbboard/timeline.json"+cb,{cache:"no-store"}),
+      fetch("dbboard/todos.json"+cb,{cache:"no-store"}),
+    ]).then(async ([emRes,mbRes,fiRes,bkRes,slRes,tlRes,tdRes])=>{
+      const em=emRes.ok?await emRes.json():[];
+      const mb=mbRes.ok?await mbRes.json():null;
+      const fi=fiRes.ok?await fiRes.json():null;
+      const bk=bkRes.ok?await bkRes.json():null;
+      DATA.sent=slRes.ok?await slRes.json():[];
+      if(tlRes.ok)DATA.timeline=await tlRes.json();
+      if(tdRes.ok)DATA.todos=await tdRes.json();
+      
+      if(Array.isArray(bk)&&bk.length){
+        BROKERS.length=0;
+        bk.forEach(x=>{if(x.tag==="disabled")return;BROKERS.push({n:x.n||"",a:x.a||"",c:x.m||x.c||"",m:"—",l:x.l||x.tag||"",tag:x.tag||"new",reason:x.reason||x.l||""});});
+      }
+      DATA.files=DATA.files||{};
+      if(fi&&typeof fi==="object")DATA.files=fi;
+      if(Array.isArray(em)&&em.length){
+        const processed=JSON.parse(localStorage.getItem("bcd_mail_done")||"{}");
+        DATA.emails=em.map(x=>{
+          const t=fmtMailDate(x.date);
+          return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
+        });
+        window._mailCustMap={};
+        (DATA.customers||[]).forEach(c=>{
+          if(c.mail&&c.mail.indexOf("@")>0){
+            const dom=c.mail.split("@")[1].toLowerCase();
+            window._mailCustMap[dom]=c.no;
+          }
+          if(c.name){
+            const short=c.name.replace(/\s*(LLC|Inc|Industries.*|International.*|Bio.*|Brands.*|Technologies.*|Education.*|Holdings.*)$/,"").toLowerCase();
+            if(short)window._mailCustMap["name:"+short]=c.no;
+          }
+        });
+      }
+      if(mb&&Array.isArray(mb.mailboxes)){
+        const unreadBy={};DATA.emails.forEach(e=>{unreadBy[e.c]=(unreadBy[e.c]||0)+(e.unread?1:0);});
+        DATA.mailboxes=mb.mailboxes.map(x=>({nm:x.client,em:x.email,st:"ok",unread:unreadBy[x.client]||0}));
+      }
+      render();
+    }).catch(e=>console.error("後台數據加載失敗:",e));
+    
+    // 兼容舊數據文件，後台加載完整 data.json 作為後備
+    fetch("dbboard/data.json"+cb,{cache:"no-store"}).then(r=>r.ok?r.json():null).then(db=>{
+      if(db){
+        if(db.finance)DATA.finance=db.finance;
+        if(db.policy)DATA.policy=db.policy;
+        if(db.companyDocs)DATA.companyDocs=db.companyDocs;
+        if(db.archive)DATA.archive=db.archive;
+      }
+    }).catch(()=>{});
+  }catch(e){console.error("loadRepoData error:",e);throw e;}
+}
       DATA.emails=em.map(x=>{
         const t=fmtMailDate(x.date);
         return {c:x.client||"",from:x.from||"",sub:x.subject||"(無標題)",t:t,unread:!x.read&&!processed[t],done:!!x.done||!!processed[t],type:guessMailType(x),body:x.body||"",auto_interp:x.auto_interp||"",atts:Array.isArray(x.attachments)?x.attachments:[],to:x.to||""};
@@ -1472,7 +1512,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106AF";
+const APP_VER="20261106AG";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
