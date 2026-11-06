@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106o1820";
+  var V="v20261106p1825";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -377,9 +377,14 @@ tr:hover td{background:#1a2130}
   </nav>
   </div>
   <div class="foot">
-    <div class="user-row" style="cursor:pointer" onclick="openSwitchUser()">
-      <div class="avatar" id="footAvatar">K</div>
-      <div><div class="nm" id="footName">Kevin W</div><div class="rl" id="footRole">super_admin</div></div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:9px;cursor:pointer" onclick="openSwitchUser()">
+        <div class="avatar" id="footAvatar">K</div>
+        <div><div class="nm" id="footName">Kevin W</div><div class="rl" id="footRole">super_admin</div></div>
+      </div>
+      <button onclick="openSettings()" title="設置" style="background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;opacity:.6;transition:.15s" onmouseover="this.style.opacity='1';this.style.color='var(--txt)'" onmouseout="this.style.opacity='.6';this.style.color='var(--mut)'">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
     </div>
   </div>
 </aside>
@@ -772,7 +777,7 @@ function toggleMic(el,btn){
   if(!SR){alert("瀏覽器不支持語音識別，請用 Chrome");return;}
   const sr=new SR();
   sr.continuous=true;sr.interimResults=true;
-  sr.lang=CURRENT_LANG==="cn"?"zh-CN":(CURRENT_LANG==="en"?"en-US":"zh-HK");
+  sr.lang=PREF.voiceLang||(CURRENT_LANG==="cn"?"zh-CN":(CURRENT_LANG==="en"?"en-US":"zh-HK"));
   const orig=el.value;
   sr.onresult=(e)=>{
     let fin="",inter="";
@@ -1389,7 +1394,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106O";
+const APP_VER="20261106P";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -4768,6 +4773,44 @@ function renderAiModelsList(){const box=document.getElementById("aimodels_list")
 <button class="btn" style="padding:2px 8px;font-size:12px" onclick="if(confirm('刪除這個模型？')){AIMODELS.splice(${i},1);renderAiModelsList();}">刪</button></div>`;}).join("");}
 async function saveAiModels(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("aimodels_msg");if(!tok){msg.textContent="請先填上面的 GitHub Token";return;}const n=document.getElementById("aim_name").value.trim();const ep=document.getElementById("aim_ep").value.trim();if(ep){AIMODELS.push({name:n||ep,endpoint:ep,account:"185 手機方舟帳號",enabled:true,note:"手動新增"});document.getElementById("aim_name").value="";document.getElementById("aim_ep").value="";}const body=JSON.stringify(AIMODELS,null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/dbboard/ai_models.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新 AI 模型清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存到 GitHub，下次巡查生效";toast("模型清單已更新");loadAiModels();}catch(e){msg.textContent="儲存失敗："+e;}}
 function paintFoot(){const n=document.getElementById("footName"),r=document.getElementById("footRole"),a=document.getElementById("footAvatar");if(n)n.textContent=CURRENT_USER.nm;if(r)r.textContent=ROLE_LB[CURRENT_USER.role]||CURRENT_USER.role;if(a)a.textContent=CURRENT_USER.avatar||CURRENT_USER.nm.charAt(0);const tu=document.getElementById("topUserName");if(tu)tu.textContent=CURRENT_USER.nm;const ta=document.querySelector("#topUser span");if(ta)ta.textContent=CURRENT_USER.nm.charAt(0).toUpperCase();}
+function openSettings(){
+  const curTz=PREF.tz||0;
+  const curLang=CURRENT_LANG;
+  const curVoice=PREF.voiceLang||"zh-HK";
+  const tzOpts=TZS.map((t,i)=>`<label style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;font-size:13px;cursor:pointer;background:${i===curTz?'var(--bg2)':'transparent'}"><input type="radio" name="set_tz" value="${i}" ${i===curTz?"checked":""} style="width:16px;height:16px"><span>${t[0]}</span> ${t[1]}</label>`).join("");
+  const voiceOpts=[["zh-HK","粵語（廣東話）"],["zh-CN","普通話"],["en-US","美式英語"]].map(v=>`<label style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;font-size:13px;cursor:pointer;background:${v[0]===curVoice?'var(--bg2)':'transparent'}"><input type="radio" name="set_voice" value="${v[0]}" ${v[0]===curVoice?"checked":""} style="width:16px;height:16px">${v[1]}</label>`).join("");
+  const langOpts=[["zh","繁體中文"],["cn","簡體中文"],["en","English"]].map(l=>`<label style="display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;font-size:13px;cursor:pointer;background:${l[0]===curLang?'var(--bg2)':'transparent'}"><input type="radio" name="set_lang" value="${l[0]}" ${l[0]===curLang?"checked":""} style="width:16px;height:16px">${l[1]}</label>`).join("");
+  openModal(`<h3>個人設置</h3>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:16px">只影響你自己的界面和輸入偏好</div>
+  <div style="margin-bottom:16px">
+    <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--mut)">當前時區（用於時間顯示）</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">${tzOpts}</div>
+  </div>
+  <div style="margin-bottom:16px">
+    <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--mut)">界面語言</div>
+    <div style="display:grid;grid-template-columns:1fr;gap:4px">${langOpts}</div>
+  </div>
+  <div style="margin-bottom:20px">
+    <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--mut)">語音識別語言</div>
+    <div style="display:grid;grid-template-columns:1fr;gap:4px">${voiceOpts}</div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:flex-end">
+    <button class="btn" onclick="closeModal()">取消</button>
+    <button class="btn primary" onclick="saveSettings()">保存設置</button>
+  </div>`);
+}
+function saveSettings(){
+  const tz=document.querySelector('input[name="set_tz"]:checked')?.value;
+  const lang=document.querySelector('input[name="set_lang"]:checked')?.value;
+  const voice=document.querySelector('input[name="set_voice"]:checked')?.value;
+  if(tz!==undefined)PREF.tz=parseInt(tz);
+  if(voice)PREF.voiceLang=voice;
+  try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}
+  if(lang&&lang!==CURRENT_LANG){setLang(lang);}
+  else{render();}
+  closeModal();
+  toast("設置已保存");
+}
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);try{localStorage.setItem("bcd_session",JSON.stringify({id:u.id,at:Date.now()}));}catch(e){}paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
 function openSwitchUser(){
   // 非超管不顯示切換選項，只有退出登錄
