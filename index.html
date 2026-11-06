@@ -264,6 +264,50 @@ table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 .legend{display:grid;gap:8px;flex:1;min-width:180px}
 .legend .li{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mut)}
 .legend .sw{width:10px;height:10px;border-radius:3px}
+/* AI Document Bot workspace */
+.ai-workspace{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+.ai-side{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:16px;position:sticky;top:16px}
+.ai-side-sec{display:flex;flex-direction:column;gap:8px}
+.ai-side-lb{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--mut);letter-spacing:.3px}
+.ai-doc-tabs,.ai-sig-tabs{display:flex;gap:6px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:4px}
+.ai-doc-tabs button,.ai-sig-tabs button{flex:1;background:transparent;border:none;color:var(--mut);font-size:12px;padding:7px 6px;border-radius:7px;cursor:pointer;transition:.15s;line-height:1.3}
+.ai-doc-tabs button.on,.ai-sig-tabs button.on{background:var(--acc);color:#fff}
+.ai-select{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:9px 10px;color:var(--txt);font-size:13px;outline:none;cursor:pointer}
+.ai-fl{font-size:11px;color:var(--dim);margin-top:2px}
+.ai-side-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.ai-side-actions .btn{display:flex;align-items:center;justify-content:center;gap:7px}
+.ai-main{min-width:0}
+.ai-sheet{background:#fff;color:#1f2937;border-radius:14px;border:1px solid var(--line);padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.pfs-doc h2{text-align:center;letter-spacing:3px;font-size:18px;margin-bottom:20px;color:#111}
+.pfs-top{display:grid;grid-template-columns:1fr 200px;gap:14px;margin-bottom:16px}
+.pfs-top label,.bond-fl label,.sig-date label{display:block;font-size:11px;color:#6b7280;margin-bottom:4px;font-weight:700}
+.ai-text{width:100%;border:1px solid #d1d5db;border-radius:7px;padding:8px 10px;font-size:13px;outline:none;background:#fff;color:#111}
+.ai-text:focus{border-color:var(--acc)}
+.pfs-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+.pfs-table th{background:#f3f4f6;border:1px solid #9ca3af;padding:7px;font-size:12px;text-align:left;letter-spacing:.5px}
+.pfs-table td{border:1px solid #9ca3af;padding:5px 8px}
+.pfs-table td.lb{width:32%;font-size:12px;color:#374151}
+.pfs-table td.vl{width:18%}
+.ai-money{width:100%;border:1px solid #d1d5db;border-radius:6px;padding:6px 8px;font-size:12px;outline:none;text-align:right;background:#fff;color:#111}
+.pfs-table tr.sum td{background:#f9fafb;font-weight:700;font-size:12px}
+.bond-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bond-fl.full{grid-column:1/-1}
+.sig-block{margin-top:22px;border-top:1px solid #d1d5db;padding-top:16px}
+.sig-title{font-size:12px;font-weight:700;color:#374151;margin-bottom:12px;letter-spacing:.5px}
+.sig-type{max-width:340px}
+.ai-signame{width:100%;border:none;border-bottom:1px solid #9ca3af;background:transparent;font-family:"Brush Script MT","Segoe Script",cursive;font-size:26px;padding:4px 2px;outline:none;color:#111}
+.sig-line{height:1px;background:#9ca3af;margin-top:6px}
+.sig-type label{display:block;font-size:11px;color:#6b7280;margin-top:4px}
+.sig-draw{display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.sig-draw canvas{border:1px dashed #9ca3af;border-radius:8px;background:#fafafa;width:100%;max-width:420px;touch-action:none}
+.sig-up{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.sig-up img{max-height:90px;border:1px solid #e5e7eb;border-radius:8px;padding:6px;background:#fafafa}
+.sig-date{max-width:220px;margin-top:14px}
+.ai-statusbar{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin-top:14px;font-size:12px;color:var(--mut)}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#3fca8a}
+.ai-dot.dirty{background:#f59e0b}
+.ai-note{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--dim);margin-top:10px}
+@media(max-width:900px){.ai-workspace{grid-template-columns:1fr}.ai-side{position:static}.pfs-top{grid-template-columns:1fr}.bond-grid{grid-template-columns:1fr}}
 /* view switch */
 .switch{display:inline-flex;background:var(--bg2);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
 .switch button{padding:7px 16px;background:transparent;border:0;color:var(--mut);font-size:12px;cursor:pointer}
@@ -4690,97 +4734,263 @@ function formulaDocs(){
 }
 function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化開發信逐封送達"],["10/29","Oliveware","回覆 IIA/DRI/Aurora/BorderBuddy，提交 Bluebird POA"],["10/29","Nervaqon","CBP 申請表回覆 SPG Anova，等待報價"],["10/30","A1 Worldwide","要求填 POA 開戶，待回覆"]];
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
-// ===== PFS 個人財務表生成器 =====
+// ===== AI Document Bot 雙欄文檔工作台 =====
+const AI_DICT={
+  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"AI 人設",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 一鍵填好",blank:"空白表",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"AI 生成數字僅供參考，送出前請人工核對"},
+  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"AI persona",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"AI auto-fill",blank:"Blank form",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Not saved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"AI-generated figures are estimates. Review before submission."},
+  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"AI 人设",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 一键填好",blank:"空白表",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"AI 生成数字仅供参考，送出前请人工核对"}
+};
+function aiT(){return AI_DICT[CURRENT_LANG==="en"?"en":CURRENT_LANG==="cn"?"cn":"zh"];}
+let aiDocType="pfs";
 let aiSel=(DATA.customers&&DATA.customers[0])||{};
-function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;}
-let pfsPersona={marital:"married_sep",income:"mid",asset:"mid"};
-function pfsGen(){
-  const c=aiSel||{};
-  const inc=pfsPersona.income==="low"?70:pfsPersona.income==="high"?220:125; // 年收 千美元
-  const scale=pfsPersona.asset==="low"?.4:pfsPersona.asset==="high"?2.2:1;
-  const married=pfsPersona.marital!=="single";
-  const cash=Math.round(25*scale),stocks=Math.round(35*scale),home=Math.round(420*scale),realE=0,ppe=Math.round(30*scale),ira=Math.round(65*scale),other=0;
-  const assets=cash+stocks+home+realE+ppe+ira+other;
-  const dueBank=0,credit=Math.round(7*scale),taxes=0,ap=0,np=0,equip=0,mortgage=Math.round(265*scale),otherL=0;
-  const liab=dueBank+credit+taxes+ap+np+equip+mortgage+otherL;
-  const net=assets-liab;
-  const salary=Math.round(inc),div=Math.round(inc*.01),rei=0,otherI=0;
-  const income=salary+div+rei+otherI;
-  const row=(a,b)=>`<tr><td>${a}</td><td style="text-align:right">$${b.toLocaleString()}</td></tr>`;
-  const frow=(a,b)=>`<tr><td>${a}</td><td style="text-align:right">$${b.toLocaleString()}</td></tr>`;
-  const html=`
-  <div style="background:#fff;color:#111;padding:28px;max-width:820px;margin:0 auto;font-family:Georgia,'Times New Roman',serif">
-    <h2 style="text-align:center;letter-spacing:2px;margin-bottom:14px">PERSONAL FINANCIAL STATEMENT</h2>
-    <p style="font-size:12px;line-height:1.7">This statement and any applicable schedules may be completed jointly by married and unmarried applicants if their assets and liabilities are sufficiently joined so that the statement can be meaningfully and fairly presented on a combined basis; otherwise separate statements and schedules are required.</p>
-    <p style="margin:8px 0;font-size:13px">Applicant is: ${married?(pfsPersona.marital==="married_joint"?"☑ Married　☐ Single　☐ Separated":"☑ Married　☐ Single　☐ Separated"):"☐ Married　☑ Single　☐ Separated"}</p>
-    <p style="font-size:13px">If married, the financial statement is: ${married?(pfsPersona.marital==="married_joint"?"☑ Completed jointly with spouse　☐ Not completed jointly":"☐ Completed jointly with spouse　☑ Not completed jointly"):"<span style='color:#888'>N/A</span>"}</p>
-    <table style="width:100%;border-collapse:collapse;margin:10px 0">
-      <tr><td style="width:50%;border:1px solid #999;padding:8px;vertical-align:top"><b>Name and address</b><br>${esc(c.member||"")}<br>${esc(c.name||"")}<br>${esc(c.ein?"EIN "+c.ein:"")}</td>
-      <td style="border:1px solid #999;padding:8px;vertical-align:top"><b>Statement of assets and liabilities as of</b><br>${new Date().toLocaleDateString("en-US")}<br><span style="color:#666;font-size:11px">(insert date, otherwise statement will be returned)</span><br>☑ Individual　☐ Co-Partnership　☐ Corporation</td></tr>
-    </table>
-    <table style="width:100%;border-collapse:collapse">
-      <tr><th style="width:50%;border:1px solid #999;padding:6px;text-align:left">ASSETS</th><th style="border:1px solid #999;padding:6px;text-align:left">LIABILITIES</th></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Cash　<span style="float:right">$${cash.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Due to banks　<span style="float:right">$${dueBank.toLocaleString()}</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Stocks, bonds, etc.　<span style="float:right">$${stocks.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Credit cards　<span style="float:right">$${credit.toLocaleString()}</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Accounts receivable　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Taxes　<span style="float:right">$${taxes.toLocaleString()}</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Notes receivable　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Accounts payable　<span style="float:right">$0</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Inventory　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Notes payable　<span style="float:right">$0</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Equipment　<span style="float:right">$0</span></td><td style="border:1px solid #999;padding:5px">Due on equipment　<span style="float:right">$0</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Home　<span style="float:right">$${home.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Due on real estate　<span style="float:right">$${mortgage.toLocaleString()}</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Real estate　<span style="float:right">$${realE.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Other liabilities　<span style="float:right">$${otherL.toLocaleString()}</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Personal property　<span style="float:right">$${ppe.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px"><b>TOTAL LIABILITIES</b>　<span style="float:right">$${liab.toLocaleString()}</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">IRA　<span style="float:right">$${ira.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Capital stock (if any)　<span style="float:right">$0</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Other Assets　<span style="float:right">$${other.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px">Retained earnings　<span style="float:right">$0</span></td></tr>
-      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL ASSETS</b>　<span style="float:right">$${assets.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px"><b>NET WORTH</b>　<span style="float:right">$${net.toLocaleString()}</span></td></tr>
-    </table>
-    <table style="width:100%;border-collapse:collapse;margin-top:10px">
-      <tr><th style="width:50%;border:1px solid #999;padding:6px;text-align:left">SOURCES OF INCOME FOR YEAR ENDED</th><th style="border:1px solid #999;padding:6px;text-align:left">OTHER LIABILITIES</th></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Salary, bonuses & commissions　<span style="float:right">¥${salary.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Contingent liabilities (lawsuits, indemnification): None</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Dividends　<span style="float:right">¥${div.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Endorser, co-maker or guarantor?　$0</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Real estate income　<span style="float:right">¥${rei.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">On leases or contracts?　$0</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px">Other income　<span style="float:right">¥${otherI.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Legal claims (judgments)?　$0</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL INCOME</b>　<span style="float:right">¥${income.toLocaleString()}</span></td><td style="border:1px solid #999;padding:5px;font-size:12px">Amount of contested income tax liens?　$0</td></tr>
-    </table>
-    <p style="text-align:center;margin-top:14px;font-size:11px;color:#666">AI 依人設生成的合理數字，送出前請人工核對修改。</p>
-  </div>`;
-  openModal(`<h3>Personal Financial Statement</h3><div style="max-height:70vh;overflow:auto">${html}</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="window.print()">🖨 列印 / 存 PDF</button></div>`);
+let aiPersona={marital:"married_sep",income:"mid",asset:"mid"};
+let aiSigType="type";
+let aiSigData="";
+let aiDraft={};
+let aiSavedAt=null;
+let aiDirty=false;
+function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;aiInitDraft();render();}
+function aiSwitchDoc(t){aiDocType=t;aiInitDraft();render();}
+function aiSetSig(t){aiSigType=t;if(t!=="type")aiSigData="";scheduleAiSave();render();}
+// PFS 欄位定義
+const PFS_ASSET_FIELDS=[["cash","Cash"],["stocks","Stocks, bonds"],["ar","Accounts receivable"],["nr","Notes receivable"],["inv","Inventory"],["equip","Equipment"],["home","Home"],["realE","Real estate"],["ppe","Personal property"],["ira","IRA"],["otherA","Other assets"]];
+const PFS_LIAB_FIELDS=[["bank","Due to banks"],["credit","Credit cards"],["taxes","Taxes"],["ap","Accounts payable"],["np","Notes payable"],["equipL","Due on equipment"],["mortgage","Mortgage"],["otherL","Other liabilities"]];
+const PFS_INC_FIELDS=[["salary","Salary, bonuses"],["div","Dividends"],["rei","Real estate income"],["otherI","Other income"]];
+const BOND_FIELDS=[["impName","Importer name"],["dba","DBA"],["ein","EIN"],["addr","Address"],["contact","Contact person"],["phone","Phone"],["email","Email"],["bondType","Bond type"],["bondAmt","Bond amount"],["port","Port of entry"],["hts","HTS codes"],["annualVal","Est. annual import value"],["annualDuty","Est. annual duties"],["cargoDesc","Cargo description"]];
+function aiBlankDraft(){
+  const d={date:new Date().toISOString().slice(0,10),sigName:"",sigDate:""};
+  if(aiDocType==="pfs"){
+    PFS_ASSET_FIELDS.forEach(f=>d[f[0]]="");
+    PFS_LIAB_FIELDS.forEach(f=>d[f[0]]="");
+    PFS_INC_FIELDS.forEach(f=>d[f[0]]="");
+  }else{BOND_FIELDS.forEach(f=>d[f[0]]="");}
+  return d;
 }
-function pfsBlank(){
-  const c=aiSel||{};
-  const blankRow=label=>`<tr><td style="border:1px solid #999;padding:6px">${label}</td><td style="border:1px solid #999;padding:6px">$　</td></tr>`;
-  const html=`
-  <div style="background:#fff;color:#111;padding:28px;max-width:860px;margin:0 auto;font-family:Georgia,serif;font-size:12px">
-    <h2 style="text-align:center;letter-spacing:2px">PERSONAL FINANCIAL STATEMENT ｜ 個人財務表</h2>
-    <p style="font-size:11px;color:#444">中文欄位對照，客戶可直接在英文欄位填寫。</p>
-    <table style="width:100%;border-collapse:collapse;margin:10px 0">
-      <tr><th style="border:1px solid #999;padding:5px;text-align:left">項目 Item</th><th style="border:1px solid #999;padding:5px;text-align:left">中文說明</th><th style="border:1px solid #999;padding:5px;text-align:left">金額 Amount (CNY)</th></tr>
-      ${blankRow("Cash 現金")}${blankRow("Stocks, bonds 股票債券")}${blankRow("Home 房產自住")}${blankRow("Real estate 其他不動產")}${blankRow("Personal property 個人動產")}${blankRow("IRA 退休帳戶")}${blankRow("Other Assets 其他資產")}
-      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL ASSETS 資產合計</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
-      ${blankRow("Credit cards 信用卡")}${blankRow("Taxes 應繳稅")}${blankRow("Due on real estate 房貸")}${blankRow("Other liabilities 其他負債")}
-      <tr><td style="border:1px solid #999;padding:5px"><b>TOTAL LIABILITIES 負債合計</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
-      <tr><td style="border:1px solid #999;padding:5px"><b>NET WORTH 淨值</b></td><td></td><td style="border:1px solid #999;padding:5px">$　</td></tr>
-      ${blankRow("Salary 薪資年收")}${blankRow("Dividends 股息")}${blankRow("Real estate income 租金收入")}
-    </table>
-    <p style="font-size:11px">Name 姓名：${esc(c.member||"")}　Company 公司：${esc(c.name||"")}</p>
-  </div>`;
-  openModal(`<h3>中英對照空白表單</h3><div style="max-height:70vh;overflow:auto">${html}</div><div class="mrow"><button class="btn" onclick="closeModal()">關閉</button><button class="btn primary" onclick="window.print()">🖨 列印 / 存 PDF</button></div>`);
+function aiInitDraft(){
+  const key="bcd_ai_draft_"+aiDocType+"_"+(aiSel.no||"");
+  try{
+    const saved=JSON.parse(localStorage.getItem(key)||"null");
+    if(saved&&saved.d){aiDraft=saved.d;aiSavedAt=saved.t;return;}
+  }catch(e){}
+  aiDraft=aiBlankDraft();
+  if(aiDocType==="pfs"&&aiSel.member)aiDraft.sigName=aiSel.member;
+  if(aiDocType==="bond"){if(aiSel.name)aiDraft.impName=aiSel.name;if(aiSel.member)aiDraft.contact=aiSel.member;if(aiSel.ein)aiDraft.ein=aiSel.ein;if(aiSel.mail)aiDraft.email=aiSel.mail;}
+  aiSavedAt=null;
 }
-R.ai=()=>`<h1>${CURRENT_LANG==='en'?'AI Document Bot':CURRENT_LANG==='cn'?'AI 文件机器人':'AI 文件機器人'}</h1>
-<div class="row r3">
-<div class="panel"><div class="sec-title">個人財務表 PFS</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選擇客戶與人設，AI 直接填好出表，或產生中英對照空白表給客戶填。</p>
-<select class="btn" style="width:100%;margin-bottom:10px" onchange="aiPick(this.value)">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>${c.no} ${c.name} ｜ ${esc(c.member)}</option>`).join("")}</select>
-<div class="fg"><label>婚姻狀態 Marital</label><select onchange="pfsPersona.marital=this.value"><option value="married_sep">已婚 分別申報 Married Separately</option><option value="married_joint">已婚 聯合申報 Married Jointly</option><option value="single">單身 Single</option></select></div>
-<div class="fg"><label>年收檔 Income</label><select onchange="pfsPersona.income=this.value"><option value="low">約 7 萬美金</option><option value="mid" selected>約 12 萬美金</option><option value="high">約 22 萬美金</option></select></div>
-<div class="fg"><label>資產檔 Asset</label><select onchange="pfsPersona.asset=this.value"><option value="low">小資產</option><option value="mid" selected>中產</option><option value="high">高淨值</option></select></div>
-<button class="btn primary" style="width:100%;margin-top:10px" onclick="pfsGen()">🤖 AI 直接填好出表</button>
-<button class="btn" style="width:100%;margin-top:8px" onclick="pfsBlank()">📋 中英對照空白指引表</button>
-</div>
-<div class="panel"><div class="sec-title">UCRM 申請表</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">預填 EIN、地址、法人；填 Bond 金額、HTS、進口額。</p>
-<button class="btn primary" style="width:100%" onclick="toast('申請表草稿已產生，請於下方確認')">🤖 產生草稿</button></div>
-<div class="panel"><div class="sec-title">AI 郵件草稿</div><p style="font-size:12px;color:var(--mut);margin-bottom:12px">選取一封信件，AI 依客戶時間線上下文產生繁中＋英文草稿。</p>
-<button class="btn primary" style="width:100%" onclick="toast('已開啟回覆草稿編輯，繁中＋英文雙份保留')">✍ 產生回覆草稿</button></div>
-</div>
-<div class="panel"><div class="sec-title">草稿雙語保存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">草稿同時保留 <b>繁體中文</b> 與 <b>英文</b> 兩份，簡體由系統即時轉換。所有草稿僅供參考，經人工確認後才併入客戶記錄。</p></div>`;
+function aiNum(v){const n=Number(String(v).replace(/[^0-9.-]/g,""));return isNaN(n)?0:n;}
+function aiSum(fields){return fields.reduce((a,f)=>a+aiNum(aiDraft[f[0]]),0);}
+function scheduleAiSave(){
+  aiDirty=true;
+  clearTimeout(window._aiSaveTimer);
+  window._aiSaveTimer=setTimeout(aiSave,800);
+  const el=document.getElementById("aiSaveState");
+  if(el)el.textContent=aiT().notSaved;
+}
+function aiSave(){
+  const key="bcd_ai_draft_"+aiDocType+"_"+(aiSel.no||"");
+  aiSavedAt=new Date().toLocaleTimeString();
+  localStorage.setItem(key,JSON.stringify({d:aiDraft,t:aiSavedAt}));
+  aiDirty=false;
+  const el=document.getElementById("aiSaveState");
+  if(el)el.textContent=aiT().savedAt+" "+aiSavedAt;
+  addAudit("AI文檔草稿",aiDocType+" #"+(aiSel.no||""));
+}
+function aiFill(){
+  const c=aiSel||{};
+  const inc=aiPersona.income==="low"?70:aiPersona.income==="high"?220:125;
+  const scale=aiPersona.income==="low"?.4:aiPersona.income==="high"?2.2:1;
+  if(aiDocType==="pfs"){
+    aiDraft.cash=Math.round(25*scale);aiDraft.stocks=Math.round(35*scale);aiDraft.ar=0;aiDraft.nr=0;aiDraft.inv=0;
+    aiDraft.equip=Math.round(30*scale);aiDraft.home=Math.round(420*scale);aiDraft.realE=0;aiDraft.ppe=Math.round(30*scale);
+    aiDraft.ira=Math.round(65*scale);aiDraft.otherA=0;
+    aiDraft.bank=0;aiDraft.credit=Math.round(7*scale);aiDraft.taxes=0;aiDraft.ap=0;aiDraft.np=0;aiDraft.equipL=0;
+    aiDraft.mortgage=Math.round(265*scale);aiDraft.otherL=0;
+    aiDraft.salary=inc*1000;aiDraft.div=Math.round(inc*10);aiDraft.rei=0;aiDraft.otherI=0;
+    aiDraft.sigName=c.member||"";
+  }else{
+    aiDraft.impName=c.name||"";aiDraft.dba="";aiDraft.ein=c.ein||"";aiDraft.addr="";aiDraft.contact=c.member||"";
+    aiDraft.phone="";aiDraft.email=c.mail||"";aiDraft.bondType="Continuous Bond";aiDraft.bondAmt="50,000";
+    aiDraft.port="";aiDraft.hts="";aiDraft.annualVal="";aiDraft.annualDuty="";aiDraft.cargoDesc="";
+  }
+  aiSave();
+  toast(aiT().draftSaved);
+  render();
+}
+function aiReset(){aiDraft=aiBlankDraft();aiSave();render();}
+function aiSubmit(){
+  aiDraft.sigDate=new Date().toISOString().slice(0,10);
+  aiSave();
+  addAudit("AI文檔送出",aiDocType+" #"+(aiSel.no||"")+" "+(aiDraft.sigName||""));
+  toast(aiT().confirm);
+}
+function aiFieldInput(k,v){aiDraft[k]=v;scheduleAiSave();}
+// SVG icons
+const AI_IC={
+  doc:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+  spark:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+  pen:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  save:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>',
+  pdf:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+  sig:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17.5l4-4 4 4 7-8"/><path d="M18 9.5h3"/></svg>',
+  user:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+};
+R.ai=()=>{
+  const T=aiT();
+  if(!Object.keys(aiDraft).length)aiInitDraft();
+  const left=`
+  <div class="ai-side">
+    <div class="ai-side-sec">
+      <div class="ai-side-lb">${AI_IC.doc}${T.docType}</div>
+      <div class="ai-doc-tabs">
+        <button class="${aiDocType==='pfs'?'on':''}" onclick="aiSwitchDoc('pfs')">${T.pfs}</button>
+        <button class="${aiDocType==='bond'?'on':''}" onclick="aiSwitchDoc('bond')">${T.bond}</button>
+      </div>
+    </div>
+    <div class="ai-side-sec">
+      <div class="ai-side-lb">${AI_IC.user}${T.customer}</div>
+      <select class="ai-select" onchange="aiPick(this.value)">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>#${c.no} ${esc(c.name)} ｜ ${esc(c.member)}</option>`).join("")}</select>
+    </div>
+    ${aiDocType==='pfs'?`
+    <div class="ai-side-sec">
+      <div class="ai-side-lb">${AI_IC.spark}${T.persona}</div>
+      <label class="ai-fl">${T.marital}</label>
+      <select class="ai-select" onchange="aiPersona.marital=this.value;scheduleAiSave()">
+        <option value="married_sep" ${aiPersona.marital==='married_sep'?'selected':''}>${T.mSep}</option>
+        <option value="married_joint" ${aiPersona.marital==='married_joint'?'selected':''}>${T.mJoint}</option>
+        <option value="single" ${aiPersona.marital==='single'?'selected':''}>${T.mSingle}</option>
+      </select>
+      <label class="ai-fl">${T.income}</label>
+      <select class="ai-select" onchange="aiPersona.income=this.value;scheduleAiSave()">
+        <option value="low" ${aiPersona.income==='low'?'selected':''}>${T.incLow}</option>
+        <option value="mid" ${aiPersona.income==='mid'?'selected':''}>${T.incMid}</option>
+        <option value="high" ${aiPersona.income==='high'?'selected':''}>${T.incHigh}</option>
+      </select>
+      <label class="ai-fl">${T.asset}</label>
+      <select class="ai-select" onchange="aiPersona.asset=this.value;scheduleAiSave()">
+        <option value="low" ${aiPersona.asset==='low'?'selected':''}>${T.asLow}</option>
+        <option value="mid" ${aiPersona.asset==='mid'?'selected':''}>${T.asMid}</option>
+        <option value="high" ${aiPersona.asset==='high'?'selected':''}>${T.asHigh}</option>
+      </select>
+    </div>`:""}
+    <div class="ai-side-sec">
+      <div class="ai-side-lb">${AI_IC.sig}${T.sig}</div>
+      <div class="ai-sig-tabs">
+        <button class="${aiSigType==='type'?'on':''}" onclick="aiSetSig('type')">${T.sigType}</button>
+        <button class="${aiSigType==='draw'?'on':''}" onclick="aiSetSig('draw')">${T.sigDraw}</button>
+        <button class="${aiSigType==='upload'?'on':''}" onclick="aiSetSig('upload')">${T.sigUp}</button>
+      </div>
+    </div>
+    <div class="ai-side-actions">
+      <button class="btn primary" style="width:100%" onclick="aiFill()">${AI_IC.spark}${T.aiFill}</button>
+      <button class="btn" style="width:100%" onclick="aiReset()">${T.reset}</button>
+      <button class="btn" style="width:100%" onclick="aiSave()">${AI_IC.save}${T.save}</button>
+      <button class="btn" style="width:100%" onclick="window.print()">${AI_IC.pdf}${T.export}</button>
+      <button class="btn primary" style="width:100%;background:#0f766e" onclick="aiSubmit()">${T.confirm}</button>
+    </div>
+  </div>`;
+  const right=`<div class="ai-main"><div id="aiDocSheet" class="ai-sheet">${aiDocType==='pfs'?aiPfsSheet(T):aiBondSheet(T)}</div></div>`;
+  const statusBar=`<div class="ai-statusbar">
+    <span class="ai-dot ${aiDirty?'dirty':''}"></span>
+    <span id="aiSaveState">${aiSavedAt?T.savedAt+" "+aiSavedAt:T.notSaved}</span>
+    <span style="flex:1"></span>
+    <span>${T.autosave}</span>
+    <span style="margin-left:16px">${aiSigData||aiDraft.sigName?T.signed:T.unsigned}</span>
+  </div>`;
+  return `<h1>${T.title}</h1><div class="ai-workspace">${left}${right}</div>${statusBar}
+  <div class="ai-note">${AI_IC.spark}${T.note}</div>`;
+};
+function aiMoneyInput(k){
+  return `<input class="ai-money" inputmode="decimal" value="${esc(aiDraft[k])}" oninput="aiFieldInput('${k}',this.value)">`;
+}
+function aiPfsSheet(T){
+  const tA=aiSum(PFS_ASSET_FIELDS),tL=aiSum(PFS_LIAB_FIELDS),tI=aiSum(PFS_INC_FIELDS);
+  const rows=(af,lf)=>{
+    const n=Math.max(af.length,lf.length);let h="";
+    for(let i=0;i<n;i++){
+      const a=af[i],l=lf[i];
+      h+=`<tr><td class="lb">${a?a[1]:""}</td><td class="vl">${a?aiMoneyInput(a[0]):""}</td>
+      <td class="lb">${l?l[1]:""}</td><td class="vl">${l?aiMoneyInput(l[0]):""}</td></tr>`;
+    }
+    return h;
+  };
+  const incRows=PFS_INC_FIELDS.map(f=>`<tr><td class="lb">${f[1]}</td><td class="vl">${aiMoneyInput(f[0])}</td><td class="lb"></td><td class="vl"></td></tr>`).join("");
+  return `
+  <div class="pfs-doc">
+    <h2>PERSONAL FINANCIAL STATEMENT</h2>
+    <div class="pfs-top">
+      <div><label>Name</label><input class="ai-text" value="${esc(aiDraft.sigName)}" oninput="aiFieldInput('sigName',this.value)"></div>
+      <div><label>${T.sigDate}</label><input type="date" class="ai-text" value="${esc(aiDraft.date)}" oninput="aiFieldInput('date',this.value)"></div>
+    </div>
+    <table class="pfs-table">
+      <thead><tr><th colspan="2">ASSETS</th><th colspan="2">LIABILITIES</th></tr></thead>
+      <tbody>${rows(PFS_ASSET_FIELDS,PFS_LIAB_FIELDS)}
+      <tr class="sum"><td>${T.total}</td><td class="vl">$${tA.toLocaleString()}</td><td>${T.total}</td><td class="vl">$${tL.toLocaleString()}</td></tr>
+      </tbody>
+    </table>
+    <table class="pfs-table">
+      <thead><tr><th colspan="4">SOURCES OF INCOME</th></tr></thead>
+      <tbody>${incRows}
+      <tr class="sum"><td>${T.total}</td><td class="vl">$${tI.toLocaleString()}</td><td>${T.net}</td><td class="vl">$${(tA-tL).toLocaleString()}</td></tr>
+      </tbody>
+    </table>
+    ${aiSignatureBlock(T)}
+  </div>`;
+}
+function aiBondSheet(T){
+  const half=BOND_FIELDS.slice(0,7).map(f=>`<div class="bond-fl"><label>${f[1]}</label><input class="ai-text" value="${esc(aiDraft[f[0]])}" oninput="aiFieldInput('${f[0]}',this.value)"></div>`).join("");
+  const rest=BOND_FIELDS.slice(7).map(f=>`<div class="bond-fl full"><label>${f[1]}</label><input class="ai-text" value="${esc(aiDraft[f[0]])}" oninput="aiFieldInput('${f[0]}',this.value)"></div>`).join("");
+  return `
+  <div class="pfs-doc">
+    <h2>CUSTOMS BOND APPLICATION</h2>
+    <div class="bond-grid">${half}${rest}</div>
+    ${aiSignatureBlock(T)}
+  </div>`;
+}
+function aiSignatureBlock(T){
+  let body="";
+  if(aiSigType==="type"){
+    body=`<div class="sig-type">
+      <input class="ai-signame" placeholder="${T.sigName}" value="${esc(aiDraft.sigName)}" oninput="aiFieldInput('sigName',this.value)">
+      <div class="sig-line"></div>
+      <label>${T.sigType}</label>
+    </div>`;
+  }else if(aiSigType==="draw"){
+    body=`<div class="sig-draw">
+      <canvas id="aiSigCanvas" width="420" height="120"></canvas>
+      <button class="btn small" onclick="aiClearCanvas()">${T.clear}</button>
+    </div>`;
+    setTimeout(aiInitCanvas,50);
+  }else{
+    body=`<div class="sig-up">
+      ${aiSigData?`<img src="${aiSigData}" alt="signature">`:""}
+      <button class="btn" onclick="aiSigUpload()">${T.sigUp}</button>
+      <input type="file" id="aiSigFile" accept="image/*" style="display:none" onchange="aiReadSig(this)">
+    </div>`;
+  }
+  return `<div class="sig-block"><div class="sig-title">${T.sig}</div>${body}
+  <div class="sig-date"><label>${T.sigDate}</label><input type="date" class="ai-text" value="${esc(aiDraft.sigDate)}" oninput="aiFieldInput('sigDate',this.value)"></div></div>`;
+}
+function aiInitCanvas(){
+  const cv=document.getElementById("aiSigCanvas");if(!cv)return;
+  const ctx=cv.getContext("2d");ctx.lineWidth=2.2;ctx.lineCap="round";ctx.strokeStyle="#1f2937";
+  let drawing=false;
+  const pos=e=>{const r=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return {x:(t.clientX-r.left)*(cv.width/r.width),y:(t.clientY-r.top)*(cv.height/r.height)};};
+  const start=e=>{drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault();};
+  const move=e=>{if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();e.preventDefault();};
+  const end=()=>{if(!drawing)return;drawing=false;aiSigData=cv.toDataURL("image/png");scheduleAiSave();};
+  cv.addEventListener("mousedown",start);cv.addEventListener("mousemove",move);window.addEventListener("mouseup",end);
+  cv.addEventListener("touchstart",start);cv.addEventListener("touchmove",move);cv.addEventListener("touchend",end);
+  window._aiCanvas=cv;
+}
+function aiClearCanvas(){const cv=window._aiCanvas;if(cv){cv.getContext("2d").clearRect(0,0,cv.width,cv.height);aiSigData="";scheduleAiSave();}}
+function aiSigUpload(){document.getElementById("aiSigFile").click();}
+function aiReadSig(inp){
+  const f=inp.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{aiSigData=r.result;scheduleAiSave();render();};
+  r.readAsDataURL(f);
+}
+
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
 R.doc=()=>{const L=CURRENT_LANG;return `<h1>文件中心</h1>
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
