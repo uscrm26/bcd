@@ -232,7 +232,16 @@ h1{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px}
 .r4{grid-template-columns:repeat(4,1fr)}
 .r3{grid-template-columns:repeat(3,1fr)}
 .r2{grid-template-columns:repeat(2,1fr)}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:relative;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease}
+.stat:hover{transform:scale(1.02);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.stat:before{content:"";position:absolute;inset:0;background:radial-gradient(320px circle at var(--mx,50%) var(--my,30%),rgba(74,158,255,.10),transparent 60%);opacity:0;transition:.2s;pointer-events:none}
+.stat:hover:before{opacity:1}
+.ast-card{cursor:default;transition:transform .18s ease,box-shadow .18s ease}
+.ast-card:hover{transform:scale(1.02);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.ast-card:before{content:"";position:absolute;inset:0;background:radial-gradient(360px circle at var(--mx,50%) var(--my,30%),rgba(74,158,255,.10),transparent 60%);opacity:0;transition:.2s;pointer-events:none;border-radius:inherit}
+.ast-card:hover:before{opacity:1}
+.issued-card{transition:transform .18s ease}
+.issued-card:hover{transform:scale(1.01)}
 .stat.featured{border-color:var(--acc);background:linear-gradient(135deg,rgba(59,130,246,.08),transparent)}
 .stat .lb{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px}
 .stat .vl{font-size:26px;font-weight:800;color:var(--txt);margin-top:6px;font-variant-numeric:tabular-nums}
@@ -1143,6 +1152,7 @@ render();
 if(key==="cn")simplifyPage();
 applyPerm();
 if(typeof paintFoot==="function")paintFoot();
+if(typeof setConnStatus==="function")setConnStatus("ok");
 toast("語言已切換為 "+L.label);}
 document.addEventListener("click",e=>{const m=document.getElementById("langMenu");if(m&&!e.target.closest(".lang"))m.classList.remove("show");});
 let _oc=null;
@@ -1679,19 +1689,22 @@ async function runBulkTranslate(target){
   closeModal();render();
 }
 function statusPie(){
+  const STATUS_LB={new:{zh:"新線索",en:"New lead",cn:"新线索"},pending_client:{zh:"等待客戶補充資料",en:"Awaiting client docs",cn:"等待客户补充资料"},form:{zh:"待填寫申請",en:"Form pending",cn:"待填写申请"},reply:{zh:"等待報關行回覆",en:"Awaiting broker reply",cn:"等待报关行回复"},broker:{zh:"等待報關行審核",en:"Broker under review",cn:"等待报关行审核"},supply:{zh:"待補充申請文件",en:"Docs pending",cn:"待补充申请文件"},quote:{zh:"收到報價",en:"Quoted",cn:"已收到报价"},paid:{zh:"財務已付款",en:"Paid",cn:"财务已付款"},done:{zh:"已獲擔保文件",en:"Bond issued",cn:"已获担保文件"},hold:{zh:"擱置暫停",en:"On hold",cn:"搁置暂停"},reject:{zh:"申請被拒",en:"Rejected",cn:"申请被拒"}};
   const all=(DATA.statuses||[]);
   const pal=["#3b82f6","#f59e0b","#9ca3af","#eab308","#22c55e","#ef4444","#8b5cf6","#06b6d4","#ec4899","#6366f1","#84cc16","#f97316","#14b8a6","#a855f7","#64748b"];
   const rows=all.map((s,i)=>{
     let list=DATA.customers.filter(c=>c.status===s.id);
     if(window._dashScope==="mine")list=list.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
-    return [s.color||pal[i%pal.length],s.lb||s.label||s.id,list.length];
+    const lb=(STATUS_LB[s.id]&&STATUS_LB[s.id][CURRENT_LANG])||s.lb||s.id;
+    return [s.color||pal[i%pal.length],lb,list.length];
   }).filter(r=>r[2]>0||r[1]);
   const total=rows.reduce((a,r)=>a+r[2],0)||1;
   const R=54,C=2*Math.PI*R;let off=0;
   const segs=rows.filter(r=>r[2]>0).map(r=>{
     const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
+  const totalLb=CURRENT_LANG==="en"?"Total":CURRENT_LANG==="cn"?"合计":"總客戶";
   return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-  <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
+  <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">${totalLb}</text></svg>
   <div style="flex:1;min-width:160px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">${rows.map(r=>`<div style="display:flex;align-items:center;font-size:12px;padding:2px 0"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px;flex-shrink:0"></span><span style="flex:1;color:var(--mut)">${r[1]}</span><b style="color:var(--txt)">${r[2]}</b></div>`).join("")}</div>
   </div>${followUpAlerts()}`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
@@ -1846,7 +1859,7 @@ R.dashboard=()=>{
       <div class="row r3">
         ${[[unread.length,T.a],[custs,T.b],[unread.filter(e=>!e.done).length,T.c]].map(x=>`<div class="stat" style="cursor:pointer;opacity:.85" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0">
         ${payCard}
         ${subCard}
       </div>
@@ -1903,13 +1916,18 @@ R.commission=()=>{
   const curCut=deductions.filter(x=>x.user===me&&parseYM(x.t)===curYM).reduce((a,b)=>a+Number(b.amount||0),0);
   const prevCut=deductions.filter(x=>x.user===me&&parseYM(x.t)===prevYM).reduce((a,b)=>a+Number(b.amount||0),0);
   let est=0;myCustomers.forEach((c,i)=>{est+=(i<30?1000:1500);});
-  const actualCur=curDone.reduce((a,b)=>a+Number(b.amount||0),0)-curCut;
+  // 自動從 status=done 的客戶推導本月已收佣金，避免手動漏登
+  const allMy=DATA.customers.filter(c=>ownerMap[c.no]===me);
+  const autoDone=allMy.filter(c=>c.status==="done").length;
+  const autoRate=superAdminRate();
+  const actualCur=curDone.reduce((a,b)=>a+Number(b.amount||0),0)+autoDone*autoRate-curCut;
   const actualPrev=prevDone.reduce((a,b)=>a+Number(b.amount||0),0)-prevCut;
+  const curDoneTotal=curDone.length+autoDone;
   const isAdmin=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
   return `<h1>佣金記錄</h1>
   <div class="row r3" style="margin-bottom:12px">
     <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）CNY</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">¥${est.toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">前 30 戶 ¥1,000 ／ 超出 ¥1,500</div></div>
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 ¥${curCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">¥${Math.max(0,actualCur).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${curDone.length} 筆出單</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 ¥${curCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">¥${Math.max(0,actualCur).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${curDoneTotal} 筆出單</div></div>
     <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">上月實收（已扣 ¥${prevCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--mut);margin:6px 0">¥${Math.max(0,actualPrev).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${prevDone.length} 筆出單</div></div>
   </div>
   <div class="panel" style="margin-bottom:12px"><div class="sec-title">在跟客戶明細（預估）</div>
@@ -5639,14 +5657,14 @@ function initConnStatus(){
   div.addEventListener("mouseleave",()=>{const t=div.querySelector(".txt");if(t.dataset.orig)t.textContent=t.dataset.orig;});
   document.body.appendChild(div);
   // 卡片聚光跟隨滑鼠
-  document.addEventListener("mousemove",e=>{const c=e.target.closest&&e.target.closest(".ccard");if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px");});
+  document.addEventListener("mousemove",e=>{const c=e.target.closest&&e.target.closest(".ccard,.stat,.ast-card");if(!c)return;const r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px");});
 }
 function setConnStatus(state,text){
   const el=document.getElementById("connStatus");if(!el)return;
   const dot=el.querySelector(".dot");const txt=el.querySelector(".txt");
-  if(state==="ok"){dot.style.background="#22c55e";txt.textContent=text||"已連接";}
-  else if(state==="err"){dot.style.background="#ef4444";txt.textContent=text||"連接失敗";}
-  else{dot.style.background="#f59e0b";txt.textContent=text||"連接中...";}
+  if(state==="ok"){dot.style.background="#22c55e";txt.textContent=text||(CURRENT_LANG==="en"?"Connected":CURRENT_LANG==="cn"?"已连接":"已連接");}
+  else if(state==="err"){dot.style.background="#ef4444";txt.textContent=text||(CURRENT_LANG==="en"?"Connection error":CURRENT_LANG==="cn"?"连接失败":"連接失敗");}
+  else{dot.style.background="#f59e0b";txt.textContent=text||(CURRENT_LANG==="en"?"Connecting…":CURRENT_LANG==="cn"?"连接中…":"連接中...");}
 }
 async function tryLoadData(){
   setBootStep(20,"正在加載基礎數據...");
