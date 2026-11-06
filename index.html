@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106q1830";
+  var V="v20261106r1835";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -138,10 +138,14 @@ h1{font-size:20px;font-weight:700;color:var(--txt);margin-bottom:4px}
 .r3{grid-template-columns:repeat(3,1fr)}
 .r2{grid-template-columns:repeat(2,1fr)}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.stat.featured{border-color:var(--acc);background:linear-gradient(135deg,rgba(59,130,246,.08),transparent)}
 .stat .lb{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:6px}
-.stat .vl{font-size:26px;font-weight:800;color:var(--txt);margin-top:6px}
+.stat .vl{font-size:26px;font-weight:800;color:var(--txt);margin-top:6px;font-variant-numeric:tabular-nums}
+.stat.featured .vl{color:var(--acc)}
 .stat .tg{font-size:11px;color:var(--ok);margin-top:4px}
 .stat .tag2{font-size:11px;color:var(--warn)}
+table td,table th{font-variant-numeric:tabular-nums}
+table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;margin-bottom:14px}
 /* funnel */
 .funnel{display:flex;gap:8px;align-items:flex-end}
@@ -1404,7 +1408,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106Q";
+const APP_VER="20261106R";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -1504,7 +1508,7 @@ R.dashboard=()=>{
   ];
   return `<h1>總覽看板</h1>
   <div class="row r4">
-    ${cards.map(x=>`<div class="stat" style="cursor:pointer" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
+    ${cards.map((x,i)=>`<div class="stat ${i===0?'featured':''}" style="cursor:pointer;${i>0?'opacity:.75':''}" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
