@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106r1835";
+  var V="v20261106s1840";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -279,9 +279,12 @@ tr:hover td{background:#1a2130}
 #loginScreen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:radial-gradient(1200px 600px at 70% -10%,rgba(74,158,255,.18),transparent),var(--bg);padding:20px}
 #loginScreen.hide{display:none}
 .login-card{width:380px;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:34px 30px;box-shadow:0 24px 60px rgba(0,0,0,.35)}
-.login-card label{display:block;font-size:12px;color:var(--mut);margin:12px 0 6px}
-.login-card input{width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:11px 13px;font-size:14px;outline:none}
-.login-card input:focus{border-color:var(--acc)}
+.login-card .floating-field{position:relative;margin:16px 0}
+.login-card .floating-field input{width:100%;box-sizing:border-box;background:var(--bg2);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:16px 13px 6px;font-size:14px;outline:none;transition:border-color .2s}
+.login-card .floating-field input:focus{border-color:var(--acc)}
+.login-card .floating-field label{position:absolute;left:13px;top:12px;font-size:14px;color:var(--mut);pointer-events:none;transition:all .2s ease}
+.login-card .floating-field input:focus~label,
+.login-card .floating-field input:not(:placeholder-shown)~label{top:6px;font-size:10px;color:var(--acc)}
 .login-btn{width:100%;margin-top:22px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:700;cursor:pointer}
 /* 滑塊登錄 */
 .slide-login{margin-top:22px;position:relative;height:46px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;overflow:hidden;user-select:none}
@@ -428,10 +431,14 @@ tr:hover td{background:#1a2130}
   </div>
   <div class="login-card">
     <div class="login-head" style="cursor:pointer" onclick="copyVersionCode()" title="點擊複製版本編碼"><img src="assets/ucrm_icon.png" class="logo-ico" alt="UCRM"><div class="lt" id="lh_title">美國進口客戶關係管理系統</div><div class="ls" id="lh_sub">US Customs Relationship Manager</div></div>
-    <label id="ll_user">登入帳號</label>
-    <input id="li_user" autocomplete="username" placeholder="請輸入賬號名稱">
-    <label id="ll_pwd">密碼</label>
-    <input id="li_pwd" type="password" autocomplete="current-password" placeholder="請輸入賬戶密碼">
+    <div class="floating-field">
+      <input id="li_user" autocomplete="username" placeholder=" ">
+      <label id="ll_user">登入帳號</label>
+    </div>
+    <div class="floating-field">
+      <input id="li_pwd" type="password" autocomplete="current-password" placeholder=" ">
+      <label id="ll_pwd">密碼</label>
+    </div>
     <div class="login-err" id="li_err"></div>
     <div style="margin:14px 0 0;font-size:12px;color:var(--mut);line-height:1.7">
       <label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer">
@@ -1408,7 +1415,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106R";
+const APP_VER="20261106S";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
