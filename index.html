@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106n1815";
+  var V="v20261106o1820";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1389,7 +1389,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106N";
+const APP_VER="20261106O";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -5104,22 +5104,46 @@ ${mine.length?mine.map(c=>`<div class="logrow"><span class="c">#${c.no} ${esc(c.
 <div class="sec-title">本人操作記錄（${mineAudit.length}）</div>
 ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class="t">${a.t}</span><span class="c">${esc(a.action)} ${esc(a.detail)}</span></div>`).join(""):"<div class='empty'>尚無操作記錄</div>"}
 <div class="mrow"><button class="btn" onclick="closeModal()">關閉</button></div>`);}
-// 初次渲染：先顯示加載中，等數據全部加載完再渲染
+// 初次渲染：好看的加載動畫，帶實時步驟提示
+const bootStartTime=Date.now();
 (function showBootLoader(){
   const boot=document.createElement("div");
   boot.id="bootLoader";
-  boot.style.cssText="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px";
-  boot.innerHTML='<div style="width:48px;height:48px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:spin 1s linear infinite"></div><div style="color:var(--mut);font-size:14px">正在加載數據...</div><style>@keyframes spin{to{transform:rotate(360deg)}}</style>';
+  boot.style.cssText="position:fixed;inset:0;z-index:9999;background:radial-gradient(1200px 600px at 70% -10%,rgba(74,158,255,.08),transparent),var(--bg);display:flex;align-items:center;justify-content:center";
+  boot.innerHTML=`
+    <div style="width:320px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="width:56px;height:56px;margin:0 auto 12px;background:linear-gradient(135deg,#2980b9,#3498db);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px">U</div>
+        <div style="font-size:16px;font-weight:700;color:var(--txt)">UCRM 美國報關管理系統</div>
+      </div>
+      <div style="width:100%;height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-bottom:16px">
+        <div id="bootProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#2980b9,#3498db);border-radius:2px;transition:width .3s ease"></div>
+      </div>
+      <div id="bootStep" style="text-align:center;color:var(--mut);font-size:13px">正在初始化...</div>
+    </div>
+  `;
   document.body.appendChild(boot);
 })();
+function setBootStep(pct,text){
+  const p=document.getElementById("bootProgress");if(p)p.style.width=pct+"%";
+  const t=document.getElementById("bootStep");if(t)t.textContent=text;
+}
 (async()=>{
   try{
+    setBootStep(20,"正在加載基礎數據...");
     await loadRepoData();
+    setBootStep(50,"正在加載客戶與文件...");
     try{loadPersisted();}catch(e){}
+    setBootStep(75,"正在連接雲端服務...");
     await loadSB();
+    setBootStep(95,"即將完成...");
   }catch(e){console.error("init data load error:",e);}
   render();
-  const bl=document.getElementById("bootLoader");if(bl)bl.remove();
+  // 至少顯示 600ms，避免閃屏
+  const elapsed=Date.now()-bootStartTime;
+  if(elapsed<600){await new Promise(r=>setTimeout(r,600-elapsed));}
+  setBootStep(100,"加載完成");
+  setTimeout(()=>{const bl=document.getElementById("bootLoader");if(bl)bl.remove();},200);
   if(PREF.lang&&PREF.lang!=="zh"){
     const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;
     if(L){
