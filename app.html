@@ -1345,23 +1345,21 @@ function recentTodos(){
   </tbody></table></div>`;
 }
 function statusPie(){
- const rows=[
-  ["var(--acc)","處理中",countBy("new")+countBy("collect")+countBy("form")+countBy("submit")],
-  ["var(--ok)","已出單",countBy("done")],
-  ["var(--err)","待補件",countBy("supply")],
-  ["var(--warn)","已收報價",countBy("quote")],
-  ["#8b5cf6","等待審核",countBy("confirm")],
-  ["#ef4444","已拒絕",countBy("reject")],
-  ["#555","擱置",countBy("hold")],
- ];
- const total=rows.reduce((a,r)=>a+r[2],0)||1;
- const R=54,C=2*Math.PI*R;let off=0;
- const segs=rows.filter(r=>r[2]>0).map(r=>{
-   const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
- return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
- <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
- <div style="flex:1;min-width:160px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">${rows.map(r=>`<div style="display:flex;align-items:center;font-size:12px;padding:2px 0"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px;flex-shrink:0"></span><span style="flex:1;color:var(--mut)">${r[1]}</span><b style="color:var(--txt)">${r[2]}</b></div>`).join("")}</div>
- </div>${followUpAlerts()}`;}
+  const all=(DATA.statuses||[]);
+  const pal=["#3b82f6","#f59e0b","#9ca3af","#eab308","#22c55e","#ef4444","#8b5cf6","#06b6d4","#ec4899","#6366f1","#84cc16","#f97316","#14b8a6","#a855f7","#64748b"];
+  const rows=all.map((s,i)=>{
+    let list=DATA.customers.filter(c=>c.status===s.id);
+    if(window._dashScope==="mine")list=list.filter(c=>ownerMap[c.no]===CURRENT_USER.id);
+    return [s.color||pal[i%pal.length],s.label||s.id,list.length];
+  }).filter(r=>r[2]>0||r[1]);
+  const total=rows.reduce((a,r)=>a+r[2],0)||1;
+  const R=54,C=2*Math.PI*R;let off=0;
+  const segs=rows.filter(r=>r[2]>0).map(r=>{
+    const len=r[2]/total*C;const s=`<circle r="${R}" cx="70" cy="70" fill="none" stroke="${r[0]}" stroke-width="16" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}"/>`;off+=len;return s;}).join("");
+  return `<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+  <svg width="140" height="140" viewBox="0 0 140 140" style="flex-shrink:0">${segs}<text x="70" y="66" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="800">${total}</text><text x="70" y="84" text-anchor="middle" fill="#8b95a7" font-size="10">總客戶</text></svg>
+  <div style="flex:1;min-width:160px;display:grid;grid-template-columns:1fr 1fr;gap:4px 12px">${rows.map(r=>`<div style="display:flex;align-items:center;font-size:12px;padding:2px 0"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r[0]};margin-right:6px;flex-shrink:0"></span><span style="flex:1;color:var(--mut)">${r[1]}</span><b style="color:var(--txt)">${r[2]}</b></div>`).join("")}</div>
+  </div>${followUpAlerts()}`;}
 function funnel(){const seq=["new","collect","form","submit","quote","done"];
 const stmap={"new":"新線索","collect":"收集中","form":"待填表","submit":"待提交","quote":"已報價","done":"已出單"};
 return `<div class="funnel">`+seq.map(s=>`<div class="fb" style="opacity:${countBy(s)?1:.35}"><div class="fv">${countBy(s)}</div><div class="fl">${stmap[s]}</div></div>`).join("")+`</div>`;}
