@@ -1852,164 +1852,12 @@
  "emails": [
   {
    "c": "Huntington Ingalls",
-   "from": "Mail Delivery System <MAILER-DAEMON@mail.pony-it.com>",
-   "sub": "Undelivered Mail Returned to Sender",
-   "t": "11/3 22:38",
-   "unread": false,
-   "type": "supply",
-   "body": "This is the mail system at host mail.pony-it.com.\nI'm sorry to have to inform you that your message could not\nbe delivered to one or more recipients. It's attached below.\nFor further assistance, please send mail to postmaster.\nIf you do so, please include this problem report. You can\ndelete your own text from the attached returned message.\n The mail system\n<brokercbo@cboutsourcing.us>: host smtp.r",
-   "atts": []
-  },
-  {
-   "c": "Huntington Ingalls",
-   "from": "Mail Delivery System <MAILER-DAEMON@mail.pony-it.com>",
-   "sub": "Undelivered Mail Returned to Sender",
-   "t": "11/3 22:36",
-   "unread": false,
-   "type": "supply",
-   "body": "This is the mail system at host mail.pony-it.com.\nI'm sorry to have to inform you that your message could not\nbe delivered to one or more recipients. It's attached below.\nFor further assistance, please send mail to postmaster.\nIf you do so, please include this problem report. You can\ndelete your own text from the attached returned message.\n The mail system\n<info@vortexwl.com>: host smtp.resend.com",
-   "atts": []
-  },
-  {
-   "c": "JELD-WEN",
-   "from": "Linda Corbett <Linda.Corbett@gallaghertransport.com>",
-   "sub": "RE: Import Compliance Question",
-   "t": "11/3 06:28",
-   "unread": true,
-   "type": "supply",
-   "body": "Thank you for your request. So that we may be able to assist you, please provide us with the following:\nDescription of the commodity and HTS code\nCounty of origin\nValue of cargo\nAre you established as a US Based Importer of record?\nThank you,\nLinda Corbett\nBranch Manager, \nGallagher Transport Int’l, Inc\nSt. Louis Office\n314 987 2211\nwww.gallaghertransport.com\nIncreased import volumes, vessel delay",
-   "atts": []
-  },
-  {
-   "c": "JELD-WEN",
-   "from": "\"Willis, Nicole (Financial Shared Services Ops)\"\r\n\t<Nicole.Killiebrew@thehartford.com>",
-   "sub": "RE: Right person for new importer bonds? (Encrypted Delivery)",
-   "t": "11/3 02:11",
-   "unread": true,
-   "type": "supply",
-   "body": "Please contact our policy holder service department 1866467-8730 selection Option 1\nFrom: amerdaujok@jeld-wenholding.live <amerdaujok@jeld-wenholding.live>\nSent: Thursday, October 29, 2026 2:57 PM\nTo: Claims, Bond (Bond, Bond HO) <Bond.Claims@thehartford.com>\nSubject: Right person for new importer bonds?\nHi Hartford Insurance Group (The) team, We're a new LLC out of California expecting several en",
-   "atts": []
-  },
-  {
-   "c": "Kervalonix",
-   "from": "Staff Underwriters <StaffUnderwriters@SuretyOne.com>",
-   "sub": "Re: Customs bond inquiry - Kervalonix, Inc.",
-   "t": "11/6 00:37",
-   "unread": true,
-   "type": "quote",
-   "body": "Thank you for your interest in our bonding company’s support of this \nneed, Ahmed. You may learn more about the various CBP bond obligations \nat https://Customs-Bonds.com. In order to quote you we will need will \nneed the attached application and the items at the bottom of page three.\nThis class of surety undertaking for non-U.S. operators with no \nsignificant footprint nor nationalized assets in ",
-   "atts": [
-    {
-     "name": "surety-one-staff-email-signature.png"
-    },
-    {
-     "name": "us-customs-surety-bonds-all-activity-codes-customs-bonds.png"
-    },
-    {
-     "name": "Customs Bond Application vers.\r\n 2026.pdf"
-    }
-   ]
-  },
-  {
-   "c": "Kervalonix",
-   "from": "Callie Bergsrud <Callie_Bergsrud@rpsins.com>",
-   "sub": "RE: Customs Bond Application - Kervalonix LLC",
-   "t": "11/4 23:43",
-   "unread": true,
-   "type": "supply",
-   "body": "Hello!\nThank you for the new submission. Please provide the full SSN of the owner as well as current company financials including a balance sheet and profit & loss.\n** Please note my email address has changed to callie_bergsrud@rpsins.com<mailto:callie_bergsrud@rpsins.com> **\nCallie Bergsrud\nCCI Surety\n1710 N. Douglas Drive, Suite 110, Golden Valley, MN 55422\nPhone: (763) 543-6993 | Toll Free: (86",
-   "atts": []
-  },
-  {
-   "c": "Kervalonix",
-   "from": "\"Joe Allen (Golden Valley)\" <Joe_Allen@rpsins.com>",
-   "sub": "RE: Customs Bond Application - Kervalonix LLC",
-   "t": "11/4 05:10",
-   "unread": true,
-   "type": "supply",
-   "body": "Thank you for the information! We will review and follow up.\n Joe Allen\n[cid:image001.png@01DD6BA5.7AB82FD0]\n Office - (866)317-3294 | Cell - (763)232-2138 | Email - Joe_Allen@rpsins.com<mailto:Joe_Allen@rpsins.com>\n CA License Number: 4267307\n NOTICE OF CONFIDENTIALITY AND DAMAGE DISCLAIMER:\n The information in this e-mail and any attachment(s) is confidential and may be privileged. If you are no",
-   "atts": [
-    {
-     "name": "image001.png"
-    }
-   ]
-  },
-  {
-   "c": "Kontoor",
-   "from": "Customs Broker Suppliers CBS <imports@cbsmco.com>",
-   "sub": "Re: Continuous Customs Bond — Kontoor",
-   "t": "11/5 02:18",
+   "from": "Surety Bonds Direct <service@suretybondsdirect.com>",
+   "sub": "RE: Continuous Customs Bond — Huntington LLC",
+   "t": "11/6 17:23",
    "unread": true,
    "type": "reject",
-   "body": "Hello Aman,\nThank you for your message - happy to assist:\n - What kinds of merchandise or cargo does your company import?\n - You've imported before? How much in commercial value have you imported\n in the last year (estimates are okay)\n - How much in duties/tariffs did you pay last year (estimates are okay)\n - How much in commercial value do you expect to import this year\n going forward?\nWe would n",
-   "atts": []
-  },
-  {
-   "c": "Kontoor",
-   "from": "\"D'Antonio, Robert\" <RDANTONI@travelers.com>",
-   "sub": "Continuous Customs Bond — Kontoor",
-   "t": "11/5 05:48",
-   "unread": true,
-   "type": "quote",
-   "body": "Hi Aman,\nI received your email about needing a customs bond. All of our customs bonds go through C.A. Shea. Please see Kevin's contact information below who works for C.A. Shea and he can assist you with your inquiry.\nKevin Daily\n(908) 975-0913\nkevindaily@cashea.com\nRobert D’Antonio, MBA, AFSB | Account Underwriter | Commercial Surety\nTravelers Bond & Specialty Insurance\n343 Thornall St | 5th Floo",
-   "atts": []
-  },
-  {
-   "c": "Kontoor",
-   "from": "\"Aman Tahir Adam | Kontoor Brands LLC\" <amantahiradam@kontoorbrands.live>",
-   "sub": "\"Personal Address Book\" has been created",
-   "t": "10/22 22:22",
-   "unread": false,
-   "type": "info",
-   "body": "The \"Personal Address Book\" folder has been created.",
-   "atts": []
-  },
-  {
-   "c": "Kontoor",
-   "from": "\"Aman Tahir Adam | Kontoor Brands LLC\" <amantahiradam@kontoorbrands.live>",
-   "sub": "\"Personal Calendar\" has been created",
-   "t": "10/22 22:20",
-   "unread": false,
-   "type": "info",
-   "body": "The \"Personal Calendar\" folder has been created.",
-   "atts": []
-  },
-  {
-   "c": "L3Harris",
-   "from": "Jotform <noreply@jotform.com>",
-   "sub": "We’ve Received Your Annual Bond Form Request",
-   "t": "11/5 22:11",
-   "unread": true,
-   "type": "supply",
-   "body": "Hello,\nWe’re writing to confirm that we’ve received your annual bond form request.\nFor your convenience, we’ve attached the application PDF to this email so you\ncan review and complete it at your leisure.\nOur team is currently processing your request, and someone will get back to you\nas soon as possible with the next steps or if any additional information is\nneeded.\nIf you have any questions in th",
-   "atts": [
-    {
-     "name": "L3Harris-LLC_-Annual-Bond-Application-_-6697150443013022090.pdf"
-    }
-   ]
-  },
-  {
-   "c": "L3Harris",
-   "from": "Jotform <noreply@jotform.com>",
-   "sub": "We’ve Received Your Annual Bond Form Request",
-   "t": "11/5 21:34",
-   "unread": true,
-   "type": "supply",
-   "body": "Hello,\nWe’re writing to confirm that we’ve received your annual bond form request.\nFor your convenience, we’ve attached the application PDF to this email so you\ncan review and complete it at your leisure.\nOur team is currently processing your request, and someone will get back to you\nas soon as possible with the next steps or if any additional information is\nneeded.\nIf you have any questions in th",
-   "atts": [
-    {
-     "name": "L3Harris-LLC_-Annual-Bond-Application-_-6697127863299939335.pdf"
-    }
-   ]
-  },
-  {
-   "c": "L3Harris",
-   "from": "Ellie <service@borderbuddy.com>",
-   "sub": "Annual Bond Application",
-   "t": "11/5 00:19",
-   "unread": true,
-   "type": "supply",
-   "body": "Hello,\nThank you for reaching out to us at BorderBuddy.\nAn annual U.S. Customs bond costs $640 USD and provides coverage of up to $50,000 for all imports into the U.S. over a 12-month period. It’s a cost-effective solution for frequent importers, eliminating the need for single-entry bonds and helping ensure smoother, uninterrupted customs clearance year-round.\nIf you'd like to move forward with o",
+   "body": "Hello,\nThank you so much for reaching out!\nUnfortunately, we do not have a market for customs bonds at this time so we\nare unable to assist.\nWe do recommend C A Shea & Company Inc as they do offer customs bonds and\nwould be able to better accommodate your needs.\nWe wish you all the best and hope you have a wonderful rest of your day.\nThank you!\n*Surety Bonds Direct*\n(800) 608-9950\nservice@suretybo",
    "atts": []
   },
   {
@@ -2033,6 +1881,96 @@
    "atts": []
   },
   {
+   "c": "Kervalonix",
+   "from": "Staff Underwriters <StaffUnderwriters@SuretyOne.com>",
+   "sub": "Re: Customs bond inquiry - Kervalonix, Inc.",
+   "t": "11/6 00:37",
+   "unread": true,
+   "type": "quote",
+   "body": "Thank you for your interest in our bonding company’s support of this \nneed, Ahmed. You may learn more about the various CBP bond obligations \nat https://Customs-Bonds.com. In order to quote you we will need will \nneed the attached application and the items at the bottom of page three.\nThis class of surety undertaking for non-U.S. operators with no \nsignificant footprint nor nationalized assets in ",
+   "atts": [
+    {
+     "name": "surety-one-staff-email-signature.png",
+     "path": "docs/clients/Kervalonix/Kervalonix_surety-one-staff-email-signature.png",
+     "size": 40745,
+     "type": "image"
+    },
+    {
+     "name": "us-customs-surety-bonds-all-activity-codes-customs-bonds.png",
+     "path": "docs/clients/Kervalonix/Kervalonix_us-customs-surety-bonds-all-activity-codes-customs-bonds.png",
+     "size": 99506,
+     "type": "image"
+    },
+    {
+     "name": "Customs Bond Application vers. 2026.pdf",
+     "path": "docs/clients/Kervalonix/Kervalonix_Customs%20Bond%20Application%20vers.%202026.pdf",
+     "size": 514362,
+     "type": "pdf"
+    }
+   ]
+  },
+  {
+   "c": "L3Harris",
+   "from": "Jotform <noreply@jotform.com>",
+   "sub": "We’ve Received Your Annual Bond Form Request",
+   "t": "11/5 22:11",
+   "unread": true,
+   "type": "supply",
+   "body": "Hello,\nWe’re writing to confirm that we’ve received your annual bond form request.\nFor your convenience, we’ve attached the application PDF to this email so you\ncan review and complete it at your leisure.\nOur team is currently processing your request, and someone will get back to you\nas soon as possible with the next steps or if any additional information is\nneeded.\nIf you have any questions in th",
+   "atts": [
+    {
+     "name": "L3Harris-LLC_-Annual-Bond-Application-_-6697150443013022090.pdf",
+     "path": "docs/clients/L3Harris/L3Harris_L3Harris-LLC_-Annual-Bond-Application-_-6697150443013022090.pdf",
+     "size": 479252,
+     "type": "pdf"
+    }
+   ]
+  },
+  {
+   "c": "L3Harris",
+   "from": "Jotform <noreply@jotform.com>",
+   "sub": "We’ve Received Your Annual Bond Form Request",
+   "t": "11/5 21:34",
+   "unread": true,
+   "type": "supply",
+   "body": "Hello,\nWe’re writing to confirm that we’ve received your annual bond form request.\nFor your convenience, we’ve attached the application PDF to this email so you\ncan review and complete it at your leisure.\nOur team is currently processing your request, and someone will get back to you\nas soon as possible with the next steps or if any additional information is\nneeded.\nIf you have any questions in th",
+   "atts": [
+    {
+     "name": "L3Harris-LLC_-Annual-Bond-Application-_-6697127863299939335.pdf",
+     "path": "docs/clients/L3Harris/L3Harris_L3Harris-LLC_-Annual-Bond-Application-_-6697127863299939335.pdf",
+     "size": 479252,
+     "type": "pdf"
+    }
+   ]
+  },
+  {
+   "c": "Lennar",
+   "from": "Staff Underwriters <StaffUnderwriters@SuretyOne.com>",
+   "sub": "Re: Customs Bond App. (Lennar, LLC)",
+   "t": "11/5 04:03",
+   "unread": true,
+   "type": "supply",
+   "body": "Thank you for your interest in our bonding company’s support of this \nneed, Corey.\nThis class of surety undertaking for start-up, owner/operator with no \nfinancial statement and personal credit challenges requires the support \nof collateral security. You may learn more about the collateral options \nthat we offer on our website at \nhttps://suretyone.com/surety-bond-collateral-security. Please advis",
+   "atts": [
+    {
+     "name": "surety-one-staff-email-signature.png",
+     "path": "docs/clients/Kervalonix/Kervalonix_surety-one-staff-email-signature.png",
+     "size": 40745,
+     "type": "image"
+    }
+   ]
+  },
+  {
+   "c": "L3Harris",
+   "from": "Ellie <service@borderbuddy.com>",
+   "sub": "Annual Bond Application",
+   "t": "11/5 00:19",
+   "unread": true,
+   "type": "supply",
+   "body": "Hello,\nThank you for reaching out to us at BorderBuddy.\nAn annual U.S. Customs bond costs $640 USD and provides coverage of up to $50,000 for all imports into the U.S. over a 12-month period. It’s a cost-effective solution for frequent importers, eliminating the need for single-entry bonds and helping ensure smoother, uninterrupted customs clearance year-round.\nIf you'd like to move forward with o",
+   "atts": []
+  },
+  {
    "c": "Laureate",
    "from": "Katrina <service@borderbuddy.com>",
    "sub": "Annual Bond & POA - Next Steps",
@@ -2042,24 +1980,60 @@
    "body": "Hi Adisu,\nThank you for reaching out! We’d be happy to review your company’s application for a U.S. annual/continuous customs bond, subject to account review and surety approval.\nTo start, please confirm your LLC’s full legal name, the goods you plan to import, and their country of manufacture.\nOur standard fees are:\nAnnual/continuous bond: $640 USD\nCBP Importer Registration / Form 5106: $125 USD,",
    "atts": [
     {
-     "name": "Example Annual Bond Form.pdf"
+     "name": "Example Annual Bond Form.pdf",
+     "path": "docs/clients/Oliveware/Annual_Bond_Form.pdf",
+     "size": 218481,
+     "type": "pdf"
     },
     {
-     "name": "BorderBuddy_POA_Supporting_Business_Document_1.pdf"
+     "name": "BorderBuddy_POA_Supporting_Business_Document_1.pdf",
+     "path": "docs/clients/Oliveware/BorderBuddy_POA.pdf",
+     "size": 27037,
+     "type": "pdf"
     },
     {
-     "name": "BorderBuddy U.S. Customs\r\n Brokerage Rates.pdf"
+     "name": "BorderBuddy U.S. Customs Brokerage Rates.pdf",
+     "path": "docs/clients/Oliveware/BorderBuddy_Rates.pdf",
+     "size": 202989,
+     "type": "pdf"
     }
    ]
   },
   {
-   "c": "Leidos",
-   "from": "\"Michka, Kelly\" <kelly.michka@axaxl.com>",
-   "sub": "Automatic reply: Customs bond inquiry - Leidos Holdings Inc.",
-   "t": "11/6 01:33",
+   "c": "Kervalonix",
+   "from": "Callie Bergsrud <Callie_Bergsrud@rpsins.com>",
+   "sub": "RE: Customs Bond Application - Kervalonix LLC",
+   "t": "11/4 23:43",
+   "unread": true,
+   "type": "supply",
+   "body": "Hello!\nThank you for the new submission. Please provide the full SSN of the owner as well as current company financials including a balance sheet and profit & loss.\n** Please note my email address has changed to callie_bergsrud@rpsins.com<mailto:callie_bergsrud@rpsins.com> **\nCallie Bergsrud\nCCI Surety\n1710 N. Douglas Drive, Suite 110, Golden Valley, MN 55422\nPhone: (763) 543-6993 | Toll Free: (86",
+   "atts": []
+  },
+  {
+   "c": "Kervalonix",
+   "from": "\"Joe Allen (Golden Valley)\" <Joe_Allen@rpsins.com>",
+   "sub": "RE: Customs Bond Application - Kervalonix LLC",
+   "t": "11/4 05:10",
+   "unread": true,
+   "type": "supply",
+   "body": "Thank you for the information! We will review and follow up.\n Joe Allen\n[cid:image001.png@01DD6BA5.7AB82FD0]\n Office - (866)317-3294 | Cell - (763)232-2138 | Email - Joe_Allen@rpsins.com<mailto:Joe_Allen@rpsins.com>\n CA License Number: 4267307\n NOTICE OF CONFIDENTIALITY AND DAMAGE DISCLAIMER:\n The information in this e-mail and any attachment(s) is confidential and may be privileged. If you are no",
+   "atts": [
+    {
+     "name": "image001.png",
+     "path": "docs/clients/Kervalonix/Kervalonix_image001.png",
+     "size": 16985,
+     "type": "image"
+    }
+   ]
+  },
+  {
+   "c": "Huntington Ingalls",
+   "from": "Mail Delivery System <MAILER-DAEMON@mail.pony-it.com>",
+   "sub": "Undelivered Mail Returned to Sender",
+   "t": "11/3 22:42",
    "unread": false,
    "type": "supply",
-   "body": "﻿\nThank you for your email. I am out of the office returning on Monday, 9th Nov with limited access to email. If you require anything urgent please reach out to:\nAshley Marino - ashley.marino@axaxl.com (Political Risk and Credit)\nXLC-CommercialBonds@axaxl.com (Commercial Bond / Surety)\nKind regards,\nKelly\n________________________________\nYou may unsubscribe from future promotional emails at any ti",
+   "body": "This is the mail system at host mail.pony-it.com.\nI'm sorry to have to inform you that your message could not\nbe delivered to one or more recipients. It's attached below.\nFor further assistance, please send mail to postmaster.\nIf you do so, please include this problem report. You can\ndelete your own text from the attached returned message.\n The mail system\n<mia@jtmsa.us>: host smtp.resend.com[54.2",
    "atts": []
   },
   {
@@ -2073,18 +2047,74 @@
    "atts": []
   },
   {
-   "c": "Lennar",
-   "from": "Staff Underwriters <StaffUnderwriters@SuretyOne.com>",
-   "sub": "Re: Customs Bond App. (Lennar, LLC)",
-   "t": "11/5 04:03",
-   "unread": true,
+   "c": "Huntington Ingalls",
+   "from": "Mail Delivery System <MAILER-DAEMON@mail.pony-it.com>",
+   "sub": "Undelivered Mail Returned to Sender",
+   "t": "11/3 22:40",
+   "unread": false,
    "type": "supply",
-   "body": "Thank you for your interest in our bonding company’s support of this \nneed, Corey.\nThis class of surety undertaking for start-up, owner/operator with no \nfinancial statement and personal credit challenges requires the support \nof collateral security. You may learn more about the collateral options \nthat we offer on our website at \nhttps://suretyone.com/surety-bond-collateral-security. Please advis",
-   "atts": [
-    {
-     "name": "surety-one-staff-email-signature.png"
-    }
-   ]
+   "body": "This is the mail system at host mail.pony-it.com.\nI'm sorry to have to inform you that your message could not\nbe delivered to one or more recipients. It's attached below.\nFor further assistance, please send mail to postmaster.\nIf you do so, please include this problem report. You can\ndelete your own text from the attached returned message.\n The mail system\n<info@jdbrokers.net>: host smtp.resend.co",
+   "atts": []
+  },
+  {
+   "c": "Huntington Ingalls",
+   "from": "Mail Delivery System <MAILER-DAEMON@mail.pony-it.com>",
+   "sub": "Undelivered Mail Returned to Sender",
+   "t": "11/3 22:38",
+   "unread": false,
+   "type": "supply",
+   "body": "This is the mail system at host mail.pony-it.com.\nI'm sorry to have to inform you that your message could not\nbe delivered to one or more recipients. It's attached below.\nFor further assistance, please send mail to postmaster.\nIf you do so, please include this problem report. You can\ndelete your own text from the attached returned message.\n The mail system\n<brokercbo@cboutsourcing.us>: host smtp.r",
+   "atts": []
+  },
+  {
+   "c": "Huntington Ingalls",
+   "from": "Mail Delivery System <MAILER-DAEMON@mail.pony-it.com>",
+   "sub": "Undelivered Mail Returned to Sender",
+   "t": "11/3 22:36",
+   "unread": false,
+   "type": "supply",
+   "body": "This is the mail system at host mail.pony-it.com.\nI'm sorry to have to inform you that your message could not\nbe delivered to one or more recipients. It's attached below.\nFor further assistance, please send mail to postmaster.\nIf you do so, please include this problem report. You can\ndelete your own text from the attached returned message.\n The mail system\n<info@vortexwl.com>: host smtp.resend.com",
+   "atts": []
+  },
+  {
+   "c": "Kontoor",
+   "from": "\"Aman Tahir Adam | Kontoor Brands LLC\" <amantahiradam@kontoorbrands.live>",
+   "sub": "\"Personal Address Book\" has been created",
+   "t": "10/22 22:22",
+   "unread": false,
+   "type": "info",
+   "body": "The \"Personal Address Book\" folder has been created.",
+   "atts": []
+  },
+  {
+   "c": "Kontoor",
+   "from": "\"Aman Tahir Adam | Kontoor Brands LLC\" <amantahiradam@kontoorbrands.live>",
+   "sub": "\"Personal Calendar\" has been created",
+   "t": "10/22 22:20",
+   "unread": false,
+   "type": "info",
+   "body": "The \"Personal Calendar\" folder has been created.",
+   "atts": []
+  },
+  {
+   "c": "Honeywell",
+   "from": "\"Allyson Brenna Fankuchen | Honeywell International LLC\" <allysonbrennafankuchen@honeywellinternational.live>",
+   "sub": "\"Personal Address Book\" has been created",
+   "t": "10/22 21:11",
+   "unread": false,
+   "type": "info",
+   "body": "The \"Personal Address Book\" folder has been created.",
+   "atts": []
+  },
+  {
+   "c": "Honeywell",
+   "from": "\"Allyson Brenna Fankuchen | Honeywell International LLC\" <allysonbrennafankuchen@honeywellinternational.live>",
+   "sub": "\"Personal Calendar\" has been created",
+   "t": "10/22 21:04",
+   "unread": false,
+   "type": "info",
+   "body": "The \"Personal Calendar\" folder has been created.",
+   "atts": []
   }
  ],
  "logs": [
