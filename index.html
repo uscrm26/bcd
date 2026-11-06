@@ -4688,10 +4688,11 @@ R.doc=()=>`<h1>文件中心</h1>
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
   <div class="search" style="flex:2;min-width:200px"><input placeholder="搜尋公司名、法人、檔名" oninput="window._df=this.value;renderDoc()"></div>
   <div style="display:flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 8px" id="docOwnerBar">
-    <span style="font-size:11px;color:var(--mut);padding:0 4px">歸屬</span>
-    <button class="own-chip on" data-v="" onclick="setDocOwner(this)">全部</button>
-    <button class="own-chip" data-v="kevinyama" onclick="setDocOwner(this)"><span class="own-face">K</span>Kevin W</button>
-    <button class="own-chip" data-v="ryanfan" onclick="setDocOwner(this)"><span class="own-face">R</span>Ryan F</button>
+    <span style="font-size:11px;color:var(--mut);padding:0 4px">${L==='en'?'Owner':(L==='cn'?'归属':'歸屬')}</span>
+    <select id="docOwnerSel" onchange="window._do=this.value;renderDoc()" style="background:transparent;border:none;color:var(--fg);font-size:13px;cursor:pointer;outline:none">
+      <option value="">${L==='en'?'All':(L==='cn'?'全部':'全部')}</option>
+      ${USERS.filter(u=>u.active!==false).map(u=>`<option value="${u.id}">${esc(u.nm)}</option>`).join("")}
+    </select>
   </div>
 </div>
 <div id="docArea"></div>`;
