@@ -286,6 +286,17 @@ table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 .ai-gen:focus{outline:2px solid var(--acc);outline-offset:4px;border-radius:6px}
 .ai-main{min-width:0}
 .ai-sheet{background:#fff;color:#1f2937;border-radius:14px;border:1px solid var(--line);padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
+.ai-gen > div, .ai-gen{font-family:'Times New Roman',Times,serif;color:#000!important}
+@page{size:A4;margin:12mm}
+@media print{
+  body *{visibility:hidden}
+  .ai-sheet,.ai-sheet *{visibility:visible}
+  .ai-sheet{position:absolute;left:0;top:0;width:210mm;min-height:297mm;border:none;box-shadow:none;border-radius:0;padding:0}
+  .ai-gen{width:100%!important;max-width:none!important}
+  .ai-gen input,.ai-gen button{display:none!important}
+  .ai-gen .sig-line{display:block!important}
+  .sidebar,.topbar,.ai-side,.ai-statusbar,.ai-note,h1,.toast,.modal{display:none!important}
+}
 .pfs-doc h2{text-align:center;letter-spacing:3px;font-size:18px;margin-bottom:20px;color:#111}
 .pfs-top{display:grid;grid-template-columns:1fr 200px;gap:14px;margin-bottom:16px}
 .pfs-top label,.bond-fl label,.sig-date label{display:block;font-size:11px;color:#6b7280;margin-bottom:4px;font-weight:700}
@@ -1079,6 +1090,8 @@ function injectMicButtons(){
     if(el.dataset.micBound)return;
     // 登錄頁面的輸入框不加語音按鈕
     if(el.closest('#loginScreen'))return;
+    // AI 生成的正式文檔裡面不加語音按鈕，保持 PDF 乾淨
+    if(el.closest('.ai-gen'))return;
     el.dataset.micBound="1";
     const wrap=document.createElement("div");
     wrap.style.cssText="position:relative;display:inline-block;width:100%";
@@ -4760,6 +4773,7 @@ let aiDirty=false;
 let aiGenHtml="";
 let aiDesignSeed="";
 let aiGenLoading=false;
+let aiFont="'Times New Roman',Times,serif";
 function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;aiInitDraft();render();}
 function aiSwitchDoc(t){aiDocType=t;aiInitDraft();render();}
 function aiSetSig(t){aiSigType=t;if(t!=="type")aiSigData="";scheduleAiSave();render();}
@@ -4836,10 +4850,11 @@ async function aiFill(){
   let usedLLM=false;
   try{
     const personaTxt=JSON.stringify(aiPersona);
-    const custTxt=JSON.stringify({no:c.no,name:c.name,member:c.member,ein:c.ein,mail:c.mail,status:(c.status||"")});
+    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||""});
     const docName=aiDocType==="pfs"?"PERSONAL FINANCIAL STATEMENT":"CUSTOMS CONTINUOUS BOND APPLICATION";
-    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". STRICT STYLE: black text on white background, Times New Roman serif font, no colors except black/white/light gray. The ONLY thing that varies is the layout structure per the brief. Include realistic, internally-consistent numbers for the persona. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
-    const prompt="Layout brief (must follow exactly, all black and white, Times New Roman):\n"+design.layout+"\n\nCustomer data: "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now.";
+    const fontLabel=aiFont.includes("Arial")?"Arial, sans-serif":aiFont.includes("Courier")?"'Courier New', monospace":"'Times New Roman', Times, serif";
+    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". STRICT STYLE: black text on pure white background, font family "+fontLabel+", no colors except black/white/light gray. Output must be 100% English, no Chinese characters. The ONLY thing that varies is the layout structure per the brief. MUST prominently include the company name, the individual/member name, EIN, and address. Include realistic, internally-consistent numbers for the persona. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
+    const prompt="Layout brief (must follow exactly, all black and white, "+fontLabel+", all English):\n"+design.layout+"\n\nCustomer data (use these exact values): "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now.";
     const out=await callAI(sys,prompt);
     if(out){
       let body=out.trim().replace(/^```(?:html)?\s*/i,"").replace(/```\s*$/,"");
@@ -4858,30 +4873,71 @@ async function aiFill(){
 }
 function aiLocalDocHTML(c,d){
   const inc=aiLocalFill._inc||125, scale=aiLocalFill._scale||1;
-  const cash=Math.round(25*scale),stocks=Math.round(35*scale),home=Math.round(420*scale),ppe=Math.round(30*scale),ira=Math.round(65*scale);
-  const credit=Math.round(7*scale),mort=Math.round(265*scale);
+  const cash=Math.round(25*scale)*1000,stocks=Math.round(35*scale)*1000,home=Math.round(420*scale)*1000,ppe=Math.round(30*scale)*1000,ira=Math.round(65*scale)*1000;
+  const credit=Math.round(7*scale)*1000,mort=Math.round(265*scale)*1000;
   const tA=cash+stocks+home+ppe+ira,tL=credit+mort;
-  const F="'Times New Roman',Times,serif";
-  const items=[["Cash",cash],["Stocks & bonds",stocks],["Home",home],["Personal property",ppe],["IRA",ira]];
-  const tableRows=items.map(r=>`<tr><td style="padding:5px 2px;border-bottom:1px solid #000">${r[0]}</td><td style="padding:5px 2px;border-bottom:1px solid #000;text-align:right">$${r[1].toLocaleString()}</td></tr>`).join("");
-  return `<div style="background:#fff;color:#000;padding:40px;font-family:${F};max-width:760px;margin:0 auto;font-size:14px">
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="font-size:10px;letter-spacing:3px">U C R M</div>
-      <h2 style="margin:8px 0;font-size:20px;text-decoration:underline">${aiDocType==='pfs'?'Personal Financial Statement':'Customs Bond Application'}</h2>
-      <div style="font-size:12px;margin-top:4px">${esc(c.name||'')} · ${esc(c.member||'')}${esc(c.ein?' · EIN '+c.ein:'')}</div>
+  const F=aiFont;
+  const B='#000';
+  const items=[["Cash on hand & checking",cash],["Stocks, bonds & mutual funds",stocks],["Primary residence",home],["Personal property & vehicles",ppe],["Retirement accounts (IRA/401k)",ira]];
+  const tableRows=items.map(r=>`<tr><td style="padding:6px 4px;border-bottom:1px solid ${B};color:${B};font-size:13px">${r[0]}</td><td style="padding:6px 4px;border-bottom:1px solid ${B};text-align:right;color:${B};font-size:13px">$${r[1].toLocaleString()}</td></tr>`).join("");
+  const title=aiDocType==='pfs'?'Personal Financial Statement':'Customs Continuous Bond Application';
+  if(aiDocType==='bond'){
+    const fld=(l,v)=>`<tr><td style="padding:7px 6px;border:1px solid ${B};width:38%;font-weight:bold;font-size:12px;color:${B}">${l}</td><td style="padding:7px 6px;border:1px solid ${B};color:${B};font-size:13px">${v||"—"}</td></tr>`;
+    return `<div style="background:#fff;color:${B};padding:40px;font-family:${F};width:210mm;min-height:297mm;margin:0 auto;font-size:13px">
+      <h2 style="text-align:center;text-decoration:underline;margin:0 0 6px;font-size:18px;color:${B}">CUSTOMS CONTINUOUS BOND APPLICATION</h2>
+      <p style="text-align:center;font-size:11px;margin:0 0 22px;color:${B}">${esc(c.name||'')} · ${esc(c.member||'')}</p>
+      <table style="width:100%;border-collapse:collapse;color:${B}">
+        ${fld("Importer of record (company)",esc(c.name||""))}
+        ${fld("Principal / officer",esc(c.member||""))}
+        ${fld("EIN",esc(c.ein||""))}
+        ${fld("Business address",esc(c.address||""))}
+        ${fld("Phone",esc(c.phone||"—"))}
+        ${fld("Email",esc(c.mail||"—"))}
+        ${fld("Bond type","Continuous Import Bond (CBP Form 301, Type 1)")}
+        ${fld("Bond amount requested","$50,000")}
+        ${fld("Port(s) of entry",esc(c.address?c.address.split(',').slice(-2,-1)[0].trim():"—"))}
+        ${fld("Estimated annual imports","$400,000")}
+        ${fld("Estimated annual duties & taxes","$40,000")}
+        ${fld("Commodities","General merchandise / consumer goods")}
+        ${fld("Country of origin","China")}
+      </table>
+      <p style="margin-top:26px;font-size:10px;color:${B}">Prepared ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})} by UCRM. Figures are estimates for underwriting review.</p>
+    </div>`;
+  }
+  return `<div style="background:#fff;color:${B};padding:40px;font-family:${F};width:210mm;min-height:297mm;margin:0 auto;font-size:13px">
+    <div style="text-align:center;margin-bottom:22px">
+      <h2 style="margin:0 0 4px;font-size:18px;text-decoration:underline;color:${B}">${title}</h2>
+      <div style="font-size:14px;font-weight:bold;margin-top:10px;color:${B}">${esc(c.name||'')}</div>
+      <div style="font-size:12px;color:${B}">${esc(c.member||'')}</div>
+      <div style="font-size:11px;color:${B}">${esc(c.ein?'EIN '+c.ein:'')}${c.address?'<br>'+esc(c.address):''}</div>
     </div>
-    <div style="display:flex;justify-content:space-between;border-top:2px solid #000;border-bottom:1px solid #000;padding:10px 0;margin-bottom:16px">
-      <div><div style="font-size:10px">TOTAL ASSETS</div><div style="font-size:22px;font-weight:bold">$${tA.toLocaleString()}</div></div>
-      <div style="text-align:right"><div style="font-size:10px">NET WORTH</div><div style="font-size:22px;font-weight:bold">$${(tA-tL).toLocaleString()}</div></div>
+    <div style="display:flex;justify-content:space-between;border-top:2px solid ${B};border-bottom:1px solid ${B};padding:10px 0;margin-bottom:14px;color:${B}">
+      <div><div style="font-size:10px">TOTAL ASSETS</div><div style="font-size:20px;font-weight:bold">$${tA.toLocaleString()}</div></div>
+      <div style="text-align:right"><div style="font-size:10px">TOTAL LIABILITIES</div><div style="font-size:20px;font-weight:bold">$${tL.toLocaleString()}</div></div>
+      <div style="text-align:right"><div style="font-size:10px">NET WORTH</div><div style="font-size:20px;font-weight:bold">$${(tA-tL).toLocaleString()}</div></div>
     </div>
-    <table style="width:100%;border-collapse:collapse;font-size:13px">
-      <tr><th style="text-align:left;padding:6px 2px;border-bottom:2px solid #000">Asset</th><th style="text-align:right;padding:6px 2px;border-bottom:2px solid #000">Amount</th></tr>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;color:${B}">
+      <tr><th style="text-align:left;padding:6px 4px;border-bottom:2px solid ${B};color:${B}">ASSET</th><th style="text-align:right;padding:6px 4px;border-bottom:2px solid ${B};color:${B}">AMOUNT</th></tr>
       ${tableRows}
     </table>
-    <p style="margin-top:24px;font-size:10px">Generated ${new Date().toLocaleDateString()}. Figures are estimates for underwriting review.</p>
+    <p style="margin-top:22px;font-size:10px;color:${B}">As of ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}. Figures are estimates for underwriting review.</p>
   </div>`;
 }
 function aiReset(){aiDraft=aiBlankDraft();aiGenHtml="";aiDesignSeed="";aiSave();render();}
+function aiSetFont(v){
+  if(v==='a')aiFont="Arial,Helvetica,sans-serif";
+  else if(v==='c')aiFont="'Courier New',Courier,monospace";
+  else aiFont="'Times New Roman',Times,serif";
+  const g=document.querySelector('.ai-gen');
+  if(g)g.style.fontFamily=aiFont;
+}
+function aiPrintPdf(){
+  const c=aiSel||{};
+  const safe=(c.name||'document').replace(/[^\w\-. ]/g,'').trim()||'document';
+  const docType=aiDocType==='pfs'?'Personal_Statement':'Customs_Bond_Application';
+  document.title=safe+'_'+docType;
+  window.print();
+}
 function aiSubmit(){
   aiDraft.sigDate=new Date().toISOString().slice(0,10);
   aiSave();
@@ -4938,6 +4994,14 @@ R.ai=()=>{
       </select>
     </div>`:""}
     <div class="ai-side-sec">
+      <div class="ai-side-lb">${AI_IC.doc}${CURRENT_LANG==='en'?'Font':'字體'}</div>
+      <select class="ai-select" onchange="aiSetFont(this.value)">
+        <option value="t" ${aiFont.includes('Times')?'selected':''}>Times New Roman</option>
+        <option value="a" ${aiFont.includes('Arial')?'selected':''}>Arial</option>
+        <option value="c" ${aiFont.includes('Courier')?'selected':''}>Courier New</option>
+      </select>
+    </div>
+    <div class="ai-side-sec">
       <div class="ai-side-lb">${AI_IC.sig}${T.sig}</div>
       <div class="ai-sig-tabs">
         <button class="${aiSigType==='type'?'on':''}" onclick="aiSetSig('type')">${T.sigType}</button>
@@ -4949,7 +5013,7 @@ R.ai=()=>{
       <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()">${AI_IC.spark}${T.aiFill}</button>
       <button class="btn" style="width:100%" onclick="aiReset()">${T.reset}</button>
       <button class="btn" style="width:100%" onclick="aiSave()">${AI_IC.save}${T.save}</button>
-      <button class="btn" style="width:100%" onclick="window.print()">${AI_IC.pdf}${T.export}</button>
+      <button class="btn" style="width:100%" onclick="aiPrintPdf()">${AI_IC.pdf}${T.export}</button>
       <button class="btn primary" style="width:100%;background:#0f766e" onclick="aiSubmit()">${T.confirm}</button>
     </div>
   </div>`;
