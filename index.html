@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106y1910";
+  var V="v20261106z1920";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -307,6 +307,25 @@ tr:hover td{background:#1a2130}
 .doc-card:hover{transform:translateY(-4px);border-color:var(--acc);box-shadow:0 8px 24px rgba(0,0,0,.15)}
 @keyframes cardIn{to{opacity:1;transform:translateY(0)}}
 .card-animate{animation:cardIn .35s ease forwards}
+/* 骨架屏 */
+@keyframes shimmer{0%{background-position:-200px 0}100%{background-position:calc(200px + 100%) 0}}
+.skeleton{background:linear-gradient(90deg,var(--bg2) 25%,rgba(255,255,255,.06) 50%,var(--bg2) 75%);background-size:400px 100%;animation:shimmer 1.2s infinite linear;border-radius:8px}
+.skeleton-text{height:14px;margin:6px 0}
+.skeleton-title{height:20px;width:60%;margin:8px 0}
+.skeleton-card{height:120px;margin-bottom:12px}
+.skeleton-avatar{width:40px;height:40px;border-radius:50%}
+/* 圖片模糊漸顯 */
+img.blur-up{filter:blur(12px);opacity:0;transition:filter .5s ease,opacity .5s ease}
+img.blur-up.loaded{filter:blur(0);opacity:1}
+/* 按鈕加載狀態 */
+.btn.loading{opacity:.7;pointer-events:none;position:relative}
+.btn.loading::after{content:"";position:absolute;right:12px;top:50%;width:14px;height:14px;margin-top:-7px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* 403 無權限 */
+.forbidden-page{text-align:center;padding:60px 20px}
+.forbidden-page .code{font-size:72px;font-weight:800;color:var(--acc);opacity:.3;margin-bottom:16px}
+.forbidden-page .msg{font-size:16px;color:var(--txt);margin-bottom:8px}
+.forbidden-page .sub{font-size:13px;color:var(--mut);margin-bottom:24px}
 .doc-ava{width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--acc);font-weight:800;font-size:30px;margin-bottom:10px}
 .doc-ava img{width:100%;height:100%;object-fit:cover}
 .doc-nm{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -745,6 +764,45 @@ const fixMoji=s=>{if(!s||typeof s!=="string")return s;try{const bytes=[];for(let
 let view="dashboard";
 const R={};
 function toast(m,kind){const t=document.getElementById("toast");t.textContent=m;t.style.display="block";t.style.background=kind==="err"?"#dc2626":kind==="ok"?"#10b981":"var(--bg2)";t.style.color=kind==="err"||kind==="ok"?"#fff":"var(--tx)";clearTimeout(t._x);t._x=setTimeout(()=>t.style.display="none",2400);}
+// 按鈕加載狀態
+function setBtnLoading(btn,loading){
+  if(!btn)return;
+  if(loading){btn.dataset.origText=btn.textContent;btn.classList.add("loading");btn.textContent="處理中...";}
+  else{btn.classList.remove("loading");if(btn.dataset.origText)btn.textContent=btn.dataset.origText;}
+}
+// 圖片模糊漸顯
+function blurImg(img){
+  if(!img)return;
+  img.classList.add("blur-up");
+  if(img.complete&&img.naturalWidth>0){img.classList.add("loaded");return;}
+  img.onload=()=>img.classList.add("loaded");
+  img.onerror=()=>img.classList.add("loaded");
+}
+// 樂觀更新：先顯示成功，再後台同步，失敗回滾
+async function optimisticUpdate(updater,apiCall,rollback){
+  const oldData=JSON.parse(JSON.stringify(DATA));
+  try{
+    updater();
+    render();
+    await apiCall();
+    toast("已保存","ok");
+  }catch(e){
+    Object.assign(DATA,JSON.parse(JSON.stringify(oldData)));
+    if(rollback)rollback();
+    render();
+    toast("保存失敗，已還原","err");
+    console.error("optimistic update failed:",e);
+  }
+}
+// 403 無權限頁面
+function forbiddenPage(msg){
+  return `<div class="forbidden-page">
+    <div class="code">403</div>
+    <div class="msg">${msg||"你沒有權限訪問這個頁面"}</div>
+    <div class="sub">如需開通權限，請聯繫系統管理員</div>
+    <button class="btn primary" onclick="goto('dashboard')">返回總覽看板</button>
+  </div>`;
+}
 let _floatCount=0;
 function floatPos(){return 20+(_floatCount%5)*420;}
 function floatNext(){_floatCount++;if(_floatCount>10)_floatCount=0;return floatPos();}
@@ -1413,7 +1471,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106Y";
+const APP_VER="20261106Z";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
