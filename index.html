@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106ae1955";
+  var V="v20261106af2000";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1472,7 +1472,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106AE";
+const APP_VER="20261106AF";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -4859,24 +4859,45 @@ function openSettings(){
   const curTz=PREF.tz||0;
   const curLang=CURRENT_LANG;
   const curVoice=PREF.voiceLang||"zh-HK";
-  const optCls=(on)=>`display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:10px;font-size:13px;cursor:pointer;transition:all .15s;${on?'background:rgba(59,130,246,.15);border:1px solid var(--acc);color:var(--acc);font-weight:600':'border:1px solid transparent'}`;
-  const tzOpts=TZS.map((t,i)=>`<label style="${optCls(i===curTz)}"><input type="radio" name="set_tz" value="${i}" ${i===curTz?"checked":""} style="width:16px;height:16px;accent-color:var(--acc)"><span>${t[0]}</span> ${t[1]}</label>`).join("");
-  const voiceOpts=[["zh-HK","廣東話｜繁體中文"],["zh-CN","普通話｜簡體中文"],["en-US","美式英語｜英語"],["en-GB","英式英語｜英語"]].map(v=>`<label style="${optCls(v[0]===curVoice)}"><input type="radio" name="set_voice" value="${v[0]}" ${v[0]===curVoice?"checked":""} style="width:16px;height:16px;accent-color:var(--acc)">${v[1]}</label>`).join("");
-  const langOpts=[["zh","繁體中文"],["cn","簡體中文"],["en","English"]].map(l=>`<label style="${optCls(l[0]===curLang)}"><input type="radio" name="set_lang" value="${l[0]}" ${l[0]===curLang?"checked":""} style="width:16px;height:16px;accent-color:var(--acc)">${l[1]}</label>`).join("");
+  const voiceOpts=[
+    ["zh-HK","廣東話","繁體中文"],
+    ["zh-CN","普通話","簡體中文"],
+    ["zh-CN-T","普通話","繁體中文"],
+    ["en-US","美式英語","英語"],
+    ["en-GB","英式英語","英語"]
+  ];
+  const tzCards=TZS.map((t,i)=>`
+    <div onclick="document.querySelector('input[name=set_tz][value=${i}]').click()" style="padding:14px;border-radius:12px;cursor:pointer;transition:all .15s;${i===curTz?'background:rgba(59,130,246,.12);border:2px solid var(--acc);':'background:var(--bg2);border:2px solid transparent'};text-align:center">
+      <div style="font-size:20px;margin-bottom:4px">${t[0]}</div>
+      <div style="font-size:12px;color:var(--mut)">${t[1]}</div>
+    </div>`).join("");
+  const langCards=[["zh","繁體中文"],["cn","簡體中文"],["en","English"]].map(l=>`
+    <div onclick="document.querySelector('input[name=set_lang][value=${l[0]}]').click()" style="padding:14px;border-radius:12px;cursor:pointer;transition:all .15s;${l[0]===curLang?'background:rgba(59,130,246,.12);border:2px solid var(--acc);':'background:var(--bg2);border:2px solid transparent'};text-align:center">
+      <div style="font-size:14px;font-weight:600">${l[1]}</div>
+    </div>`).join("");
+  const voiceCards=voiceOpts.map(v=>`
+    <div onclick="document.querySelector('input[name=set_voice][value=${v[0]}]').click()" style="padding:14px 16px;border-radius:12px;cursor:pointer;transition:all .15s;${v[0]===curVoice?'background:rgba(59,130,246,.12);border:2px solid var(--acc);':'background:var(--bg2);border:2px solid transparent'}">
+      <div style="font-size:14px;font-weight:600;margin-bottom:2px">${v[1]}</div>
+      <div style="font-size:12px;color:var(--mut)">識別語言 → 輸出 ${v[2]}</div>
+    </div>`).join("");
   openModal(`<h3>個人設置</h3>
-  <div style="font-size:12px;color:var(--mut);margin-bottom:16px">只影響你自己的界面和輸入偏好</div>
-  <div style="margin-bottom:16px">
-    <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--mut)">當前時區（用於時間顯示）</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">${tzOpts}</div>
-  </div>
-  <div style="margin-bottom:16px">
-    <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--mut)">界面語言</div>
-    <div style="display:grid;grid-template-columns:1fr;gap:4px">${langOpts}</div>
-  </div>
+  <div style="font-size:12px;color:var(--mut);margin-bottom:20px">只影響你自己的界面和輸入偏好，點擊卡片即可選擇</div>
+  
   <div style="margin-bottom:20px">
-    <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--mut)">語音識別語言及輸出語言</div>
-    <div style="display:grid;grid-template-columns:1fr;gap:4px">${voiceOpts}</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt">當前時區</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${tzCards}</div>
   </div>
+  
+  <div style="margin-bottom:20px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt">界面語言</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${langCards}</div>
+  </div>
+  
+  <div style="margin-bottom:24px">
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt">語音識別及輸出語言</div>
+    <div style="display:grid;grid-template-columns:1fr;gap:8px">${voiceCards}</div>
+  </div>
+  
   <div style="display:flex;gap:8px;justify-content:flex-end">
     <button class="btn" onclick="closeModal()">取消</button>
     <button class="btn primary" onclick="saveSettings()">保存設置</button>
