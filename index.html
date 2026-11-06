@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106j1755";
+  var V="v20261106k1800";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1390,7 +1390,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106J";
+const APP_VER="20261106K";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -4517,15 +4517,15 @@ R.archive=()=>{
 R.learn=()=>{
   const L=CURRENT_LANG;
   const t=L==='en'?'Learning Library':(L==='cn'?'学习档案':'學習檔案');
-  const sub=L==='en'?'Internal training documents. Click a card to view in-browser. No download.':(L==='cn'?'内部培训文件。点击卡片在线预览，不可下载。':'內部培訓文件。點卡片在線預覽，不可下載。');
+  const sub=L==='en'?'Internal training documents. Click a card to view in-browser.':(L==='cn'?'内部培训文件。点击卡片在线预览。':'內部培訓文件。點卡片在線預覽。');
   const title1=L==='en'?'Broker FAQ & Outreach Training':(L==='cn'?'开发性经纪常见提问手册':'開發性經紀常見提問手冊');
   const title2=L==='en'?'UCRM System User Guide':(L==='cn'?'UCRM 系统操作手册':'UCRM 系統操作手冊');
   const title3=L==='en'?'Financial Statement Guide':(L==='cn'?'客户财务报表填写指引':'客戶財務報表填寫指引');
   const title4=L==='en'?'Application & ID Verification':(L==='cn'?'申请表填写与资料核对':'申請表填寫與資料核對');
-  const desc1=L==='en'?'14 pages · 12 email samples · 3 languages':(L==='cn'?'14页 · 12个邮件范例 · 3种语言':'14頁 · 12個郵件範例 · 3種語言');
-  const desc2=L==='en'?'16 chapters · full walkthrough · 3 languages':(L==='cn'?'16个章节 · 完整操作说明 · 3种语言':'16個章節 · 完整操作說明 · 3種語言');
-  const desc3=L==='en'?'10 case samples · PFS walkthrough · 3 languages':(L==='cn'?'10个案例 · 逐项填写说明 · 3种语言':'10個案例 · 逐欄填寫說明 · 3種語言');
-  const desc4=L==='en'?'9 documents · ID verification · 3 languages':(L==='cn'?'9份文件 · 身份核对流程 · 3种语言':'9份文件 · 身份核對流程 · 3種語言');
+  const desc1=L==='en'?'How to write cold outreach emails to customs brokers, with FAQ and reply templates.':(L==='cn'?'教你怎么写开发信给报关行，附常见问题与标准回覆模板。':'教你怎麼寫開發信給報關行，附常見問題與標準回覆範本。');
+  const desc2=L==='en'?'Full walkthrough of every feature in UCRM, from login to daily workflow.':(L==='cn'?'UCRM 全功能操作说明，从登入到日常工作流程一步步讲。':'UCRM 全功能操作說明，從登入到日常工作流程一步步講。');
+  const desc3=L==='en'?'How to guide clients through financial statement preparation, with 10 real case examples.':(L==='cn'?'教客户怎么填财务报表，十个不同行业真实案例逐项说明。':'教客戶怎麼填財務報表，十個不同行業真實案例逐項說明。');
+  const desc4=L==='en'?'What 9 documents to collect from each client, and how to verify identity and company info.':(L==='cn'?'每个客户要收哪九份文件，怎么核对身份与公司资料真伪。':'每個客戶要收哪九份文件，怎麼核對身份與公司資料真偽。');
   return `<h1>${t}</h1>
   <div style="font-size:13px;color:var(--mut);margin-bottom:20px">${sub}</div>
   <div style="display:flex;gap:20px;flex-wrap:wrap">
