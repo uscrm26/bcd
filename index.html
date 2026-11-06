@@ -82,6 +82,34 @@ body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
 @keyframes bootLogoIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 @keyframes bootFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){#bootLoader *{animation:none!important}}
+/* ===== 歸檔包：資料夾形態卡片 ===== */
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;margin-top:8px}
+.arch-card{position:relative;margin-top:14px;display:flex;flex-direction:column;align-items:center;text-align:center;
+  background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);
+  border-radius:4px 14px 14px 14px;padding:26px 16px 18px;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.arch-card::before{content:"";position:absolute;top:-14px;left:0;width:96px;height:16px;
+  background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-bottom:none;border-radius:8px 8px 0 0}
+.arch-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,.4);border-color:var(--acc)}
+.arch-photo{width:64px;height:64px;border-radius:14px;object-fit:cover;margin-bottom:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.35);background:var(--bg2)}
+.arch-name{font-size:14px;font-weight:700;color:var(--txt);line-height:1.3;margin-bottom:4px;word-break:break-word}
+.arch-no{font-size:11px;color:var(--acc);font-weight:600;margin-bottom:8px;letter-spacing:.5px}
+.arch-meta{font-size:12px;color:var(--mut);margin-bottom:14px}
+/* 客戶頭像重疊堆疊 */
+.avatar-stack{display:inline-flex;align-items:center}
+.avatar-stack .ast{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg);object-fit:cover;margin-left:-8px;
+  box-shadow:0 2px 6px rgba(0,0,0,.3);background:var(--card2)}
+.avatar-stack .ast:first-child{margin-left:0}
+.avatar-stack .ast-more{display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+  color:var(--txt);background:var(--card2)}
+.ast-card{cursor:default}
+.ast-card .vl{font-size:34px}
+.ast-wrap{position:relative;display:inline-block;margin-top:14px}
+.ast-pop{display:none;position:absolute;bottom:calc(100% + 10px);left:0;
+  background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;
+  min-width:240px;box-shadow:0 18px 44px rgba(0,0,0,.55);z-index:30;font-size:12px;color:var(--txt)}
+.ast-pop:after{content:"";position:absolute;top:100%;left:24px;border:6px solid transparent;border-top-color:var(--line)}
+.ast-wrap:hover .ast-pop{display:block}
 /* language dropdown */
 .lang{position:relative}
 .lang .menu{display:none;position:absolute;right:0;top:38px;background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:160px;overflow:hidden;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.25)}
@@ -138,7 +166,7 @@ a{color:var(--acc);text-decoration:none}
 .brand .bs{font-size:10px;color:var(--dim)}
 .sideclock{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.9;color:var(--mut)}
 .sideclock b{color:var(--txt);font-weight:600}
-.sideclock .z{display:flex;align-items:center;gap:6px}.sideclock .z .zem{font-size:12px;flex:0 0 auto}.sideclock .z b{flex:1 1 auto}.sideclock .z span:last-child{font-variant-numeric:tabular-nums}
+.sideclock .z{display:flex;align-items:center;gap:8px;padding:5px 6px;border-radius:8px}.sideclock .z .zem{font-size:15px;flex:0 0 auto}.sideclock .z b{flex:1 1 auto;font-size:13px;font-weight:600}.sideclock .z span:last-child{font-variant-numeric:tabular-nums;font-size:12px;color:var(--mut)}
 .nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0}
 .nav{padding:4px 0}
 .nav .grp{font-size:10px;color:var(--dim);text-transform:none;padding:20px 10px 8px;letter-spacing:.5px;font-weight:600;border-top:1px solid rgba(255,255,255,.04);margin-top:8px}
@@ -1692,9 +1720,26 @@ R.dashboard=()=>{
     [custs,T.b],
     [unread.filter(e=>!e.done).length,T.c]
   ];
+  // 第二列：已支付待審核（paid）與已遞申請客戶
+  const paidList=myCusts.filter(c=>c.status==="paid");
+  const submittedList=myCusts.filter(c=>["reply","broker","supply","quote"].includes(c.status));
+  const paidLb=CURRENT_LANG==="en"?"Paid, Awaiting Bond":CURRENT_LANG==="cn"?"已支付待审核":"已經交錢";
+  const paidTg=CURRENT_LANG==="en"?"Payment confirmed, waiting for bond":"已付款，等待下擔保文件";
+  const subLb=CURRENT_LANG==="en"?"Applications Submitted":CURRENT_LANG==="cn"?"已递申请客户":"已遞申請客戶";
+  const subTg=CURRENT_LANG==="en"?"Submitted to broker, in review":"已遞交申請，等待報關行處理";
+  function astRow(list,lb,tg){
+    const shown=list.slice(0,4);const rest=list.length-shown.length;
+    const stack=`<div class="ast-wrap"><div class="avatar-stack">${shown.map(c=>`<img class="ast" src="${phSrc(c.no)}" title="${esc(c.name)}" onerror="this.style.visibility='hidden'">`).join("")}${rest>0?`<span class="ast ast-more">+${rest}</span>`:""}</div>
+      <div class="ast-pop">${list.length?list.map(c=>`<div style="padding:3px 0"><b>#${c.no}</b> ${esc(c.name)}<span style="color:var(--mut)"> · ${esc(c.member)}</span></div>`).join(""):"<div style='color:var(--mut)'>無</div>"}</div></div>`;
+    return `<div class="stat ast-card"><div class="lb">${lb}</div><div class="vl">${list.length}</div><div class="tg">${tg}</div>${stack}</div>`;
+  }
   return `<h1>總覽看板</h1>
   <div class="row r4">
     ${cards.map((x,i)=>`<div class="stat ${i===0?'featured':''}" style="cursor:pointer;${i>0?'opacity:.75':''}" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
+  </div>
+  <div class="row r2" style="margin-top:12px">
+    ${astRow(paidList,paidLb,paidTg)}
+    ${astRow(submittedList,subLb,subTg)}
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
@@ -4675,15 +4720,17 @@ R.archive=()=>{
   const L=CURRENT_LANG;
   const list=DATA.customers.filter(c=>canViewCust(c.no));
   return `<h1>${L==='en'?'Archives':(L==='cn'?'归档包':'歸檔包')}</h1>
-  <div style="font-size:13px;color:var(--mut);margin-bottom:16px">${L==='en'?'Download a complete data bundle per customer as JSON. Files are listed with their cloud URLs.':(L==='cn'?'为每个客户下载完整数据包（JSON格式）。附件列出云端链接。':'為每個客戶下載完整數據包（JSON格式）。附件列出雲端連結。')}</div>
-  <div class="row r2">${list.map(c=>{
+  <div style="font-size:13px;color:var(--mut);margin-bottom:8px">${L==='en'?'Download a complete data bundle per customer as JSON. Files are listed with their cloud URLs.':(L==='cn'?'为每个客户下载完整数据包（JSON格式）。附件列出云端链接。':'為每個客戶下載完整數據包（JSON格式）。附件列出雲端連結。')}</div>
+  <div class="arch-grid">${list.map(c=>{
     const files=(DATA.files||{})[c.no]||[];
-    return `<div class="panel">
-      <div class="sec-title">${c.no} ${esc(c.name)}</div>
-      <div style="font-size:12px;color:var(--mut)">${L==='en'?'Summary · JSON · Timeline · Todos · Files':'客戶摘要 · 數據 JSON · 時間線 · 待辦 · 附件 '}· ${files.length} ${L==='en'?'files':'份檔案'}</div>
-      <div style="margin-top:10px;display:flex;gap:8px">
-        <button class="btn primary small" onclick="genArchive('${c.no}')">${L==='en'?'Generate / Download':'產生 / 下載'}</button>
-      </div>
+    const ph=phSrc(c.no);
+    const owner=CURRENT_USER.role==="super_admin"?(" · "+(ownerMap[c.no]||"")):"";
+    return `<div class="arch-card">
+      <img class="arch-photo" src="${ph}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <div class="arch-no">#${c.no}</div>
+      <div class="arch-name">${esc(c.name)}</div>
+      <div class="arch-meta">${L==='en'?files.length+' files':'共 '+files.length+' 份檔案'}</div>
+      <button class="btn primary small" onclick="genArchive('${c.no}')">${L==='en'?'Generate / Download':'產生 / 下載'}</button>
     </div>`;
   }).join("")}</div>`;
 };
@@ -5033,54 +5080,42 @@ function openSettings(){
     ["en-US","美式英語","英語"],
     ["en-GB","英式英語","英語"]
   ];
-  const tzCards=TZS.map((t,i)=>`
-    <div onclick="document.querySelector('input[name=set_tz][value=${i}]').click()" style="padding:14px;border-radius:12px;cursor:pointer;transition:all .15s;${i===curTz?'background:rgba(59,130,246,.12);border:2px solid var(--acc);':'background:var(--bg2);border:2px solid transparent'};text-align:center">
-      <div style="font-size:20px;margin-bottom:4px">${t[0]}</div>
-      <div style="font-size:12px;color:var(--mut)">${t[1]}</div>
-    </div>`).join("");
-  const langCards=[["zh","繁體中文"],["cn","簡體中文"],["en","English"]].map(l=>`
-    <div onclick="document.querySelector('input[name=set_lang][value=${l[0]}]').click()" style="padding:14px;border-radius:12px;cursor:pointer;transition:all .15s;${l[0]===curLang?'background:rgba(59,130,246,.12);border:2px solid var(--acc);':'background:var(--bg2);border:2px solid transparent'};text-align:center">
-      <div style="font-size:14px;font-weight:600">${l[1]}</div>
-    </div>`).join("");
-  const voiceCards=voiceOpts.map(v=>`
-    <div onclick="document.querySelector('input[name=set_voice][value=${v[0]}]').click()" style="padding:14px 16px;border-radius:12px;cursor:pointer;transition:all .15s;${v[0]===curVoice?'background:rgba(59,130,246,.12);border:2px solid var(--acc);':'background:var(--bg2);border:2px solid transparent'}">
-      <div style="font-size:14px;font-weight:600;margin-bottom:2px">${v[1]}</div>
-      <div style="font-size:12px;color:var(--mut)">識別語言 → 輸出 ${v[2]}</div>
-    </div>`).join("");
+  const sel={tz:curTz,lang:curLang,voice:curVoice};
+  const cardCls=on=>"padding:16px 14px;border-radius:14px;cursor:pointer;transition:all .18s ease;text-align:center;"+(on?"background:rgba(74,158,255,.15);border:2px solid var(--acc);box-shadow:0 0 0 3px rgba(74,158,255,.08);":"background:var(--bg2);border:2px solid transparent");
+  window.__setSelTz=function(i){sel.tz=i;document.querySelectorAll("[data-g='tz']").forEach(function(el){el.style.cssText=cardCls(Number(el.dataset.v)===i);});};
+  window.__setSelLang=function(v){sel.lang=v;document.querySelectorAll("[data-g='lang']").forEach(function(el){el.style.cssText=cardCls(el.dataset.v===v);});};
+  window.__setSelVoice=function(v){sel.voice=v;document.querySelectorAll("[data-g='voice']").forEach(function(el){el.style.cssText=cardCls(el.dataset.v===v);});};
+  const tzCards=TZS.map((t,i)=>`<div data-g="tz" data-v="${i}" onclick="__setSelTz(${i})" style="${cardCls(i===sel.tz)}"><div style="font-size:26px;margin-bottom:6px">${t[0]}</div><div style="font-size:13px;font-weight:600;color:var(--txt)">${t[1]}</div></div>`).join("");
+  const langCards=[["zh","繁體中文"],["cn","簡體中文"],["en","English"]].map(l=>`<div data-g="lang" data-v="${l[0]}" onclick="__setSelLang('${l[0]}')" style="${cardCls(l[0]===sel.lang)}"><div style="font-size:15px;font-weight:600">${l[1]}</div></div>`).join("");
+  const voiceCards=voiceOpts.map(v=>`<div data-g="voice" data-v="${v[0]}" onclick="__setSelVoice('${v[0]}')" style="${cardCls(v[0]===sel.voice)};text-align:left"><div style="font-size:14px;font-weight:600;margin-bottom:2px">${v[1]}</div><div style="font-size:12px;color:var(--mut)">識別語言 → 輸出 ${v[2]}</div></div>`).join("");
+  window.__saveSettings=function(){
+    PREF.tz=sel.tz;PREF.lang=sel.lang;PREF.voiceLang=sel.voice;
+    try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}
+    CURRENT_LANG=sel.lang;try{localStorage.setItem("bcd_lang",sel.lang);}catch(e){}
+    closeModal();goto(CUR_VIEW);
+  };
   openModal(`<h3>個人設置</h3>
   <div style="font-size:12px;color:var(--mut);margin-bottom:20px">只影響你自己的界面和輸入偏好，點擊卡片即可選擇</div>
-  
+
   <div style="margin-bottom:20px">
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt">當前時區</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${tzCards}</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt)">當前時區</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">${tzCards}</div>
   </div>
-  
+
   <div style="margin-bottom:20px">
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt">界面語言</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt)">界面語言</div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${langCards}</div>
   </div>
-  
+
   <div style="margin-bottom:24px">
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt">語音識別及輸出語言</div>
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:var(--txt)">語音識別及輸出語言</div>
     <div style="display:grid;grid-template-columns:1fr;gap:8px">${voiceCards}</div>
   </div>
-  
+
   <div style="display:flex;gap:8px;justify-content:flex-end">
     <button class="btn" onclick="closeModal()">取消</button>
-    <button class="btn primary" onclick="saveSettings()">保存設置</button>
+    <button class="btn primary" onclick="__saveSettings()">保存設置</button>
   </div>`);
-}
-function saveSettings(){
-  const tz=document.querySelector('input[name="set_tz"]:checked')?.value;
-  const lang=document.querySelector('input[name="set_lang"]:checked')?.value;
-  const voice=document.querySelector('input[name="set_voice"]:checked')?.value;
-  if(tz!==undefined)PREF.tz=parseInt(tz);
-  if(voice)PREF.voiceLang=voice;
-  try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}
-  if(lang&&lang!==CURRENT_LANG){setLang(lang);}
-  else{render();}
-  closeModal();
-  toast("設置已保存");
 }
 function switchUser(id){const u=USERS.find(x=>x.id===id);if(!u)return;if(!u.active){toast("此帳戶已停用，無法登入");return;}CURRENT_USER=u;u.lastLogin=nowBJ();addAudit("登入",u.nm);try{localStorage.setItem("bcd_session",JSON.stringify({id:u.id,at:Date.now()}));}catch(e){}paintFoot();applyPerm();render();toast("已切換為 "+u.nm);}
 function openSwitchUser(){
