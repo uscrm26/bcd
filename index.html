@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106g1740";
+  var V="v20261106h1745";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1377,7 +1377,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106G";
+const APP_VER="20261106H";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -2132,7 +2132,7 @@ R.customer=()=>{
   <button class="btn small" onclick="curCust=null;custTab='info';render()">← 返回客戶列表</button>
   <button class="btn small" style="background:#dc2626;color:#fff;border-color:#dc2626" onclick="confirmDeleteCust('${curCust}')">刪除客戶</button>
   </div>
-  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch;height:calc(100vh - 220px);min-height:500px"><div class="panel" style="margin-bottom:0;overflow-y:auto"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="margin-bottom:0;display:flex;flex-direction:column;overflow:hidden"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div style="flex:1;overflow-y:auto">${custSub(curCust)}</div></div></div>`;}
+  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start"><div class="panel" style="margin-bottom:0"><div class="sec-title">客戶詳細資料</div>${custDetail(curCust)}</div><div class="panel" style="margin-bottom:0"><div class="tabs">${[["info","檔案資訊"],["timeline","時間線"],["todo","待辦"],["doc","文件"],["mail","郵箱"],["finance","財務"],["audit","操作記錄"]].map(t=>`<button class="${custTab===t[0]?"on":""}" onclick="custTab='${t[0]}';render()">${t[1]}</button>`).join("")}</div><div>${custSub(curCust)}</div></div></div>`;}
   return `<h1>客戶管理</h1>
   <div class="search"><input placeholder="搜尋編號 / 公司名 / 法人 / EIN" oninput="window._cs=this.value;refreshCustList()"><select onchange="window._cst=this.value;refreshCustList()"><option value="">全部狀態</option>${DATA.statuses.map(s=>`<option value="${s.id}">${s.lb}</option>`).join("")}</select>
   ${canManage()?`<button class="btn primary" onclick="openNewCust()">新增客戶</button>`:""}
@@ -2262,7 +2262,7 @@ return `<div style="margin-bottom:12px;padding:10px 16px;background:linear-gradi
   </div>
   <div style="margin-top:10px;width:220px;padding:12px 14px;min-height:120px;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(99,102,246,.08));border:1px solid rgba(139,92,246,.3);border-radius:14px">
     <div style="font-size:12px;color:#a78bfa;font-weight:600;margin-bottom:4px">${L==='en'?'AI Status':L==='cn'?'AI 分析状态':'AI 分析狀態'}</div>
-    <div style="font-size:11px;color:var(--mut);line-height:1.5;margin-bottom:6px;min-height:40px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(function(){const tl=((DATA.timeline&&DATA.timeline[no])||[]).filter(t=>t.e==='ai'||(t.act||'').includes('AI')||(t.txt||'').includes('AI')||(t.tt||'').includes('AI'));if(tl.length){const last=tl[0];return "最近 AI 分析："+(last.tm||"")+"<br>共 "+tl.length+" 條記錄";}return T.noAI;})()}</div>
+    <div style="font-size:11px;color:var(--mut);line-height:1.5;margin-bottom:6px;min-height:40px">${c.aiLastAt?aiStatusCard(c.aiLastAt):(function(){const tl=((DATA.timeline&&DATA.timeline[String(no)])||DATA.timeline[no]||[]).filter(x=>x.key&&(String(x.key).startsWith("ai_")||String(x.key).startsWith("batch_")||String(x.key||"").includes("AI")));if(tl.length){const last=tl[0];return "最近 AI 分析："+(last.tm||last.t||"")+"<br>共 "+tl.length+" 條記錄";}return T.noAI;})()}</div>
     <button class="btn small" style="font-size:11px;padding:3px 8px" onclick="openAiHistory('${no}')">${T.viewHist}</button>
   </div>
   </div>
