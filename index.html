@@ -491,7 +491,7 @@ img.blur-up.loaded{filter:blur(0);opacity:1}
     <a data-v="broker"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><path d="M6 7l4 4M18 7l-4 4M6 17l4-4M18 17l-4-4"/></svg></span>經紀資源池</a>
     <a data-v="ai"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>AI 表單助手</a>
     <div class="grp">郵件往來</div>
-    <a data-v="queue"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>客戶電郵信箱<span class="dot" id="qdot">0</span></a>
+    <a data-v="queue"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>客戶電郵信箱 <span class="dot" id="qdot">0</span></a>
     <a data-v="mailbox"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg></span>客戶郵箱設置</a>
     <a data-v="webmail"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg></span>外聯郵箱登錄</a>
     <div class="grp">文件與學習</div>
@@ -1137,7 +1137,7 @@ sc.innerHTML=items.map((i,k)=>{const[ic,zh,en,cnm,off]=TZS[i]||TZS[0];const nm=C
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 文件機器人","客戶電郵信箱","客戶郵箱設置","外聯郵箱登錄","文件中心","歸檔包","學習檔案","工作通知","系統工作記錄","佣金記錄","GitHub 備份","巡查排程","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Document Bot","Client E-mailbox","E-mailbox Setting","Web Mailbox Login","Documents","Archives","Learning Library","Notifications","System Log","Commission","GitHub Backup","Polling Schedule","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 文件机器人","客户电子信箱","客户邮箱设置","外联邮箱登录","文件中心","归档包","学习档案","工作通知","系统工作记录","佣金记录","GitHub 备份","巡查排程","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 文件機器人","客戶電郵信箱","客戶郵箱設置","外聯郵箱登錄","文件中心","歸檔包","學習檔案","工作通知","系統工作記錄","佣金記錄","GitHub 備份","巡查排程","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Document Bot","Client E-mailbox ","E-mailbox Setting","Web Mailbox Login","Documents","Archives","Learning Library","Notifications","System Log","Commission","GitHub Backup","Polling Schedule","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 文件机器人","客户电子信箱","客户邮箱设置","外联邮箱登录","文件中心","归档包","学习档案","工作通知","系统工作记录","佣金记录","GitHub 备份","巡查排程","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
 const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;let tn=null;a.childNodes.forEach(n=>{if(n.nodeType===3&&n.textContent.trim())tn=tn||n;});if(tn)tn.textContent=t;});
@@ -1834,15 +1834,15 @@ R.dashboard=()=>{
   }
   // 左側高大慶賀卡：已出單
   const doneStack=doneList.slice(0,3).map(c=>`<img class="done-avatar" src="${phSrc(c.no)}" title="${esc(c.name)}" onerror="this.style.visibility='hidden'">`).join("");
-  // 本月預計收入：已出單客戶已結清款項
-  const expIncome=doneList.reduce((s,c)=>s+((fin[c.no]||[]).filter(f=>f.status==="paid").reduce((a,f)=>a+(+f.amount||0),0)),0);
-  const issIncLb=CURRENT_LANG==="en"?"Expected revenue this month":CURRENT_LANG==="cn"?"本月预计收入":"本月預計收入";
+  // 本月預計收入：已出單客戶 × 超管佣金 ¥1000/戶
+  const expIncome=doneList.length*superAdminRate();
+  const issIncLb=CURRENT_LANG==="en"?"Expected commission this month":CURRENT_LANG==="cn"?"本月预计佣金":"本月預計佣金";
   const issuedCard=`<div class="issued-card">
     <div class="iss-glow"></div>
     <div class="iss-lb">${doneLabel}</div>
     <div class="iss-vl">${doneCount}<span> / ${totalCount}</span></div>
     <div class="iss-tg">${CURRENT_LANG==="en"?"Bonds obtained this month":"本月已獲擔保文件"}</div>
-    <div class="iss-inc">${issIncLb} <b>$${expIncome.toLocaleString()}</b></div>
+    <div class="iss-inc">${issIncLb} <b>¥${expIncome.toLocaleString()} <span style="font-size:11px;color:var(--mut)">CNY</span></b></div>
     <div class="done-avatars">${doneStack||'<div style="color:var(--mut);font-size:12px">尚無</div>'}</div>
   </div>`;
   // 付款上下結構卡
