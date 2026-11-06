@@ -110,6 +110,32 @@ body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
   min-width:240px;box-shadow:0 18px 44px rgba(0,0,0,.55);z-index:30;font-size:12px;color:var(--txt)}
 .ast-pop:after{content:"";position:absolute;top:100%;left:24px;border:6px solid transparent;border-top-color:var(--line)}
 .ast-wrap:hover .ast-pop{display:block}
+/* 已出單慶賀高卡 */
+.issued-card{position:relative;flex:0 0 30%;min-width:230px;border-radius:16px;padding:22px 22px 18px;
+  background:linear-gradient(160deg,#16243a 0%,#131a26 60%,#10151f 100%);border:1px solid rgba(124,192,255,.28);
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:0 18px 50px rgba(0,0,0,.45)}
+.iss-glow{position:absolute;top:-60px;right:-40px;width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(74,158,255,.35) 0%,rgba(124,192,255,.12) 45%,transparent 70%);pointer-events:none}
+.iss-lb{font-size:13px;color:var(--mut);letter-spacing:.3px;position:relative}
+.iss-vl{font-size:52px;font-weight:800;color:#fff;line-height:1.1;margin:6px 0 2px;position:relative}
+.iss-vl span{font-size:22px;font-weight:600;color:var(--mut)}
+.iss-tg{font-size:12px;color:#7fd1a0;position:relative}
+.done-avatars{margin-top:auto;padding-top:16px;display:flex;align-items:center}
+.done-avatar{width:56px;height:56px;border-radius:50%;object-fit:cover;border:3px solid #1c2b40;margin-left:-10px;
+  box-shadow:0 6px 18px rgba(74,158,255,.35)}
+.done-avatar:first-child{margin-left:0}
+/* 付款上下結構卡 */
+.pay-card{display:flex;flex-direction:column;padding:14px 16px}
+.pay-half{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.pay-div{height:1px;background:var(--line);margin:8px 0}
+.ph-head{display:flex;align-items:baseline;justify-content:space-between}
+.ph-lb{font-size:12px;color:var(--mut)}
+.ph-num{font-size:26px;font-weight:700;color:var(--txt)}
+/* 更大頭像，彈窗往下開 */
+.ast{width:44px;height:44px;border-width:2.5px}
+.ast-wrap{margin-top:10px}
+.ast-pop{top:calc(100% + 12px);bottom:auto;font-size:12.5px;min-width:250px}
+.ast-pop:after{top:auto;bottom:100%;border-top-color:transparent;border-bottom-color:var(--line)}
 /* language dropdown */
 .lang{position:relative}
 .lang .menu{display:none;position:absolute;right:0;top:38px;background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:160px;overflow:hidden;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.25)}
@@ -1078,12 +1104,12 @@ function applyLangText(){
 const empty=()=>`<div class="empty">頁面載入中</div>`;
 // clock
 var CURRENT_LANG="zh";
-const TZS=[["🇨🇳","北京","Beijing","北京",8],["🇺🇸","西雅圖","Seattle","西雅图",-8],["🏔️","丹佛","Denver","丹佛",-7],["🌆","芝加哥","Chicago","芝加哥",-6],["🗽","紐約","New York","纽约",-5]];
+const TZS=[["🇨🇳","北京","Beijing","北京",8],["🇺🇸","西雅圖","Seattle","西雅图",-8],["🇺🇸","丹佛","Denver","丹佛",-7],["🇺🇸","芝加哥","Chicago","芝加哥",-6],["🇺🇸","紐約","New York","纽约",-5],["🇯🇵","東京","Tokyo","东京",9],["🇰🇷","首爾","Seoul","首尔",9]];
 let PREF={theme:"dark",h24:true,lang:"zh"};try{Object.assign(PREF,JSON.parse(localStorage.getItem("bcd_pref")||"{}"));}catch(e){}
 // === 外部 AI 與語音識別接入憑證 ===
 // 新 LLM（OpenAI 相容）：方舟額度用完後切換。Key 不寫死在原始碼，公開倉庫會外洩，
 // 改由個人設定裡輸入後存 localStorage，與現有方舟 Key 同一做法。
-function getNewLLM(){const k=localStorage.getItem("bcd_new_llm_key")||"";return {key:k,baseURL:localStorage.getItem("bcd_new_llm_base")||"",model:localStorage.getItem("bcd_new_llm_model")||""};}
+function getNewLLM(){return {key:localStorage.getItem("bcd_new_llm_key")||"",baseURL:localStorage.getItem("bcd_new_llm_base")||"https://api.lk88.ai/v1",model:localStorage.getItem("bcd_new_llm_model")||"deepseek-v4.1-flash"};}
 // 豆包流式語音識別 2.0：app id 已記錄，access token 由設定輸入。
 const ASR_CFG={appid:"2b474186-dce9-45b8-912e-c70c55f889ba",token:"",endpoint:""};
 function savePref(){try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}}
@@ -1092,7 +1118,8 @@ function applyTheme(){document.body.dataset.theme=PREF.theme;const tb=document.g
 function toggleTheme(){PREF.theme=PREF.theme==="light"?"dark":"light";savePref();applyTheme();}
 function clock(){const d=new Date();const f=x=>String(x).padStart(2,"0");
 const sc=document.getElementById("sideClock");
-if(sc)sc.innerHTML=TZS.map(([ic,zh,en,cnm,off])=>{const nm=CURRENT_LANG==='en'?en:CURRENT_LANG==='cn'?cnm:zh;const t=new Date(d.getTime()+off*3600e3);return `<div class="z"><span class="zem">${ic}</span><b>${nm}</b><span>${t.getUTCMonth()+1}/${t.getUTCDate()} ${fmtH(t.getUTCHours())}:${f(t.getUTCMinutes())}</span></div>`;}).join("");}
+if(sc){const sel=PREF.tz||0;const idxs=[0,sel!==0?sel:-1].filter(i=>i>=0);
+sc.innerHTML=idxs.map(i=>{const[ic,zh,en,cnm,off]=TZS[i]||TZS[0];const nm=CURRENT_LANG==='en'?en:CURRENT_LANG==='cn'?cnm:zh;const t=new Date(d.getTime()+off*3600e3);return `<div class="z"><span class="zem">${ic}</span><b>${nm}</b><span>${t.getUTCMonth()+1}/${t.getUTCDate()} ${fmtH(t.getUTCHours())}:${f(t.getUTCMinutes())}</span></div>`;}).join("");}}
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
@@ -1720,32 +1747,50 @@ R.dashboard=()=>{
   const doneCount=myCusts.filter(c=>c.status==="done"||st(c.status).lb==="已出單").length;
   const totalCount=myCusts.length;
   const doneLabel=CURRENT_LANG==="en"?"Bonds Issued":CURRENT_LANG==="cn"?"已出单客户":"已出單客戶";
-  const cards=[
-    [doneCount+" / "+totalCount,[doneLabel,"本月已獲擔保文件"]],
-    [unread.length,T.a],
-    [custs,T.b],
-    [unread.filter(e=>!e.done).length,T.c]
-  ];
   // 第二列：已支付待審核（paid）與已遞申請客戶
   const paidList=myCusts.filter(c=>c.status==="paid");
   const submittedList=myCusts.filter(c=>["reply","broker","supply","quote"].includes(c.status));
-  const paidLb=CURRENT_LANG==="en"?"Paid, Awaiting Bond":CURRENT_LANG==="cn"?"已支付待审核":"已經交錢";
-  const paidTg=CURRENT_LANG==="en"?"Payment confirmed, waiting for bond":"已付款，等待下擔保文件";
+  // 待付款客戶：帳上有未結清款項
+  const fin=DATA.finance||{};
+  const pendingPayList=myCusts.filter(c=>((fin[c.no]||[]).some(f=>f.status!=="paid")));
+  const doneList=myCusts.filter(c=>c.status==="done"||st(c.status).lb==="已出單");
   const subLb=CURRENT_LANG==="en"?"Applications Submitted":CURRENT_LANG==="cn"?"已递申请客户":"已遞申請客戶";
   const subTg=CURRENT_LANG==="en"?"Submitted to broker, in review":"已遞交申請，等待報關行處理";
-  function astRow(list,lb,tg){
+  const pendLb=CURRENT_LANG==="en"?"Awaiting Payment":CURRENT_LANG==="cn"?"待付款客户":"待付款客戶";
+  const paidLb=CURRENT_LANG==="en"?"Paid, Under Review":CURRENT_LANG==="cn"?"已付费待审核":"已付費待審核";
+  function stackHTML(list){
     const shown=list.slice(0,4);const rest=list.length-shown.length;
-    const stack=`<div class="ast-wrap"><div class="avatar-stack">${shown.map(c=>`<img class="ast" src="${phSrc(c.no)}" title="${esc(c.name)}" onerror="this.style.visibility='hidden'">`).join("")}${rest>0?`<span class="ast ast-more">+${rest}</span>`:""}</div>
-      <div class="ast-pop">${list.length?list.map(c=>`<div style="padding:3px 0"><b>#${c.no}</b> ${esc(c.name)}<span style="color:var(--mut)"> · ${esc(c.member)}</span></div>`).join(""):"<div style='color:var(--mut)'>無</div>"}</div></div>`;
-    return `<div class="stat ast-card"><div class="lb">${lb}</div><div class="vl">${list.length}</div><div class="tg">${tg}</div>${stack}</div>`;
+    return `<div class="ast-wrap"><div class="avatar-stack">${shown.map(c=>`<img class="ast" src="${phSrc(c.no)}" title="${esc(c.name)}" onerror="this.style.visibility='hidden'">`).join("")}${rest>0?`<span class="ast ast-more">+${rest}</span>`:""}</div>
+      <div class="ast-pop">${list.length?list.map(c=>`<div style="padding:4px 0"><b>#${c.no}</b> ${esc(c.name)}<span style="color:var(--mut)"> · ${esc(c.member)}</span></div>`).join(""):"<div style='color:var(--mut)'>尚無</div>"}</div></div>`;
   }
+  // 左側高大慶賀卡：已出單
+  const doneStack=doneList.slice(0,3).map(c=>`<img class="done-avatar" src="${phSrc(c.no)}" title="${esc(c.name)}" onerror="this.style.visibility='hidden'">`).join("");
+  const issuedCard=`<div class="issued-card">
+    <div class="iss-glow"></div>
+    <div class="iss-lb">${doneLabel}</div>
+    <div class="iss-vl">${doneCount}<span> / ${totalCount}</span></div>
+    <div class="iss-tg">${CURRENT_LANG==="en"?"Bonds obtained this month":"本月已獲擔保文件"}</div>
+    <div class="done-avatars">${doneStack||'<div style="color:var(--mut);font-size:12px">尚無</div>'}</div>
+  </div>`;
+  // 付款上下結構卡
+  const payCard=`<div class="stat ast-card pay-card">
+     <div class="pay-half"><div class="ph-head"><span class="ph-lb">${pendLb}</span><span class="ph-num">${pendingPayList.length}</span></div>${stackHTML(pendingPayList)}</div>
+     <div class="pay-div"></div>
+     <div class="pay-half"><div class="ph-head"><span class="ph-lb">${paidLb}</span><span class="ph-num">${paidList.length}</span></div>${stackHTML(paidList)}</div>
+   </div>`;
+  const subCard=`<div class="stat ast-card"><div class="lb">${subLb}</div><div class="vl">${submittedList.length}</div><div class="tg">${subTg}</div>${stackHTML(submittedList)}</div>`;
   return `<h1>總覽看板</h1>
-  <div class="row r4">
-    ${cards.map((x,i)=>`<div class="stat ${i===0?'featured':''}" style="cursor:pointer;${i>0?'opacity:.75':''}" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
-  </div>
-  <div class="row r2" style="margin-top:12px">
-    ${astRow(paidList,paidLb,paidTg)}
-    ${astRow(submittedList,subLb,subTg)}
+  <div style="display:flex;gap:12px;align-items:stretch">
+    ${issuedCard}
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0">
+      <div class="row r3">
+        ${[[unread.length,T.a],[custs,T.b],[unread.filter(e=>!e.done).length,T.c]].map(x=>`<div class="stat" style="cursor:pointer;opacity:.85" onclick="goto('queue')"><div class="lb">${x[1][0]}</div><div class="vl">${x[0]}</div><div class="tg">${x[1][1]}</div></div>`).join("")}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        ${payCard}
+        ${subCard}
+      </div>
+    </div>
   </div>
   <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
   <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
