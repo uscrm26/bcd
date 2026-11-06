@@ -1377,7 +1377,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106D";
+const APP_VER="20261106E";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -4501,6 +4501,7 @@ R.archive=()=>{
 };
 
 R.learn=()=>{
+  const L=CURRENT_LANG;
   const t=L==='en'?'Learning Library':(L==='cn'?'学习档案':'學習檔案');
   const sub=L==='en'?'Internal training documents. Click a card to view in-browser. No download.':(L==='cn'?'内部培训文件。点击卡片在线预览，不可下载。':'內部培訓文件。點卡片在線預覽，不可下載。');
   const title1=L==='en'?'Broker FAQ & Outreach Training':(L==='cn'?'开发性经纪常见提问手册':'開發性經紀常見提問手冊');
@@ -4538,6 +4539,7 @@ R.learn=()=>{
 
 let learnCurrentDoc='broker';
 function openLearn(doc){
+  const L=CURRENT_LANG;
   learnCurrentDoc=doc||'broker';
   const files={
     broker:{tc:'docs/learning/broker-faq-tc.pdf',sc:'docs/learning/broker-faq-sc.pdf',en:'docs/learning/broker-faq-en.pdf'},
