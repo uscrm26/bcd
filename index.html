@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106ad1950";
+  var V="v20261106ae1955";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1472,7 +1472,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106AD";
+const APP_VER="20261106AE";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -5254,6 +5254,22 @@ function setBootStep(pct,text){
   const p=document.getElementById("bootProgress");if(p)p.style.width=pct+"%";
   const t=document.getElementById("bootStep");if(t)t.textContent=text;
 }
+// 右下角連接狀態指示器
+function initConnStatus(){
+  const div=document.createElement("div");
+  div.id="connStatus";
+  div.style.cssText="position:fixed;bottom:20px;right:20px;z-index:9998;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 14px;font-size:12px;display:flex;align-items:center;gap:8px;box-shadow:0 4px 12px rgba(0,0,0,.15);cursor:pointer";
+  div.innerHTML=`<span class="dot" style="width:8px;height:8px;border-radius:50%;background:#f59e0b;display:inline-block"></span><span class="txt">連接中...</span>`;
+  div.onclick=()=>location.reload();
+  document.body.appendChild(div);
+}
+function setConnStatus(state,text){
+  const el=document.getElementById("connStatus");if(!el)return;
+  const dot=el.querySelector(".dot");const txt=el.querySelector(".txt");
+  if(state==="ok"){dot.style.background="#22c55e";txt.textContent=text||"已連接";}
+  else if(state==="err"){dot.style.background="#ef4444";txt.textContent=text||"連接失敗";}
+  else{dot.style.background="#f59e0b";txt.textContent=text||"連接中...";}
+}
 async function tryLoadData(){
   setBootStep(20,"正在加載基礎數據...");
   await loadRepoData();
@@ -5264,16 +5280,19 @@ async function tryLoadData(){
   setBootStep(95,"即將完成...");
 }
 (async()=>{
+  initConnStatus();
   let loadError=null;
   const maxRetries=2;
   for(let attempt=0;attempt<=maxRetries;attempt++){
     try{
+      setConnStatus("ing","連接中...");
       await tryLoadData();
       loadError=null;
       break;
     }catch(e){
       console.error(`init data load attempt ${attempt+1} failed:`,e);
       loadError=e;
+      setConnStatus("err","連接失敗，重試中...");
       if(attempt<maxRetries){
         const waitSec=2+attempt*2;
         setBootStep(40,`加載失敗，${waitSec} 秒後自動重試 (${attempt+1}/${maxRetries+1})...`);
@@ -5286,6 +5305,7 @@ async function tryLoadData(){
   if(elapsed<1200){await new Promise(r=>setTimeout(r,1200-elapsed));}
   if(loadError){
     setBootStep(100,"加載失敗");
+    setConnStatus("err","連接失敗，點擊重試");
     const bl=document.getElementById("bootLoader");
     if(bl)bl.innerHTML=`<div style="width:360px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,.35);text-align:center">
       <div style="font-size:40px;margin-bottom:16px">⚠️</div>
@@ -5296,6 +5316,7 @@ async function tryLoadData(){
     return;
   }
   render();
+  setConnStatus("ok","已連接");
   setBootStep(100,"加載完成");
   setTimeout(()=>{const bl=document.getElementById("bootLoader");if(bl)bl.remove();},200);
   if(PREF.lang&&PREF.lang!=="zh"){
