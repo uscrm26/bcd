@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106ab1930";
+  var V="v20261106ac1945";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -611,9 +611,10 @@ async function loadRepoData(){
   try{
     const cb="?cb="+Date.now();
     const [emRes,mbRes,dbRes,fiRes,bkRes,slRes]=await Promise.all([fetch("emails.json"+cb,{cache:"no-store"}),fetch("mailboxes.json"+cb,{cache:"no-store"}),fetch("dbboard/data.json"+cb,{cache:"no-store"}),fetch("files.json"+cb,{cache:"no-store"}),fetch("brokers.json"+cb,{cache:"no-store"}),fetch("sent_log.json"+cb,{cache:"no-store"})]);
+    if(!dbRes.ok)throw new Error("核心數據文件 dbboard/data.json 加載失敗，狀態碼 "+dbRes.status);
     const em=emRes.ok?await emRes.json():[];
     const mb=mbRes.ok?await mbRes.json():null;
-    const db=dbRes.ok?await dbRes.json():null;
+    const db=await dbRes.json();
     const fi=fiRes.ok?await fiRes.json():null;
     const bk=bkRes.ok?await bkRes.json():null;
     DATA.sent=slRes.ok?await slRes.json():[];
@@ -1471,7 +1472,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106AB";
+const APP_VER="20261106AC";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
