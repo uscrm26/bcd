@@ -729,12 +729,54 @@ function aiLog(msg,kind){const p=document.getElementById("aiLogPanel");if(!p)ret
 function aiLogDone(title){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.add("done");const t=document.getElementById("aiLogTitle");if(t)t.textContent=title||"處理完成";}
 function toggleAiLog(){const b=document.getElementById("aiLogBody");if(!b)return;const hid=b.style.display==="none";b.style.display=hid?"block":"none";const m=document.getElementById("aiLogMin");if(m)m.textContent=hid?"✕":"+";}
 function closeAiLog(){const p=document.getElementById("aiLogPanel");if(!p)return;p.classList.remove("open");const b=document.getElementById("aiLogBody");if(b)b.style.display="block";const m=document.getElementById("aiLogMin");if(m)m.textContent="✕";}
-function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();}
+function openModal(html){const m=document.getElementById("modal");m.innerHTML=`<div class="mbox">${html}</div>`;m.classList.add("show");if(CURRENT_LANG==="en")applyLangText();setTimeout(injectMicButtons,50);}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){
-  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();}
+  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")loadStorageUsage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();injectMicButtons();}
+
+// === 語音輸入 ===
+let _sr=null;
+function injectMicButtons(){
+  document.querySelectorAll('textarea, input[type="text"], input[type="search"], input:not([type])').forEach(el=>{
+    if(el.dataset.micBound)return;
+    el.dataset.micBound="1";
+    const wrap=document.createElement("div");
+    wrap.style.cssText="position:relative;display:inline-block;width:100%";
+    el.parentNode.insertBefore(wrap,el);wrap.appendChild(el);
+    el.style.width="100%";el.style.paddingRight="36px";
+    const btn=document.createElement("button");
+    btn.type="button";btn.innerHTML="🎤";
+    btn.style.cssText="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:4px;opacity:.5";
+    btn.title=CURRENT_LANG==="en"?"Voice input":(CURRENT_LANG==="cn"?"语音输入":"語音輸入");
+    btn.onclick=(e)=>{e.preventDefault();toggleMic(el,btn);};
+    wrap.appendChild(btn);
+  });
+}
+function toggleMic(el,btn){
+  if(_sr&&_sr._active){_sr.stop();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert("瀏覽器不支持語音識別，請用 Chrome");return;}
+  const sr=new SR();
+  sr.continuous=true;sr.interimResults=true;
+  sr.lang=CURRENT_LANG==="cn"?"zh-CN":(CURRENT_LANG==="en"?"en-US":"zh-HK");
+  const orig=el.value;
+  sr.onresult=(e)=>{
+    let fin="",inter="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal)fin+=e.results[i][0].transcript;
+      else inter+=e.results[i][0].transcript;
+    }
+    el.value=orig+fin+inter;
+    el.dispatchEvent(new Event("input",{bubbles:true}));
+  };
+  sr.onend=()=>{btn.style.opacity=".5";btn.style.background="";_sr=null;};
+  sr.onerror=(e)=>{btn.style.opacity=".5";btn.style.background="";_sr=null;};
+  sr._active=true;_sr=sr;
+  btn.style.opacity="1";btn.style.background="#ef4444";btn.style.borderRadius="50%";
+  sr.start();
+}
 const ENMAP={
 "總覽看板":"Dashboard","客戶管理":"Customers","經紀資源池":"Broker Pool","AI 表單助手":"AI Assistant","信箱配置":"Mailboxes","電子郵件":"Email","文件中心":"Documents","歸檔包":"Archives","GitHub 備份":"GitHub Backup","GitHub 備份管理":"GitHub Backup","系統管理":"Control Panel","工作區":"Workspace",
 "數據即時同步，含多時區換算":"Data syncs in real time, with multi-timezone conversion",
