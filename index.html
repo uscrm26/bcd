@@ -5185,7 +5185,7 @@ function openSettings(){
     PREF.tz=sel.tz;PREF.tz2=sel.tz2;PREF.lang=sel.lang;PREF.voiceLang=sel.voice;
     try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}
     CURRENT_LANG=sel.lang;try{localStorage.setItem("bcd_lang",sel.lang);}catch(e){}
-    closeModal();goto(CUR_VIEW);
+    closeModal();goto(view);
   };
   openModal(`<h3>個人設置</h3>
   <div style="font-size:12px;color:var(--mut);margin-bottom:20px">只影響你自己的界面和輸入偏好，點擊卡片即可選擇</div>
