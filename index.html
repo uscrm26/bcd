@@ -41,6 +41,47 @@ body[data-theme="light"]{
 body[data-theme="light"] .side{background:linear-gradient(180deg,#ffffff,#f0f4fa);border-right:1px solid var(--line)}
 body[data-theme="light"] .brand .logo{background:linear-gradient(135deg,#dce9fb,#eaf2fc);border-color:#bcd4f5;color:var(--acc)}
 body[data-theme="light"] .mtop{background:rgba(255,255,255,.95)}
+/* ===== 啟動載入頁：高端深色背景與真實 Logo ===== */
+#bootLoader{
+  background:
+    radial-gradient(900px 520px at 82% -10%, rgba(74,158,255,.16), transparent 60%),
+    radial-gradient(780px 540px at 6% 110%, rgba(41,128,185,.14), transparent 62%),
+    radial-gradient(600px 400px at 50% 48%, rgba(124,192,255,.05), transparent 65%),
+    linear-gradient(160deg,#0c1017 0%,#0e141d 46%,#0a0e14 100%);
+  overflow:hidden;
+}
+#bootLoader::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.055) 1px,transparent 1px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(ellipse 72% 62% at 50% 45%,#000 28%,transparent 76%);
+  mask-image:radial-gradient(ellipse 72% 62% at 50% 45%,#000 28%,transparent 76%);
+}
+#bootLoader::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 92% 82% at 50% 50%,transparent 52%,rgba(0,0,0,.52));
+}
+#bootLoader .boot-card{
+  position:relative;z-index:2;width:342px;
+  background:linear-gradient(165deg,rgba(30,38,52,.9),rgba(19,24,33,.92));
+  border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:38px 34px 34px;
+  box-shadow:0 32px 84px rgba(0,0,0,.58),inset 0 1px 0 rgba(255,255,255,.07);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+  animation:bootCardIn .7s cubic-bezier(.22,.8,.3,1) both;
+}
+#bootLoader .boot-logo{
+  width:74px;height:74px;margin:0 auto 16px;border-radius:19px;display:block;
+  box-shadow:0 14px 32px rgba(41,128,185,.42),0 2px 8px rgba(0,0,0,.42);
+  animation:bootLogoIn .8s cubic-bezier(.22,.8,.3,1) both,bootFloat 5s ease-in-out 1s infinite;
+}
+#bootLoader .boot-title{font-size:17px;font-weight:700;letter-spacing:.3px;color:var(--txt);text-align:center;margin-bottom:24px}
+#bootLoader .boot-track{height:5px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-bottom:15px}
+#bootLoader #bootProgress{height:100%;background:linear-gradient(90deg,#2980b9,#4a9eff,#7cc0ff);box-shadow:0 0 12px rgba(74,158,255,.6);border-radius:99px}
+#bootLoader #bootStep{text-align:center;color:var(--mut);font-size:13px;letter-spacing:.2px}
+@keyframes bootCardIn{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes bootLogoIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes bootFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@media (prefers-reduced-motion:reduce){#bootLoader *{animation:none!important}}
 /* language dropdown */
 .lang{position:relative}
 .lang .menu{display:none;position:absolute;right:0;top:38px;background:var(--card);border:1px solid var(--line);border-radius:10px;min-width:160px;overflow:hidden;z-index:80;box-shadow:0 10px 30px rgba(0,0,0,.25)}
@@ -5384,17 +5425,16 @@ const bootStartTime=Date.now();
 (function showBootLoader(){
   const boot=document.createElement("div");
   boot.id="bootLoader";
-  boot.style.cssText="position:fixed;inset:0;z-index:9999;background:radial-gradient(1200px 600px at 70% -10%,rgba(74,158,255,.08),transparent),var(--bg);display:flex;align-items:center;justify-content:center";
+  boot.id="bootLoader";
+  boot.style.cssText="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center";
   boot.innerHTML=`
-    <div style="width:320px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:32px;box-shadow:0 24px 60px rgba(0,0,0,.35)">
-      <div style="text-align:center;margin-bottom:24px">
-        <div style="width:56px;height:56px;margin:0 auto 12px;background:linear-gradient(135deg,#2980b9,#3498db);border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px">U</div>
-        <div style="font-size:16px;font-weight:700;color:var(--txt)">UCRM 美國報關管理系統</div>
+    <div class="boot-card">
+      <img class="boot-logo" src="assets/ucrm_icon.png" alt="UCRM">
+      <div class="boot-title">UCRM 美國報關管理系統</div>
+      <div class="boot-track">
+        <div id="bootProgress" style="width:0%;transition:width .3s ease"></div>
       </div>
-      <div style="width:100%;height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-bottom:16px">
-        <div id="bootProgress" style="height:100%;width:0%;background:linear-gradient(90deg,#2980b9,#3498db);border-radius:2px;transition:width .3s ease"></div>
-      </div>
-      <div id="bootStep" style="text-align:center;color:var(--mut);font-size:13px">正在初始化...</div>
+      <div id="bootStep">正在初始化...</div>
     </div>
   `;
   document.body.appendChild(boot);
