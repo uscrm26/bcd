@@ -276,6 +276,10 @@ table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 .ai-fl{font-size:11px;color:var(--dim);margin-top:2px}
 .ai-side-actions{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .ai-side-actions .btn{display:flex;align-items:center;justify-content:center;gap:7px}
+.ai-llm{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:12px;color:var(--mut)}
+.ai-llm-dot{width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0}
+.ai-llm-dot.ok{background:#3fca8a}.ai-llm-dot.fb{background:#f59e0b}.ai-llm-dot.load{background:#3b82f6;animation:aiPulse 1s infinite}
+@keyframes aiPulse{50%{opacity:.35}}
 .ai-main{min-width:0}
 .ai-sheet{background:#fff;color:#1f2937;border-radius:14px;border:1px solid var(--line);padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
 .pfs-doc h2{text-align:center;letter-spacing:3px;font-size:18px;margin-bottom:20px;color:#111}
@@ -4795,7 +4799,7 @@ function aiSave(){
   if(el)el.textContent=aiT().savedAt+" "+aiSavedAt;
   addAudit("AI文檔草稿",aiDocType+" #"+(aiSel.no||""));
 }
-function aiFill(){
+function aiLocalFill(){
   const c=aiSel||{};
   const inc=aiPersona.income==="low"?70:aiPersona.income==="high"?220:125;
   const scale=aiPersona.income==="low"?.4:aiPersona.income==="high"?2.2:1;
@@ -4812,7 +4816,44 @@ function aiFill(){
     aiDraft.phone="";aiDraft.email=c.mail||"";aiDraft.bondType="Continuous Bond";aiDraft.bondAmt="50,000";
     aiDraft.port="";aiDraft.hts="";aiDraft.annualVal="";aiDraft.annualDuty="";aiDraft.cargoDesc="";
   }
+}
+let aiLLMState="idle";
+async function aiFill(){
+  const c=aiSel||{};
+  const fillBtn=document.getElementById("aiFillBtn");
+  if(fillBtn){fillBtn.disabled=true;fillBtn.dataset.tx=fillBtn.textContent;fillBtn.textContent="...";}
+  aiLLMState="loading";
+  let usedLLM=false;
+  try{
+    const personaTxt=JSON.stringify(aiPersona);
+    const custTxt=JSON.stringify({no:c.no,name:c.name,member:c.member,ein:c.ein,mail:c.mail});
+    let sys,prompt;
+    if(aiDocType==="pfs"){
+      const keys=PFS_ASSET_FIELDS.map(f=>f[0]).concat(PFS_LIAB_FIELDS.map(f=>f[0])).concat(PFS_INC_FIELDS.map(f=>f[0]));
+      sys="You are a US customs bond underwriting assistant. Generate realistic Personal Financial Statement figures in whole USD for the given persona. Return ONLY a JSON object with these numeric keys: "+keys.join(",")+". No explanation, no markdown.";
+      prompt="Persona: "+personaTxt+"\nCustomer: "+custTxt+"\nReturn JSON with realistic whole-dollar amounts consistent with the income and asset band.";
+    }else{
+      const keys=BOND_FIELDS.map(f=>f[0]);
+      sys="You are a US customs bond application assistant. Pre-fill a Customs Bond Application. Return ONLY a JSON object with these string keys: "+keys.join(",")+". Use empty string when unknown. No explanation, no markdown.";
+      prompt="Persona: "+personaTxt+"\nCustomer: "+custTxt+"\nReturn JSON. Use bond type Continuous Bond and bond amount 50,000 unless data suggests otherwise.";
+    }
+    const out=await callAI(sys,prompt);
+    if(out){
+      const m=out.match(/\{[\s\S]*\}/);
+      if(m){
+        const j=JSON.parse(m[0]);
+        let touched=0;
+        Object.keys(j).forEach(k=>{
+          if(Object.prototype.hasOwnProperty.call(aiDraft,k)&&j[k]!==""&&j[k]!=null){aiDraft[k]=j[k];touched++;}
+        });
+        if(touched>0){usedLLM=true;if(aiDocType==="pfs"&&c.member&&!aiDraft.sigName)aiDraft.sigName=c.member;}
+      }
+    }
+  }catch(e){console.warn("ai LLM fill failed",e);}
+  if(!usedLLM){aiLocalFill();aiLLMState="fallback";}else{aiLLMState="ok";}
+  if(fillBtn){fillBtn.disabled=false;fillBtn.textContent=fillBtn.dataset.tx||fillBtn.textContent;}
   aiSave();
+  addAudit(usedLLM?"AI LLM填表":"AI本地填表",aiDocType+" #"+(c.no||""));
   toast(aiT().draftSaved);
   render();
 }
@@ -4880,8 +4921,12 @@ R.ai=()=>{
         <button class="${aiSigType==='upload'?'on':''}" onclick="aiSetSig('upload')">${T.sigUp}</button>
       </div>
     </div>
+    <div class="ai-llm" id="aiLLMPill">
+      <span class="ai-llm-dot ${aiLLMState==='ok'?'ok':aiLLMState==='fallback'?'fb':aiLLMState==='loading'?'load':''}"></span>
+      <span>${aiLLMState==='ok'?(CURRENT_LANG==='en'?'LLM connected':'LLM 已連接'):aiLLMState==='fallback'?(CURRENT_LANG==='en'?'LLM offline, local fill':'LLM 離線 本地填表'):aiLLMState==='loading'?(CURRENT_LANG==='en'?'Contacting LLM…':'LLM 連線中…'):(CURRENT_LANG==='en'?'LLM ready':'LLM 待命中')}</span>
+    </div>
     <div class="ai-side-actions">
-      <button class="btn primary" style="width:100%" onclick="aiFill()">${AI_IC.spark}${T.aiFill}</button>
+      <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()">${AI_IC.spark}${T.aiFill}</button>
       <button class="btn" style="width:100%" onclick="aiReset()">${T.reset}</button>
       <button class="btn" style="width:100%" onclick="aiSave()">${AI_IC.save}${T.save}</button>
       <button class="btn" style="width:100%" onclick="window.print()">${AI_IC.pdf}${T.export}</button>
