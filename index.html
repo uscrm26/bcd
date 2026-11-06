@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106h1745";
+  var V="v20261106i1750";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -1377,7 +1377,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106H";
+const APP_VER="20261106I";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -4407,7 +4407,7 @@ R.ai=()=>`<h1>AI 表單助手</h1>
 </div>
 <div class="panel"><div class="sec-title">草稿雙語保存原則</div><p style="font-size:12px;color:var(--mut);line-height:1.9">草稿同時保留 <b>繁體中文</b> 與 <b>英文</b> 兩份，簡體由系統即時轉換。所有草稿僅供參考，經人工確認後才併入客戶記錄。</p></div>`;
 // ===== 文件 / 歸檔 / GitHub / 系統 =====
-R.doc=()=>`<h1>文件中心</h1>
+R.doc=()=>{const L=CURRENT_LANG;return `<h1>文件中心</h1>
 <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
   <div class="search" style="flex:2;min-width:200px"><input placeholder="搜尋公司名、法人、檔名" oninput="window._df=this.value;renderDoc()"></div>
   <div style="display:flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px 8px" id="docOwnerBar">
@@ -4418,7 +4418,7 @@ R.doc=()=>`<h1>文件中心</h1>
     </select>
   </div>
 </div>
-<div id="docArea"></div>`;
+<div id="docArea"></div>`;}
 function setDocOwner(btn){document.querySelectorAll("#docOwnerBar .own-chip").forEach(b=>b.classList.remove("on"));btn.classList.add("on");window._do=btn.dataset.v;renderDoc();}
 const CUST_CREATED={"93":"10/30","89":"10/22","90":"10/22","98":"10/22","2":"10/24","3":"10/28","5":"10/29","7":"10/29","8":"10/24","61":"10/29","64":"10/29","66":"10/29","69":"10/22","71":"10/29","73":"10/30","75":"10/29"};
 function renderDoc(){
@@ -4485,6 +4485,7 @@ function delFile(no,name){if(CURRENT_USER.role!=="super_admin"){toast("僅超級
   const arr=(DATA.files||{})[no]||[];const i=arr.findIndex(x=>x.name===name);if(i>=0)arr.splice(i,1);
   addAudit("刪除檔案",no+" / "+name);render();openDocFolder(no);toast("已刪除");}
 R.archive=()=>{
+  const L=CURRENT_LANG;
   const list=DATA.customers.filter(c=>canViewCust(c.no));
   return `<h1>${L==='en'?'Archives':(L==='cn'?'归档包':'歸檔包')}</h1>
   <div style="font-size:13px;color:var(--mut);margin-bottom:16px">${L==='en'?'Download a complete data bundle per customer as JSON. Files are listed with their cloud URLs.':(L==='cn'?'为每个客户下载完整数据包（JSON格式）。附件列出云端链接。':'為每個客戶下載完整數據包（JSON格式）。附件列出雲端連結。')}</div>
