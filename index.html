@@ -4800,16 +4800,28 @@ async function reimportFromCloud(){
     if(fail){fail.style.color="#ef4444";fail.textContent="導入失敗 "+e.message;}
   }
 }
+function renderLatestFallback(el){
+  let log=[];
+  try{log=JSON.parse(localStorage.getItem(SYNC_LOG_KEY)||"[]");}catch(e){}
+  const hit=log.find(function(x){return x&&x.ok&&x.sha;});
+  if(hit){
+    el.innerHTML=esc(hit.msg||"最近一次雲端寫回")+'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+String(hit.sha).slice(0,8)+' · '+esc(hit.t||"")+'</div>';
+  }else el.textContent="暫無提交記錄";
+}
 async function refreshRepoInfo(){
   const el=document.getElementById("gh_latest");if(!el)return;
+  let timer=null;
   try{
-    const r=await fetch("https://api.github.com/repos/uscrm26/bcd/commits?per_page=1",{headers:{Authorization:"token "+getGHTok(),Accept:"application/vnd.github+json"}});
+    const ctrl=new AbortController();
+    timer=setTimeout(function(){try{ctrl.abort();}catch(e){}},8000);
+    const r=await fetch("https://api.github.com/repos/uscrm26/bcd/commits?per_page=1",{headers:{Authorization:"token "+getGHTok(),Accept:"application/vnd.github+json"},signal:ctrl.signal});
     const d=await r.json();
     if(Array.isArray(d)&&d[0]){
       const c=d[0];const dt=(c.commit.author.date||"").replace("T"," ").replace("Z","");
       el.innerHTML=esc(c.commit.message.split("\n")[0])+'<div style="font-size:11px;color:var(--mut);margin-top:2px">'+String(c.sha).slice(0,8)+' · '+dt+'</div>';
-    }else el.textContent="讀取失敗";
-  }catch(e){el.textContent="讀取失敗";}
+    }else renderLatestFallback(el);
+  }catch(e){renderLatestFallback(el);}
+  finally{if(timer)clearTimeout(timer);}
 }
 function initGithubPage(){try{loadStorageUsage();refreshRepoInfo();}catch(e){}}
 R.github=()=>{
