@@ -8,7 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
 (function(){
-  var V="v20261106i1750";
+  var V="v20261106j1755";
   try{
     var oldV=localStorage.getItem("bcd_ver");
     if(oldV!==V){
@@ -100,14 +100,20 @@ a{color:var(--acc);text-decoration:none}
 .sideclock{background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin-bottom:12px;font-size:10px;line-height:1.9;color:var(--mut)}
 .sideclock b{color:var(--txt);font-weight:600}
 .sideclock .z{display:flex;align-items:center;gap:6px}.sideclock .z .zem{font-size:12px;flex:0 0 auto}.sideclock .z b{flex:1 1 auto}.sideclock .z span:last-child{font-variant-numeric:tabular-nums}
-.nav{flex:1;overflow-y:auto}
-.nav .grp{font-size:10px;color:var(--dim);text-transform:none;padding:12px 10px 6px;letter-spacing:.4px}
-.nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--mut);font-size:13px;margin-bottom:2px;border:1px solid transparent;transition:.15s}
+.nav-scroll{flex:1;overflow-y:auto;overflow-x:hidden;min-height:0}
+.nav{padding:4px 0}
+.nav .grp{font-size:10px;color:var(--dim);text-transform:none;padding:20px 10px 8px;letter-spacing:.5px;font-weight:600;border-top:1px solid rgba(255,255,255,.04);margin-top:8px}
+.nav .grp:first-child{border-top:none;margin-top:0;padding-top:8px}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;color:var(--dim);font-size:13px;margin-bottom:2px;border:1px solid transparent;transition:.15s}
 .nav a:hover{background:var(--bg2);color:var(--txt)}
-.nav a.on{background:linear-gradient(90deg,rgba(74,158,255,.14),transparent);color:var(--acc2);border-color:#29476b}
-.nav a .ic{width:20px;text-align:center;font-size:14px}
+.nav a.on{background:var(--acc);color:#fff;border-color:transparent;font-weight:600}
+.nav a.on .ic{color:#fff}
+.nav a .ic{width:20px;text-align:center;font-size:14px;color:var(--mut)}
+.nav a.on .dot{background:#fff;color:var(--acc)}
 .nav a .dot{margin-left:auto;background:var(--err);color:#fff;font-size:10px;padding:0 6px;border-radius:9px;font-weight:700}
-.side .foot{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.side .foot{border-top:1px solid rgba(255,255,255,.06);padding-top:12px;margin-top:8px;flex-shrink:0}
+.upgrade-banner{background:linear-gradient(135deg,rgba(74,158,255,.12),rgba(124,192,255,.06));border:1px solid rgba(74,158,255,.25);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.15s}
+.upgrade-banner:hover{border-color:rgba(74,158,255,.5);background:linear-gradient(135deg,rgba(74,158,255,.18),rgba(124,192,255,.1))}
 .user-row{display:flex;align-items:center;gap:9px}
 .avatar{width:30px;height:30px;border-radius:50%;background:#26334a;color:var(--acc2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px}
 .user-row .nm{font-size:12px;color:var(--txt)}
@@ -345,30 +351,37 @@ tr:hover td{background:#1a2130}
     <img src="assets/ucrm_nav.png" class="logo-img" alt="UCRM">
   </div>
   <div class="sideclock" id="sideClock"></div>
+  <div class="nav-scroll">
   <nav class="nav">
-    <div class="grp">工作區</div>
+    <div class="grp">主工作區</div>
     <a data-v="dashboard" class="on"><span class="ic">◧</span>總覽看板</a>
     <a data-v="customer"><span class="ic">▤</span>客戶管理</a>
     <a data-v="broker"><span class="ic">◍</span>經紀資源池</a>
     <a data-v="ai"><span class="ic">✦</span>AI 表單助手</a>
-    <div class="grp">郵件</div>
+    <div class="grp">郵件往來</div>
+    <a data-v="queue"><span class="ic">⇆</span>電子郵件<span class="dot" id="qdot">0</span></a>
     <a data-v="mailbox"><span class="ic">✉</span>信箱配置</a>
     <a data-v="webmail"><span class="ic">⇥</span>手動登錄信箱</a>
-    <a data-v="queue"><span class="ic">⇆</span>電子郵件<span class="dot" id="qdot">0</span></a>
-    <div class="grp">檔案</div>
+    <div class="grp">文件與學習</div>
     <a data-v="doc"><span class="ic">▤</span>文件中心</a>
     <a data-v="archive"><span class="ic">▦</span>歸檔包</a>
     <a data-v="learn"><span class="ic">📖</span>學習檔案</a>
-    <div class="grp">系統</div>
+    <div class="grp">營運管理</div>
     <a data-v="worklog"><span class="ic">✎</span>工作通知</a>
-    <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
     <a data-v="commission"><span class="ic">$</span>佣金記錄</a>
-    <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
     <a data-v="polling"><span class="ic">◷</span>巡查排程</a>
+    <div class="grp">系統設置</div>
+    <a data-v="worklog_admin"><span class="ic">☰</span>系統工作記錄</a>
+    <a data-v="github"><span class="ic">⚙</span>GitHub 備份</a>
     <a data-v="system"><span class="ic">◫</span>系統管理</a>
   </nav>
+  </div>
   <div class="foot">
-    <div class="user-row" style="cursor:pointer" onclick="openSwitchUser()">
+    <div class="upgrade-banner">
+      <div style="font-size:12px;font-weight:700;color:var(--acc2)">升級到專業版</div>
+      <div style="font-size:10px;color:var(--mut);margin-top:2px">解鎖更多 AI 配額與團隊協作功能</div>
+    </div>
+    <div class="user-row" style="cursor:pointer;margin-top:10px" onclick="openSwitchUser()">
       <div class="avatar" id="footAvatar">K</div>
       <div><div class="nm" id="footName">Kevin W</div><div class="rl" id="footRole">super_admin</div></div>
     </div>
@@ -849,7 +862,7 @@ const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
 const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});
-const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};
+const grpMap={zh:["主工作區","郵件往來","文件與學習","營運管理","系統設置"],en:["MAIN WORKSPACE","EMAIL","FILES & LEARN","OPERATIONS","SYSTEM"],cn:["主工作区","邮件往来","文件与学习","营运管理","系统设置"]};
 document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[key][i])g.textContent=grpMap[key][i];});
 const bsEl=document.querySelector(".brand .bs");if(bsEl)bsEl.textContent=L.sub;
 document.getElementById("langBtn").textContent=L.label+" ▾";
@@ -1377,7 +1390,7 @@ function phSrc(no){
   if(PHOTO_OVERRIDE[no])return FILEBASE+PHOTO_OVERRIDE[no]+"?t="+Date.now();
   const p=PHOTO[no]||"";return p?resolveFile(p):"";
 }
-const APP_VER="20261106I";
+const APP_VER="20261106J";
 function genVersionCode(){
   const d=new Date();
   const ymd=""+d.getFullYear()+String(d.getMonth()+1).padStart(2,"0")+String(d.getDate()).padStart(2,"0");
@@ -5095,7 +5108,7 @@ ${mineAudit.length?mineAudit.slice(0,12).map(a=>`<div class="logrow"><span class
 // 初次渲染：先以內置兜底繪製，再拉取同倉 JSON 真實資料覆蓋
 render();
 (async()=>{await loadRepoData();try{loadPersisted();}catch(e){}await loadSB();})();
-if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["工作區","郵件","檔案","系統"],en:["WORKSPACE","MAIL","FILES","SYSTEM"],cn:["工作区","邮件","档案","系统"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
+if(PREF.lang&&PREF.lang!=="zh"){const L=LANGS[PREF.lang];CURRENT_LANG=PREF.lang;if(L){const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;const tn=a.childNodes[a.childNodes.length-1];if(tn&&tn.nodeType===3)tn.textContent=t;});const grpMap={zh:["主工作區","郵件往來","文件與學習","營運管理","系統設置"],en:["MAIN WORKSPACE","EMAIL","FILES & LEARN","OPERATIONS","SYSTEM"],cn:["主工作区","邮件往来","文件与学习","营运管理","系统设置"]};document.querySelectorAll(".nav .grp").forEach((g,i)=>{if(grpMap[PREF.lang][i])g.textContent=grpMap[PREF.lang][i];});const bs=document.querySelector(".brand .bs");if(bs)bs.textContent=L.sub;const lb=document.getElementById("langBtn");if(lb)lb.textContent=L.label+" ▾";const lo=document.querySelectorAll(".topbar .btn.small");if(lo[0])lo[0].textContent=L.logout;render();}}
 </script>
 </body>
 </html>
