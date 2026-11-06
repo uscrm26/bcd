@@ -280,6 +280,10 @@ table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 .ai-llm-dot{width:8px;height:8px;border-radius:50%;background:#6b7280;flex-shrink:0}
 .ai-llm-dot.ok{background:#3fca8a}.ai-llm-dot.fb{background:#f59e0b}.ai-llm-dot.load{background:#3b82f6;animation:aiPulse 1s infinite}
 @keyframes aiPulse{50%{opacity:.35}}
+.ai-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:80px 20px;color:var(--mut);text-align:center;min-height:420px}
+.ai-empty svg{opacity:.4}
+.ai-gen{outline:none}
+.ai-gen:focus{outline:2px solid var(--acc);outline-offset:4px;border-radius:6px}
 .ai-main{min-width:0}
 .ai-sheet{background:#fff;color:#1f2937;border-radius:14px;border:1px solid var(--line);padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
 .pfs-doc h2{text-align:center;letter-spacing:3px;font-size:18px;margin-bottom:20px;color:#111}
@@ -4740,9 +4744,9 @@ function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化�
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
 // ===== AI Document Bot 雙欄文檔工作台 =====
 const AI_DICT={
-  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"AI 人設",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 一鍵填好",blank:"空白表",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"AI 生成數字僅供參考，送出前請人工核對"},
-  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"AI persona",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"AI auto-fill",blank:"Blank form",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Not saved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"AI-generated figures are estimates. Review before submission."},
-  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"AI 人设",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 一键填好",blank:"空白表",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"AI 生成数字仅供参考，送出前请人工核对"}
+  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"AI 人設",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 生成文檔",blank:"空白表",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"每次生成的版面都不同，送出前請人工核對"},
+  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"AI persona",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"Generate document",blank:"Blank form",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Not saved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"Every output has a fresh layout. Review before submission."},
+  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"AI 人设",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 生成文档",blank:"空白表",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"每次生成的版面都不同，送出前请人工核对"}
 };
 function aiT(){return AI_DICT[CURRENT_LANG==="en"?"en":CURRENT_LANG==="cn"?"cn":"zh"];}
 let aiDocType="pfs";
@@ -4753,6 +4757,9 @@ let aiSigData="";
 let aiDraft={};
 let aiSavedAt=null;
 let aiDirty=false;
+let aiGenHtml="";
+let aiDesignSeed="";
+let aiGenLoading=false;
 function aiPick(v){aiSel=DATA.customers.find(c=>c.no===v)||aiSel;aiInitDraft();render();}
 function aiSwitchDoc(t){aiDocType=t;aiInitDraft();render();}
 function aiSetSig(t){aiSigType=t;if(t!=="type")aiSigData="";scheduleAiSave();render();}
@@ -4772,9 +4779,10 @@ function aiBlankDraft(){
 }
 function aiInitDraft(){
   const key="bcd_ai_draft_"+aiDocType+"_"+(aiSel.no||"");
+  aiGenHtml="";aiDesignSeed="";
   try{
     const saved=JSON.parse(localStorage.getItem(key)||"null");
-    if(saved&&saved.d){aiDraft=saved.d;aiSavedAt=saved.t;return;}
+    if(saved&&saved.d){aiDraft=saved.d;aiSavedAt=saved.t;aiGenHtml=saved.html||"";aiDesignSeed=saved.seed||"";return;}
   }catch(e){}
   aiDraft=aiBlankDraft();
   if(aiDocType==="pfs"&&aiSel.member)aiDraft.sigName=aiSel.member;
@@ -4793,71 +4801,86 @@ function scheduleAiSave(){
 function aiSave(){
   const key="bcd_ai_draft_"+aiDocType+"_"+(aiSel.no||"");
   aiSavedAt=new Date().toLocaleTimeString();
-  localStorage.setItem(key,JSON.stringify({d:aiDraft,t:aiSavedAt}));
+  localStorage.setItem(key,JSON.stringify({d:aiDraft,t:aiSavedAt,html:aiGenHtml,seed:aiDesignSeed}));
   aiDirty=false;
   const el=document.getElementById("aiSaveState");
   if(el)el.textContent=aiT().savedAt+" "+aiSavedAt;
   addAudit("AI文檔草稿",aiDocType+" #"+(aiSel.no||""));
 }
+// 每次隨機抽一份設計簡報，確保每份文檔版面都不同
+const AI_DESIGNS=[
+  {palette:"deep navy #0f2a4a background, ivory #f8f5ec cards, gold #b8893a accent",font:"Georgia serif, classic banking statement feel",layout:"two-column ledger table with hairline rules, numbered sections"},
+  {palette:"warm cream #f5efe0 background, charcoal #1f2937 text, terracotta #c2410c accent",font:"system sans-serif, modern minimal",layout:"card grid with rounded corners, big hero numbers, soft shadows"},
+  {palette:"slate #1e293b background, off-white #f1f5f9 panels, teal #0d9488 accent",font:"'Courier New' monospace, bureaucratic form feel",layout:"boxed form fields with dashed borders, monospaced totals"},
+  {palette:"paper white #ffffff background, black #111 text, single red #b91c1c accent rule",font:"'Times New Roman' serif, newspaper feel",layout:"newspaper two-column columns, ruled tables, small caps headers"},
+  {palette:"forest #1a3a2f background, parchment #f3ecd9 text, brass #9c7a3c accent",font:"Garamond serif, old-world ledger",layout:"ornate bordered sections, wax-seal style totals box"},
+  {palette:"light gray #eef1f5 background, white cards, indigo #4f46e5 accent",font:"system sans, modern fintech dashboard",layout:"KPI stat tiles on top, compact table below, pill badges"},
+  {palette:"ivory #faf7f0 background, walnut #3f2d1e text, sage #6b7f5e accent",font:"Palatino serif, understated estate document",layout:"left margin annotations, wide ruled lines, centered seal"},
+  {palette:"charcoal #222 background, #fafafa text, amber #d97706 accent",font:"system sans, dark mode financial report",layout:"full-bleed dark sections, glowing total row, tabular numbers"}
+];
+function aiPickDesign(){return AI_DESIGNS[Math.floor(Math.random()*AI_DESIGNS.length)];}
 function aiLocalFill(){
   const c=aiSel||{};
   const inc=aiPersona.income==="low"?70:aiPersona.income==="high"?220:125;
   const scale=aiPersona.income==="low"?.4:aiPersona.income==="high"?2.2:1;
-  if(aiDocType==="pfs"){
-    aiDraft.cash=Math.round(25*scale);aiDraft.stocks=Math.round(35*scale);aiDraft.ar=0;aiDraft.nr=0;aiDraft.inv=0;
-    aiDraft.equip=Math.round(30*scale);aiDraft.home=Math.round(420*scale);aiDraft.realE=0;aiDraft.ppe=Math.round(30*scale);
-    aiDraft.ira=Math.round(65*scale);aiDraft.otherA=0;
-    aiDraft.bank=0;aiDraft.credit=Math.round(7*scale);aiDraft.taxes=0;aiDraft.ap=0;aiDraft.np=0;aiDraft.equipL=0;
-    aiDraft.mortgage=Math.round(265*scale);aiDraft.otherL=0;
-    aiDraft.salary=inc*1000;aiDraft.div=Math.round(inc*10);aiDraft.rei=0;aiDraft.otherI=0;
-    aiDraft.sigName=c.member||"";
-  }else{
-    aiDraft.impName=c.name||"";aiDraft.dba="";aiDraft.ein=c.ein||"";aiDraft.addr="";aiDraft.contact=c.member||"";
-    aiDraft.phone="";aiDraft.email=c.mail||"";aiDraft.bondType="Continuous Bond";aiDraft.bondAmt="50,000";
-    aiDraft.port="";aiDraft.hts="";aiDraft.annualVal="";aiDraft.annualDuty="";aiDraft.cargoDesc="";
-  }
+  aiLocalFill._inc=inc;aiLocalFill._scale=scale;
+  aiDraft.sigName=c.member||"";
 }
 let aiLLMState="idle";
 async function aiFill(){
   const c=aiSel||{};
   const fillBtn=document.getElementById("aiFillBtn");
-  if(fillBtn){fillBtn.disabled=true;fillBtn.dataset.tx=fillBtn.textContent;fillBtn.textContent="...";}
-  aiLLMState="loading";
+  if(fillBtn){fillBtn.disabled=true;fillBtn.dataset.tx=fillBtn.textContent;fillBtn.textContent="…";}
+  aiLLMState="loading";aiGenLoading=true;render();
+  const design=aiPickDesign();aiDesignSeed=JSON.stringify(design);
   let usedLLM=false;
   try{
     const personaTxt=JSON.stringify(aiPersona);
-    const custTxt=JSON.stringify({no:c.no,name:c.name,member:c.member,ein:c.ein,mail:c.mail});
-    let sys,prompt;
-    if(aiDocType==="pfs"){
-      const keys=PFS_ASSET_FIELDS.map(f=>f[0]).concat(PFS_LIAB_FIELDS.map(f=>f[0])).concat(PFS_INC_FIELDS.map(f=>f[0]));
-      sys="You are a US customs bond underwriting assistant. Generate realistic Personal Financial Statement figures in whole USD for the given persona. Return ONLY a JSON object with these numeric keys: "+keys.join(",")+". No explanation, no markdown.";
-      prompt="Persona: "+personaTxt+"\nCustomer: "+custTxt+"\nReturn JSON with realistic whole-dollar amounts consistent with the income and asset band.";
-    }else{
-      const keys=BOND_FIELDS.map(f=>f[0]);
-      sys="You are a US customs bond application assistant. Pre-fill a Customs Bond Application. Return ONLY a JSON object with these string keys: "+keys.join(",")+". Use empty string when unknown. No explanation, no markdown.";
-      prompt="Persona: "+personaTxt+"\nCustomer: "+custTxt+"\nReturn JSON. Use bond type Continuous Bond and bond amount 50,000 unless data suggests otherwise.";
-    }
+    const custTxt=JSON.stringify({no:c.no,name:c.name,member:c.member,ein:c.ein,mail:c.mail,status:(c.status||"")});
+    const docName=aiDocType==="pfs"?"PERSONAL FINANCIAL STATEMENT":"CUSTOMS CONTINUOUS BOND APPLICATION";
+    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". The document must look professional and printable. CRITICAL: the layout, typography, color scheme and section arrangement must strictly follow the design brief below. Include realistic, internally-consistent numbers for the persona. Vary the structure each time. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
+    const prompt="Design brief (must follow exactly):\nPalette: "+design.palette+"\nTypography: "+design.font+"\nLayout: "+design.layout+"\n\nCustomer data: "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now.";
     const out=await callAI(sys,prompt);
     if(out){
-      const m=out.match(/\{[\s\S]*\}/);
-      if(m){
-        const j=JSON.parse(m[0]);
-        let touched=0;
-        Object.keys(j).forEach(k=>{
-          if(Object.prototype.hasOwnProperty.call(aiDraft,k)&&j[k]!==""&&j[k]!=null){aiDraft[k]=j[k];touched++;}
-        });
-        if(touched>0){usedLLM=true;if(aiDocType==="pfs"&&c.member&&!aiDraft.sigName)aiDraft.sigName=c.member;}
-      }
+      let body=out.trim().replace(/^```(?:html)?\s*/i,"").replace(/```\s*$/,"");
+      const s=body.indexOf("<div");const e=body.lastIndexOf("</div>");
+      if(s>=0&&e>s){aiGenHtml=body.slice(s,e+6);usedLLM=true;}
     }
-  }catch(e){console.warn("ai LLM fill failed",e);}
-  if(!usedLLM){aiLocalFill();aiLLMState="fallback";}else{aiLLMState="ok";}
+  }catch(e){console.warn("ai doc gen failed",e);}
+  if(!usedLLM){aiGenHtml=aiLocalDocHTML(c,design);aiLLMState="fallback";}
+  else aiLLMState="ok";
+  aiGenLoading=false;
   if(fillBtn){fillBtn.disabled=false;fillBtn.textContent=fillBtn.dataset.tx||fillBtn.textContent;}
   aiSave();
-  addAudit(usedLLM?"AI LLM填表":"AI本地填表",aiDocType+" #"+(c.no||""));
+  addAudit(usedLLM?"AI生成文檔":"AI本地文檔",aiDocType+" #"+(c.no||"")+" seed:"+design.layout.slice(0,20));
   toast(aiT().draftSaved);
   render();
 }
-function aiReset(){aiDraft=aiBlankDraft();aiSave();render();}
+function aiLocalDocHTML(c,d){
+  const inc=aiLocalFill._inc||125, scale=aiLocalFill._scale||1;
+  const cash=Math.round(25*scale),stocks=Math.round(35*scale),home=Math.round(420*scale),ppe=Math.round(30*scale),ira=Math.round(65*scale);
+  const credit=Math.round(7*scale),mort=Math.round(265*scale);
+  const tA=cash+stocks+home+ppe+ira,tL=credit+mort,tI=inc*1000;
+  const colors=d.palette.split(",");
+  const bg=colors[0].split(" ")[1]||"#fff",fg=colors[1].split(" ")[1]||"#111",acc=colors[2].split(" ")[1]||"#333";
+  return `<div style="background:${bg};color:${fg};padding:36px;font-family:${d.font};max-width:760px;margin:0 auto">
+    <div style="border-bottom:3px solid ${acc};padding-bottom:14px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end">
+      <div><div style="font-size:11px;letter-spacing:3px;color:${acc};font-weight:700">UCRM UNDERWRITING</div>
+      <h2 style="margin:6px 0 0;font-size:24px">${aiDocType==='pfs'?'Personal Financial Statement':'Customs Bond Application'}</h2></div>
+      <div style="text-align:right;font-size:12px">${esc(c.name||'')}<br>${esc(c.member||'')}<br>${esc(c.ein?'EIN '+c.ein:'')}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px">
+      <div style="background:${acc}11;border-left:3px solid ${acc};padding:12px"><div style="font-size:11px;color:${acc};font-weight:700">TOTAL ASSETS</div><div style="font-size:26px;font-weight:800">$${tA.toLocaleString()}</div></div>
+      <div style="background:${acc}11;border-left:3px solid ${acc};padding:12px"><div style="font-size:11px;color:${acc};font-weight:700">NET WORTH</div><div style="font-size:26px;font-weight:800">$${(tA-tL).toLocaleString()}</div></div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <tr style="background:${acc};color:#fff"><th style="padding:7px;text-align:left">Asset</th><th style="padding:7px;text-align:right">Amount</th></tr>
+      ${[["Cash",cash],["Stocks & bonds",stocks],["Home",home],["Personal property",ppe],["IRA",ira]].map(r=>`<tr style="border-bottom:1px solid ${fg}22"><td style="padding:6px">${r[0]}</td><td style="padding:6px;text-align:right">$${r[1].toLocaleString()}</td></tr>`).join("")}
+    </table>
+    <p style="margin-top:18px;font-size:11px;opacity:.7">Generated ${new Date().toLocaleDateString()}. Figures are estimates for underwriting preview.</p>
+  </div>`;
+}
+function aiReset(){aiDraft=aiBlankDraft();aiGenHtml="";aiDesignSeed="";aiSave();render();}
 function aiSubmit(){
   aiDraft.sigDate=new Date().toISOString().slice(0,10);
   aiSave();
@@ -4933,7 +4956,11 @@ R.ai=()=>{
       <button class="btn primary" style="width:100%;background:#0f766e" onclick="aiSubmit()">${T.confirm}</button>
     </div>
   </div>`;
-  const right=`<div class="ai-main"><div id="aiDocSheet" class="ai-sheet">${aiDocType==='pfs'?aiPfsSheet(T):aiBondSheet(T)}</div></div>`;
+  const right=`<div class="ai-main"><div id="aiDocSheet" class="ai-sheet ai-sheet-gen">
+    ${aiGenLoading?`<div class="ai-empty">${AI_IC.spark}<div>${CURRENT_LANG==='en'?'AI is designing a new document…':'AI 正在設計全新文檔…'}</div></div>`:
+      aiGenHtml?`<div class="ai-gen" contenteditable="true" oninput="scheduleAiSave()">${aiGenHtml}${aiSignatureBlock(T)}</div>`:
+      `<div class="ai-empty">${AI_IC.doc}<div style="font-size:14px;font-weight:700;margin-bottom:6px">${CURRENT_LANG==='en'?'No document yet':'尚未生成文檔'}</div><div style="font-size:12px;color:var(--mut)">${CURRENT_LANG==='en'?'Press AI generate. Every output uses a fresh layout.':'按下 AI 生成，每次版面都不一樣'}</div></div>`}
+  </div></div>`;
   const statusBar=`<div class="ai-statusbar">
     <span class="ai-dot ${aiDirty?'dirty':''}"></span>
     <span id="aiSaveState">${aiSavedAt?T.savedAt+" "+aiSavedAt:T.notSaved}</span>
@@ -4944,53 +4971,6 @@ R.ai=()=>{
   return `<h1>${T.title}</h1><div class="ai-workspace">${left}${right}</div>${statusBar}
   <div class="ai-note">${AI_IC.spark}${T.note}</div>`;
 };
-function aiMoneyInput(k){
-  return `<input class="ai-money" inputmode="decimal" value="${esc(aiDraft[k])}" oninput="aiFieldInput('${k}',this.value)">`;
-}
-function aiPfsSheet(T){
-  const tA=aiSum(PFS_ASSET_FIELDS),tL=aiSum(PFS_LIAB_FIELDS),tI=aiSum(PFS_INC_FIELDS);
-  const rows=(af,lf)=>{
-    const n=Math.max(af.length,lf.length);let h="";
-    for(let i=0;i<n;i++){
-      const a=af[i],l=lf[i];
-      h+=`<tr><td class="lb">${a?a[1]:""}</td><td class="vl">${a?aiMoneyInput(a[0]):""}</td>
-      <td class="lb">${l?l[1]:""}</td><td class="vl">${l?aiMoneyInput(l[0]):""}</td></tr>`;
-    }
-    return h;
-  };
-  const incRows=PFS_INC_FIELDS.map(f=>`<tr><td class="lb">${f[1]}</td><td class="vl">${aiMoneyInput(f[0])}</td><td class="lb"></td><td class="vl"></td></tr>`).join("");
-  return `
-  <div class="pfs-doc">
-    <h2>PERSONAL FINANCIAL STATEMENT</h2>
-    <div class="pfs-top">
-      <div><label>Name</label><input class="ai-text" value="${esc(aiDraft.sigName)}" oninput="aiFieldInput('sigName',this.value)"></div>
-      <div><label>${T.sigDate}</label><input type="date" class="ai-text" value="${esc(aiDraft.date)}" oninput="aiFieldInput('date',this.value)"></div>
-    </div>
-    <table class="pfs-table">
-      <thead><tr><th colspan="2">ASSETS</th><th colspan="2">LIABILITIES</th></tr></thead>
-      <tbody>${rows(PFS_ASSET_FIELDS,PFS_LIAB_FIELDS)}
-      <tr class="sum"><td>${T.total}</td><td class="vl">$${tA.toLocaleString()}</td><td>${T.total}</td><td class="vl">$${tL.toLocaleString()}</td></tr>
-      </tbody>
-    </table>
-    <table class="pfs-table">
-      <thead><tr><th colspan="4">SOURCES OF INCOME</th></tr></thead>
-      <tbody>${incRows}
-      <tr class="sum"><td>${T.total}</td><td class="vl">$${tI.toLocaleString()}</td><td>${T.net}</td><td class="vl">$${(tA-tL).toLocaleString()}</td></tr>
-      </tbody>
-    </table>
-    ${aiSignatureBlock(T)}
-  </div>`;
-}
-function aiBondSheet(T){
-  const half=BOND_FIELDS.slice(0,7).map(f=>`<div class="bond-fl"><label>${f[1]}</label><input class="ai-text" value="${esc(aiDraft[f[0]])}" oninput="aiFieldInput('${f[0]}',this.value)"></div>`).join("");
-  const rest=BOND_FIELDS.slice(7).map(f=>`<div class="bond-fl full"><label>${f[1]}</label><input class="ai-text" value="${esc(aiDraft[f[0]])}" oninput="aiFieldInput('${f[0]}',this.value)"></div>`).join("");
-  return `
-  <div class="pfs-doc">
-    <h2>CUSTOMS BOND APPLICATION</h2>
-    <div class="bond-grid">${half}${rest}</div>
-    ${aiSignatureBlock(T)}
-  </div>`;
-}
 function aiSignatureBlock(T){
   let body="";
   if(aiSigType==="type"){
