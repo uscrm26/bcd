@@ -3726,9 +3726,9 @@ async function aiPolishNote(){
   if(!body){toast("請先輸入內容");return;}
   const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spin"></span>潤色中…';
   try{
-    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"你是商務文書潤色助手。根據用戶輸入的語言進行潤色：英文輸入就英文潤色，繁體中文輸入就繁體中文潤色。保持原意，讓表達更專業流暢。只返回潤色後的文本。"},{role:"user",content:body}],max_tokens:500})});
-    const j=await r.json();
-    document.getElementById("nbody").value=j.choices[0].message.content.trim();
+    const out=await callAI("你是商務文書潤色助手。根據用戶輸入的語言進行潤色：英文輸入就英文潤色，繁體中文輸入就繁體中文潤色。保持原意，讓表達更專業流暢。只返回潤色後的文本。",body);
+    if(!out)throw new Error("AI 無回應");
+    document.getElementById("nbody").value=out.trim();
     toast("潤色完成");
   }catch(e){toast("潤色失敗："+e.message);}
   btn.disabled=false;btn.textContent="🤖 AI 潤色內容";
@@ -3739,9 +3739,8 @@ async function confirmNote(no){
   const tx=document.getElementById("nbody").value||"";
   let txZh=tx, txCn=tx, txEn=tx;
   try{
-    const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+["ark-","623bd4f8","-1913-","48f3-","9c8d-","224c5b0d","421f-","62ff6"].join("")},body:JSON.stringify({model:"ep-20261031163615-7dhwh",messages:[{role:"system",content:"把用戶輸入翻譯成三語，返回JSON：{\"zh\":\"繁體中文\",\"cn\":\"简体中文\",\"en\":\"English\"}。原文已是某語言則該語言用原文。只返回JSON。"},{role:"user",content:tx}],max_tokens:600})});
-    const j=await r.json();
-    const tr=JSON.parse(j.choices[0].message.content.trim());
+    const out=await callAI("把用戶輸入翻譯成三語，返回JSON：{\"zh\":\"繁體中文\",\"cn\":\"简体中文\",\"en\":\"English\"}。原文已是某語言則該語言用原文。只返回JSON。",tx);
+    const tr=JSON.parse(out.trim().replace(/```json|```/g,"").trim());
     txZh=tr.zh||tx;txCn=tr.cn||tx;txEn=tr.en||tx;
   }catch(e){console.warn("translate:",e);}
   DATA.timeline[no]=DATA.timeline[no]||[];
@@ -3946,27 +3945,15 @@ const INTERP_CACHE=JSON.parse(localStorage.getItem("bcd_interp")||"{}");
 function saveZH(k,v){ZH_CACHE[k]=v;localStorage.setItem("bcd_zh",JSON.stringify(ZH_CACHE));}
 function saveInterp(k,v){INTERP_CACHE[k]=v;localStorage.setItem("bcd_interp",JSON.stringify(INTERP_CACHE));}
 async function callAI(sys,user){
-  const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
-  // 先載入模型清單，按 enabled 順序輪詢，某個額度用完自動跳下一個
-  let list=[];
-  try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/ai_models.json",{cache:"no-store"});list=await r.json();}catch(e){list=[];}
-  let models=Array.isArray(list)?list.filter(m=>m.enabled!==false&&m.endpoint).map(m=>m.endpoint):[];
-  const fb=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
-  if(!models.includes(fb))models.unshift(fb);
-  for(const model of models){
-    for(let attempt=0;attempt<2;attempt++){
-      try{
-        const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
-        if(r.status===429||r.status===402||r.status===403){console.warn("模型額度不足，切換下一個",model);break;}
-        if(!r.ok){const t=await r.text();if(attempt<1){await new Promise(r=>setTimeout(r,1500));continue;}throw new Error("方舟 HTTP "+r.status);}
-        const j=await r.json();
-        const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
-        if(out)return out;
-      }catch(e){
-        console.warn("callAI fail",model,attempt,e);
-        if(attempt<1)await new Promise(r=>setTimeout(r,1500));
-      }
-    }
+  const cfg=getNewLLM();
+  for(let attempt=0;attempt<2;attempt++){
+    try{
+      const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.model,messages:[{role:"system",content:sys},{role:"user",content:user}],max_tokens:4000})});
+      if(!r.ok){const t=await r.text();console.warn("callAI http",r.status,t.slice(0,200));if(attempt<1){await new Promise(r=>setTimeout(r,1200));continue;}return "";}
+      const j=await r.json();
+      const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
+      if(out)return out;
+    }catch(e){console.warn("callAI fail",attempt,e);if(attempt<1)await new Promise(r=>setTimeout(r,1200));}
   }
   return "";
 }
@@ -4032,28 +4019,21 @@ function chunkText(t,size=6000){
 async function extractPdfText(file){try{const r=await extractPdfFull(file);return r.text;}catch(e){return "";}}
 // 多圖視覺問答：parts 為 [{type:'text',text} | {type:'image_url',image_url:{url}}]
 async function callAIVision(sys,parts){
-  const key=atob("YXJrLTYyM2JkNGY4LTE5MTMtNDhmMy05YzhkLTIyNGM1YjBkNDIxZi02MmZmNg==");
-  // 主通道：方舟多模態 endpoint 直接讀圖（已實測支援 image_url），複用模型輪詢
-  let list=[];
-  try{const r=await fetch("https://raw.githubusercontent.com/uscrm26/bcd/main/dbboard/ai_models.json",{cache:"no-store"});list=await r.json();}catch(e){list=[];}
-  let models=Array.isArray(list)?list.filter(m=>m.enabled!==false&&m.endpoint).map(m=>m.endpoint):[];
-  const fb=localStorage.getItem("bcd_ark_model")||"ep-20261031163615-7dhwh";
-  if(!models.includes(fb))models.unshift(fb);
-  for(const model of models){
-    try{
-      const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),30000);
-      const r=await fetch("https://ark.cn-beijing.volces.com/api/v3/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+key},body:JSON.stringify({model:model,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
-      clearTimeout(tm);
-      if(r.status===402){console.warn("方舟账户欠费");return "ERROR_OVERDUE";}if(r.status===429||r.status===403)continue;
-      if(!r.ok){const t=await r.text();console.warn("vision ark",model,r.status,t.slice(0,100));continue;}
+  const cfg=getNewLLM();
+  // 主通道：新 LLM OpenAI 相容介面
+  try{
+    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),60000);
+    const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.model,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
+    clearTimeout(tm);
+    if(r.ok){
       const j=await r.json();
       const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
       if(out)return out;
-    }catch(e){console.warn("vision ark fail",model,e);}
-  }
-  // 備用：OpenRouter（key 已失效時快速返回空）
+    } else { console.warn("vision newLLM",r.status,(await r.text()).slice(0,200)); }
+  }catch(e){console.warn("vision newLLM fail",e);}
+  // 備用：OpenRouter 免費 VL
   try{
-    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),8000);
+    const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),20000);
     const r=await fetch("https://openrouter.ai/api/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+OR_KEY},body:JSON.stringify({model:VL_MODEL,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
     clearTimeout(tm);
     if(!r.ok)throw new Error("VL HTTP "+r.status);
