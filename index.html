@@ -5158,7 +5158,8 @@ R.ai=()=>{
         <div style="font-size:11px;color:var(--mut)">${T.suppHint}</div>
         <input type="file" id="aiSuppFiles" accept="image/*,.pdf" multiple style="display:none" onchange="aiLoadSuppDocs(this)">
       </div>
-      <button class="btn" style="width:100%;font-size:12px" onclick="aiFillFromBlank()">${T.autoFill}</button>
+      <button class="btn" style="width:100%;font-size:12px" onclick="aiPickFromSystem()">${T.orSystem}</button>
+      <button class="btn primary" style="width:100%;font-size:12px" onclick="aiFillFromBlank()">${T.autoFill}</button>
     </div>
     <div class="ai-side-actions">
       <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()"><span class="ai-load-btn" id="aiFillBtnInner">${AI_IC.spark}${T.aiFill}</span></button>
@@ -5241,6 +5242,69 @@ function aiLoadSuppDocs(inp){
     r.readAsDataURL(f);
   });
   toast("已載入 "+inp.files.length+" 份支持文件");
+}
+async function aiPickFromSystem(){
+  const c=aiSel||{};if(!c||!c.no){toast("請先選擇客戶");return;}
+  const modal=document.createElement("div");
+  modal.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center";
+  modal.id="aiPickModal";
+  modal.innerHTML=`<div style="background:var(--card);border-radius:14px;width:90%;max-width:520px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:700;font-size:14px">${esc(c.name||"")} · 從系統檔案選擇空白表格</div>
+      <button class="btn small" onclick="document.getElementById('aiPickModal').remove()">✕</button>
+    </div>
+    <div id="aiPickList" style="padding:12px;overflow-y:auto;font-size:12px">載入中…</div>
+  </div>`;
+  document.body.appendChild(modal);
+  try{
+    const r=await fetch(SB.url+"/storage/v1/object/list/attachments",{method:"POST",headers:{apikey:SB.key,Authorization:"Bearer "+SB.key,"Content-Type":"application/json"},body:JSON.stringify({prefix:c.no+"/",limit:200,sortBy:{column:"name",order:"desc"}})});
+    const files=await r.json();
+    const list=document.getElementById("aiPickList");
+    if(!files||!files.length){list.innerHTML="<div style='color:var(--mut);padding:20px;text-align:center'>尚無檔案</div>";return;}
+    list.innerHTML=files.map((f,i)=>{
+      const url=PUB+encodeURIComponent(c.no+"/"+f.name);
+      const isImg=/\.(jpe?g|png|webp|gif)$/i.test(f.name);
+      const isPdf=/\.pdf$/i.test(f.name);
+      const icon=isPdf?"📄":(isImg?"🖼️":"📎");
+      return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:8px;cursor:pointer;border:1px solid transparent" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''" onclick="aiUseSystemFile('${url.replace(/'/g,"\\'")}','${f.name.replace(/'/g,"\\'")}')">
+        <span style="font-size:18px">${icon}</span>
+        <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</div>
+        <div style="color:var(--mut);font-size:11px">${f.metadata&&f.metadata.size?Math.round(f.metadata.size/1024)+" KB":""}${isPdf?" · PDF 會自動轉圖":""}</div></div>
+        <button class="btn small">選此</button>
+      </div>`;
+    }).join("");
+  }catch(e){document.getElementById("aiPickList").innerHTML="<div style='color:var(--mut);padding:20px'>讀取失敗："+e.message+"</div>";}
+}
+async function aiUseSystemFile(url,name){
+  toast("載入中："+name);
+  try{
+    const r=await fetch(url);
+    const blob=await r.blob();
+    if(/\.pdf$/i.test(name)){
+      // Render PDF first page to PNG via pdf.js
+      if(!window.pdfjsLib){
+        const s=document.createElement("script");
+        s.src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+        document.head.appendChild(s);
+        await new Promise((res,rej)=>{s.onload=res;s.onerror=rej;setTimeout(rej,8000);});
+        pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+      }
+      const buf=await blob.arrayBuffer();
+      const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+      const page=await pdf.getPage(1);
+      const vp=page.getViewport({scale:1.5});
+      const cv=document.createElement("canvas");
+      cv.width=vp.width;cv.height=vp.height;
+      await page.render({canvasContext:cv.getContext("2d"),viewport:vp}).promise;
+      const dataUrl=cv.toDataURL("image/png");
+      aiBlankForm={name:name.replace(/\.pdf$/i,".png"),data:dataUrl};
+    } else {
+      const dataUrl=await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.readAsDataURL(blob);});
+      aiBlankForm={name:name,data:dataUrl};
+    }
+    const m=document.getElementById("aiPickModal");if(m)m.remove();
+    toast("已載入："+name);
+  }catch(e){console.warn(e);toast("載入失敗："+e.message);}
 }
 async function aiFillFromBlank(){
   if(!aiBlankForm){toast(aiT().noBlank);return;}
