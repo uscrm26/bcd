@@ -5308,14 +5308,24 @@ async function aiUseSystemFile(url,name){
 }
 async function aiFillFromBlank(){
   if(!aiBlankForm){toast(aiT().noBlank);return;}
+  const c=aiSel||{};
+  // Pre-check: if no PFS generated, ask to generate one first as supporting doc
+  const hasPfs = aiGenHtml && aiGenHtml.length > 500 && aiGenHtml.includes("FINANCIAL");
+  if(!hasPfs){
+    const ok = confirm("尚未生成 Financial Report。是否要先生成 PFS 作為 supporting document，確保數字一致？\n\n按確定：先跳出 PFS 生成，再回來填表格。\n按取消：直接用預設數字填。");
+    if(ok){
+      aiDocType="pfs";
+      aiFill();
+      return;
+    }
+  }
   const fillBtn=document.getElementById("aiFillBtnInner");
   if(fillBtn)fillBtn.innerHTML='<span class="spin"></span>'+aiT().analyzing;
   aiGenLoading=true;render();
-  const c=aiSel||{};
   try{
-    const sys="You are a US customs bond document specialist. You will see an uploaded blank form image. Fill EVERY fillable field. Do NOT leave any blank. For each field return:\n- label: the field label visible on the form\n- value: the filled value (English only)\n- x_pct: horizontal position 0-100 where text should be written on the blank line/box\n- y_pct: vertical position 0-100\n\nRules:\n1. For text fields: write the actual value on the blank line.\n2. For checkboxes: use '☑' for the box that should be checked, '☐' for unchecked. Place the symbol at the checkbox position.\n3. For marital status: if customer is SINGLE, put ☑ on Single box and ☐ on Married. If married, reverse.\n4. For financial fields: use the provided incomeK/assetK to fill reasonable dollar amounts.\n5. For dates: use the application period.\n6. For signature/date: fill with the member name and today's date.\n7. If a field has no clear data, put a reasonable placeholder based on the customer profile.\n8. NEVER leave value as empty string. Every field must have content.\n9. Do NOT change original labels. We overlay text on the original image.\n\nOutput ONLY a JSON array: [{\"label\":\"...\",\"value\":\"...\",\"x_pct\":NN,\"y_pct\":NN}].";
-    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||"",periodFrom:aiPersona.from||"",periodTo:aiPersona.to||"",incomeK:aiPersona.incomeK,assetK:aiPersona.assetK,marital:aiPersona.marital});
-    const prompt="Customer data: "+custTxt+"\n\nReturn JSON array with label, value, x_pct, y_pct for each fillable field on the uploaded form.";
+    const sys="You are a US customs bond document specialist. You will see an uploaded blank form image. Fill EVERY fillable field. Do NOT leave any blank. For each field return:\n- label: the field label visible on the form\n- value: the filled value (English only)\n- x_pct: horizontal position 0-100 where text should be written on the blank line/box\n- y_pct: vertical position 0-100\n\nRules:\n1. For text fields: write the actual value on the blank line.\n2. For checkboxes: use '☑' for the box that should be checked, '☐' for unchecked. Place the symbol at the checkbox position.\n3. For marital status: if customer is SINGLE, put ☑ on Single box and ☐ on Married.\n4. For financial fields: USE THE PROVIDED FINANCIAL DATA EXACTLY. Do not invent different numbers.\n5. For dates: use the application period.\n6. For signature/date: fill with the member name and today's date.\n7. NEVER leave value as empty string.\n8. Do NOT change original labels.\n\nOutput ONLY a JSON array: [{\"label\":\"...\",\"value\":\"...\",\"x_pct\":NN,\"y_pct\":NN}].";
+    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||"",periodFrom:aiPersona.from||"",periodTo:aiPersona.to||"",incomeK:aiPersona.incomeK,assetK:aiPersona.assetK,marital:aiPersona.marital,financialData:hasPfs?"USE NUMBERS FROM GENERATED PFS":"no PFS yet, use reasonable defaults"});
+    const prompt="Customer data: "+custTxt+"\n\nReturn JSON array with label, value, x_pct, y_pct for each fillable field.";
     const parts=[{type:"text",text:prompt}];
     if(aiBlankForm.data.includes("image"))parts.push({type:"image_url",image_url:{url:aiBlankForm.data}});
     const cfg=getNewLLM();
@@ -5326,11 +5336,10 @@ async function aiFillFromBlank(){
     const m=out.match(/\[[\s\S]*\]/);
     if(m){try{fields=JSON.parse(m[0]);}catch(e){}}
     if(fields.length){
-      // Render original form image as background, overlay filled values at coordinates
-      const overlays=fields.filter(f=>f.value).map(f=>{
+      const overlays=fields.filter(f=>f.value).map((f,i)=>{
         const x=Math.min(95,Math.max(2,f.x_pct!=null?f.x_pct:(f.x||50)));
         const y=Math.min(97,Math.max(2,f.y_pct!=null?f.y_pct:(f.y||50)));
-        return `<div contenteditable="true" class="ai-field-overlay" title="${esc(f.label||'')}" style="position:absolute;left:${x}%;top:${y}%;transform:translateY(-50%);font-size:13px;color:#000;font-family:Arial,sans-serif;white-space:nowrap;background:rgba(255,255,255,.85);padding:1px 4px;border-radius:2px;outline:none;cursor:text" oninput="scheduleAiSave()">${esc(f.value)}</div>`;
+        return `<div contenteditable="true" class="ai-field-overlay" data-idx="${i}" title="${esc(f.label||'')} — 拖動可移動位置" style="position:absolute;left:${x}%;top:${y}%;transform:translateY(-50%);font-size:13px;color:#000;font-family:Arial,sans-serif;white-space:nowrap;background:rgba(255,255,255,.85);padding:1px 4px;border-radius:2px;outline:none;cursor:grab;user-select:auto" oninput="scheduleAiSave()" onmousedown="aiDragStart(event,this)">${esc(f.value)}</div>`;
       }).join("");
       aiGenHtml=`<div style="position:relative;width:100%;background:#fff;padding:0;">
         <img src="${aiBlankForm.data}" style="width:100%;display:block" alt="blank form">
@@ -5344,6 +5353,29 @@ async function aiFillFromBlank(){
     }
   }catch(e){console.warn(e);toast("失敗："+e.message);}
   aiGenLoading=false;aiSave();render();
+}
+function aiDragStart(e,el){
+  if(e.target.isContentEditable && document.activeElement===el) return;
+  e.preventDefault();
+  const startX=e.clientX, startY=e.clientY;
+  const origLeft=parseFloat(el.style.left), origTop=parseFloat(el.style.top);
+  const parent=el.parentElement;
+  const rect=parent.getBoundingClientRect();
+  el.style.cursor='grabbing';
+  function onMove(ev){
+    const dx=(ev.clientX-startX)/rect.width*100;
+    const dy=(ev.clientY-startY)/rect.height*100;
+    el.style.left=Math.min(95,Math.max(2,origLeft+dx))+'%';
+    el.style.top=Math.min(97,Math.max(2,origTop+dy))+'%';
+  }
+  function onUp(){
+    el.style.cursor='grab';
+    document.removeEventListener('mousemove',onMove);
+    document.removeEventListener('mouseup',onUp);
+    scheduleAiSave();
+  }
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
 }
 function aiReadSig(inp){
   const f=inp.files[0];if(!f)return;
