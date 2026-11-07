@@ -293,8 +293,19 @@ table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 .ai-gen{outline:none}
 .ai-gen:focus{outline:2px solid var(--acc);outline-offset:4px;border-radius:6px}
 .ai-main{min-width:0;overflow-x:auto}
-.ai-sheet{background:#fff;color:#1f2937;border-radius:14px;border:1px solid var(--line);padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
-.ai-gen > div, .ai-gen{font-family:'Times New Roman',Times,serif;color:#000!important}
+.ai-sheet{background:#fff;color:#000;border-radius:14px;border:1px solid var(--line);padding:20px 24px;box-shadow:0 12px 30px rgba(0,0,0,.18);width:210mm;min-height:297mm;max-width:100%;margin:0 auto;box-sizing:border-box}
+.ai-gen{font-family:'Times New Roman',Times,serif;color:#000!important;outline:none;min-height:260mm}
+.ai-gen *{color:#000!important;border-color:#000!important}
+.ai-gen table{border-collapse:collapse}
+.ai-gen td,.ai-gen th{padding:5px 8px;border:1px solid #000;font-size:12px;color:#000}
+.ai-gen input,.ai-gen button{color:#000!important}
+.ai-head-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.ai-head-row .ai-statusbar{margin-top:0}
+.ai-load-btn{display:inline-flex;align-items:center;gap:8px}
+.ai-load-btn .spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:ai-spin .8s linear infinite;display:inline-block}
+@keyframes ai-spin{to{transform:rotate(360deg)}}
+.ai-period{display:flex;gap:8px;align-items:center;font-size:11px;color:var(--mut)}
+.ai-period input[type=month]{flex:1;padding:5px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font-size:12px;outline:none}
 @page{size:A4;margin:12mm}
 @media print{
   body *{visibility:hidden}
@@ -4909,7 +4920,9 @@ let aiLLMState="idle";
 async function aiFill(){
   const c=aiSel||{};
   const fillBtn=document.getElementById("aiFillBtn");
-  if(fillBtn){fillBtn.disabled=true;fillBtn.dataset.tx=fillBtn.textContent;fillBtn.textContent="…";}
+  const inner=document.getElementById("aiFillBtnInner");
+  if(fillBtn){fillBtn.disabled=true;}
+  if(inner){inner.innerHTML='<span class="spin"></span>'+aiT().aiFill;}
   aiLLMState="loading";aiGenLoading=true;
   window._aiLoadT0=Date.now();
   if(window._aiLoadIv)clearInterval(window._aiLoadIv);
@@ -4919,11 +4932,11 @@ async function aiFill(){
   let usedLLM=false;
   try{
     const personaTxt=JSON.stringify(aiPersona);
-    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||""});
+    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||"",periodFrom:aiPersona.from||"",periodTo:aiPersona.to||""});
     const docName=aiDocType==="pfs"?"PERSONAL FINANCIAL STATEMENT":"CUSTOMS CONTINUOUS BOND APPLICATION";
     const fontLabel=aiFont.includes("Arial")?"Arial, sans-serif":aiFont.includes("Courier")?"'Courier New', monospace":"'Times New Roman', Times, serif";
-    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". STRICT STYLE: black text on pure white background, font family "+fontLabel+", no colors except black/white/light gray. Output must be 100% English, no Chinese characters. The ONLY thing that varies is the layout structure per the brief. MUST prominently include the company name, the individual/member name, EIN, and address. Include realistic, internally-consistent numbers for the persona. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
-    const prompt="Layout brief (must follow exactly, all black and white, "+fontLabel+", all English):\n"+design.layout+"\n\nCustomer data (use these exact values): "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now.";
+    const sys="You are a US customs bond document designer. Generate a COMPLETE, self-contained HTML document body (inline styles only, no <html><head><body><script> tags, no external links) for a "+docName+". STRICT STYLE: ALL text must be pure black (#000) or near-black (#111). No light gray text, no faded labels, no #999/#aaa/#ccc text. Table borders must be solid black or dark gray. Background pure white. Font family "+fontLabel+". Output must be 100% English. The ONLY thing that varies is the layout structure per the brief. MUST prominently include the company name, the individual/member name, EIN, and address. Include realistic, internally-consistent numbers for the persona. Include the statement period (from-to month/year) in the header. Output ONLY the HTML fragment starting with a top-level <div>. Do not explain.";
+    const prompt="Layout brief (must follow exactly, all black text on white, "+fontLabel+", all English):\n"+design.layout+"\n\nCustomer data (use these exact values): "+custTxt+"\nPersona: "+personaTxt+"\n\nGenerate the full "+docName+" HTML now. Keep it to ONE A4 page if possible (PFS must fit on one page).";
     const out=await callAI(sys,prompt);
     if(out){
       let body=out.trim().replace(/^```(?:html)?\s*/i,"").replace(/```\s*$/,"");
@@ -4935,7 +4948,7 @@ async function aiFill(){
   else aiLLMState="ok";
   aiGenLoading=false;
   if(window._aiLoadIv){clearInterval(window._aiLoadIv);window._aiLoadIv=null;}
-  if(fillBtn){fillBtn.disabled=false;fillBtn.textContent=fillBtn.dataset.tx||fillBtn.textContent;}
+  if(fillBtn){fillBtn.disabled=false;}
   aiSave();
   addAudit(usedLLM?"AI生成文檔":"AI本地文檔",aiDocType+" #"+(c.no||"")+" seed:"+design.layout.slice(0,20));
   toast(aiT().draftSaved);
@@ -5103,6 +5116,14 @@ R.ai=()=>{
       </div>
     </div>`:""}
     <div class="ai-side-sec">
+      <div class="ai-side-lb">${AI_IC.doc}申請期間</div>
+      <div class="ai-period">
+        <input type="month" value="${aiPersona.from||'2025-01'}" onchange="aiPersona.from=this.value;scheduleAiSave()" title="起始">
+        <span>至</span>
+        <input type="month" value="${aiPersona.to||'2025-12'}" onchange="aiPersona.to=this.value;scheduleAiSave()" title="截止">
+      </div>
+    </div>
+    <div class="ai-side-sec">
       <div class="ai-side-lb">${AI_IC.doc}${CURRENT_LANG==='en'?'Font':'字體'}</div>
       <select class="ai-select" onchange="aiSetFont(this.value)">
         <option value="t" ${aiFont.includes('Times')?'selected':''}>Times New Roman</option>
@@ -5119,7 +5140,7 @@ R.ai=()=>{
       </div>
     </div>
     <div class="ai-side-actions">
-      <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()">${AI_IC.spark}${T.aiFill}</button>
+      <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()"><span class="ai-load-btn" id="aiFillBtnInner">${AI_IC.spark}${T.aiFill}</span></button>
       <button class="btn" style="width:100%" onclick="aiReset()">${T.reset}</button>
       <button class="btn" style="width:100%" onclick="aiSave()">${AI_IC.save}${T.save}</button>
       <button class="btn" style="width:100%" onclick="aiPrintPdf()">${AI_IC.pdf}${T.export}</button>
@@ -5135,17 +5156,16 @@ R.ai=()=>{
       <div class="ai-load-time" id="aiLoadTime">0.0s</div>
     </div>`:
       aiGenHtml?`<div class="ai-gen" contenteditable="true" oninput="scheduleAiSave()">${aiGenHtml}${aiSignatureBlock(T)}</div>`:
-      `<div class="ai-empty">${AI_IC.doc}<div style="font-size:14px;font-weight:700;margin-bottom:10px">${CURRENT_LANG==='en'?'No document yet':CURRENT_LANG==='cn'?'尚未生成文档':'尚未生成文檔'}</div><div style="font-size:12px;color:var(--mut);max-width:340px;line-height:1.7;text-align:center">${CURRENT_LANG==='en'?'This document is generated with AI assistance. Due to the nature of generation, outputs may vary each time. To meet the independence requirements for application materials and reduce the risk of detection so that the recipient will not identify AI involvement, please save the file promptly if you wish to retain it.':CURRENT_LANG==='cn'?'本文件由 AI 协助生成。受生成机制影响，每次输出内容会存在差异。为满足申请材料独立性要求，降低识别风险，避免接收方察觉内容经过 AI 辅助制作，若您需要留存，请及时保存对应文件。':'本檔案由 AI 協助生成。受生成機制影響，每次輸出內容會存在差異。為滿足申請材料獨立性要求，降低識別風險，避免接收方察覺內容經 AI 輔助製作，若您有留存需求，請及時儲存對應檔案。'}</div></div>`}
-  </div>
-  <div class="ai-statusbar" style="margin-top:10px">
+      `<div class="ai-empty" style="color:#9ca3af">${AI_IC.doc}<div style="font-size:14px;font-weight:700;margin-bottom:10px">${CURRENT_LANG==='en'?'No document yet':CURRENT_LANG==='cn'?'尚未生成文档':'尚未生成文檔'}</div></div>`}
+  </div></div>`;
+  const statusBar=`<div class="ai-statusbar">
     <span class="ai-dot ${aiDirty?'dirty':''}"></span>
     <span id="aiSaveState">${aiSavedAt?T.savedAt+" "+aiSavedAt:T.notSaved}</span>
     <span style="flex:1"></span>
     <span>${T.autosave}</span>
     <span style="margin-left:16px">${aiSigData||aiDraft.sigName?T.signed:T.unsigned}</span>
-  </div></div>`;
-  const statusBar="";
-  return `<h1>${T.title}</h1><div class="ai-workspace">${left}${right}</div>${statusBar}
+  </div>`;
+  return `<div class="ai-head-row"><h1 style="margin:0">${T.title}</h1>${statusBar}</div><div class="ai-workspace">${left}${right}</div>
   <div class="ai-note">${AI_IC.spark}${T.note}</div>`;
 };
 function aiSignatureBlock(T){
