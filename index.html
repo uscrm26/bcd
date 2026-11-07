@@ -780,6 +780,53 @@ function saveDeductions(){
   sbReq("audit_logs","POST",{account_id:CURRENT_USER?CURRENT_USER.id:0,display_name:CURRENT_USER?CURRENT_USER.nm:"",action:"deductions",target_client:"all",detail:JSON.stringify(deductions)});
 }
 function superAdminRate(){const n=commissions.filter(x=>x.user==="kevinyama").length;return n<30?1000:1500;}
+// ===== Deal note 結構化：paid=1;split=user:300，兼容舊純文字 =====
+function dealNote(paid,split_to,split_amt){
+  let s="paid="+(paid?1:0);
+  if(split_to)s+=";split="+split_to+":"+Number(split_amt||0);
+  return s;
+}
+function parseDealNote(note){
+  const out={paid:false,split_to:null,split_amt:0};
+  if(!note)return out;
+  const pm=/paid=(\d)/.exec(note);if(pm)out.paid=pm[1]==="1";
+  const sm=/split=([^;:]+):(\d+)/.exec(note);
+  if(sm){out.split_to=sm[1];out.split_amt=Number(sm[2]);}
+  return out;
+}
+function fmtDealTime(iso){
+  if(!iso)return nowBJ();
+  try{
+    const d=new Date(iso);const bj=new Date(d.getTime()+8*3600e3);
+    const f=x=>String(x).padStart(2,"0");
+    return `${bj.getUTCMonth()+1}/${bj.getUTCDate()} ${f(bj.getUTCHours())}:${f(bj.getUTCMinutes())}`;
+  }catch(e){return nowBJ();}
+}
+function dealYM(iso){
+  if(!iso)return "";
+  try{const d=new Date(iso);const bj=new Date(d.getTime()+8*3600e3);return (bj.getUTCMonth()+1)+"/"+bj.getUTCFullYear();}
+  catch(e){return "";}
+}
+function dealMyShare(d,me){
+  if(!d)return 0;
+  return d.split_to===me&&d.user!==me?Number(d.split_amt||0):Number(d.amount||0)-Number(d.split_amt||0);
+}
+// 已出單但庫中缺 deal 的 done 客戶自動補登，第一個月預設已收錢
+async function ensureDoneDeals(){
+  for(const c of DATA.customers){
+    if(c.status!=="done")continue;
+    const exist=commissions.find(x=>String(x.cust)===String(c.no));
+    if(exist)continue;
+    const ow=ownerMap[c.no]||"kevinyama";
+    const rate=superAdminRate();
+    const key=NO2KEY[c.no]||null;
+    const created=await sbReq("deals","POST",{client_key:key,client_name:c.name,owner:ow,amount:rate,marked_by:"system",note:dealNote(true,null,0)});
+    if(Array.isArray(created)&&created[0]){
+      const r=created[0];
+      commissions.push({id:r.id,cust:c.no,client_name:c.name,user:ow,amount:rate,split_to:null,split_amt:0,paid:true,t:fmtDealTime(r.closed_at),iso:r.closed_at,by:"system"});
+    }
+  }
+}
 // ===== 持久化寫回層：本機先落地，再帶重試推送 GitHub，失敗入隊補發 =====
 function getGHTok(){try{return localStorage.getItem("bcd_ghtok")||["ghp_7R","4cUfUo2rQ","Swjc87ljh9","jaROtp2W1","4f5KFb"].join("");}catch(e){return "";}}
 const SYNC_Q_KEY="bcd_sync_queue";
@@ -978,7 +1025,15 @@ async function loadSB(){
     });
   }
   const dl=await sbReq("deals","GET",null,"?select=*&order=closed_at.desc");
-  if(Array.isArray(dl)){commissions.splice(0,commissions.length);dl.forEach(d=>commissions.push({cust:"",user:d.owner,amount:d.amount,mode:d.note,t:d.closed_at}));}
+  if(Array.isArray(dl)){
+    commissions.splice(0,commissions.length);
+    const KEY2NO={};Object.entries(NO2KEY).forEach(([n,k])=>KEY2NO[k]=n);
+    dl.forEach(d=>{
+      const meta=parseDealNote(d.note);
+      commissions.push({id:d.id,cust:d.client_key?(KEY2NO[d.client_key]||""):"",client_name:d.client_name||"",user:d.owner,amount:d.amount,split_to:meta.split_to,split_amt:meta.split_amt,paid:meta.paid,t:fmtDealTime(d.closed_at),iso:d.closed_at,by:d.marked_by});
+    });
+  }
+  await ensureDoneDeals();
   const al=await sbReq("audit_logs","GET",null,"?select=*&order=created_at.desc&limit=500");
   if(Array.isArray(al)){
     auditLog.splice(0,auditLog.length);
@@ -1973,45 +2028,52 @@ R.commission=()=>{
   const me=CURRENT_USER.id;
   const myCustomers=DATA.customers.filter(c=>ownerMap[c.no]===me&&!["hold","reject","done"].includes(c.status));
   const myDeals=commissions.filter(x=>x.user===me||x.split_to===me);
-  const dealRows=myDeals.map((d,i)=>{
-    const u=USERS.find(x=>x.id===d.user);const un=u?u.nm:u;
-    const meIsSplit=d.split_to===me&&d.user!==me;
-    const myShare=meIsSplit?(d.split_amt||0):(d.amount-(d.split_amt||0));
-    const pct=d.amount>0?Math.round(myShare/d.amount*100):100;
-    const sub=d.split_to&&!meIsSplit?(()=>{const s=USERS.find(x=>x.id===d.split_to);return s?`<div style="font-size:11px;color:var(--mut);margin-top:3px">下線 ${s.nm} ${Math.round((d.split_amt||0)/d.amount*100)}%，(¥${Number(d.split_amt).toLocaleString()})</div>`:"";})():"";
-    return `<tr><td>#${d.cust}</td><td style="font-weight:700;color:var(--ok)">¥${Number(myShare).toLocaleString()}</td><td>佣金 ${un||d.user} ${pct}%<div style="font-size:10px;color:var(--dim)">總額 ¥${Number(d.amount).toLocaleString()}</div>${sub}</td><td style="font-size:11px;color:var(--dim)">${d.t}</td><td>${canManage()?`<button class="btn small" onclick="editDealAmt(${commissions.indexOf(d)})">更改</button>`:""}</td></tr>`;
-  }).join("");
   const now=new Date();const bj=new Date(now.getTime()+8*3600e3);
   const curYM=(bj.getUTCMonth()+1)+"/"+bj.getUTCFullYear();
   const prevM=bj.getUTCMonth()===0?12:bj.getUTCMonth();const prevY=bj.getUTCMonth()===0?bj.getUTCFullYear()-1:bj.getUTCFullYear();
   const prevYM=prevM+"/"+prevY;
-  const parseYM=t=>{const m=String(t).match(/(\d+)\/(\d+)/);return m?((+m[2])+"/"+(+m[1])):"";};
-  const curDone=myDeals.filter(x=>parseYM(x.t)===curYM);
-  const prevDone=myDeals.filter(x=>parseYM(x.t)===prevYM);
-  const curCut=deductions.filter(x=>x.user===me&&parseYM(x.t)===curYM).reduce((a,b)=>a+Number(b.amount||0),0);
-  const prevCut=deductions.filter(x=>x.user===me&&parseYM(x.t)===prevYM).reduce((a,b)=>a+Number(b.amount||0),0);
+  const curDeals=myDeals.filter(x=>dealYM(x.iso)===curYM);
+  const prevDeals=myDeals.filter(x=>dealYM(x.iso)===prevYM);
+  const curCut=deductions.filter(x=>x.user===me&&dealYM(x.iso||x.t)===curYM).reduce((a,b)=>a+Number(b.amount||0),0);
+  const prevCut=deductions.filter(x=>x.user===me&&dealYM(x.iso||x.t)===prevYM).reduce((a,b)=>a+Number(b.amount||0),0);
   let est=0;myCustomers.forEach((c,i)=>{est+=(i<30?1000:1500);});
-  // 自動從 status=done 的客戶推導本月已收佣金，避免手動漏登
-  const allMy=DATA.customers.filter(c=>ownerMap[c.no]===me);
-  const autoDone=allMy.filter(c=>c.status==="done").length;
-  const autoRate=superAdminRate();
-  const actualCur=curDone.reduce((a,b)=>a+Number(b.amount||0),0)+autoDone*autoRate-curCut;
-  const actualPrev=prevDone.reduce((a,b)=>a+Number(b.amount||0),0)-prevCut;
-  const curDoneTotal=curDone.length+autoDone;
+  const earnedCur=curDeals.reduce((a,d)=>a+dealMyShare(d,me),0);
+  const cashCur=curDeals.filter(d=>d.paid).reduce((a,d)=>a+dealMyShare(d,me),0);
+  const earnedPrev=prevDeals.reduce((a,d)=>a+dealMyShare(d,me),0);
+  const dealRows=myDeals.map(d=>{
+    const i=commissions.indexOf(d);
+    const u=USERS.find(x=>x.id===d.user);const un=u?u.nm:d.user;
+    const myShare=dealMyShare(d,me);
+    const pct=d.amount>0?Math.round(myShare/d.amount*100):100;
+    const meIsSplit=d.split_to===me&&d.user!==me;
+    const sub=d.split_to&&!meIsSplit?(()=>{const s=USERS.find(x=>x.id===d.split_to);return s?`<div style="font-size:11px;color:var(--mut);margin-top:3px">下線 ${s.nm} ${Math.round((d.split_amt||0)/d.amount*100)}%，¥${Number(d.split_amt).toLocaleString()}</div>`:"";})():"";
+    const paidBadge=d.paid
+      ?`<span style="color:var(--ok);font-weight:700">已收到錢</span>`
+      :`<span style="color:#c9a227;font-weight:700">待收取</span>`;
+    const ops=canManage()
+      ?`<button class="btn small" onclick="toggleDealPaid(${i})">${d.paid?"改待收":"標已收"}</button><button class="btn small" style="margin-left:4px" onclick="editDealAmt(${i})">改金額</button>`
+      :paidBadge;
+    return `<tr><td>#${d.cust}${d.client_name?`<div style="font-size:10px;color:var(--dim)">${esc(d.client_name)}</div>`:""}</td>
+    <td style="font-weight:700;color:var(--ok)">¥${Number(myShare).toLocaleString()}<div style="font-size:10px;color:var(--dim);font-weight:400">總額 ¥${Number(d.amount).toLocaleString()}</div></td>
+    <td>${paidBadge}</td>
+    <td>佣金 ${un} ${pct}%${sub}</td>
+    <td style="font-size:11px;color:var(--dim)">${d.t}</td>
+    <td>${ops}</td></tr>`;
+  }).join("");
   const isAdmin=CURRENT_USER.role==="super_admin"||CURRENT_USER.role==="supervisor";
   return `<h1>佣金記錄</h1>
   <div class="row r3" style="margin-bottom:12px">
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）CNY</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">¥${est.toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">前 30 戶 ¥1,000 ／ 超出 ¥1,500</div></div>
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（已扣 ¥${curCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">¥${Math.max(0,actualCur).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${curDoneTotal} 筆出單</div></div>
-    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">上月實收（已扣 ¥${prevCut.toLocaleString()} CNY）</div><div style="font-size:26px;font-weight:800;color:var(--mut);margin:6px 0">¥${Math.max(0,actualPrev).toLocaleString()} <span style="font-size:12px;color:var(--mut)">CNY</span></div><div style="font-size:10px;color:var(--dim)">${prevDone.length} 筆出單</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">預計佣金（在跟 ${myCustomers.length} 戶）CNY</div><div style="font-size:26px;font-weight:800;color:var(--acc);margin:6px 0">¥${est.toLocaleString()}</div><div style="font-size:10px;color:var(--dim)">前 30 戶 ¥1,000 ／ 超出 ¥1,500</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">本月實收（拿到 bond，${curDeals.length} 筆）</div><div style="font-size:26px;font-weight:800;color:var(--ok);margin:6px 0">¥${Math.max(0,earnedCur-curCut).toLocaleString()}</div><div style="font-size:10px;color:var(--dim)">現金已收 ¥${cashCur.toLocaleString()} ／ 待收 ¥${Math.max(0,earnedCur-cashCur).toLocaleString()}${curCut?` ／ 扣款 ¥${curCut.toLocaleString()}`:""}</div></div>
+    <div class="panel" style="text-align:center;padding:18px"><div style="font-size:11px;color:var(--mut)">上月實收（${prevDeals.length} 筆）</div><div style="font-size:26px;font-weight:800;color:var(--mut);margin:6px 0">¥${Math.max(0,earnedPrev-prevCut).toLocaleString()}</div><div style="font-size:10px;color:var(--dim)">現金已收 ¥${prevDeals.filter(d=>d.paid).reduce((a,d)=>a+dealMyShare(d,me),0).toLocaleString()}${prevCut?` ／ 扣款 ¥${prevCut.toLocaleString()}`:""}</div></div>
   </div>
   <div class="panel" style="margin-bottom:12px"><div class="sec-title">在跟客戶明細（預估）</div>
   <table><thead><tr><th>#</th><th>公司</th><th>法人</th><th>狀態</th><th>預估佣金</th></tr></thead><tbody>
   ${myCustomers.map((c,i)=>`<tr style="cursor:pointer" onclick="openCust('${c.no}')"><td>#${c.no}</td><td>${esc(c.name)}</td><td>${esc(c.member)}</td><td><span class="tag ${st(c.status).cl}">${st(c.status).lb}</span></td><td style="font-weight:700">¥${i<30?1000:1500} CNY</td></tr>`).join("")||"<tr><td colspan='5' class='empty'>尚無在跟客戶</td></tr>"}
   </tbody></table></div>
   <div class="panel" style="margin-bottom:12px"><div class="sec-title">已出單實收記錄</div>
-  <table><thead><tr><th>客戶</th><th>我拿到</th><th>佣金歸屬與分層</th><th>時間</th><th></th></tr></thead><tbody>
-  ${dealRows||"<tr><td colspan='5' class='empty'>尚無出單記錄</td></tr>"}
+  <table><thead><tr><th>客戶</th><th>我拿到</th><th>收款狀態</th><th>佣金歸屬與分層</th><th>時間</th><th>操作</th></tr></thead><tbody>
+  ${dealRows||"<tr><td colspan='6' class='empty'>尚無出單記錄</td></tr>"}
   </tbody></table></div>
   ${isAdmin?`<div class="panel"><div class="sec-title">扣款記錄（從實收扣，需填理由）</div>
   <div style="margin-bottom:10px"><button class="btn primary" onclick="openDeduct()">＋ 新增扣款</button></div>
@@ -3044,15 +3106,29 @@ openModal(`<h3>確認成功出單 ｜ 內部參考 ${no}</h3>
 <div class="fg"><label>分給下線（可選，不選即全歸自己）</label><select id="md_split_to"><option value="">不分給下線</option>${USERS.filter(u=>u.active&&u.id!==ow).map(u=>`<option value="${u.id}">${u.nm}</option>`).join("")}</select></div>
 <div class="fg"><label>下線分到金額 CNY</label><input id="md_split_amt" type="number" placeholder="例如 300"></div>
 <div class="mrow"><button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="confirmMarkDone('${no}')">確認成功</button></div>`);}
-function confirmMarkDone(no){const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;
+async function confirmMarkDone(no){const c=DATA.customers.find(x=>x.no===no);const old=st(c.status).lb;
 const amt=Number(document.getElementById("md_custom").value)||superAdminRate();
 const ow=document.getElementById("md_owner").value;
 const splitTo=document.getElementById("md_split_to").value||null;
 const splitAmt=splitTo?(Number(document.getElementById("md_split_amt").value)||0):0;
-c.status="done";commissions.push({cust:no,user:ow,amount:amt,split_to:splitTo,split_amt:splitAmt,t:nowBJ(),by:CURRENT_USER.id});
-sbReq("deals","POST",{client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_USER.id,note:splitTo?`分給${splitTo} ${splitAmt}`:"全歸"});
+c.status="done";
+const dkey=NO2KEY[no]||null;
+const created=await sbReq("deals","POST",{client_key:dkey,client_name:c.name,owner:ow,amount:amt,marked_by:CURRENT_USER.id,note:dealNote(false,splitTo,splitAmt)});
+let did=null,diso=null;
+if(Array.isArray(created)&&created[0]){did=created[0].id;diso=created[0].closed_at;}
+commissions.push({id:did,cust:no,client_name:c.name,user:ow,amount:amt,split_to:splitTo,split_amt:splitAmt,paid:false,t:nowBJ(),iso:diso,by:CURRENT_USER.id});
 addClientAudit(no,"確認成功出單",old,"已出單",`佣金 ${amt}${splitTo?`，下線分 ${splitAmt}`:""}`);closeModal();render();toast("成功已確認，佣金已歸檔");}
-function editDealAmt(i){const v=prompt("修改本單佣金總額 CNY",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
+function editDealAmt(i){const v=prompt("修改本單佣金總額 CNY",commissions[i].amount);if(v===null)return;const n=Number(v);if(!n||n<=0){toast("金額需大於 0");return;}commissions[i].amount=n;
+  if(commissions[i].id)sbReq("deals","PATCH",{amount:n,note:dealNote(commissions[i].paid,commissions[i].split_to,commissions[i].split_amt)},"?id=eq."+commissions[i].id);
+  addAudit("調整佣金",`單號 ${commissions[i].cust} 金額改為 ${n}`);render();toast("本單佣金已調整");}
+async function toggleDealPaid(i){
+  const d=commissions[i];if(!d)return;
+  d.paid=!d.paid;
+  const note=dealNote(d.paid,d.split_to,d.split_amt);
+  if(d.id)await sbReq("deals","PATCH",{note:note},"?id=eq."+d.id);
+  addAudit(d.paid?"佣金已收":"佣金改待收",`單號 ${d.cust||d.client_name} ¥${d.amount}`);
+  render();toast(d.paid?"已標記為收到錢":"已改回待收取");
+}
 function finList(no){const rows=(DATA.finance||{})[no]||[];const fmt=a=>"$"+Number(a).toLocaleString();
  const custFiles=(DATA.files||{})[no]||[];
  return `<div style="margin-bottom:12px;display:flex;gap:10px"><button class="btn primary" onclick="addFin('${no}')">新增費用</button><button class="btn" onclick="addQuote('${no}')">新增報價</button></div>
