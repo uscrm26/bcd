@@ -1253,7 +1253,7 @@ let PREF={theme:"dark",h24:true,lang:"zh"};try{Object.assign(PREF,JSON.parse(loc
 // === 外部 AI 與語音識別接入憑證 ===
 // 新 LLM（OpenAI 相容）：方舟額度用完後切換。Key 不寫死在原始碼，公開倉庫會外洩，
 // 改由個人設定裡輸入後存 localStorage，與現有方舟 Key 同一做法。
-function getNewLLM(){return {key:localStorage.getItem("bcd_new_llm_key")||"sk-99c56f9033eda1a96cbc0b88dbb996b69ca93b2f832e0ed5",baseURL:localStorage.getItem("bcd_new_llm_base")||"https://api.lk88.ai/v1",model:localStorage.getItem("bcd_new_llm_model")||"deepseek-v4.1-flash"};}
+function getNewLLM(){return {key:localStorage.getItem("bcd_new_llm_key")||"sk-99c56f9033eda1a96cbc0b88dbb996b69ca93b2f832e0ed5",baseURL:localStorage.getItem("bcd_new_llm_base")||"https://api.lk888.ai/v1",model:localStorage.getItem("bcd_new_llm_model")||"deepseek-v4.1-flash",visionModel:localStorage.getItem("bcd_new_llm_vmodel")||"deepseek-v4-flash-vision-exp"};}
 // 豆包流式語音識別 2.0：app id 已記錄，access token 由設定輸入。
 const ASR_CFG={appid:"2b474186-dce9-45b8-912e-c70c55f889ba",token:"",endpoint:""};
 function savePref(){try{localStorage.setItem("bcd_pref",JSON.stringify(PREF));}catch(e){}}
@@ -4023,7 +4023,7 @@ async function callAIVision(sys,parts){
   // 主通道：新 LLM OpenAI 相容介面
   try{
     const ctl=new AbortController();const tm=setTimeout(()=>ctl.abort(),60000);
-    const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.model,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
+    const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.visionModel||cfg.model,max_tokens:2000,messages:[{role:"system",content:sys},{role:"user",content:parts}]}),signal:ctl.signal});
     clearTimeout(tm);
     if(r.ok){
       const j=await r.json();
