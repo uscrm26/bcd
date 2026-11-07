@@ -1151,7 +1151,7 @@ function closeModal(){document.getElementById("modal").classList.remove("show");
 function goto(v){view=v;if(v==="customer"){curCust=null;custTab="info";}document.querySelectorAll(".nav a").forEach(a=>a.classList.toggle("on",a.dataset.v===v));render();window.scrollTo(0,0);toggleSide(0);}
 document.querySelectorAll(".nav a").forEach(a=>a.onclick=()=>goto(a.dataset.v));
 function render(){
-  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty;if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")initGithubPage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();injectMicButtons();staggerCards();
+  const vt=document.getElementById("verTag");if(vt)vt.textContent=APP_VER;syncMailNotifs();const el=document.getElementById("view");el.innerHTML=R[view]?R[view]():empty();if(view==="queue"){renderCustAvatarBar();renderQueueTable();}if(view==="doc")renderDoc();if(view==="customer"&&custTab==="doc")loadStorageList(curCust);if(view==="github")initGithubPage();if(document.getElementById("aimodels_list"))loadAiModels();if(CURRENT_LANG==="cn")simplifyPage();else if(CURRENT_LANG==="en")applyLangText();updateBadges();injectMicButtons();staggerCards();
 }
 function staggerCards(){
   const cards=document.querySelectorAll("#view .doc-card, #view .panel, #view .ccard, #view .lcard");
@@ -1283,7 +1283,7 @@ sc.innerHTML=items.map((i,k)=>{const[ic,zh,en,cnm,off]=TZS[i]||TZS[0];const nm=C
 setInterval(clock,1000);clock();applyTheme();
 // bell
 let langIdx=0;
-const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 文件機器人","客戶電郵信箱","客戶郵箱設置","外聯郵箱登錄","文件中心","歸檔包","學習檔案","工作通知","系統工作記錄","佣金記錄","GitHub 備份","巡查排程","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Document Bot","Client E-mailbox ","E-mailbox Setting","Web Mailbox Login","Documents","Archives","Learning Library","Notifications","System Log","Commission","GitHub Backup","Polling Schedule","Control Panel"],sub:"US Customs Relationship Manager",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 文件机器人","客户电子信箱","客户邮箱设置","外联邮箱登录","文件中心","归档包","学习档案","工作通知","系统工作记录","佣金记录","GitHub 备份","巡查排程","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
+const LANGS={zh:{label:"繁體中文",nav:["總覽看板","客戶管理","經紀資源池","AI 文件機器人","客戶電郵信箱","客戶郵箱設置","外聯郵箱登錄","文件中心","歸檔包","學習檔案","工作通知","系統工作記錄","佣金記錄","GitHub 備份","巡查排程","系統管理"],sub:"美國進口客戶關係管理系統",logout:"登出"},en:{label:"English",nav:["Dashboard","Customers","Broker Pool","AI Document Bot","Client Mailbox","Mailbox Settings","Webmail Login","Documents","Archives","Learning Library","Notifications","System Log","Commission","GitHub Backup","Polling Schedule","Control Panel"],sub:"US Customs Importer CRM",logout:"Logout"},cn:{label:"简体中文",nav:["总览看板","客户管理","经纪资源池","AI 文件机器人","客户电子信箱","客户邮箱设置","外联邮箱登录","文件中心","归档包","学习档案","工作通知","系统工作记录","佣金记录","GitHub 备份","巡查排程","系统管理"],sub:"美国进口客户关系管理系统",logout:"登出"}};
 function toggleSide(force){const s=document.querySelector(".side");const o=document.getElementById("overlay");if(window.innerWidth>900)return;const open=s.classList.contains("open");const want=force===undefined?!open:force;if(want){s.classList.add("open");o.classList.add("show");}else{s.classList.remove("open");o.classList.remove("show");}}
 function setLang(key){const L=LANGS[key];CURRENT_LANG=key;PREF.lang=key;savePref();
 const navs=document.querySelectorAll(".nav a");L.nav.forEach((t,i)=>{const a=navs[i];if(!a)return;let tn=null;a.childNodes.forEach(n=>{if(n.nodeType===3&&n.textContent.trim())tn=tn||n;});if(tn)tn.textContent=t;});
@@ -1299,7 +1299,7 @@ if(key==="cn")simplifyPage();
 applyPerm();
 if(typeof paintFoot==="function")paintFoot();
 if(typeof setConnStatus==="function")setConnStatus("ok");
-toast("語言已切換為 "+L.label);}
+toast(CURRENT_LANG==='en'?('Language switched to '+L.label):(CURRENT_LANG==='cn'?('语言已切换为 '+L.label):('語言已切換為 '+L.label)));}
 document.addEventListener("click",e=>{const m=document.getElementById("langMenu");if(m&&!e.target.closest(".lang"))m.classList.remove("show");});
 let _oc=null;
 async function getOC(){if(_oc)return _oc;_oc=await OpenCC.Converter({from:'tw',to:'cn'});return _oc;}
@@ -2005,7 +2005,7 @@ R.dashboard=()=>{
      <div class="pay-half"><div class="ph-head"><span class="ph-lb">${paidLb}</span><span class="ph-num">${paidList.length}</span></div>${stackHTML(paidList)}</div>
    </div>`;
   const subCard=`<div class="stat ast-card"><div class="lb">${subLb}</div><div class="vl">${submittedList.length}</div><div class="tg">${subTg}</div>${stackHTML(submittedList)}</div>`;
-  return `<h1>總覽看板</h1>
+  return `<h1>${CURRENT_LANG==="en"?"Dashboard":CURRENT_LANG==="cn"?"总览看板":"總覽看板"}</h1>
   <div style="display:flex;gap:12px;align-items:stretch">
     ${issuedCard}
     <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0">
@@ -2018,12 +2018,12 @@ R.dashboard=()=>{
       </div>
     </div>
   </div>
-  <div class="sec-title">開發信漏斗</div><div class="panel">${funnel()}</div>
-  <div class="row r2"><div class="panel"><div class="sec-title">處理中狀態分佈</div>${statusPie()}</div>
+  <div class="sec-title">${CURRENT_LANG==="en"?"Outreach Funnel":CURRENT_LANG==="cn"?"开发信漏斗":"開發信漏斗"}</div><div class="panel">${funnel()}</div>
+  <div class="row r2"><div class="panel"><div class="sec-title">${CURRENT_LANG==="en"?"Open Cases by Status":CURRENT_LANG==="cn"?"处理中状态分布":"處理中狀態分佈"}</div>${statusPie()}</div>
   <div style="display:flex;flex-direction:column;gap:10px">
   <div class="panel"><div class="sec-title" style="display:flex;justify-content:space-between;align-items:center">${CURRENT_LANG==="en"?"Recent To-dos":CURRENT_LANG==="cn"?"最近待办事项":"最近待辦事項"}<button class="btn small" title="批量翻譯備註" onclick="openTranslateNotes()" style="padding:3px 10px;font-size:11px">${CURRENT_LANG==="en"?"Translate":CURRENT_LANG==="cn"?"翻译":"翻譯"}</button></div>${recentTodos()}</div>
-  <div class="panel"><div class="sec-title">郵件同步狀態</div><div style="max-height:280px;overflow-y:auto">${DATA.mailboxes.map(b=>{const mc=DATA.customers.find(c=>c.name&&b.nm&&(c.name===b.nm||c.name.startsWith(b.nm)||b.nm.startsWith(c.name)));return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${mc?`#${mc.no}`:"Kevin W"}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">已讀</span>`}</div>`;}).join("")}</div>
-  <div style="margin-top:10px"><button class="btn small" onclick="toast('手動測試連線中，15 箱全部成功')">手動測試連線</button></div></div>
+  <div class="panel"><div class="sec-title">${CURRENT_LANG==="en"?"Mailbox Sync Status":CURRENT_LANG==="cn"?"邮件同步状态":"郵件同步狀態"}</div><div style="max-height:280px;overflow-y:auto">${DATA.mailboxes.map(b=>{const mc=DATA.customers.find(c=>c.name&&b.nm&&(c.name===b.nm||c.name.startsWith(b.nm)||b.nm.startsWith(c.name)));return `<div class="mailitem"><span class="st ${b.st==="ok"?"":"fail"}"></span><span class="who" style="flex:0 0 auto;font-size:10px;font-weight:700;color:#fff;background:var(--ind);border-radius:6px;padding:2px 7px">${mc?`#${mc.no}`:"Kevin W"}</span><div class="nm">${esc(b.nm)}</div><div class="em">${esc(b.em)}</div>${b.unread?`<span class="unread">${b.unread}</span>`:`<span class="done">${CURRENT_LANG==="en"?"Read":CURRENT_LANG==="cn"?"已读":"已讀"}</span>`}</div>`;}).join("")}</div>
+  <div style="margin-top:10px"><button class="btn small" onclick="toast('${CURRENT_LANG==="en"?"Connection test: 15/15 mailboxes reachable":CURRENT_LANG==="cn"?"手动测试连线成功，15 箱全部在线":"手動測試連線成功，15 箱全部在線"}')">${CURRENT_LANG==="en"?"Test Connection":CURRENT_LANG==="cn"?"手动测试连线":"手動測試連線"}</button></div></div></div>
   </div></div>`;
 }
 function refreshCust(){const f=window._s||"";const s=window._st||"";const list=DATA.customers.filter(c=>(!f||(c.no+c.name+c.member).toLowerCase().includes(f.toLowerCase()))&&(!s||c.status===s));
@@ -3810,7 +3810,7 @@ R.polling=()=>{if(CURRENT_USER.role!=="super_admin")return `<div class="empty">�
 R.mailbox=()=>{
   if(!window._mbDraft){window._mbDraft=DATA.mailboxes.map(b=>({client:b.nm,email:b.em,owner:b.owner||""}));}
   const list=window._mbDraft;
-  return `<h1>${CURRENT_LANG==='en'?'E-mailbox Setting':CURRENT_LANG==='cn'?'客户邮箱设置':'客戶郵箱設置'}</h1>
+  return `<h1>${CURRENT_LANG==='en'?'Mailbox Settings':CURRENT_LANG==='cn'?'客户邮箱设置':'客戶郵箱設置'}</h1>
 <div class="row r2"><div class="panel"><div class="sec-title">信箱帳戶清單</div>
 <div style="font-size:12px;color:var(--mut);margin-bottom:10px">在客戶頁填好 email 後，可在此新增到巡查清單。密碼統一由 GitHub Secrets 加密管理，不在此頁顯示明文。儲存後下一次自動巡查生效。</div>
 <div id="mb_list">${list.map((b,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)">
@@ -3830,7 +3830,7 @@ R.mailbox=()=>{
 </div></div>`;}
 function addMbRow(){const c=document.getElementById("mb_new_client").value.trim();const e=document.getElementById("mb_new_email").value.trim();if(!c||!e){toast("請填客戶名稱和 email");return;}window._mbDraft.push({client:c,email:e,owner:""});render();}
 async function saveMailboxes(){const tok=localStorage.getItem("bcd_ghtok");const msg=document.getElementById("mb_msg");if(!tok){msg.textContent="請先到系統管理頁填 GitHub Token";return;}const body=JSON.stringify({server:{host:"mail.pony-it.com",imap_port:993,smtp_port:587,auth:"IMAP/SMTP 统一密码由执行环境掌握，不写入本文件"},mailboxes:window._mbDraft.map(b=>({client:b.client,email:b.email,owner:b.owner||""})),note:"由后台维护"},null,2);try{const cur=await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json"}}).then(r=>r.json());await fetch("https://api.github.com/repos/uscrm26/bcd/contents/mailboxes.json",{method:"PUT",headers:{Authorization:"token "+tok,Accept:"application/vnd.github+json","Content-Type":"application/json"},body:JSON.stringify({message:"更新信箱清單",content:btoa(unescape(encodeURIComponent(body))),sha:cur.sha})});msg.textContent="已儲存，下一次巡查生效";toast("信箱清單已更新");DATA.mailboxes=window._mbDraft.map(b=>({nm:b.client,em:b.email,st:"ok"}));}catch(e){msg.textContent="儲存失敗："+e;}}
-R.queue=()=>`<h1>${CURRENT_LANG==='en'?'Client E-mailbox':CURRENT_LANG==='cn'?'客户电子信箱':'客戶電郵信箱'}</h1>
+R.queue=()=>`<h1>${CURRENT_LANG==='en'?'Client Mailbox':CURRENT_LANG==='cn'?'客户电子信箱':'客戶電郵信箱'}</h1>
 <div style="display:flex;gap:6px;margin:10px 0" id="mailTabs">
   <button class="btn small" data-mt="inbox" onclick="setMailTab(this)">收件箱</button>
   <button class="btn small" data-mt="sent" onclick="setMailTab(this)">發件箱</button>
@@ -4839,9 +4839,9 @@ function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化�
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
 // ===== AI Document Bot 雙欄文檔工作台 =====
 const AI_DICT={
-  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"AI 人設",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 生成文檔",blank:"空白表",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"每次生成的版面都不同，送出前請人工核對",blankFill:"AI 填寫空白表格",uploadBlank:"上傳空白表格",orSystem:"或從系統檔案選擇",uploadSupp:"上傳支持文件",suppHint:"客戶資料、財務文件等",autoFill:"AI 自動填寫",noBlank:"請先上傳空白表格",analyzing:"AI 分析中",period:"申請期間",suppDocs:"支持文件（選填）"},
-  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"AI persona",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"Generate document",blank:"Blank form",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Not saved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"Every output has a fresh layout. Review before submission.",blankFill:"AI Fill Blank Form",uploadBlank:"Upload blank form",orSystem:"or pick from system files",uploadSupp:"Upload supporting docs",suppHint:"Customer records, financials, etc.",autoFill:"Auto-fill with AI",noBlank:"Upload a blank form first",analyzing:"AI analyzing",period:"Application period",suppDocs:"Supporting docs (optional)"},
-  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"AI 人设",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 生成文档",blank:"空白表",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"每次生成的版面都不同，送出前请人工核对",blankFill:"AI 填写空白表格",uploadBlank:"上传空白表格",orSystem:"或从系统档案选择",uploadSupp:"上传支持文件",suppHint:"客户资料、财务文件等",autoFill:"AI 自动填写",noBlank:"请先上传空白表格",analyzing:"AI 分析中",period:"申请期间",suppDocs:"支持文件（选填）"}
+  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"申請人資料",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 生成文檔",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"每次生成的版面都不同，送出前請人工核對",period:"申請期間",suppDocs:"支持文件（選填）",uploadSupp:"上傳支持文件",suppHint:"客戶資料、財務文件等",font:"字體",from:"起始",to:"截止"},
+  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"Applicant Details",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"Generate document",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Unsaved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"Every output has a fresh layout. Review before submission.",period:"Application period",suppDocs:"Supporting docs (optional)",uploadSupp:"Upload supporting documents",suppHint:"Client records, financial statements, etc.",font:"Font",from:"From",to:"To"},
+  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"申请人资料",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 生成文档",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"每次生成的版面都不同，送出前请人工核对",period:"申请期间",suppDocs:"支持文件（选填）",uploadSupp:"上传支持文件",suppHint:"客户资料、财务文件等",font:"字体",from:"起始",to:"截止"}
 };
 function aiT(){return AI_DICT[CURRENT_LANG==="en"?"en":CURRENT_LANG==="cn"?"cn":"zh"];}
 let aiDocType="pfs";
@@ -5123,13 +5123,13 @@ R.ai=()=>{
     <div class="ai-side-sec">
       <div class="ai-side-lb">${AI_IC.doc}${T.period}</div>
       <div class="ai-period">
-        <input type="month" value="${aiPersona.from||'2025-01'}" onchange="aiPersona.from=this.value;scheduleAiSave()" title="起始">
-        <span>至</span>
-        <input type="month" value="${aiPersona.to||'2025-12'}" onchange="aiPersona.to=this.value;scheduleAiSave()" title="截止">
+        <input type="month" value="${aiPersona.from||'2025-01'}" onchange="aiPersona.from=this.value;scheduleAiSave()" title="${AI_IC.from||'From'}">
+        <span>${CURRENT_LANG==='en'?'–':(CURRENT_LANG==='cn'?'至':'至')}</span>
+        <input type="month" value="${aiPersona.to||'2025-12'}" onchange="aiPersona.to=this.value;scheduleAiSave()" title="${AI_IC.to||'To'}">
       </div>
     </div>`:""}
     <div class="ai-side-sec">
-      <div class="ai-side-lb">${AI_IC.doc}${CURRENT_LANG==='en'?'Font':'字體'}</div>
+      <div class="ai-side-lb">${AI_IC.doc}${T.font}</div>
       <select class="ai-select" onchange="aiSetFont(this.value)">
         <option value="t" ${aiFont.includes('Times')?'selected':''}>Times New Roman</option>
         <option value="a" ${aiFont.includes('Arial')?'selected':''}>Arial</option>
