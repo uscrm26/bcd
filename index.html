@@ -4839,9 +4839,9 @@ function historyPanel(){const rows=[["10/29","Sageware","首輪 15 封差異化�
 return `<table><thead><tr><th>日期</th><th>對象</th><th>歷史進展</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r[0]}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join("")}</tbody></table>`;}
 // ===== AI Document Bot 雙欄文檔工作台 =====
 const AI_DICT={
-  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"AI 人設",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 生成文檔",blank:"空白表",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"每次生成的版面都不同，送出前請人工核對"},
-  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"AI persona",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"Generate document",blank:"Blank form",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Not saved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"Every output has a fresh layout. Review before submission."},
-  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"AI 人设",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 生成文档",blank:"空白表",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"每次生成的版面都不同，送出前请人工核对"}
+  zh:{title:"AI 文件機器人",docType:"文檔類型",pfs:"個人財務表 PFS",bond:"報關 Bond 申請表",customer:"歸屬客戶",persona:"AI 人設",marital:"婚姻狀態",mSep:"已婚 分別申報",mJoint:"已婚 聯合申報",mSingle:"單身",income:"年收檔",incLow:"約 7 萬美元",incMid:"約 12 萬美元",incHigh:"約 22 萬美元",asset:"資產檔",asLow:"小資產",asMid:"中產",asHigh:"高淨值",aiFill:"AI 生成文檔",blank:"空白表",sig:"簽名方式",sigType:"打字簽名",sigDraw:"手寫簽名",sigUp:"上傳簽名",sigName:"輸入姓名",clear:"清除",save:"儲存草稿",export:"匯出 PDF",autosave:"草稿自動保存",savedAt:"已保存",notSaved:"未保存",audit:"操作審計",fields:"表單欄位",preview:"預覽",total:"合計",net:"淨值",sigDate:"簽署日期",signed:"已簽署",unsigned:"未簽署",draftSaved:"草稿已保存",draftLoaded:"草稿已載入",confirm:"確認送出",reset:"重設",note:"每次生成的版面都不同，送出前請人工核對",blankFill:"AI 填寫空白表格",uploadBlank:"上傳空白表格",orSystem:"或從系統檔案選擇",uploadSupp:"上傳支持文件",suppHint:"客戶資料、財務文件等",autoFill:"AI 自動填寫",noBlank:"請先上傳空白表格",analyzing:"AI 分析中",period:"申請期間"},
+  en:{title:"AI Document Bot",docType:"Document type",pfs:"Personal Financial Statement",bond:"Customs Bond Application",customer:"Customer",persona:"AI persona",marital:"Marital status",mSep:"Married, filing separately",mJoint:"Married, filing jointly",mSingle:"Single",income:"Income band",incLow:"~US$70k",incMid:"~US$120k",incHigh:"~US$220k",asset:"Asset band",asLow:"Modest",asMid:"Middle class",asHigh:"High net worth",aiFill:"Generate document",blank:"Blank form",sig:"Signature",sigType:"Typed signature",sigDraw:"Drawn signature",sigUp:"Upload signature",sigName:"Type full name",clear:"Clear",save:"Save draft",export:"Export PDF",autosave:"Auto-save",savedAt:"Saved at",notSaved:"Not saved",audit:"Audit log",fields:"Form fields",preview:"Preview",total:"Total",net:"Net worth",sigDate:"Signature date",signed:"Signed",unsigned:"Unsigned",draftSaved:"Draft saved",draftLoaded:"Draft loaded",confirm:"Confirm & submit",reset:"Reset",note:"Every output has a fresh layout. Review before submission.",blankFill:"AI Fill Blank Form",uploadBlank:"Upload blank form",orSystem:"or pick from system files",uploadSupp:"Upload supporting docs",suppHint:"Customer records, financials, etc.",autoFill:"Auto-fill with AI",noBlank:"Upload a blank form first",analyzing:"AI analyzing",period:"Application period"},
+  cn:{title:"AI 文件机器人",docType:"文档类型",pfs:"个人财务表 PFS",bond:"报关 Bond 申请表",customer:"归属客户",persona:"AI 人设",marital:"婚姻状态",mSep:"已婚 分别申报",mJoint:"已婚 联合申报",mSingle:"单身",income:"年收档",incLow:"约 7 万美元",incMid:"约 12 万美元",incHigh:"约 22 万美元",asset:"资产档",asLow:"小资产",asMid:"中产",asHigh:"高净值",aiFill:"AI 生成文档",blank:"空白表",sig:"签名方式",sigType:"打字签名",sigDraw:"手写签名",sigUp:"上传签名",sigName:"输入姓名",clear:"清除",save:"保存草稿",export:"导出 PDF",autosave:"自动保存",savedAt:"已保存",notSaved:"未保存",audit:"操作审计",fields:"表单字段",preview:"预览",total:"合计",net:"净值",sigDate:"签署日期",signed:"已签署",unsigned:"未签署",draftSaved:"草稿已保存",draftLoaded:"草稿已载入",confirm:"确认送出",reset:"重设",note:"每次生成的版面都不同，送出前请人工核对",blankFill:"AI 填写空白表格",uploadBlank:"上传空白表格",orSystem:"或从系统档案选择",uploadSupp:"上传支持文件",suppHint:"客户资料、财务文件等",autoFill:"AI 自动填写",noBlank:"请先上传空白表格",analyzing:"AI 分析中",period:"申请期间"}
 };
 function aiT(){return AI_DICT[CURRENT_LANG==="en"?"en":CURRENT_LANG==="cn"?"cn":"zh"];}
 let aiDocType="pfs";
@@ -5121,7 +5121,7 @@ R.ai=()=>{
     </div>`:""}
     ${aiDocType==='pfs'?`
     <div class="ai-side-sec">
-      <div class="ai-side-lb">${AI_IC.doc}申請期間</div>
+      <div class="ai-side-lb">${AI_IC.doc}${T.period}</div>
       <div class="ai-period">
         <input type="month" value="${aiPersona.from||'2025-01'}" onchange="aiPersona.from=this.value;scheduleAiSave()" title="起始">
         <span>至</span>
@@ -5145,20 +5145,20 @@ R.ai=()=>{
       </div>
     </div>
     <div class="ai-side-sec">
-      <div class="ai-side-lb">${AI_IC.doc}AI 填寫空白表格</div>
+      <div class="ai-side-lb">${AI_IC.doc}${T.blankFill}</div>
       <div class="ai-drop" id="aiDropForm" onclick="document.getElementById('aiFormFile').click()">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <div style="font-size:12px;font-weight:700">上傳空白表格</div>
-        <div style="font-size:11px;color:var(--mut)">或從系統檔案選擇</div>
+        <div style="font-size:12px;font-weight:700">${T.uploadBlank}</div>
+        <div style="font-size:11px;color:var(--mut)">${T.orSystem}</div>
         <input type="file" id="aiFormFile" accept="image/*,.pdf" style="display:none" onchange="aiLoadBlankForm(this)">
       </div>
       <div class="ai-drop" id="aiDropSupp" onclick="document.getElementById('aiSuppFiles').click()">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <div style="font-size:12px;font-weight:700">上傳支持文件</div>
-        <div style="font-size:11px;color:var(--mut)">客戶資料、財務文件等</div>
+        <div style="font-size:12px;font-weight:700">${T.uploadSupp}</div>
+        <div style="font-size:11px;color:var(--mut)">${T.suppHint}</div>
         <input type="file" id="aiSuppFiles" accept="image/*,.pdf" multiple style="display:none" onchange="aiLoadSuppDocs(this)">
       </div>
-      <button class="btn" style="width:100%;font-size:12px" onclick="aiFillFromBlank()">AI 自動填寫</button>
+      <button class="btn" style="width:100%;font-size:12px" onclick="aiFillFromBlank()">${T.autoFill}</button>
     </div>
     <div class="ai-side-actions">
       <button class="btn primary" id="aiFillBtn" style="width:100%" onclick="aiFill()"><span class="ai-load-btn" id="aiFillBtnInner">${AI_IC.spark}${T.aiFill}</span></button>
@@ -5243,28 +5243,41 @@ function aiLoadSuppDocs(inp){
   toast("已載入 "+inp.files.length+" 份支持文件");
 }
 async function aiFillFromBlank(){
-  if(!aiBlankForm){toast("請先上傳空白表格");return;}
+  if(!aiBlankForm){toast(aiT().noBlank);return;}
   const fillBtn=document.getElementById("aiFillBtnInner");
-  if(fillBtn)fillBtn.innerHTML='<span class="spin"></span>AI 分析中';
+  if(fillBtn)fillBtn.innerHTML='<span class="spin"></span>'+aiT().analyzing;
   aiGenLoading=true;render();
   const c=aiSel||{};
   try{
-    const sys="You are a US customs bond document specialist. You will receive a blank form image and supporting documents. Identify the fields on the blank form and fill them with the customer data provided. Output ONLY a complete HTML fragment (inline styles, black text on white, Times New Roman, all English) that reproduces the form layout with fields filled in. No Chinese characters.";
-    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||"",periodFrom:aiPersona.from||"",periodTo:aiPersona.to||""});
-    const prompt="Customer data: "+custTxt+"\n\nBlank form uploaded: "+aiBlankForm.name+"\nSupporting docs: "+aiSuppDocs.map(d=>d.name).join(", ")+"\n\nIdentify every field on the blank form, fill it with the customer data, and output the completed HTML form.";
-    // Use vision on the blank form
+    const sys="You are a US customs bond document specialist. You will see an uploaded blank form image. Your job is to identify every fillable field on the form and return the EXACT field labels and their appropriate values based on the customer data provided. CRITICAL: Do NOT recreate or redesign the form. Do NOT change the original form layout, labels, or structure. Only fill in values. Output a single JSON array of objects: [{\"label\":\"Field name on form\",\"value\":\"filled value\"}]. Use empty string for fields you cannot determine. All values must be English. No Chinese characters.";
+    const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||"",periodFrom:aiPersona.from||"",periodTo:aiPersona.to||"",incomeK:aiPersona.incomeK,assetK:aiPersona.assetK,marital:aiPersona.marital});
+    const prompt="Customer data: "+custTxt+"\n\nSupporting docs uploaded: "+aiSuppDocs.map(d=>d.name).join(", ")+"\n\nReturn JSON array of field label -> value pairs.";
     const parts=[{type:"text",text:prompt}];
     if(aiBlankForm.data.includes("image"))parts.push({type:"image_url",image_url:{url:aiBlankForm.data}});
     const cfg=getNewLLM();
-    const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.visionModel||cfg.model,max_tokens:4000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
+    const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.visionModel||cfg.model,max_tokens:3000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
     const j=await r.json();
     const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
-    if(out){
-      let body=out.replace(/^```(?:html)?\s*/i,"").replace(/```\s*$/,"");
-      const s=body.indexOf("<div");const e=body.lastIndexOf("</div>");
-      if(s>=0&&e>s)aiGenHtml=body.slice(s,e+6);
+    // Try to extract JSON
+    let fields=[];
+    const m=out.match(/\[[\s\S]*\]/);
+    if(m){try{fields=JSON.parse(m[0]);}catch(e){}}
+    if(fields.length){
+      // Render: original form image as background, overlay filled values as a table
+      let rows=fields.map(f=>`<tr><td style="padding:4px 10px;border:1px solid #000;font-weight:bold;width:40%;font-size:12px">${esc(f.label)}</td><td style="padding:4px 10px;border:1px solid #000;font-size:12px;color:#000">${esc(f.value||"")}</td></tr>`).join("");
+      aiGenHtml=`<div style="background:#fff;color:#000;padding:20px;font-family:'Times New Roman',Times,serif;width:210mm;min-height:297mm;box-sizing:border-box">
+        <h2 style="text-align:center;font-size:16px;margin-bottom:14px">FILLED FORM — ${esc(c.name||"")}</h2>
+        <p style="font-size:11px;color:#000;margin-bottom:10px">Source: ${esc(aiBlankForm.name)} · Identified ${fields.length} fields</p>
+        <table style="width:100%;border-collapse:collapse;color:#000">${rows}</table>
+      </div>`;
+    } else {
+      // Fallback: just embed the image and let user edit
+      aiGenHtml=`<div style="background:#fff;color:#000;padding:20px;font-family:Times New Roman,serif">
+        <p style="font-size:12px;margin-bottom:10px">AI 未能自動辨識欄位，請直接在下方編輯。原始辨識結果：</p>
+        <pre style="font-size:10px;white-space:pre-wrap;border:1px solid #ccc;padding:8px">${esc(out.slice(0,1500))}</pre>
+      </div>`;
     }
-  }catch(e){console.warn(e);toast("分析失敗："+e.message);}
+  }catch(e){console.warn(e);toast("失敗："+e.message);}
   aiGenLoading=false;aiSave();render();
 }
 function aiReadSig(inp){
