@@ -282,9 +282,17 @@ table td.num,table th.num{text-align:right;font-variant-numeric:tabular-nums}
 @keyframes aiPulse{50%{opacity:.35}}
 .ai-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:80px 20px;color:var(--mut);text-align:center;min-height:420px}
 .ai-empty svg{opacity:.4}
+@keyframes aiSpin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes aiPulse{0%,100%{opacity:.3;transform:scale(.85)}50%{opacity:1;transform:scale(1.1)}}
+@keyframes aiBar{0%{width:8%}50%{width:72%}100%{width:96%}}
+.ai-load-spin{animation:aiSpin 1.6s linear infinite;color:var(--fg)}
+.ai-load-spark{animation:aiPulse 1.2s ease-in-out infinite;color:var(--fg)}
+.ai-prog{width:220px;height:4px;background:var(--bg2);border-radius:99px;overflow:hidden;margin-top:6px}
+.ai-prog>i{display:block;height:100%;background:var(--fg);border-radius:99px;animation:aiBar 2.4s ease-in-out infinite}
+.ai-load-time{font-size:11px;color:var(--mut);margin-top:4px;font-variant-numeric:tabular-nums}
 .ai-gen{outline:none}
 .ai-gen:focus{outline:2px solid var(--acc);outline-offset:4px;border-radius:6px}
-.ai-main{min-width:0}
+.ai-main{min-width:0;overflow-x:auto}
 .ai-sheet{background:#fff;color:#1f2937;border-radius:14px;border:1px solid var(--line);padding:28px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
 .ai-gen > div, .ai-gen{font-family:'Times New Roman',Times,serif;color:#000!important}
 @page{size:A4;margin:12mm}
@@ -4840,7 +4848,7 @@ const AI_DICT={
 function aiT(){return AI_DICT[CURRENT_LANG==="en"?"en":CURRENT_LANG==="cn"?"cn":"zh"];}
 let aiDocType="pfs";
 let aiSel=(DATA.customers&&DATA.customers[0])||{};
-let aiPersona={marital:"married_sep",income:"mid",asset:"mid"};
+let aiPersona={marital:"married_sep",incomeK:200,assetK:500};
 let aiSigType="type";
 let aiSigData="";
 let aiDraft={};
@@ -4910,18 +4918,20 @@ const AI_DESIGNS=[
 ];
 function aiPickDesign(){return AI_DESIGNS[Math.floor(Math.random()*AI_DESIGNS.length)];}
 function aiLocalFill(){
-  const c=aiSel||{};
-  const inc=aiPersona.income==="low"?70:aiPersona.income==="high"?220:125;
-  const scale=aiPersona.income==="low"?.4:aiPersona.income==="high"?2.2:1;
-  aiLocalFill._inc=inc;aiLocalFill._scale=scale;
-  aiDraft.sigName=c.member||"";
+  aiLocalFill._inc=aiPersona.incomeK||200;
+  aiLocalFill._scale=(aiPersona.assetK||500)/500;
+  aiDraft.sigName=(aiSel||{}).member||"";
 }
 let aiLLMState="idle";
 async function aiFill(){
   const c=aiSel||{};
   const fillBtn=document.getElementById("aiFillBtn");
   if(fillBtn){fillBtn.disabled=true;fillBtn.dataset.tx=fillBtn.textContent;fillBtn.textContent="…";}
-  aiLLMState="loading";aiGenLoading=true;render();
+  aiLLMState="loading";aiGenLoading=true;
+  window._aiLoadT0=Date.now();
+  if(window._aiLoadIv)clearInterval(window._aiLoadIv);
+  window._aiLoadIv=setInterval(()=>{const el=document.getElementById('aiLoadTime');if(el)el.textContent=((Date.now()-window._aiLoadT0)/1000).toFixed(1)+'s';},100);
+  render();
   const design=aiPickDesign();aiDesignSeed=JSON.stringify(design);
   let usedLLM=false;
   try{
@@ -4941,6 +4951,7 @@ async function aiFill(){
   if(!usedLLM){aiGenHtml=aiLocalDocHTML(c,design);aiLLMState="fallback";}
   else aiLLMState="ok";
   aiGenLoading=false;
+  if(window._aiLoadIv){clearInterval(window._aiLoadIv);window._aiLoadIv=null;}
   if(fillBtn){fillBtn.disabled=false;fillBtn.textContent=fillBtn.dataset.tx||fillBtn.textContent;}
   aiSave();
   addAudit(usedLLM?"AI生成文檔":"AI本地文檔",aiDocType+" #"+(c.no||"")+" seed:"+design.layout.slice(0,20));
@@ -4948,14 +4959,8 @@ async function aiFill(){
   render();
 }
 function aiLocalDocHTML(c,d){
-  const inc=aiLocalFill._inc||125, scale=aiLocalFill._scale||1;
-  const cash=Math.round(25*scale)*1000,stocks=Math.round(35*scale)*1000,home=Math.round(420*scale)*1000,ppe=Math.round(30*scale)*1000,ira=Math.round(65*scale)*1000;
-  const credit=Math.round(7*scale)*1000,mort=Math.round(265*scale)*1000;
-  const tA=cash+stocks+home+ppe+ira,tL=credit+mort;
-  const F=aiFont;
-  const B='#000';
-  const items=[["Cash on hand & checking",cash],["Stocks, bonds & mutual funds",stocks],["Primary residence",home],["Personal property & vehicles",ppe],["Retirement accounts (IRA/401k)",ira]];
-  const tableRows=items.map(r=>`<tr><td style="padding:6px 4px;border-bottom:1px solid ${B};color:${B};font-size:13px">${r[0]}</td><td style="padding:6px 4px;border-bottom:1px solid ${B};text-align:right;color:${B};font-size:13px">$${r[1].toLocaleString()}</td></tr>`).join("");
+  const incK=aiLocalFill._inc||200, scale=aiLocalFill._scale||1;
+  const F=aiFont, B='#000';
   const title=aiDocType==='pfs'?'Personal Financial Statement':'Customs Continuous Bond Application';
   if(aiDocType==='bond'){
     const fld=(l,v)=>`<tr><td style="padding:7px 6px;border:1px solid ${B};width:38%;font-weight:bold;font-size:12px;color:${B}">${l}</td><td style="padding:7px 6px;border:1px solid ${B};color:${B};font-size:13px">${v||"—"}</td></tr>`;
@@ -4980,23 +4985,70 @@ function aiLocalDocHTML(c,d){
       <p style="margin-top:26px;font-size:10px;color:${B}">Prepared ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})} by UCRM. Figures are estimates for underwriting review.</p>
     </div>`;
   }
+  // === Real PFS: assets, liabilities, income, net worth ===
+  const k=n=>Math.round(n*scale)*1000;
+  const assets=[
+    ["Cash on hand and in banks", k(25)],
+    ["Savings / money market accounts", k(30)],
+    ["Certificates of deposit", k(15)],
+    ["Stocks, bonds & mutual funds", k(45)],
+    ["Retirement accounts (IRA / 401k)", k(80)],
+    ["Primary residence (market value)", k(380)],
+    ["Other real estate", k(0)],
+    ["Automobiles (market value)", k(35)],
+    ["Personal property & furnishings", k(25)],
+    ["Life insurance cash value", k(12)],
+    ["Other assets", k(8)]
+  ];
+  const liab=[
+    ["Credit card balances", k(6)],
+    ["Auto loans", k(18)],
+    ["Mortgage on primary residence", k(240)],
+    ["Student loans", k(12)],
+    ["Other loans / notes payable", k(8)],
+    ["Unpaid taxes", k(3)]
+  ];
+  const income=[
+    ["Salary / wages / bonuses", k(incK)],
+    ["Interest & dividends", k(4)],
+    ["Rental / other income", k(8)]
+  ];
+  const tA=assets.reduce((a,r)=>a+r[1],0);
+  const tL=liab.reduce((a,r)=>a+r[1],0);
+  const nw=tA-tL;
+  const tI=income.reduce((a,r)=>a+r[1],0);
+  const row=(label,amt,bold)=>`<tr><td style="padding:5px 8px;border-bottom:1px solid #ccc;color:${B};font-size:12px;${bold?'font-weight:bold':''}">${label}</td><td style="padding:5px 8px;border-bottom:1px solid #ccc;text-align:right;color:${B};font-size:12px;${bold?'font-weight:bold':''}">$${amt.toLocaleString()}</td></tr>`;
   return `<div style="background:#fff;color:${B};padding:40px;font-family:${F};width:210mm;min-height:297mm;margin:0 auto;font-size:13px">
-    <div style="text-align:center;margin-bottom:22px">
-      <h2 style="margin:0 0 4px;font-size:18px;text-decoration:underline;color:${B}">${title}</h2>
-      <div style="font-size:14px;font-weight:bold;margin-top:10px;color:${B}">${esc(c.name||'')}</div>
-      <div style="font-size:12px;color:${B}">${esc(c.member||'')}</div>
-      <div style="font-size:11px;color:${B}">${esc(c.ein?'EIN '+c.ein:'')}${c.address?'<br>'+esc(c.address):''}</div>
+    <div style="text-align:center;margin-bottom:18px">
+      <h2 style="margin:0 0 4px;font-size:20px;text-decoration:underline;color:${B};letter-spacing:1px">PERSONAL FINANCIAL STATEMENT</h2>
+      <div style="font-size:11px;color:${B};letter-spacing:1px">STATEMENT OF FINANCIAL CONDITION</div>
     </div>
-    <div style="display:flex;justify-content:space-between;border-top:2px solid ${B};border-bottom:1px solid ${B};padding:10px 0;margin-bottom:14px;color:${B}">
-      <div><div style="font-size:10px">TOTAL ASSETS</div><div style="font-size:20px;font-weight:bold">$${tA.toLocaleString()}</div></div>
-      <div style="text-align:right"><div style="font-size:10px">TOTAL LIABILITIES</div><div style="font-size:20px;font-weight:bold">$${tL.toLocaleString()}</div></div>
-      <div style="text-align:right"><div style="font-size:10px">NET WORTH</div><div style="font-size:20px;font-weight:bold">$${(tA-tL).toLocaleString()}</div></div>
-    </div>
-    <table style="width:100%;border-collapse:collapse;font-size:12px;color:${B}">
-      <tr><th style="text-align:left;padding:6px 4px;border-bottom:2px solid ${B};color:${B}">ASSET</th><th style="text-align:right;padding:6px 4px;border-bottom:2px solid ${B};color:${B}">AMOUNT</th></tr>
-      ${tableRows}
+    <table style="width:100%;border-collapse:collapse;margin-bottom:16px;color:${B}">
+      <tr><td style="padding:4px 8px;font-size:12px;font-weight:bold;width:25%">Name:</td><td style="padding:4px 8px;font-size:12px">${esc(c.member||"")}</td>
+          <td style="padding:4px 8px;font-size:12px;font-weight:bold;width:15%">Date:</td><td style="padding:4px 8px;font-size:12px">${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}</td></tr>
+      <tr><td style="padding:4px 8px;font-size:12px;font-weight:bold">Company:</td><td style="padding:4px 8px;font-size:12px">${esc(c.name||"")}</td>
+          <td style="padding:4px 8px;font-size:12px;font-weight:bold">EIN:</td><td style="padding:4px 8px;font-size:12px">${esc(c.ein||"")}</td></tr>
+      <tr><td style="padding:4px 8px;font-size:12px;font-weight:bold">Address:</td><td style="padding:4px 8px;font-size:12px" colspan="3">${esc(c.address||"")}</td></tr>
     </table>
-    <p style="margin-top:22px;font-size:10px;color:${B}">As of ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})}. Figures are estimates for underwriting review.</p>
+    <h3 style="font-size:13px;border-bottom:2px solid ${B};padding-bottom:3px;margin:14px 0 8px;color:${B}">ASSETS</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:10px">
+      ${assets.map(r=>row(r[0],r[1])).join("")}
+      ${row("TOTAL ASSETS",tA,true)}
+    </table>
+    <h3 style="font-size:13px;border-bottom:2px solid ${B};padding-bottom:3px;margin:14px 0 8px;color:${B}">LIABILITIES</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:10px">
+      ${liab.map(r=>row(r[0],r[1])).join("")}
+      ${row("TOTAL LIABILITIES",tL,true)}
+    </table>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;border-top:2px solid ${B};border-bottom:2px solid ${B}">
+      <tr><td style="padding:10px 8px;font-size:13px;font-weight:bold;color:${B}">NET WORTH (Assets minus Liabilities)</td><td style="padding:10px 8px;text-align:right;font-size:16px;font-weight:bold;color:${B}">$${nw.toLocaleString()}</td></tr>
+    </table>
+    <h3 style="font-size:13px;border-bottom:2px solid ${B};padding-bottom:3px;margin:14px 0 8px;color:${B}">ANNUAL INCOME</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:10px">
+      ${income.map(r=>row(r[0],r[1])).join("")}
+      ${row("TOTAL ANNUAL INCOME",tI,true)}
+    </table>
+    <p style="font-size:9px;color:#666;margin-top:20px">The undersigned represents that the above statement is true and correct to the best of their knowledge. Figures are estimates prepared for underwriting review.</p>
   </div>`;
 }
 function aiReset(){aiDraft=aiBlankDraft();aiGenHtml="";aiDesignSeed="";aiSave();render();}
@@ -5057,17 +5109,15 @@ R.ai=()=>{
         <option value="single" ${aiPersona.marital==='single'?'selected':''}>${T.mSingle}</option>
       </select>
       <label class="ai-fl">${T.income}</label>
-      <select class="ai-select" onchange="aiPersona.income=this.value;scheduleAiSave()">
-        <option value="low" ${aiPersona.income==='low'?'selected':''}>${T.incLow}</option>
-        <option value="mid" ${aiPersona.income==='mid'?'selected':''}>${T.incMid}</option>
-        <option value="high" ${aiPersona.income==='high'?'selected':''}>${T.incHigh}</option>
-      </select>
+      <div style="padding:4px 2px">
+        <input type="range" min="50" max="500" step="10" value="${aiPersona.incomeK||200}" oninput="aiPersona.incomeK=Number(this.value);document.getElementById('aiIncVal').textContent='$'+Number(this.value).toLocaleString()+'k';scheduleAiSave()" style="width:100%;accent-color:#475569">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:2px"><span>$50k</span><span id="aiIncVal" style="font-weight:700;color:var(--fg)">$${(aiPersona.incomeK||200).toLocaleString()}k</span><span>$500k</span></div>
+      </div>
       <label class="ai-fl">${T.asset}</label>
-      <select class="ai-select" onchange="aiPersona.asset=this.value;scheduleAiSave()">
-        <option value="low" ${aiPersona.asset==='low'?'selected':''}>${T.asLow}</option>
-        <option value="mid" ${aiPersona.asset==='mid'?'selected':''}>${T.asMid}</option>
-        <option value="high" ${aiPersona.asset==='high'?'selected':''}>${T.asHigh}</option>
-      </select>
+      <div style="padding:4px 2px">
+        <input type="range" min="100" max="2000" step="50" value="${aiPersona.assetK||500}" oninput="aiPersona.assetK=Number(this.value);document.getElementById('aiAsVal').textContent='$'+Number(this.value).toLocaleString()+'k';scheduleAiSave()" style="width:100%;accent-color:#475569">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:2px"><span>$100k</span><span id="aiAsVal" style="font-weight:700;color:var(--fg)">$${(aiPersona.assetK||500).toLocaleString()}k</span><span>$2M</span></div>
+      </div>
     </div>`:""}
     <div class="ai-side-sec">
       <div class="ai-side-lb">${AI_IC.doc}${CURRENT_LANG==='en'?'Font':'字體'}</div>
@@ -5094,17 +5144,24 @@ R.ai=()=>{
     </div>
   </div>`;
   const right=`<div class="ai-main"><div id="aiDocSheet" class="ai-sheet ai-sheet-gen">
-    ${aiGenLoading?`<div class="ai-empty">${AI_IC.spark}<div>${CURRENT_LANG==='en'?'AI is designing a new document…':'AI 正在設計全新文檔…'}</div></div>`:
+    ${aiGenLoading?`<div class="ai-empty">
+      <svg class="ai-load-spin" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12a9 9 0 1 1-6.2-8.56"/></svg>
+      <svg class="ai-load-spark" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="margin-top:-22px"><path d="M12 3l1.9 5.6L19.5 10l-5.6 1.9L12 17.5l-1.9-5.6L4.5 10l5.6-1.4z"/></svg>
+      <div style="font-size:13px;font-weight:600">${CURRENT_LANG==='en'?'AI is designing a new document…':'AI 正在設計全新文檔…'}</div>
+      <div class="ai-prog"><i></i></div>
+      <div class="ai-load-time" id="aiLoadTime">0.0s</div>
+    </div>`:
       aiGenHtml?`<div class="ai-gen" contenteditable="true" oninput="scheduleAiSave()">${aiGenHtml}${aiSignatureBlock(T)}</div>`:
       `<div class="ai-empty">${AI_IC.doc}<div style="font-size:14px;font-weight:700;margin-bottom:10px">${CURRENT_LANG==='en'?'No document yet':CURRENT_LANG==='cn'?'尚未生成文档':'尚未生成文檔'}</div><div style="font-size:12px;color:var(--mut);max-width:340px;line-height:1.7;text-align:center">${CURRENT_LANG==='en'?'This document is generated with AI assistance. Due to the nature of generation, outputs may vary each time. To meet the independence requirements for application materials and reduce the risk of detection so that the recipient will not identify AI involvement, please save the file promptly if you wish to retain it.':CURRENT_LANG==='cn'?'本文件由 AI 协助生成。受生成机制影响，每次输出内容会存在差异。为满足申请材料独立性要求，降低识别风险，避免接收方察觉内容经过 AI 辅助制作，若您需要留存，请及时保存对应文件。':'本檔案由 AI 協助生成。受生成機制影響，每次輸出內容會存在差異。為滿足申請材料獨立性要求，降低識別風險，避免接收方察覺內容經 AI 輔助製作，若您有留存需求，請及時儲存對應檔案。'}</div></div>`}
-  </div></div>`;
-  const statusBar=`<div class="ai-statusbar">
+  </div>
+  <div class="ai-statusbar" style="margin-top:10px">
     <span class="ai-dot ${aiDirty?'dirty':''}"></span>
     <span id="aiSaveState">${aiSavedAt?T.savedAt+" "+aiSavedAt:T.notSaved}</span>
     <span style="flex:1"></span>
     <span>${T.autosave}</span>
     <span style="margin-left:16px">${aiSigData||aiDraft.sigName?T.signed:T.unsigned}</span>
-  </div>`;
+  </div></div>`;
+  const statusBar="";
   return `<h1>${T.title}</h1><div class="ai-workspace">${left}${right}</div>${statusBar}
   <div class="ai-note">${AI_IC.spark}${T.note}</div>`;
 };
