@@ -5249,32 +5249,33 @@ async function aiFillFromBlank(){
   aiGenLoading=true;render();
   const c=aiSel||{};
   try{
-    const sys="You are a US customs bond document specialist. You will see an uploaded blank form image. Your job is to identify every fillable field on the form and return the EXACT field labels and their appropriate values based on the customer data provided. CRITICAL: Do NOT recreate or redesign the form. Do NOT change the original form layout, labels, or structure. Only fill in values. Output a single JSON array of objects: [{\"label\":\"Field name on form\",\"value\":\"filled value\"}]. Use empty string for fields you cannot determine. All values must be English. No Chinese characters.";
+    const sys="You are a US customs bond document specialist. You will see an uploaded blank form image. Identify every fillable field (blank line, blank box, empty space next to a label). For each field, return:\n- label: the field label visible on the form (e.g. 'Company Name', 'EIN', 'Address')\n- value: the filled value from customer data (English only)\n- x_pct: horizontal position as a percentage of image width (0-100), where the value should be WRITTEN on the blank line after the label\n- y_pct: vertical position as a percentage of image height (0-100)\n\nCRITICAL: Do NOT recreate or redesign the form. Do NOT change original labels. We will render the original image as background and overlay your text at (x_pct, y_pct). Pick coordinates so the text sits exactly on the blank line after the label. Output ONLY a JSON array: [{\"label\":\"...\",\"value\":\"...\",\"x_pct\":NN,\"y_pct\":NN}]. Empty string for unknown values.";
     const custTxt=JSON.stringify({name:c.name,member:c.member,ein:c.ein,address:c.address||"",phone:c.phone||"",email:c.mail||"",periodFrom:aiPersona.from||"",periodTo:aiPersona.to||"",incomeK:aiPersona.incomeK,assetK:aiPersona.assetK,marital:aiPersona.marital});
-    const prompt="Customer data: "+custTxt+"\n\nSupporting docs uploaded: "+aiSuppDocs.map(d=>d.name).join(", ")+"\n\nReturn JSON array of field label -> value pairs.";
+    const prompt="Customer data: "+custTxt+"\n\nReturn JSON array with label, value, x_pct, y_pct for each fillable field on the uploaded form.";
     const parts=[{type:"text",text:prompt}];
     if(aiBlankForm.data.includes("image"))parts.push({type:"image_url",image_url:{url:aiBlankForm.data}});
     const cfg=getNewLLM();
     const r=await fetch(cfg.baseURL.replace(/\/$/,"")+"/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+cfg.key},body:JSON.stringify({model:cfg.visionModel||cfg.model,max_tokens:3000,messages:[{role:"system",content:sys},{role:"user",content:parts}]})});
     const j=await r.json();
     const out=(j.choices&&j.choices[0]&&j.choices[0].message.content||"").trim();
-    // Try to extract JSON
     let fields=[];
     const m=out.match(/\[[\s\S]*\]/);
     if(m){try{fields=JSON.parse(m[0]);}catch(e){}}
     if(fields.length){
-      // Render: original form image as background, overlay filled values as a table
-      let rows=fields.map(f=>`<tr><td style="padding:4px 10px;border:1px solid #000;font-weight:bold;width:40%;font-size:12px">${esc(f.label)}</td><td style="padding:4px 10px;border:1px solid #000;font-size:12px;color:#000">${esc(f.value||"")}</td></tr>`).join("");
-      aiGenHtml=`<div style="background:#fff;color:#000;padding:20px;font-family:'Times New Roman',Times,serif;width:210mm;min-height:297mm;box-sizing:border-box">
-        <h2 style="text-align:center;font-size:16px;margin-bottom:14px">FILLED FORM — ${esc(c.name||"")}</h2>
-        <p style="font-size:11px;color:#000;margin-bottom:10px">Source: ${esc(aiBlankForm.name)} · Identified ${fields.length} fields</p>
-        <table style="width:100%;border-collapse:collapse;color:#000">${rows}</table>
+      // Render original form image as background, overlay filled values at coordinates
+      const overlays=fields.filter(f=>f.value).map(f=>{
+        const x=Math.min(95,Math.max(2,f.x_pct!=null?f.x_pct:(f.x||50)));
+        const y=Math.min(97,Math.max(2,f.y_pct!=null?f.y_pct:(f.y||50)));
+        return `<div contenteditable="true" class="ai-field-overlay" title="${esc(f.label||'')}" style="position:absolute;left:${x}%;top:${y}%;transform:translateY(-50%);font-size:13px;color:#000;font-family:Arial,sans-serif;white-space:nowrap;background:rgba(255,255,255,.85);padding:1px 4px;border-radius:2px;outline:none;cursor:text" oninput="scheduleAiSave()">${esc(f.value)}</div>`;
+      }).join("");
+      aiGenHtml=`<div style="position:relative;width:100%;background:#fff;padding:0;">
+        <img src="${aiBlankForm.data}" style="width:100%;display:block" alt="blank form">
+        ${overlays}
       </div>`;
     } else {
-      // Fallback: just embed the image and let user edit
       aiGenHtml=`<div style="background:#fff;color:#000;padding:20px;font-family:Times New Roman,serif">
-        <p style="font-size:12px;margin-bottom:10px">AI 未能自動辨識欄位，請直接在下方編輯。原始辨識結果：</p>
-        <pre style="font-size:10px;white-space:pre-wrap;border:1px solid #ccc;padding:8px">${esc(out.slice(0,1500))}</pre>
+        <img src="${aiBlankForm.data}" style="width:100%" alt="blank form">
+        <pre style="font-size:10px;white-space:pre-wrap;border:1px solid #ccc;padding:8px;margin-top:10px">${esc(out.slice(0,1500))}</pre>
       </div>`;
     }
   }catch(e){console.warn(e);toast("失敗："+e.message);}
