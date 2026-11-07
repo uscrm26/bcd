@@ -5045,7 +5045,7 @@ R.ai=()=>{
     </div>
     <div class="ai-side-sec">
       <div class="ai-side-lb">${AI_IC.user}${T.customer}</div>
-      <select class="ai-select" onchange="aiPick(this.value)">${DATA.customers.map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>#${c.no} ${esc(c.name)} ｜ ${esc(c.member)}</option>`).join("")}</select>
+      <select class="ai-select" onchange="aiPick(this.value)">${DATA.customers.filter(c=>c.status!=="done"&&c.status!=="reject"||c.no===aiSel.no).map(c=>`<option value="${c.no}" ${c.no===aiSel.no?"selected":""}>#${c.no} ${esc(c.name)} ｜ ${esc(c.member)}${c.status==="done"?"（已完成）":""}</option>`).join("")}</select>
     </div>
     ${aiDocType==='pfs'?`
     <div class="ai-side-sec">
