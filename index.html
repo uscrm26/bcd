@@ -5096,7 +5096,7 @@ R.ai=()=>{
   const right=`<div class="ai-main"><div id="aiDocSheet" class="ai-sheet ai-sheet-gen">
     ${aiGenLoading?`<div class="ai-empty">${AI_IC.spark}<div>${CURRENT_LANG==='en'?'AI is designing a new document…':'AI 正在設計全新文檔…'}</div></div>`:
       aiGenHtml?`<div class="ai-gen" contenteditable="true" oninput="scheduleAiSave()">${aiGenHtml}${aiSignatureBlock(T)}</div>`:
-      `<div class="ai-empty">${AI_IC.doc}<div style="font-size:14px;font-weight:700;margin-bottom:6px">${CURRENT_LANG==='en'?'No document yet':'尚未生成文檔'}</div><div style="font-size:12px;color:var(--mut)">${CURRENT_LANG==='en'?'Press AI generate. Every output uses a fresh layout.':'按下 AI 生成，每次版面都不一樣'}</div></div>`}
+      `<div class="ai-empty">${AI_IC.doc}<div style="font-size:14px;font-weight:700;margin-bottom:10px">${CURRENT_LANG==='en'?'No document yet':CURRENT_LANG==='cn'?'尚未生成文档':'尚未生成文檔'}</div><div style="font-size:12px;color:var(--mut);max-width:340px;line-height:1.7;text-align:center">${CURRENT_LANG==='en'?'This document is generated with AI assistance. Due to the nature of generation, outputs may vary each time. To meet the independence requirements for application materials and reduce the risk of detection so that the recipient will not identify AI involvement, please save the file promptly if you wish to retain it.':CURRENT_LANG==='cn'?'本文件由 AI 协助生成。受生成机制影响，每次输出内容会存在差异。为满足申请材料独立性要求，降低识别风险，避免接收方察觉内容经过 AI 辅助制作，若您需要留存，请及时保存对应文件。':'本檔案由 AI 協助生成。受生成機制影響，每次輸出內容會存在差異。為滿足申請材料獨立性要求，降低識別風險，避免接收方察覺內容經 AI 輔助製作，若您有留存需求，請及時儲存對應檔案。'}</div></div>`}
   </div></div>`;
   const statusBar=`<div class="ai-statusbar">
     <span class="ai-dot ${aiDirty?'dirty':''}"></span>
