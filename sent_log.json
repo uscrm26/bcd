@@ -1627,5 +1627,15 @@
     "client": 7,
     "date": "2026-11-06T21:21:03.322810+08:00",
     "direction": "incoming"
+  },
+  {
+    "t": "2026-11-08 08:00",
+    "type": "daily_check",
+    "result": "12/12 active mailboxes connected OK, 0 new emails, 0 unread",
+    "skipped": [
+      "Immunora (bond done)",
+      "Pebblehome (hold)",
+      "JELD-WEN (hold)"
+    ]
   }
 ]
