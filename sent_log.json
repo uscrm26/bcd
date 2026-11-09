@@ -1637,5 +1637,15 @@
       "Pebblehome (hold)",
       "JELD-WEN (hold)"
     ]
+  },
+  {
+    "t": "2026-11-09 09:50",
+    "type": "daily_check",
+    "result": "12/12 boxes OK, 0 new emails, 0 unread",
+    "skipped": [
+      "Immunora done",
+      "Pebblehome hold",
+      "JELD-WEN hold"
+    ]
   }
 ]
