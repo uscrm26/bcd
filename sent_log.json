@@ -1,1691 +1,1771 @@
 [
-  {
-    "to": "bonds@anovamarine.com",
-    "from": "christianjgpunzalan@nervaqon.live",
-    "subject": "Re: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC",
-    "date": "Wed, 04 Nov 2026 03:19:52 +0800",
-    "client": 8,
-    "body_preview": "Sent personal financial statement to SPG, apologized for delay",
-    "attachment": "Nervaqon_Personal_Financial_Statement.pdf"
-  },
-  {
-    "to": "emily@bluebirdchb.com",
-    "from": "horaciolsanchez@olivewareinc.com",
-    "subject": "Re: first-time importer, who do I talk to?",
-    "date": "Wed, 04 Nov 2026 03:01:53 +0800",
-    "client": 3,
-    "body_preview": "Sending signed POA, first shipment expected soon",
-    "attachment": "Oliveware_Bluebird_POA_Filled.pdf"
-  },
-  {
-    "to": "allison@auroracustomsbrokerage.com",
-    "from": "horaciolsanchez@olivewareinc.com",
-    "subject": "Re: new CA importer, bond question",
-    "date": "Wed, 04 Nov 2026 02:35:53 +0800",
-    "client": 3,
-    "body_preview": "Hi Allison, Thanks for following up. We're located in Carlsbad, California..."
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "bruce@boschcustomsbrokerage.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi BOSCH CUSTOMS team,\n\nWe need to set up a continuous bond for Home Depot LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 1,
-    "broker": "BOSCH CUSTOMS BROKERAGE,INC."
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "service@kappacustomsbrokers.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Kappa Customs Brokers team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Kervalonix LLC? What do you need from us to get started?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 1,
-    "broker": "Kappa Customs Brokers, LLC"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "rpalekseev@gmail.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi Customs Broker Miami team,\n\nI'm exploring options for a continuous customs bond for Lennar LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 1,
-    "broker": "Customs Broker Miami"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "info@dna-logistics.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi DNA Logistics Group team,\n\nI'm exploring options for a continuous customs bond for Nervaqaon LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 1,
-    "broker": "DNA Logistics Group, LLC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "imports@hahnintl.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi HAHN team,\n\nWe need to set up a continuous bond for Oliveware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 1,
-    "broker": "HAHN INTERNATIONAL INC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "rob@customsandcompliance.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Customs & team,\n\nQuick inquiry: we need a continuous customs bond for Leidos LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 1,
-    "broker": "Customs & Compliance Solutions, LLC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@interport.us",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi Interport Logistics team,\n\nWe're switching our bond broker. Home Depot LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 2,
-    "broker": "Interport Logistics LLC"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "veronica@airacs.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi Airport Customs Service team,\n\nWe're switching our bond broker. Kervalonix LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 2,
-    "broker": "Airport Customs Service Inc"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "info@itcg.us",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi INTERNATINAL TRADE CMPLNCE GRP team,\n\nQuick inquiry: we need a continuous customs bond for Lennar LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 2,
-    "broker": "INTERNATINAL TRADE CMPLNCE GRP LLC"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "ralph@omegacb.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi OMEGA CUSTOMS BROKERS team,\n\nWe need to set up a continuous bond for Nervaqaon LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 2,
-    "broker": "OMEGA CUSTOMS BROKERS INC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "sales@dmanganelli.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi D MANGANELLI LOGISTICS team,\n\nWe need to set up a continuous bond for Oliveware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 2,
-    "broker": "D MANGANELLI LOGISTICS, INC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "dixon.smith@comcast.net",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi DIXON, SMITH & ASSOCIATES team,\n\nI'm exploring options for a continuous customs bond for Leidos LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 2,
-    "broker": "DIXON, SMITH & ASSOCIATES, INC."
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@glchb.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Guy Lichtenstein CHB team,\n\nWe're setting up importing under Home Depot LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 3,
-    "broker": "Guy Lichtenstein CHB Corp."
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "mvincent@reliantchb.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi Reliant Customs Broker team,\n\nWe're setting up Kervalonix LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 3,
-    "broker": "Reliant Customs Broker, Inc"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "infousa@ameritransworldwide.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi AMERITRANS WORLD GROUP team,\n\nNew LLC here. We just got our EIN and are ready to apply for a continuous customs bond. Walk us through the process and give us your best rate.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 3,
-    "broker": "AMERITRANS WORLD GROUP INC"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "info@jdbrokers.net",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi JD BROKERS & FORWARDING team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Nervaqaon LLC? What do you need from us to get started?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 3,
-    "broker": "JD BROKERS & FORWARDING CO."
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "info@CEPBroker.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi CEP CUSTOMS BROKER team,\n\nI'm exploring options for a continuous customs bond for Oliveware LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 3,
-    "broker": "CEP CUSTOMS BROKER, INC."
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "johncassidy@johncassidyintl.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi JOHN CASSIDY INT L CHB team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Leidos LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 3,
-    "broker": "JOHN CASSIDY INT L CHB INC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "import@elmcustomsservice.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi ELM CUSTOMS team,\n\nHome Depot LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 4,
-    "broker": "ELM CUSTOMS BROKERAGE, INC."
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "sales@tranzport.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi TRANZPORT team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Kervalonix LLC? What do you need from us to get started?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 4,
-    "broker": "TRANZPORT, INC."
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "arash@clearpointint.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi ClearPoint team,\n\nQuick inquiry: we need a continuous customs bond for Lennar LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 4,
-    "broker": "ClearPoint International, Inc"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "info@GJMia.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi GJ ENTERPRISES, CUSTOMS team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Nervaqaon LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 4,
-    "broker": "GJ ENTERPRISES, CUSTOMS BROKERAGE & CONS"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "hello@efilog.us",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi EFI LOGISTICS team,\n\nNew LLC here. We just got our EIN and are ready to apply for a continuous customs bond. Walk us through the process and give us your best rate.\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 4,
-    "broker": "EFI LOGISTICS INC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "imports@lmbcustomsbrokers.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi LMB Customs Brokers team,\n\nLeidos LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 4,
-    "broker": "LMB Customs Brokers"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@alliancechb.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi ALLIANCE team,\n\nWe're looking to get a continuous bond approved fast. If ALLIANCE can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 5,
-    "broker": "ALLIANCE INTERNATIONAL CHB INC"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "rgonzalez@biscayneimport.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi BISCAYNE IMPORT team,\n\nWe're setting up Kervalonix LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 5,
-    "broker": "BISCAYNE IMPORT SERVICES, INC"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "samuel@miamicsinc.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi MIAMI CUSTOMS team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Lennar LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 5,
-    "broker": "MIAMI CUSTOMS SERVICES INC."
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "alcidesfsilva@aol.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi Quicksilver Customs Brokers team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Nervaqaon LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 5,
-    "broker": "Quicksilver Customs Brokers, LLC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "JANETHAPPY@BELLSOUTH.NET",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi HAPPY CUSTOMS BROKERS team,\n\nOliveware LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 5,
-    "broker": "HAPPY CUSTOMS BROKERS, INC."
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "info@dbcustomsbrokers.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi D & B Customs Brokers team,\n\nWe're setting up importing under Leidos LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 5,
-    "broker": "D & B Customs Brokers, LLC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@wtdc.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi Warehouse Division of World Terminal and team,\n\nWe're setting up importing under Home Depot LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 6,
-    "broker": "Warehouse Division of World Terminal and"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "info@priorityimex.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi PRIORITY IMPORT-EXPORT team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Kervalonix LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 6,
-    "broker": "PRIORITY IMPORT-EXPORT SERVICES, IN"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "INFO@JCORTINA.COM",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi J. team,\n\nWe're looking to get a continuous bond approved fast. If J. can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 6,
-    "broker": "J. CORTINA, INC."
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "info@kglogistics.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi KELLY GLOBAL LOGISTICS team,\n\nWe're comparing continuous bond brokers for Nervaqaon LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 6,
-    "broker": "KELLY GLOBAL LOGISTICS, INC."
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "imports@farrischb.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi Farris Global Logistics team,\n\nWe're a new importer under Oliveware LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 6,
-    "broker": "Farris Global Logistics"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "natalia@asapmarinedocs.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi HOWARD S REEDER team,\n\nWe're a new importer under Leidos LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 6,
-    "broker": "HOWARD S REEDER INC"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "info@vortexwl.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Vortex Worldwide Logistics team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Kervalonix LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 7,
-    "broker": "Vortex Worldwide Logistics Corporation"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "mpatigler@aol.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi SERVICE EXPRESS CUSTOMS team,\n\nLooking for a continuous bond broker for Lennar LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 7,
-    "broker": "SERVICE EXPRESS CUSTOMS CORPORATION"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "miamiports@kcimia.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi KCI CUSTOMS BROKERS team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Nervaqaon LLC? What do you need from us to get started?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 7,
-    "broker": "KCI CUSTOMS BROKERS INC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "truckimports@charterbrokerage.net",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi CHARTER team,\n\nI'm exploring options for a continuous customs bond for Oliveware LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 7,
-    "broker": "CHARTER BROKERAGE LLC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "rpalekseev@gmail.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Customs Broker Miami team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Leidos LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 7,
-    "broker": "Customs Broker Miami, LLC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "sales@arii.net",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi AMERICAN ROYAL team,\n\nWe're setting up Home Depot LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 8,
-    "broker": "AMERICAN ROYAL INTERNATIONAL INC"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "imports.cst@worldnationsusa.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi WORLD NATIONS team,\n\nWe're switching our bond broker. Kervalonix LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 8,
-    "broker": "WORLD NATIONS, INC"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "sales@allynintl.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi ALLYN team,\n\nQuick inquiry: we need a continuous customs bond for Lennar LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 8,
-    "broker": "ALLYN INTERNATIONAL SERVICES INC"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "imports@wlmia.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi World Logistics (MIA) team,\n\nNervaqaon LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 8,
-    "broker": "World Logistics (MIA), Inc."
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "info@blufenixintl.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Blufenix team,\n\nOliveware LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 8,
-    "broker": "Blufenix International LLC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "brokerageintl8@gmail.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi BROKERAGE team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Leidos LLC? What do you need from us to get started?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 8,
-    "broker": "BROKERAGE INTERNATIONAL INC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@promptus.us",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Promptus team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Home Depot LLC? What do you need from us to get started?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 9,
-    "broker": "Promptus, LLC"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "info@allbordersinc.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi ALL BORDERS team,\n\nWe need to set up a continuous bond for Kervalonix LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 9,
-    "broker": "ALL BORDERS INCORPORATED"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "info@mborder.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi M Border Solutions team,\n\nLennar LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 9,
-    "broker": "M Border Solutions, Inc."
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "bgsbrokers@bgs-chb.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Border Group team,\n\nWe're a new importer under Nervaqaon LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 9,
-    "broker": "Border Group Services Inc."
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "ahilsabeck@amhcc.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi AMH Custom team,\n\nWe're comparing continuous bond brokers for Oliveware LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 9,
-    "broker": "AMH Custom Consultants"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "info@americargoexpress.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Americargo Express team,\n\nWe're looking to get a continuous bond approved fast. If Americargo Express can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 9,
-    "broker": "Americargo Express Inc."
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "sales@imperialfreight.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi IMPERIAL FREIGHT BROKERS team,\n\nWe're looking to get a continuous bond approved fast. If IMPERIAL FREIGHT BROKERS can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 10,
-    "broker": "IMPERIAL FREIGHT BROKERS INC."
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "info@maccbi.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi MAC Customs team,\n\nWe need to set up a continuous bond for Kervalonix LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 10,
-    "broker": "MAC Customs Brokerage, Inc."
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "pat@advancecustomsbrokers.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Advance Customs Brokers & team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Lennar LLC? What do you need from us to get started?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 10,
-    "broker": "Advance Customs Brokers & Consulting LLC"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "LATINB@aol.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi LATIN AMERICAN BROKERS team,\n\nLooking for a continuous bond broker for Nervaqaon LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 10,
-    "broker": "LATIN AMERICAN BROKERS INC."
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "info@bcfmiami.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi BC & F team,\n\nWe're setting up importing under Oliveware LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 10,
-    "broker": "BC & F BROKERAGE, INC."
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "marthamartinezbcg@gmail.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Brokerage team,\n\nWe're switching our bond broker. Leidos LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 10,
-    "broker": "Brokerage Consultants Group, Inc."
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@hartryinc.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi HOWARD HARTRY team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Home Depot LLC? What do you need from us to get started?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 11,
-    "broker": "HOWARD HARTRY, INC."
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "logistics@blchainlogistics.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Blockchain Logistics team,\n\nWe're looking to get a continuous bond approved fast. If Blockchain Logistics can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 11,
-    "broker": "Blockchain Logistics LLC"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "Evertrustworld@gmail.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Evertrust World Logistics team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Lennar LLC? What do you need from us to get started?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 11,
-    "broker": "Evertrust World Logistics"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "customercare@intradeco.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi INTRADECO LOGISTICS team,\n\nWe're comparing continuous bond brokers for Nervaqaon LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 11,
-    "broker": "INTRADECO LOGISTICS, LLC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "info@promptus.us",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi PROMPTUS team,\n\nOliveware LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 11,
-    "broker": "PROMPTUS, LLC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "info@gofastcb.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi GO FAST CUSTOMS team,\n\nWe're switching our bond broker. Leidos LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 11,
-    "broker": "GO FAST CUSTOMS BROKERAGE INC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "mia@jtmsa.us",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi JOIN THE MOMENT FORWARDING team,\n\nHome Depot LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 12,
-    "broker": "JOIN THE MOMENT FORWARDING CORP"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "sales.mia@neelevat.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi Miami team,\n\nQuick inquiry: we need a continuous customs bond for Kervalonix LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 12,
-    "broker": "Miami International Freight Solutions, L"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "info@nitusa.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi Nissin team,\n\nWe're switching our bond broker. Lennar LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 12,
-    "broker": "Nissin International Transport U.S.A., Inc."
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "contact@logiaide.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi LOGIAIDE team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Nervaqaon LLC? What do you need from us to get started?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 12,
-    "broker": "LOGIAIDE INC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "skimchb@gmail.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi SUNG MOO KIM team,\n\nLooking for a continuous bond broker for Oliveware LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 12,
-    "broker": "SUNG MOO KIM"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "david@unitedcustomservices.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi United Customs team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Leidos LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 12,
-    "broker": "United Customs Services LLC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "General@jec-chb.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi JEC Customs House team,\n\nI'm exploring options for a continuous customs bond for Home Depot LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 13,
-    "broker": "JEC Customs House Brokerage"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "melissa@itbfusa.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi INTERNATIONAL TRADE BROKERS FRDWR team,\n\nLooking for a continuous bond broker for Kervalonix LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 13,
-    "broker": "INTERNATIONAL TRADE BROKERS FRDWR"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "operations@elemar.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Elemar team,\n\nWe need to set up a continuous bond for Lennar LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 13,
-    "broker": "Elemar International Forwarding Inc"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "sales@cccustomsbroker.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi CC CUSTOMS BROKER team,\n\nI'm exploring options for a continuous customs bond for Nervaqaon LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 13,
-    "broker": "CC CUSTOMS BROKER, INC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "info@blufenixintl.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi Blufenix team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Oliveware LLC? What do you need from us to get started?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 13,
-    "broker": "Blufenix International LLC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "info@overseasfreight.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi OVERSEAS FREIGHT SOLUTIONS team,\n\nLeidos LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 13,
-    "broker": "OVERSEAS FREIGHT SOLUTIONS, LLC"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@ranchocustomsbrokers.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Rancho Customs Brokers team,\n\nWe're a new importer under Home Depot LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 14,
-    "broker": "Rancho Customs Brokers, Inc."
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "imports@prioritycb.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi PRIORITY CUSTOMS BROKER team,\n\nWe're switching our bond broker. Kervalonix LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 14,
-    "broker": "PRIORITY CUSTOMS BROKER INC."
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "masforwarding@marineairservice.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi MARINE AIR SERVICE FORWARDING team,\n\nWe're comparing continuous bond brokers for Lennar LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 14,
-    "broker": "MARINE AIR SERVICE FORWARDING INC."
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "info@almarlogistics.net",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi ALMAR LOGISTICS team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Nervaqaon LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 14,
-    "broker": "ALMAR LOGISTICS, LLC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "Miami@worldwidemiami.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi WORLDWIDE CUSTOMS team,\n\nWe're setting up importing under Oliveware LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 14,
-    "broker": "WORLDWIDE CUSTOMS SERVICES INC"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "sales@imperialfreight.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Imperial Freight Brokers team,\n\nWe're setting up Leidos LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 14,
-    "broker": "Imperial Freight Brokers, Inc."
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "info@robertsonforwarding.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi ROBERTSON FORWARDING team,\n\nWe're setting up Home Depot LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
-    "round": 15,
-    "broker": "ROBERTSON FORWARDING COMPANY INC"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "info@dbcustomsbrokers.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi D & B Customs Brokers team,\n\nKervalonix LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
-    "round": 15,
-    "broker": "D & B Customs Brokers, LLC"
-  },
-  {
-    "from": "coreymheaward@lennar.live",
-    "to": "info@aeaglecustomsbroker.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi American Eagle Customs Broker team,\n\nI'm exploring options for a continuous customs bond for Lennar LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
-    "round": 15,
-    "broker": "American Eagle Customs Broker, LLC"
-  },
-  {
-    "from": "christianjgpunzalan@nervaqon.live",
-    "to": "monica@pinnaclefreightus.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Pinnacle Freight Solutions team,\n\nNervaqaon LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
-    "round": 15,
-    "broker": "Pinnacle Freight Solutions, LLC"
-  },
-  {
-    "from": "horaciolsanchez@olivewareinc.com",
-    "to": "info@dracofreight.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi Draco Freight Logistics team,\n\nWe need to set up a continuous bond for Oliveware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
-    "round": 15,
-    "broker": "Draco Freight Logistics Corporation"
-  },
-  {
-    "from": "jennieannmyers@leidosholdings.live",
-    "to": "usa.info@seafairgroup.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi SEAFAIR USA team,\n\nWe need to set up a continuous bond for Leidos LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
-    "round": 15,
-    "broker": "SEAFAIR USA, LLC"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@heritagecustoms.ai",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi Heritage Customs Services, Inc team,\n\nWe need to set up a continuous bond for Sageware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "imports@seashipping.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi Sea Shipping Line (California) Inc team,\n\nI'm exploring options for a continuous customs bond for Sageware LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "shop@more-pro.com",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi Rick Haolun Ding team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Sageware LLC? What do you need from us to get started?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "support@marineairland.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi Marine Air Land Int'l Services, LLC team,\n\nSageware LLC is preparing for our first overseas shipment and we need a continuous customs bond in place before cargo moves. How quickly can you get us bonded?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@jksolutionpro.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi JK SolutionPro LLC team,\n\nQuick inquiry: we need a continuous customs bond for Sageware LLC and want to compare quotes. What documents do you require for approval?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "felix@hdsfreight.com",
-    "subject": "First Time Importer Bond Questions",
-    "body": "Hi HDS FREIGHT SERVICES OF CALIFORNIA INC team,\n\nSageware LLC just received our EIN and we're new to importing. I have a few questions about continuous bonds - can you walk me through the process and costs?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@earth-services.com",
-    "subject": "Setting Up Import Operations",
-    "body": "Hi EARTH CUSTOMS INC team,\n\nWe're setting up importing under Sageware LLC and need a continuous bond approved fast. Who would be the right contact to discuss this with?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@stellaint.com",
-    "subject": "Referred - Need Customs Bond",
-    "body": "Hi STELLA INTERNATIONAL, INC. team,\n\nWe've been referred and wanted to reach out directly. Sageware LLC needs a continuous customs bond. Can you help?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "scasas@casasinternational.com",
-    "subject": "Bond Activation for Upcoming Shipment",
-    "body": "Hi CASAS INTL. BROKERAGE, INC team,\n\nWe have cargo coming in and need a continuous bond activated before it arrives. Sageware LLC has all our paperwork ready. What's the turnaround time?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@dgsbrokers.com",
-    "subject": "Comparing Bond Brokers",
-    "body": "Hi DGS Custom House Broker, Inc. team,\n\nSageware LLC is comparing different bond brokers. We'd appreciate a quote for a continuous customs bond - our estimated import value is around $500K annually.\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "import@ganngroupcorp.com",
-    "subject": "Help Getting Bonded for CBP",
-    "body": "Hi GANN GROUP CORP team,\n\nI'm trying to get Sageware LLC properly bonded with CBP and want to make sure we're using the right broker. Can you explain what you need from us?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "ops@importexportchb.com",
-    "subject": "Import Compliance Question",
-    "body": "Hi Import Export Logistics, Inc. team,\n\nAs a new importer, Sageware LLC wants to make sure we're set up correctly from day one. Can you advise on continuous bond requirements and pricing?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "OPERATIONS@SW-BROKERAGE.COM",
-    "subject": "Bond for Repeated Shipments",
-    "body": "Hi Southwest Brokerage LLC team,\n\nSageware LLC will be importing on an ongoing basis, so a single-entry bond doesn't make sense. We're looking for a continuous bond - can you send pricing?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@globetrade.us",
-    "subject": "Urgent Bond Needed",
-    "body": "Hi GLOBE TRADE SERVICES, INC. team,\n\nTime-sensitive: Sageware LLC has a shipment scheduled and we're not bonded yet. Can you expedite this? What's the minimum you need from us?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "jaliarthomas@sagewareinc.com",
-    "to": "info@iab-sd.com",
-    "subject": "New LLC - Bond Setup Questions",
-    "body": "Hi INTERNATIONAL AUTOMATED BROKERS,INC team,\n\nNew LLC here. We just got our EIN and are ready to start importing. What's the process for getting a continuous bond for Sageware LLC?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "info@bpeglobal.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi BPE Global team,\n\nWe need to set up a continuous bond for JELD-WEN Holding LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "cindy@unitedwaychb.com",
-    "subject": "New Importer Continuous Bond Setup",
-    "body": "Hi UNITED-WAY CUSTOMS HOUSE BROKERS team,\n\nI'm exploring options for a continuous customs bond for JELD-WEN Holding LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "oriox@att.net",
-    "subject": "Continuous Customs Bond Inquiry",
-    "body": "Hi Oriox Customs Broker, Inc. team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for JELD-WEN Holding LLC? What do you need from us to get started?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "info@ifsworldwidelogistics.com",
-    "subject": "Customs Bond Services Request",
-    "body": "Hi International Freight Services, Inc. team,\n\nJELD-WEN Holding LLC is preparing for our first overseas shipment and we need a continuous customs bond in place before cargo moves. How quickly can you get us bonded?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "richard@rstringham.com",
-    "subject": "Continuous Bond Quote Needed",
-    "body": "Hi RICHARD E STRINGHAM CO team,\n\nQuick inquiry: we need a continuous customs bond for JELD-WEN Holding LLC and want to compare quotes. What documents do you require for approval?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "ths@teamhandlingservices.com",
-    "subject": "First Time Importer Bond Questions",
-    "body": "Hi Team Handling Services, Inc. team,\n\nJELD-WEN Holding LLC just received our EIN and we're new to importing. I have a few questions about continuous bonds - can you walk me through the process and costs?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "Info@GCustomsBrokerage.com",
-    "subject": "Setting Up Import Operations",
-    "body": "Hi G CUSTOMS BROKERAGE, INC team,\n\nWe're setting up importing under JELD-WEN Holding LLC and need a continuous bond approved fast. Who would be the right contact to discuss this with?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "davidnoh@gnchbinc.com",
-    "subject": "Referred - Need Customs Bond",
-    "body": "Hi GN CHB, INC team,\n\nWe've been referred and wanted to reach out directly. JELD-WEN Holding LLC needs a continuous customs bond. Can you help?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "ucbla@unitedchb.com",
-    "subject": "Bond Activation for Upcoming Shipment",
-    "body": "Hi United Customhouse Brokers Inc team,\n\nWe have cargo coming in and need a continuous bond activated before it arrives. JELD-WEN Holding LLC has all our paperwork ready. What's the turnaround time?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "hansel@sssusainc.com",
-    "subject": "Comparing Bond Brokers",
-    "body": "Hi SEVEN SEAS SHIPPING USA, INC. team,\n\nJELD-WEN Holding LLC is comparing different bond brokers. We'd appreciate a quote for a continuous customs bond - our estimated import value is around $500K annually.\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "ask@great-way.com",
-    "subject": "Help Getting Bonded for CBP",
-    "body": "Hi GREAT WAY TRADING & TRANSPORTATION team,\n\nI'm trying to get JELD-WEN Holding LLC properly bonded with CBP and want to make sure we're using the right broker. Can you explain what you need from us?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "pearl@phoenixchb.com",
-    "subject": "Import Compliance Question",
-    "body": "Hi Phoenix Customhouse Broker, Inc team,\n\nAs a new importer, JELD-WEN Holding LLC wants to make sure we're set up correctly from day one. Can you advise on continuous bond requirements and pricing?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "info@gallaghertransport.com",
-    "subject": "Bond for Repeated Shipments",
-    "body": "Hi GALLAGHER TRANSPORT INTERNATIONAL team,\n\nJELD-WEN Holding LLC will be importing on an ongoing basis, so a single-entry bond doesn't make sense. We're looking for a continuous bond - can you send pricing?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "itm@tariffmanagement.com",
-    "subject": "Urgent Bond Needed",
-    "body": "Hi INTERNATIONAL TARIFF MANAGEMENT INC team,\n\nTime-sensitive: JELD-WEN Holding LLC has a shipment scheduled and we're not bonded yet. Can you expedite this? What's the minimum you need from us?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amerdaujok@jeld-wenholding.live",
-    "to": "jose@tifww.com",
-    "subject": "New LLC - Bond Setup Questions",
-    "body": "Hi JOSE S. SANCHEZ team,\n\nNew LLC here. We just got our EIN and are ready to start importing. What's the process for getting a continuous bond for JELD-WEN Holding LLC?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
-  },
-  {
-    "from": "amjadbahmad@home-depot.live",
-    "to": "michael@agcustombroker.com",
-    "subject": "Looking for a Customs Bond Broker",
-    "body": "Hi AG CUSTOM BROKER INC team,\n\nWe need to set up a continuous bond for Home Depot LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live"
-  },
-  {
-    "from": "ahmedmohamedali@kervalonix.live",
-    "to": "CF.Ollino@vortexwl.com",
-    "subject": "Re: Continuous Bond Quote Needed",
-    "date": "2026-11-04T03:35:00+08:00",
-    "client": "66"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "imports@prioritycb.com",
-    "subject": "Cold email batch 2",
-    "round": 1,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to imports@prioritycb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "itm@tariffmanagement.com",
-    "subject": "Cold email batch 2",
-    "round": 2,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to itm@tariffmanagement.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "ahilsabeck@amhcc.com",
-    "subject": "Cold email batch 2",
-    "round": 3,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to ahilsabeck@amhcc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "service@kappacustomsbrokers.com",
-    "subject": "Cold email batch 2",
-    "round": 4,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to service@kappacustomsbrokers.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "pearl@phoenixchb.com",
-    "subject": "Cold email batch 2",
-    "round": 5,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to pearl@phoenixchb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "info@almarlogistics.net",
-    "subject": "Cold email batch 2",
-    "round": 6,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to info@almarlogistics.net",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "sales@tranzport.com",
-    "subject": "Cold email batch 2",
-    "round": 7,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to sales@tranzport.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "hello@efilog.us",
-    "subject": "Cold email batch 2",
-    "round": 8,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to hello@efilog.us",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "info@vortexwl.com",
-    "subject": "Cold email batch 2",
-    "round": 9,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to info@vortexwl.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "melissa@itbfusa.com",
-    "subject": "Cold email batch 2",
-    "round": 10,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to melissa@itbfusa.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "info@globetrade.us",
-    "subject": "Cold email batch 2",
-    "round": 11,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to info@globetrade.us",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "info@bpeglobal.com",
-    "subject": "Cold email batch 2",
-    "round": 12,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to info@bpeglobal.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "info@gallaghertransport.com",
-    "subject": "Cold email batch 2",
-    "round": 13,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to info@gallaghertransport.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "samuel@miamicsinc.com",
-    "subject": "Cold email batch 2",
-    "round": 14,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to samuel@miamicsinc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "info@dbcustomsbrokers.com",
-    "subject": "Cold email batch 2",
-    "round": 15,
-    "client": 61,
-    "body_preview": "Cold outreach round 2 to info@dbcustomsbrokers.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "info@vortexwl.com",
-    "subject": "Cold email batch 2",
-    "round": 1,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to info@vortexwl.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "Evertrustworld@gmail.com",
-    "subject": "Cold email batch 2",
-    "round": 2,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to Evertrustworld@gmail.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "samuel@miamicsinc.com",
-    "subject": "Cold email batch 2",
-    "round": 3,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to samuel@miamicsinc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "logistics@blchainlogistics.com",
-    "subject": "Cold email batch 2",
-    "round": 4,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to logistics@blchainlogistics.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "General@jec-chb.com",
-    "subject": "Cold email batch 2",
-    "round": 5,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to General@jec-chb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "infousa@ameritransworldwide.com",
-    "subject": "Cold email batch 2",
-    "round": 6,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to infousa@ameritransworldwide.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "info@itcg.us",
-    "subject": "Cold email batch 2",
-    "round": 7,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to info@itcg.us",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "info@americargoexpress.com",
-    "subject": "Cold email batch 2",
-    "round": 8,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to info@americargoexpress.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "sales@cccustomsbroker.com",
-    "subject": "Cold email batch 2",
-    "round": 9,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to sales@cccustomsbroker.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "imports@seashipping.com",
-    "subject": "Cold email batch 2",
-    "round": 10,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to imports@seashipping.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "imports@prioritycb.com",
-    "subject": "Cold email batch 2",
-    "round": 11,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to imports@prioritycb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "scasas@casasinternational.com",
-    "subject": "Cold email batch 2",
-    "round": 12,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to scasas@casasinternational.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "Miami@worldwidemiami.com",
-    "subject": "Cold email batch 2",
-    "round": 13,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to Miami@worldwidemiami.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "ask@great-way.com",
-    "subject": "Cold email batch 2",
-    "round": 14,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to ask@great-way.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "enriqueajrendon@l3harristechnologies.live",
-    "to": "info@hartryinc.com",
-    "subject": "Cold email batch 2",
-    "round": 15,
-    "client": 69,
-    "body_preview": "Cold outreach round 2 to info@hartryinc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@americargoexpress.com",
-    "subject": "Cold email batch 2",
-    "round": 1,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@americargoexpress.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "JANETHAPPY@BELLSOUTH.NET",
-    "subject": "Cold email batch 2",
-    "round": 2,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to JANETHAPPY@BELLSOUTH.NET",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@allbordersinc.com",
-    "subject": "Cold email batch 2",
-    "round": 3,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@allbordersinc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "ops@importexportchb.com",
-    "subject": "Cold email batch 2",
-    "round": 4,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to ops@importexportchb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "melissa@itbfusa.com",
-    "subject": "Cold email batch 2",
-    "round": 5,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to melissa@itbfusa.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@jksolutionpro.com",
-    "subject": "Cold email batch 2",
-    "round": 6,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@jksolutionpro.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "truckimports@charterbrokerage.net",
-    "subject": "Cold email batch 2",
-    "round": 7,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to truckimports@charterbrokerage.net",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@gofastcb.com",
-    "subject": "Cold email batch 2",
-    "round": 8,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@gofastcb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@aeaglecustomsbroker.com",
-    "subject": "Cold email batch 2",
-    "round": 9,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@aeaglecustomsbroker.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "operations@elemar.com",
-    "subject": "Cold email batch 2",
-    "round": 10,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to operations@elemar.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "ask@great-way.com",
-    "subject": "Cold email batch 2",
-    "round": 11,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to ask@great-way.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "masforwarding@marineairservice.com",
-    "subject": "Cold email batch 2",
-    "round": 12,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to masforwarding@marineairservice.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "imports@wlmia.com",
-    "subject": "Cold email batch 2",
-    "round": 13,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to imports@wlmia.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@alliancechb.com",
-    "subject": "Cold email batch 2",
-    "round": 14,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@alliancechb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "info@bpeglobal.com",
-    "subject": "Cold email batch 2",
-    "round": 15,
-    "client": 71,
-    "body_preview": "Cold outreach round 2 to info@bpeglobal.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "usa.info@seafairgroup.com",
-    "subject": "Cold email batch 2",
-    "round": 1,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to usa.info@seafairgroup.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "customercare@intradeco.com",
-    "subject": "Cold email batch 2",
-    "round": 2,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to customercare@intradeco.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "info@gallaghertransport.com",
-    "subject": "Cold email batch 2",
-    "round": 3,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to info@gallaghertransport.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "contact@logiaide.com",
-    "subject": "Cold email batch 2",
-    "round": 4,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to contact@logiaide.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "ops@importexportchb.com",
-    "subject": "Cold email batch 2",
-    "round": 5,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to ops@importexportchb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "Evertrustworld@gmail.com",
-    "subject": "Cold email batch 2",
-    "round": 6,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to Evertrustworld@gmail.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "ahilsabeck@amhcc.com",
-    "subject": "Cold email batch 2",
-    "round": 7,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to ahilsabeck@amhcc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "ask@great-way.com",
-    "subject": "Cold email batch 2",
-    "round": 8,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to ask@great-way.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "info@mborder.com",
-    "subject": "Cold email batch 2",
-    "round": 9,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to info@mborder.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "operations@elemar.com",
-    "subject": "Cold email batch 2",
-    "round": 10,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to operations@elemar.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "ths@teamhandlingservices.com",
-    "subject": "Cold email batch 2",
-    "round": 11,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to ths@teamhandlingservices.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "info@globetrade.us",
-    "subject": "Cold email batch 2",
-    "round": 12,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to info@globetrade.us",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "info@jksolutionpro.com",
-    "subject": "Cold email batch 2",
-    "round": 13,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to info@jksolutionpro.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "info@ranchocustomsbrokers.com",
-    "subject": "Cold email batch 2",
-    "round": 14,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to info@ranchocustomsbrokers.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "allysonbrennafankuchen@honeywellinternational.live",
-    "to": "natalia@asapmarinedocs.com",
-    "subject": "Cold email batch 2",
-    "round": 15,
-    "client": 90,
-    "body_preview": "Cold outreach round 2 to natalia@asapmarinedocs.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@promptus.us",
-    "subject": "Cold email batch 2",
-    "round": 1,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@promptus.us",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@kglogistics.com",
-    "subject": "Cold email batch 2",
-    "round": 2,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@kglogistics.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "import@ganngroupcorp.com",
-    "subject": "Cold email batch 2",
-    "round": 3,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to import@ganngroupcorp.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "rob@customsandcompliance.com",
-    "subject": "Cold email batch 2",
-    "round": 4,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to rob@customsandcompliance.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "sales@allynintl.com",
-    "subject": "Cold email batch 2",
-    "round": 5,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to sales@allynintl.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@americargoexpress.com",
-    "subject": "Cold email batch 2",
-    "round": 6,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@americargoexpress.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@stellaint.com",
-    "subject": "Cold email batch 2",
-    "round": 7,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@stellaint.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "usa.info@seafairgroup.com",
-    "subject": "Cold email batch 2",
-    "round": 8,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to usa.info@seafairgroup.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@CEPBroker.com",
-    "subject": "Cold email batch 2",
-    "round": 9,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@CEPBroker.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@dbcustomsbrokers.com",
-    "subject": "Cold email batch 2",
-    "round": 10,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@dbcustomsbrokers.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "davidnoh@gnchbinc.com",
-    "subject": "Cold email batch 2",
-    "round": 11,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to davidnoh@gnchbinc.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "imports@prioritycb.com",
-    "subject": "Cold email batch 2",
-    "round": 12,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to imports@prioritycb.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@maccbi.com",
-    "subject": "Cold email batch 2",
-    "round": 13,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@maccbi.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "sales@tranzport.com",
-    "subject": "Cold email batch 2",
-    "round": 14,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to sales@tranzport.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "amantahiradam@kontoorbrands.live",
-    "to": "info@nitusa.com",
-    "subject": "Cold email batch 2",
-    "round": 15,
-    "client": 98,
-    "body_preview": "Cold outreach round 2 to info@nitusa.com",
-    "batch": "batch2_20261104"
-  },
-  {
-    "from": "jessicakeyates@huntingtoningallsindustries.live",
-    "to": "service@borderbuddy.com",
-    "subject": "Re: New U.S. Importer - Account Setup & Annual Bond",
-    "body_preview": "BorderBuddy account setup inquiry",
-    "client": 61
-  },
-  {
-    "from": "adisushimelismulatu@laureateeducation.live",
-    "to": "service@borderbuddy.com",
-    "subject": "Re: New U.S. Importer - Account Setup & Annual Bond",
-    "body_preview": "BorderBuddy account setup inquiry - Laureate Education",
-    "client": 71
-  },
-  {
-    "from": "tvaughan.dolphin@gmail.com",
-    "to": "jaliarthomas@sagewareinc.com",
-    "subject": "Re: Continuous Customs Bond — Sageware LLC",
-    "body_preview": "Tom Vaughan from Dolphin Brokerage in West Palm Beach FL declined due to geographic distance and time difference with West Hollywood CA, recommended finding a local California broker between LA and SF.",
-    "client": 7,
-    "date": "2026-11-06T21:21:03.322810+08:00",
-    "direction": "incoming"
-  },
-  {
-    "t": "2026-11-08 08:00",
-    "type": "daily_check",
-    "result": "12/12 active mailboxes connected OK, 0 new emails, 0 unread",
-    "skipped": [
-      "Immunora (bond done)",
-      "Pebblehome (hold)",
-      "JELD-WEN (hold)"
-    ]
-  },
-  {
-    "t": "2026-11-09 09:50",
-    "type": "daily_check",
-    "result": "12/12 boxes OK, 0 new emails, 0 unread",
-    "skipped": [
-      "Immunora done",
-      "Pebblehome hold",
-      "JELD-WEN hold"
-    ]
-  },
-  {
-    "to": "allysonbrennafankuchen@honeywellinternational.live",
-    "from": "rick@bossbonds.com",
-    "subject": "Need help completing your BOSS Bonds application?",
-    "date": "Mon, 09 Nov 2026 22:00:11 +0000 (UTC)",
-    "client": 90,
-    "body_preview": "BOSS Bonds 提醒表單已開始填寫，提供協助完成申請；屬表單跟進郵件，後續仍待線上表單收尾。"
-  },
-  {
-    "to": "amantahiradam@kontoorbrands.live",
-    "from": "kevindaily@cashea.com",
-    "subject": "RE: Continuous Customs Bond — Kontoor Brands LLC",
-    "date": "Mon, 9 Nov 2026 19:28:41 +0000",
-    "client": 98,
-    "body_preview": "C.A. Shea 要求透過持牌保險經紀聯繫他們，並需提供進口商品種類與財務報表以供核保。"
-  },
-  {
-    "to": "christianjgpunzalan@nervaqon.live",
-    "from": "bonds@anovamarine.com",
-    "subject": "RE: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC",
-    "date": "Mon, 9 Nov 2026 18:24:01 +0000",
-    "client": 8,
-    "body_preview": "SPG Anova 已將案件提交 surety，待其完成審核後再回覆更新。"
-  },
-  {
-    "to": "ahmedmohamedali@kervalonix.live",
-    "from": "sprice@suretyone.com",
-    "subject": "Re: Fwd: Customs Bond Application - Kervalonix LLC",
-    "date": "Mon, 9 Nov 2026 16:56:54 -0500",
-    "client": 66,
-    "body_preview": "SuretyOne 要求補交企業資產負債表、損益表，以及過去幾次進口報關摘要。"
-  },
-  {
-    "to": "coreymheaward@lennar.live",
-    "from": "chinoso@borderbuddy.com",
-    "subject": "Re: Customs Bond Onboarding — Lennar LLC",
-    "date": "Mon, 09 Nov 2026 21:44:52 +0000",
-    "client": 75,
-    "body_preview": "BorderBuddy 表示僅為同時委託其清關的客戶設立 bond，並詢問進口商品、起運地及運輸方式空運海運陸運。"
-  }
+ {
+  "to": "bonds@anovamarine.com",
+  "from": "christianjgpunzalan@nervaqon.live",
+  "subject": "Re: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC",
+  "date": "Wed, 04 Nov 2026 03:19:52 +0800",
+  "client": 8,
+  "body_preview": "Sent personal financial statement to SPG, apologized for delay",
+  "attachment": "Nervaqon_Personal_Financial_Statement.pdf"
+ },
+ {
+  "to": "emily@bluebirdchb.com",
+  "from": "horaciolsanchez@olivewareinc.com",
+  "subject": "Re: first-time importer, who do I talk to?",
+  "date": "Wed, 04 Nov 2026 03:01:53 +0800",
+  "client": 3,
+  "body_preview": "Sending signed POA, first shipment expected soon",
+  "attachment": "Oliveware_Bluebird_POA_Filled.pdf"
+ },
+ {
+  "to": "allison@auroracustomsbrokerage.com",
+  "from": "horaciolsanchez@olivewareinc.com",
+  "subject": "Re: new CA importer, bond question",
+  "date": "Wed, 04 Nov 2026 02:35:53 +0800",
+  "client": 3,
+  "body_preview": "Hi Allison, Thanks for following up. We're located in Carlsbad, California..."
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "bruce@boschcustomsbrokerage.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi BOSCH CUSTOMS team,\n\nWe need to set up a continuous bond for Home Depot LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 1,
+  "broker": "BOSCH CUSTOMS BROKERAGE,INC."
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "service@kappacustomsbrokers.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Kappa Customs Brokers team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Kervalonix LLC? What do you need from us to get started?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 1,
+  "broker": "Kappa Customs Brokers, LLC"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "rpalekseev@gmail.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi Customs Broker Miami team,\n\nI'm exploring options for a continuous customs bond for Lennar LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 1,
+  "broker": "Customs Broker Miami"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "info@dna-logistics.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi DNA Logistics Group team,\n\nI'm exploring options for a continuous customs bond for Nervaqaon LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 1,
+  "broker": "DNA Logistics Group, LLC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "imports@hahnintl.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi HAHN team,\n\nWe need to set up a continuous bond for Oliveware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 1,
+  "broker": "HAHN INTERNATIONAL INC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "rob@customsandcompliance.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Customs & team,\n\nQuick inquiry: we need a continuous customs bond for Leidos LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 1,
+  "broker": "Customs & Compliance Solutions, LLC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@interport.us",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi Interport Logistics team,\n\nWe're switching our bond broker. Home Depot LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 2,
+  "broker": "Interport Logistics LLC"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "veronica@airacs.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi Airport Customs Service team,\n\nWe're switching our bond broker. Kervalonix LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 2,
+  "broker": "Airport Customs Service Inc"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "info@itcg.us",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi INTERNATINAL TRADE CMPLNCE GRP team,\n\nQuick inquiry: we need a continuous customs bond for Lennar LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 2,
+  "broker": "INTERNATINAL TRADE CMPLNCE GRP LLC"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "ralph@omegacb.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi OMEGA CUSTOMS BROKERS team,\n\nWe need to set up a continuous bond for Nervaqaon LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 2,
+  "broker": "OMEGA CUSTOMS BROKERS INC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "sales@dmanganelli.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi D MANGANELLI LOGISTICS team,\n\nWe need to set up a continuous bond for Oliveware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 2,
+  "broker": "D MANGANELLI LOGISTICS, INC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "dixon.smith@comcast.net",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi DIXON, SMITH & ASSOCIATES team,\n\nI'm exploring options for a continuous customs bond for Leidos LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 2,
+  "broker": "DIXON, SMITH & ASSOCIATES, INC."
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@glchb.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Guy Lichtenstein CHB team,\n\nWe're setting up importing under Home Depot LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 3,
+  "broker": "Guy Lichtenstein CHB Corp."
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "mvincent@reliantchb.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi Reliant Customs Broker team,\n\nWe're setting up Kervalonix LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 3,
+  "broker": "Reliant Customs Broker, Inc"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "infousa@ameritransworldwide.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi AMERITRANS WORLD GROUP team,\n\nNew LLC here. We just got our EIN and are ready to apply for a continuous customs bond. Walk us through the process and give us your best rate.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 3,
+  "broker": "AMERITRANS WORLD GROUP INC"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "info@jdbrokers.net",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi JD BROKERS & FORWARDING team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Nervaqaon LLC? What do you need from us to get started?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 3,
+  "broker": "JD BROKERS & FORWARDING CO."
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "info@CEPBroker.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi CEP CUSTOMS BROKER team,\n\nI'm exploring options for a continuous customs bond for Oliveware LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 3,
+  "broker": "CEP CUSTOMS BROKER, INC."
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "johncassidy@johncassidyintl.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi JOHN CASSIDY INT L CHB team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Leidos LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 3,
+  "broker": "JOHN CASSIDY INT L CHB INC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "import@elmcustomsservice.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi ELM CUSTOMS team,\n\nHome Depot LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 4,
+  "broker": "ELM CUSTOMS BROKERAGE, INC."
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "sales@tranzport.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi TRANZPORT team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Kervalonix LLC? What do you need from us to get started?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 4,
+  "broker": "TRANZPORT, INC."
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "arash@clearpointint.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi ClearPoint team,\n\nQuick inquiry: we need a continuous customs bond for Lennar LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 4,
+  "broker": "ClearPoint International, Inc"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "info@GJMia.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi GJ ENTERPRISES, CUSTOMS team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Nervaqaon LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 4,
+  "broker": "GJ ENTERPRISES, CUSTOMS BROKERAGE & CONS"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "hello@efilog.us",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi EFI LOGISTICS team,\n\nNew LLC here. We just got our EIN and are ready to apply for a continuous customs bond. Walk us through the process and give us your best rate.\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 4,
+  "broker": "EFI LOGISTICS INC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "imports@lmbcustomsbrokers.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi LMB Customs Brokers team,\n\nLeidos LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 4,
+  "broker": "LMB Customs Brokers"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@alliancechb.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi ALLIANCE team,\n\nWe're looking to get a continuous bond approved fast. If ALLIANCE can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 5,
+  "broker": "ALLIANCE INTERNATIONAL CHB INC"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "rgonzalez@biscayneimport.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi BISCAYNE IMPORT team,\n\nWe're setting up Kervalonix LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 5,
+  "broker": "BISCAYNE IMPORT SERVICES, INC"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "samuel@miamicsinc.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi MIAMI CUSTOMS team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Lennar LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 5,
+  "broker": "MIAMI CUSTOMS SERVICES INC."
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "alcidesfsilva@aol.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi Quicksilver Customs Brokers team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Nervaqaon LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 5,
+  "broker": "Quicksilver Customs Brokers, LLC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "JANETHAPPY@BELLSOUTH.NET",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi HAPPY CUSTOMS BROKERS team,\n\nOliveware LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 5,
+  "broker": "HAPPY CUSTOMS BROKERS, INC."
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "info@dbcustomsbrokers.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi D & B Customs Brokers team,\n\nWe're setting up importing under Leidos LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 5,
+  "broker": "D & B Customs Brokers, LLC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@wtdc.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi Warehouse Division of World Terminal and team,\n\nWe're setting up importing under Home Depot LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 6,
+  "broker": "Warehouse Division of World Terminal and"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "info@priorityimex.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi PRIORITY IMPORT-EXPORT team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Kervalonix LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 6,
+  "broker": "PRIORITY IMPORT-EXPORT SERVICES, IN"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "INFO@JCORTINA.COM",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi J. team,\n\nWe're looking to get a continuous bond approved fast. If J. can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 6,
+  "broker": "J. CORTINA, INC."
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "info@kglogistics.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi KELLY GLOBAL LOGISTICS team,\n\nWe're comparing continuous bond brokers for Nervaqaon LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 6,
+  "broker": "KELLY GLOBAL LOGISTICS, INC."
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "imports@farrischb.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi Farris Global Logistics team,\n\nWe're a new importer under Oliveware LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 6,
+  "broker": "Farris Global Logistics"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "natalia@asapmarinedocs.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi HOWARD S REEDER team,\n\nWe're a new importer under Leidos LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 6,
+  "broker": "HOWARD S REEDER INC"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "info@vortexwl.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Vortex Worldwide Logistics team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Kervalonix LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 7,
+  "broker": "Vortex Worldwide Logistics Corporation"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "mpatigler@aol.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi SERVICE EXPRESS CUSTOMS team,\n\nLooking for a continuous bond broker for Lennar LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 7,
+  "broker": "SERVICE EXPRESS CUSTOMS CORPORATION"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "miamiports@kcimia.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi KCI CUSTOMS BROKERS team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Nervaqaon LLC? What do you need from us to get started?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 7,
+  "broker": "KCI CUSTOMS BROKERS INC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "truckimports@charterbrokerage.net",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi CHARTER team,\n\nI'm exploring options for a continuous customs bond for Oliveware LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 7,
+  "broker": "CHARTER BROKERAGE LLC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "rpalekseev@gmail.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Customs Broker Miami team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Leidos LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 7,
+  "broker": "Customs Broker Miami, LLC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "sales@arii.net",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi AMERICAN ROYAL team,\n\nWe're setting up Home Depot LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 8,
+  "broker": "AMERICAN ROYAL INTERNATIONAL INC"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "imports.cst@worldnationsusa.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi WORLD NATIONS team,\n\nWe're switching our bond broker. Kervalonix LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 8,
+  "broker": "WORLD NATIONS, INC"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "sales@allynintl.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi ALLYN team,\n\nQuick inquiry: we need a continuous customs bond for Lennar LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 8,
+  "broker": "ALLYN INTERNATIONAL SERVICES INC"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "imports@wlmia.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi World Logistics (MIA) team,\n\nNervaqaon LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 8,
+  "broker": "World Logistics (MIA), Inc."
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "info@blufenixintl.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Blufenix team,\n\nOliveware LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 8,
+  "broker": "Blufenix International LLC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "brokerageintl8@gmail.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi BROKERAGE team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Leidos LLC? What do you need from us to get started?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 8,
+  "broker": "BROKERAGE INTERNATIONAL INC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@promptus.us",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Promptus team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Home Depot LLC? What do you need from us to get started?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 9,
+  "broker": "Promptus, LLC"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "info@allbordersinc.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi ALL BORDERS team,\n\nWe need to set up a continuous bond for Kervalonix LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 9,
+  "broker": "ALL BORDERS INCORPORATED"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "info@mborder.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi M Border Solutions team,\n\nLennar LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 9,
+  "broker": "M Border Solutions, Inc."
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "bgsbrokers@bgs-chb.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Border Group team,\n\nWe're a new importer under Nervaqaon LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 9,
+  "broker": "Border Group Services Inc."
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "ahilsabeck@amhcc.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi AMH Custom team,\n\nWe're comparing continuous bond brokers for Oliveware LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 9,
+  "broker": "AMH Custom Consultants"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "info@americargoexpress.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Americargo Express team,\n\nWe're looking to get a continuous bond approved fast. If Americargo Express can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 9,
+  "broker": "Americargo Express Inc."
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "sales@imperialfreight.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi IMPERIAL FREIGHT BROKERS team,\n\nWe're looking to get a continuous bond approved fast. If IMPERIAL FREIGHT BROKERS can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 10,
+  "broker": "IMPERIAL FREIGHT BROKERS INC."
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "info@maccbi.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi MAC Customs team,\n\nWe need to set up a continuous bond for Kervalonix LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 10,
+  "broker": "MAC Customs Brokerage, Inc."
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "pat@advancecustomsbrokers.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Advance Customs Brokers & team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Lennar LLC? What do you need from us to get started?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 10,
+  "broker": "Advance Customs Brokers & Consulting LLC"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "LATINB@aol.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi LATIN AMERICAN BROKERS team,\n\nLooking for a continuous bond broker for Nervaqaon LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 10,
+  "broker": "LATIN AMERICAN BROKERS INC."
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "info@bcfmiami.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi BC & F team,\n\nWe're setting up importing under Oliveware LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 10,
+  "broker": "BC & F BROKERAGE, INC."
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "marthamartinezbcg@gmail.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Brokerage team,\n\nWe're switching our bond broker. Leidos LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 10,
+  "broker": "Brokerage Consultants Group, Inc."
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@hartryinc.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi HOWARD HARTRY team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Home Depot LLC? What do you need from us to get started?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 11,
+  "broker": "HOWARD HARTRY, INC."
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "logistics@blchainlogistics.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Blockchain Logistics team,\n\nWe're looking to get a continuous bond approved fast. If Blockchain Logistics can turn it around in under a week, we'd like to move forward. What's the first step?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 11,
+  "broker": "Blockchain Logistics LLC"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "Evertrustworld@gmail.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Evertrust World Logistics team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Lennar LLC? What do you need from us to get started?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 11,
+  "broker": "Evertrust World Logistics"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "customercare@intradeco.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi INTRADECO LOGISTICS team,\n\nWe're comparing continuous bond brokers for Nervaqaon LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 11,
+  "broker": "INTRADECO LOGISTICS, LLC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "info@promptus.us",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi PROMPTUS team,\n\nOliveware LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 11,
+  "broker": "PROMPTUS, LLC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "info@gofastcb.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi GO FAST CUSTOMS team,\n\nWe're switching our bond broker. Leidos LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 11,
+  "broker": "GO FAST CUSTOMS BROKERAGE INC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "mia@jtmsa.us",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi JOIN THE MOMENT FORWARDING team,\n\nHome Depot LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 12,
+  "broker": "JOIN THE MOMENT FORWARDING CORP"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "sales.mia@neelevat.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi Miami team,\n\nQuick inquiry: we need a continuous customs bond for Kervalonix LLC. Can you send over your requirements and rate? We're ready to move this week.\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 12,
+  "broker": "Miami International Freight Solutions, L"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "info@nitusa.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi Nissin team,\n\nWe're switching our bond broker. Lennar LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 12,
+  "broker": "Nissin International Transport U.S.A., Inc."
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "contact@logiaide.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi LOGIAIDE team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Nervaqaon LLC? What do you need from us to get started?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 12,
+  "broker": "LOGIAIDE INC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "skimchb@gmail.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi SUNG MOO KIM team,\n\nLooking for a continuous bond broker for Oliveware LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 12,
+  "broker": "SUNG MOO KIM"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "david@unitedcustomservices.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi United Customs team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Leidos LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 12,
+  "broker": "United Customs Services LLC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "General@jec-chb.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi JEC Customs House team,\n\nI'm exploring options for a continuous customs bond for Home Depot LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 13,
+  "broker": "JEC Customs House Brokerage"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "melissa@itbfusa.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi INTERNATIONAL TRADE BROKERS FRDWR team,\n\nLooking for a continuous bond broker for Kervalonix LLC. We have regular entries starting next month. What documents do you require and how fast can you activate?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 13,
+  "broker": "INTERNATIONAL TRADE BROKERS FRDWR"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "operations@elemar.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Elemar team,\n\nWe need to set up a continuous bond for Lennar LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 13,
+  "broker": "Elemar International Forwarding Inc"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "sales@cccustomsbroker.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi CC CUSTOMS BROKER team,\n\nI'm exploring options for a continuous customs bond for Nervaqaon LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 13,
+  "broker": "CC CUSTOMS BROKER, INC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "info@blufenixintl.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi Blufenix team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Oliveware LLC? What do you need from us to get started?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 13,
+  "broker": "Blufenix International LLC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "info@overseasfreight.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi OVERSEAS FREIGHT SOLUTIONS team,\n\nLeidos LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 13,
+  "broker": "OVERSEAS FREIGHT SOLUTIONS, LLC"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@ranchocustomsbrokers.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Rancho Customs Brokers team,\n\nWe're a new importer under Home Depot LLC and need a continuous customs bond. Could you send over what you need from us and your pricing?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 14,
+  "broker": "Rancho Customs Brokers, Inc."
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "imports@prioritycb.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi PRIORITY CUSTOMS BROKER team,\n\nWe're switching our bond broker. Kervalonix LLC imports regularly and is looking for better service. Can you quote continuous bond coverage?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 14,
+  "broker": "PRIORITY CUSTOMS BROKER INC."
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "masforwarding@marineairservice.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi MARINE AIR SERVICE FORWARDING team,\n\nWe're comparing continuous bond brokers for Lennar LLC. What makes your service stand out and what documents do you need from us?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 14,
+  "broker": "MARINE AIR SERVICE FORWARDING INC."
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "info@almarlogistics.net",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi ALMAR LOGISTICS team,\n\nWe've been referred and wanted to reach out directly about a continuous bond for Nervaqaon LLC. Can you quote and tell us your typical processing time?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 14,
+  "broker": "ALMAR LOGISTICS, LLC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "Miami@worldwidemiami.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi WORLDWIDE CUSTOMS team,\n\nWe're setting up importing under Oliveware LLC and need a continuous bond. Can you help? We'd need it active within a week. Please send what you need from us.\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 14,
+  "broker": "WORLDWIDE CUSTOMS SERVICES INC"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "sales@imperialfreight.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Imperial Freight Brokers team,\n\nWe're setting up Leidos LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 14,
+  "broker": "Imperial Freight Brokers, Inc."
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "info@robertsonforwarding.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi ROBERTSON FORWARDING team,\n\nWe're setting up Home Depot LLC for ongoing imports and would like a quote on a continuous bond. Please include your required application forms.\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live",
+  "round": 15,
+  "broker": "ROBERTSON FORWARDING COMPANY INC"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "info@dbcustomsbrokers.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi D & B Customs Brokers team,\n\nKervalonix LLC is preparing for our first overseas shipment. We need a continuous bond in place before the cargo arrives. How quickly can you process?\n\nBest regards,\nAhmed Mohamed Ali\nKervalonix LLC\nahmedmohamedali@kervalonix.live",
+  "round": 15,
+  "broker": "D & B Customs Brokers, LLC"
+ },
+ {
+  "from": "coreymheaward@lennar.live",
+  "to": "info@aeaglecustomsbroker.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi American Eagle Customs Broker team,\n\nI'm exploring options for a continuous customs bond for Lennar LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nCorey Heaward\nLennar LLC\ncoreymheaward@lennar.live",
+  "round": 15,
+  "broker": "American Eagle Customs Broker, LLC"
+ },
+ {
+  "from": "christianjgpunzalan@nervaqon.live",
+  "to": "monica@pinnaclefreightus.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Pinnacle Freight Solutions team,\n\nNervaqaon LLC needs a continuous customs bond activated before our first entry. We're comparing brokers right now. What's your rate and fastest turnaround?\n\nBest regards,\nChristian Punzalan\nNervaqaon LLC\nchristianjgpunzalan@nervaqon.live",
+  "round": 15,
+  "broker": "Pinnacle Freight Solutions, LLC"
+ },
+ {
+  "from": "horaciolsanchez@olivewareinc.com",
+  "to": "info@dracofreight.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi Draco Freight Logistics team,\n\nWe need to set up a continuous bond for Oliveware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nHoracio Sanchez\nOliveware LLC\nhoraciolsanchez@olivewareinc.com",
+  "round": 15,
+  "broker": "Draco Freight Logistics Corporation"
+ },
+ {
+  "from": "jennieannmyers@leidosholdings.live",
+  "to": "usa.info@seafairgroup.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi SEAFAIR USA team,\n\nWe need to set up a continuous bond for Leidos LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nJennie Myers\nLeidos LLC\njennieannmyers@leidosholdings.live",
+  "round": 15,
+  "broker": "SEAFAIR USA, LLC"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@heritagecustoms.ai",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi Heritage Customs Services, Inc team,\n\nWe need to set up a continuous bond for Sageware LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "imports@seashipping.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi Sea Shipping Line (California) Inc team,\n\nI'm exploring options for a continuous customs bond for Sageware LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "shop@more-pro.com",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi Rick Haolun Ding team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for Sageware LLC? What do you need from us to get started?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "support@marineairland.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi Marine Air Land Int'l Services, LLC team,\n\nSageware LLC is preparing for our first overseas shipment and we need a continuous customs bond in place before cargo moves. How quickly can you get us bonded?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@jksolutionpro.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi JK SolutionPro LLC team,\n\nQuick inquiry: we need a continuous customs bond for Sageware LLC and want to compare quotes. What documents do you require for approval?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "felix@hdsfreight.com",
+  "subject": "First Time Importer Bond Questions",
+  "body": "Hi HDS FREIGHT SERVICES OF CALIFORNIA INC team,\n\nSageware LLC just received our EIN and we're new to importing. I have a few questions about continuous bonds - can you walk me through the process and costs?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@earth-services.com",
+  "subject": "Setting Up Import Operations",
+  "body": "Hi EARTH CUSTOMS INC team,\n\nWe're setting up importing under Sageware LLC and need a continuous bond approved fast. Who would be the right contact to discuss this with?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@stellaint.com",
+  "subject": "Referred - Need Customs Bond",
+  "body": "Hi STELLA INTERNATIONAL, INC. team,\n\nWe've been referred and wanted to reach out directly. Sageware LLC needs a continuous customs bond. Can you help?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "scasas@casasinternational.com",
+  "subject": "Bond Activation for Upcoming Shipment",
+  "body": "Hi CASAS INTL. BROKERAGE, INC team,\n\nWe have cargo coming in and need a continuous bond activated before it arrives. Sageware LLC has all our paperwork ready. What's the turnaround time?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@dgsbrokers.com",
+  "subject": "Comparing Bond Brokers",
+  "body": "Hi DGS Custom House Broker, Inc. team,\n\nSageware LLC is comparing different bond brokers. We'd appreciate a quote for a continuous customs bond - our estimated import value is around $500K annually.\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "import@ganngroupcorp.com",
+  "subject": "Help Getting Bonded for CBP",
+  "body": "Hi GANN GROUP CORP team,\n\nI'm trying to get Sageware LLC properly bonded with CBP and want to make sure we're using the right broker. Can you explain what you need from us?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "ops@importexportchb.com",
+  "subject": "Import Compliance Question",
+  "body": "Hi Import Export Logistics, Inc. team,\n\nAs a new importer, Sageware LLC wants to make sure we're set up correctly from day one. Can you advise on continuous bond requirements and pricing?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "OPERATIONS@SW-BROKERAGE.COM",
+  "subject": "Bond for Repeated Shipments",
+  "body": "Hi Southwest Brokerage LLC team,\n\nSageware LLC will be importing on an ongoing basis, so a single-entry bond doesn't make sense. We're looking for a continuous bond - can you send pricing?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@globetrade.us",
+  "subject": "Urgent Bond Needed",
+  "body": "Hi GLOBE TRADE SERVICES, INC. team,\n\nTime-sensitive: Sageware LLC has a shipment scheduled and we're not bonded yet. Can you expedite this? What's the minimum you need from us?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "jaliarthomas@sagewareinc.com",
+  "to": "info@iab-sd.com",
+  "subject": "New LLC - Bond Setup Questions",
+  "body": "Hi INTERNATIONAL AUTOMATED BROKERS,INC team,\n\nNew LLC here. We just got our EIN and are ready to start importing. What's the process for getting a continuous bond for Sageware LLC?\n\nBest regards,\nJaliar Thomas\nSageware LLC\njaliarthomas@sagewareinc.com"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "info@bpeglobal.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi BPE Global team,\n\nWe need to set up a continuous bond for JELD-WEN Holding LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "cindy@unitedwaychb.com",
+  "subject": "New Importer Continuous Bond Setup",
+  "body": "Hi UNITED-WAY CUSTOMS HOUSE BROKERS team,\n\nI'm exploring options for a continuous customs bond for JELD-WEN Holding LLC. We're a small operation and want straightforward pricing. Can you send a quote?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "oriox@att.net",
+  "subject": "Continuous Customs Bond Inquiry",
+  "body": "Hi Oriox Customs Broker, Inc. team,\n\nWe're a first-time importer and need a continuous bond. Can you handle the full setup for JELD-WEN Holding LLC? What do you need from us to get started?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "info@ifsworldwidelogistics.com",
+  "subject": "Customs Bond Services Request",
+  "body": "Hi International Freight Services, Inc. team,\n\nJELD-WEN Holding LLC is preparing for our first overseas shipment and we need a continuous customs bond in place before cargo moves. How quickly can you get us bonded?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "richard@rstringham.com",
+  "subject": "Continuous Bond Quote Needed",
+  "body": "Hi RICHARD E STRINGHAM CO team,\n\nQuick inquiry: we need a continuous customs bond for JELD-WEN Holding LLC and want to compare quotes. What documents do you require for approval?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "ths@teamhandlingservices.com",
+  "subject": "First Time Importer Bond Questions",
+  "body": "Hi Team Handling Services, Inc. team,\n\nJELD-WEN Holding LLC just received our EIN and we're new to importing. I have a few questions about continuous bonds - can you walk me through the process and costs?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "Info@GCustomsBrokerage.com",
+  "subject": "Setting Up Import Operations",
+  "body": "Hi G CUSTOMS BROKERAGE, INC team,\n\nWe're setting up importing under JELD-WEN Holding LLC and need a continuous bond approved fast. Who would be the right contact to discuss this with?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "davidnoh@gnchbinc.com",
+  "subject": "Referred - Need Customs Bond",
+  "body": "Hi GN CHB, INC team,\n\nWe've been referred and wanted to reach out directly. JELD-WEN Holding LLC needs a continuous customs bond. Can you help?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "ucbla@unitedchb.com",
+  "subject": "Bond Activation for Upcoming Shipment",
+  "body": "Hi United Customhouse Brokers Inc team,\n\nWe have cargo coming in and need a continuous bond activated before it arrives. JELD-WEN Holding LLC has all our paperwork ready. What's the turnaround time?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "hansel@sssusainc.com",
+  "subject": "Comparing Bond Brokers",
+  "body": "Hi SEVEN SEAS SHIPPING USA, INC. team,\n\nJELD-WEN Holding LLC is comparing different bond brokers. We'd appreciate a quote for a continuous customs bond - our estimated import value is around $500K annually.\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "ask@great-way.com",
+  "subject": "Help Getting Bonded for CBP",
+  "body": "Hi GREAT WAY TRADING & TRANSPORTATION team,\n\nI'm trying to get JELD-WEN Holding LLC properly bonded with CBP and want to make sure we're using the right broker. Can you explain what you need from us?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "pearl@phoenixchb.com",
+  "subject": "Import Compliance Question",
+  "body": "Hi Phoenix Customhouse Broker, Inc team,\n\nAs a new importer, JELD-WEN Holding LLC wants to make sure we're set up correctly from day one. Can you advise on continuous bond requirements and pricing?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "info@gallaghertransport.com",
+  "subject": "Bond for Repeated Shipments",
+  "body": "Hi GALLAGHER TRANSPORT INTERNATIONAL team,\n\nJELD-WEN Holding LLC will be importing on an ongoing basis, so a single-entry bond doesn't make sense. We're looking for a continuous bond - can you send pricing?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "itm@tariffmanagement.com",
+  "subject": "Urgent Bond Needed",
+  "body": "Hi INTERNATIONAL TARIFF MANAGEMENT INC team,\n\nTime-sensitive: JELD-WEN Holding LLC has a shipment scheduled and we're not bonded yet. Can you expedite this? What's the minimum you need from us?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amerdaujok@jeld-wenholding.live",
+  "to": "jose@tifww.com",
+  "subject": "New LLC - Bond Setup Questions",
+  "body": "Hi JOSE S. SANCHEZ team,\n\nNew LLC here. We just got our EIN and are ready to start importing. What's the process for getting a continuous bond for JELD-WEN Holding LLC?\n\nBest regards,\nAmer Dau Jok\nJELD-WEN Holding LLC\namerdaujok@jeld-wenholding.live"
+ },
+ {
+  "from": "amjadbahmad@home-depot.live",
+  "to": "michael@agcustombroker.com",
+  "subject": "Looking for a Customs Bond Broker",
+  "body": "Hi AG CUSTOM BROKER INC team,\n\nWe need to set up a continuous bond for Home Depot LLC. We have our EIN and importer number ready. What's your fastest activation?\n\nBest regards,\nAmjad Bahmad\nHome Depot LLC\namjadbahmad@home-depot.live"
+ },
+ {
+  "from": "ahmedmohamedali@kervalonix.live",
+  "to": "CF.Ollino@vortexwl.com",
+  "subject": "Re: Continuous Bond Quote Needed",
+  "date": "2026-11-04T03:35:00+08:00",
+  "client": "66"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "imports@prioritycb.com",
+  "subject": "Cold email batch 2",
+  "round": 1,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to imports@prioritycb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "itm@tariffmanagement.com",
+  "subject": "Cold email batch 2",
+  "round": 2,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to itm@tariffmanagement.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "ahilsabeck@amhcc.com",
+  "subject": "Cold email batch 2",
+  "round": 3,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to ahilsabeck@amhcc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "service@kappacustomsbrokers.com",
+  "subject": "Cold email batch 2",
+  "round": 4,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to service@kappacustomsbrokers.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "pearl@phoenixchb.com",
+  "subject": "Cold email batch 2",
+  "round": 5,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to pearl@phoenixchb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "info@almarlogistics.net",
+  "subject": "Cold email batch 2",
+  "round": 6,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to info@almarlogistics.net",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "sales@tranzport.com",
+  "subject": "Cold email batch 2",
+  "round": 7,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to sales@tranzport.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "hello@efilog.us",
+  "subject": "Cold email batch 2",
+  "round": 8,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to hello@efilog.us",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "info@vortexwl.com",
+  "subject": "Cold email batch 2",
+  "round": 9,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to info@vortexwl.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "melissa@itbfusa.com",
+  "subject": "Cold email batch 2",
+  "round": 10,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to melissa@itbfusa.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "info@globetrade.us",
+  "subject": "Cold email batch 2",
+  "round": 11,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to info@globetrade.us",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "info@bpeglobal.com",
+  "subject": "Cold email batch 2",
+  "round": 12,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to info@bpeglobal.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "info@gallaghertransport.com",
+  "subject": "Cold email batch 2",
+  "round": 13,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to info@gallaghertransport.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "samuel@miamicsinc.com",
+  "subject": "Cold email batch 2",
+  "round": 14,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to samuel@miamicsinc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "info@dbcustomsbrokers.com",
+  "subject": "Cold email batch 2",
+  "round": 15,
+  "client": 61,
+  "body_preview": "Cold outreach round 2 to info@dbcustomsbrokers.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "info@vortexwl.com",
+  "subject": "Cold email batch 2",
+  "round": 1,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to info@vortexwl.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "Evertrustworld@gmail.com",
+  "subject": "Cold email batch 2",
+  "round": 2,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to Evertrustworld@gmail.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "samuel@miamicsinc.com",
+  "subject": "Cold email batch 2",
+  "round": 3,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to samuel@miamicsinc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "logistics@blchainlogistics.com",
+  "subject": "Cold email batch 2",
+  "round": 4,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to logistics@blchainlogistics.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "General@jec-chb.com",
+  "subject": "Cold email batch 2",
+  "round": 5,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to General@jec-chb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "infousa@ameritransworldwide.com",
+  "subject": "Cold email batch 2",
+  "round": 6,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to infousa@ameritransworldwide.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "info@itcg.us",
+  "subject": "Cold email batch 2",
+  "round": 7,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to info@itcg.us",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "info@americargoexpress.com",
+  "subject": "Cold email batch 2",
+  "round": 8,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to info@americargoexpress.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "sales@cccustomsbroker.com",
+  "subject": "Cold email batch 2",
+  "round": 9,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to sales@cccustomsbroker.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "imports@seashipping.com",
+  "subject": "Cold email batch 2",
+  "round": 10,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to imports@seashipping.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "imports@prioritycb.com",
+  "subject": "Cold email batch 2",
+  "round": 11,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to imports@prioritycb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "scasas@casasinternational.com",
+  "subject": "Cold email batch 2",
+  "round": 12,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to scasas@casasinternational.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "Miami@worldwidemiami.com",
+  "subject": "Cold email batch 2",
+  "round": 13,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to Miami@worldwidemiami.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "ask@great-way.com",
+  "subject": "Cold email batch 2",
+  "round": 14,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to ask@great-way.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "enriqueajrendon@l3harristechnologies.live",
+  "to": "info@hartryinc.com",
+  "subject": "Cold email batch 2",
+  "round": 15,
+  "client": 69,
+  "body_preview": "Cold outreach round 2 to info@hartryinc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@americargoexpress.com",
+  "subject": "Cold email batch 2",
+  "round": 1,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@americargoexpress.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "JANETHAPPY@BELLSOUTH.NET",
+  "subject": "Cold email batch 2",
+  "round": 2,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to JANETHAPPY@BELLSOUTH.NET",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@allbordersinc.com",
+  "subject": "Cold email batch 2",
+  "round": 3,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@allbordersinc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "ops@importexportchb.com",
+  "subject": "Cold email batch 2",
+  "round": 4,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to ops@importexportchb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "melissa@itbfusa.com",
+  "subject": "Cold email batch 2",
+  "round": 5,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to melissa@itbfusa.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@jksolutionpro.com",
+  "subject": "Cold email batch 2",
+  "round": 6,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@jksolutionpro.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "truckimports@charterbrokerage.net",
+  "subject": "Cold email batch 2",
+  "round": 7,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to truckimports@charterbrokerage.net",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@gofastcb.com",
+  "subject": "Cold email batch 2",
+  "round": 8,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@gofastcb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@aeaglecustomsbroker.com",
+  "subject": "Cold email batch 2",
+  "round": 9,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@aeaglecustomsbroker.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "operations@elemar.com",
+  "subject": "Cold email batch 2",
+  "round": 10,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to operations@elemar.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "ask@great-way.com",
+  "subject": "Cold email batch 2",
+  "round": 11,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to ask@great-way.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "masforwarding@marineairservice.com",
+  "subject": "Cold email batch 2",
+  "round": 12,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to masforwarding@marineairservice.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "imports@wlmia.com",
+  "subject": "Cold email batch 2",
+  "round": 13,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to imports@wlmia.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@alliancechb.com",
+  "subject": "Cold email batch 2",
+  "round": 14,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@alliancechb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "info@bpeglobal.com",
+  "subject": "Cold email batch 2",
+  "round": 15,
+  "client": 71,
+  "body_preview": "Cold outreach round 2 to info@bpeglobal.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "usa.info@seafairgroup.com",
+  "subject": "Cold email batch 2",
+  "round": 1,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to usa.info@seafairgroup.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "customercare@intradeco.com",
+  "subject": "Cold email batch 2",
+  "round": 2,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to customercare@intradeco.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "info@gallaghertransport.com",
+  "subject": "Cold email batch 2",
+  "round": 3,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to info@gallaghertransport.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "contact@logiaide.com",
+  "subject": "Cold email batch 2",
+  "round": 4,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to contact@logiaide.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "ops@importexportchb.com",
+  "subject": "Cold email batch 2",
+  "round": 5,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to ops@importexportchb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "Evertrustworld@gmail.com",
+  "subject": "Cold email batch 2",
+  "round": 6,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to Evertrustworld@gmail.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "ahilsabeck@amhcc.com",
+  "subject": "Cold email batch 2",
+  "round": 7,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to ahilsabeck@amhcc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "ask@great-way.com",
+  "subject": "Cold email batch 2",
+  "round": 8,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to ask@great-way.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "info@mborder.com",
+  "subject": "Cold email batch 2",
+  "round": 9,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to info@mborder.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "operations@elemar.com",
+  "subject": "Cold email batch 2",
+  "round": 10,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to operations@elemar.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "ths@teamhandlingservices.com",
+  "subject": "Cold email batch 2",
+  "round": 11,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to ths@teamhandlingservices.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "info@globetrade.us",
+  "subject": "Cold email batch 2",
+  "round": 12,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to info@globetrade.us",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "info@jksolutionpro.com",
+  "subject": "Cold email batch 2",
+  "round": 13,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to info@jksolutionpro.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "info@ranchocustomsbrokers.com",
+  "subject": "Cold email batch 2",
+  "round": 14,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to info@ranchocustomsbrokers.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "allysonbrennafankuchen@honeywellinternational.live",
+  "to": "natalia@asapmarinedocs.com",
+  "subject": "Cold email batch 2",
+  "round": 15,
+  "client": 90,
+  "body_preview": "Cold outreach round 2 to natalia@asapmarinedocs.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@promptus.us",
+  "subject": "Cold email batch 2",
+  "round": 1,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@promptus.us",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@kglogistics.com",
+  "subject": "Cold email batch 2",
+  "round": 2,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@kglogistics.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "import@ganngroupcorp.com",
+  "subject": "Cold email batch 2",
+  "round": 3,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to import@ganngroupcorp.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "rob@customsandcompliance.com",
+  "subject": "Cold email batch 2",
+  "round": 4,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to rob@customsandcompliance.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "sales@allynintl.com",
+  "subject": "Cold email batch 2",
+  "round": 5,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to sales@allynintl.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@americargoexpress.com",
+  "subject": "Cold email batch 2",
+  "round": 6,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@americargoexpress.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@stellaint.com",
+  "subject": "Cold email batch 2",
+  "round": 7,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@stellaint.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "usa.info@seafairgroup.com",
+  "subject": "Cold email batch 2",
+  "round": 8,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to usa.info@seafairgroup.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@CEPBroker.com",
+  "subject": "Cold email batch 2",
+  "round": 9,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@CEPBroker.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@dbcustomsbrokers.com",
+  "subject": "Cold email batch 2",
+  "round": 10,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@dbcustomsbrokers.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "davidnoh@gnchbinc.com",
+  "subject": "Cold email batch 2",
+  "round": 11,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to davidnoh@gnchbinc.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "imports@prioritycb.com",
+  "subject": "Cold email batch 2",
+  "round": 12,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to imports@prioritycb.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@maccbi.com",
+  "subject": "Cold email batch 2",
+  "round": 13,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@maccbi.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "sales@tranzport.com",
+  "subject": "Cold email batch 2",
+  "round": 14,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to sales@tranzport.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "amantahiradam@kontoorbrands.live",
+  "to": "info@nitusa.com",
+  "subject": "Cold email batch 2",
+  "round": 15,
+  "client": 98,
+  "body_preview": "Cold outreach round 2 to info@nitusa.com",
+  "batch": "batch2_20261104"
+ },
+ {
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "to": "service@borderbuddy.com",
+  "subject": "Re: New U.S. Importer - Account Setup & Annual Bond",
+  "body_preview": "BorderBuddy account setup inquiry",
+  "client": 61
+ },
+ {
+  "from": "adisushimelismulatu@laureateeducation.live",
+  "to": "service@borderbuddy.com",
+  "subject": "Re: New U.S. Importer - Account Setup & Annual Bond",
+  "body_preview": "BorderBuddy account setup inquiry - Laureate Education",
+  "client": 71
+ },
+ {
+  "from": "tvaughan.dolphin@gmail.com",
+  "to": "jaliarthomas@sagewareinc.com",
+  "subject": "Re: Continuous Customs Bond — Sageware LLC",
+  "body_preview": "Tom Vaughan from Dolphin Brokerage in West Palm Beach FL declined due to geographic distance and time difference with West Hollywood CA, recommended finding a local California broker between LA and SF.",
+  "client": 7,
+  "date": "2026-11-06T21:21:03.322810+08:00",
+  "direction": "incoming"
+ },
+ {
+  "t": "2026-11-08 08:00",
+  "type": "daily_check",
+  "result": "12/12 active mailboxes connected OK, 0 new emails, 0 unread",
+  "skipped": [
+   "Immunora (bond done)",
+   "Pebblehome (hold)",
+   "JELD-WEN (hold)"
+  ]
+ },
+ {
+  "t": "2026-11-09 09:50",
+  "type": "daily_check",
+  "result": "12/12 boxes OK, 0 new emails, 0 unread",
+  "skipped": [
+   "Immunora done",
+   "Pebblehome hold",
+   "JELD-WEN hold"
+  ]
+ },
+ {
+  "to": "allysonbrennafankuchen@honeywellinternational.live",
+  "from": "rick@bossbonds.com",
+  "subject": "Need help completing your BOSS Bonds application?",
+  "date": "Mon, 09 Nov 2026 22:00:11 +0000 (UTC)",
+  "client": 90,
+  "body_preview": "BOSS Bonds 提醒表單已開始填寫，提供協助完成申請；屬表單跟進郵件，後續仍待線上表單收尾。"
+ },
+ {
+  "to": "amantahiradam@kontoorbrands.live",
+  "from": "kevindaily@cashea.com",
+  "subject": "RE: Continuous Customs Bond — Kontoor Brands LLC",
+  "date": "Mon, 9 Nov 2026 19:28:41 +0000",
+  "client": 98,
+  "body_preview": "C.A. Shea 要求透過持牌保險經紀聯繫他們，並需提供進口商品種類與財務報表以供核保。"
+ },
+ {
+  "to": "christianjgpunzalan@nervaqon.live",
+  "from": "bonds@anovamarine.com",
+  "subject": "RE: [EXTERNAL] Inquiry About Obtaining Customs Bond for Nervaqon LLC",
+  "date": "Mon, 9 Nov 2026 18:24:01 +0000",
+  "client": 8,
+  "body_preview": "SPG Anova 已將案件提交 surety，待其完成審核後再回覆更新。"
+ },
+ {
+  "to": "ahmedmohamedali@kervalonix.live",
+  "from": "sprice@suretyone.com",
+  "subject": "Re: Fwd: Customs Bond Application - Kervalonix LLC",
+  "date": "Mon, 9 Nov 2026 16:56:54 -0500",
+  "client": 66,
+  "body_preview": "SuretyOne 要求補交企業資產負債表、損益表，以及過去幾次進口報關摘要。"
+ },
+ {
+  "to": "coreymheaward@lennar.live",
+  "from": "chinoso@borderbuddy.com",
+  "subject": "Re: Customs Bond Onboarding — Lennar LLC",
+  "date": "Mon, 09 Nov 2026 21:44:52 +0000",
+  "client": 75,
+  "body_preview": "BorderBuddy 表示僅為同時委託其清關的客戶設立 bond，並詢問進口商品、起運地及運輸方式空運海運陸運。"
+ },
+ {
+  "to": "jreno@acrisure.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Continuous Customs Bond — Huntington LLC",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Acrisure Southeast Partners, LLC：Hi Reno,"
+ },
+ {
+  "to": "info@gallaghertransport.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Continuous Customs Bond for Ongoing Entries",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Gallagher Transport International：Hi Gallagher Transport team,"
+ },
+ {
+  "to": "info@maccbi.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "New Importer Looking for a Continuous Bond",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 MAC Customs Brokerage, Inc.：Hi MAC Customs Brokerage team,"
+ },
+ {
+  "to": "info@artemus.us",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Continuous Customs Bond Underwriting",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Artemus：Hi Artemus team,"
+ },
+ {
+  "to": "melissa.hibbs@phly.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Customs Bond Inquiry — Huntington LLC",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Philadelphia Indemnity Insurance Company：Hi Melissa,"
+ },
+ {
+  "to": "info@access-worldwide.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Bond Setup Alongside Customs Clearance",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Access Worldwide：Hi Access Worldwide team,"
+ },
+ {
+  "to": "Info@ILogixCHB.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Continuous Bond for a California Importer",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 I-Logix Customs, Inc.：Hi I-Logix Customs team,"
+ },
+ {
+  "to": "info@lufrani-intl.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Who Handles Bond Setup Here?",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Lufrani International：Hi Lufrani International team,"
+ },
+ {
+  "to": "info@pagcoverage.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Continuous Customs Bond Quote",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Personal Alliance Group / PAG Insurance Services：Hi PAG Insurance team,"
+ },
+ {
+  "to": "info@celeritasbrokers.com",
+  "from": "jessicakeyates@huntingtoningallsindustries.live",
+  "subject": "Continuous Customs Bond for Repeated Shipments",
+  "date": "2026-11-10 21:52",
+  "client": 61,
+  "body_preview": "第三輪冷啟動信寄給 Celeritas Brokers：Hi Celeritas Brokers team,"
+ }
 ]
