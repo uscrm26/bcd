@@ -1376,6 +1376,13 @@
         "tt": "Need help completing your BOSS Bonds application?",
         "tm": "11/11 21:14",
         "tx": "BOSS Bonds Rick Bredow 第二次來信提醒申請表仍是 Draft，願提供協助；線上表單尚待起保日期、條款同意與後續送出。"
+      },
+      {
+        "e": "sent",
+        "tt": "回覆 Keating Agency：申請已提交待審核",
+        "tm": "11/12 02:58",
+        "src": "📩 bonds@thekeatingagency.com",
+        "tx": "從 Allyson 信箱回信 bonds@thekeatingagency.com，告知 Honeywell International LLC Type 1 continuous bond $50,000 線上申請已提交，表單顯示審核中，請對方審核並告知是否需補資料、後續步驟與預期時程。"
       }
     ],
     "93": [
@@ -2447,13 +2454,13 @@
     },
     {
       "no": "90",
-      "name": "Honeywell LLC",
+      "name": "Honeywell International LLC",
       "member": "Allyson Fankuchen",
-      "ein": "43-2210034",
-      "status": "reply",
+      "ein": "43-2192334",
+      "status": "broker",
       "dl": "正常",
       "mail": "allysonbrennafankuchen@honeywellinternational.live",
-      "todo": 0,
+      "todo": 1,
       "sysId": "1002",
       "fileInsights": [
         {
@@ -2470,9 +2477,14 @@
       "aiTodos": [],
       "created": "2026-11-01",
       "address": "340 E 2ND ST STE 401 LOS ANGELES, CA 90012",
-      "notes": "已發 15 封冷啟動信，0 回覆",
-      "submitted_count": 0,
-      "timeline": [],
+      "notes": "Keating/BOSS Bonds 線上申請已提交，Step 6 顯示申請審核中；Type 1 continuous bond $50,000，起保日期 11/15/2026。已回信 bonds@thekeatingagency.com 請對方審核並告知後續步驟與時程；報價與付費須經確認後再進行。",
+      "submitted_count": 1,
+      "timeline": [
+        {
+          "t": "2026-11-12 02:58",
+          "e": "已回信 Keating/BOSS Bonds：線上 continuous bond $50,000 申請已提交，Step 6 審核中，待保險公司核保回覆報價"
+        }
+      ],
       "aiLastAt": 1794038468637,
       "aiSuggestions": [],
       "memberPhoto": "",
@@ -4003,9 +4015,25 @@
       "type": "reply",
       "body": "ARTEMUS 僅承作委託自家報關的進口客戶，確認我方是否走其清關；無附件。",
       "atts": []
+    },
+    {
+      "c": "Honeywell",
+      "from": "\"Allyson Brenna Fankuchen | Honeywell International LLC\" <allysonbrennafankuchen@honeywellinternational.live>",
+      "to": "bonds@thekeatingagency.com",
+      "sub": "Re: Continuous Customs Bond — Honeywell LLC",
+      "t": "11/12 02:58",
+      "unread": false,
+      "type": "sent",
+      "body": "Hi Keating team,\n\nThanks for sending over the application link. We have completed and submitted the online customs bond application for Honeywell International LLC. It is set up as a Type 1 continuous bond at the $50,000 limit, and the form now shows that our application is under review.\n\nCould you please review the submission on your end and let us know whether any additional documents or information are required, along with the next steps and the expected approval timeline?\n\nHappy to answer any questions.\n\nBest,\nAllyson Brenna Fankuchen\nHoneywell International LLC\nallysonbrennafankuchen@honeywellinternational.live",
+      "atts": []
     }
   ],
   "logs": [
+    {
+      "t": "11/12 02:58",
+      "c": "Honeywell 線上 Keating/BOSS Bonds continuous bond 申請已提交至 Step6 審核中；從 Allyson 信箱回信 bonds@thekeatingagency.com 告知申請已送出，待對方核保報價。",
+      "o": "1 封回信已寄出"
+    },
     {
       "t": "10/30 14:13",
       "c": "定時巡查 15 個信箱全部成功連線，新郵件 0 封，外發佇列 0 條。",

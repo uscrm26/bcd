@@ -18,21 +18,26 @@
   },
   {
     "no": "90",
-    "name": "Honeywell LLC",
+    "name": "Honeywell International LLC",
     "member": "Allyson Fankuchen",
-    "ein": "43-2210034",
-    "status": "reply",
+    "ein": "43-2192334",
+    "status": "broker",
     "dl": "ÃÂÃÂÃÂÃÂ¦ÃÂÃÂÃÂÃÂ­ÃÂÃÂÃÂÃÂ£ÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ¸",
     "mail": "allysonbrennafankuchen@honeywellinternational.live",
-    "todo": 0,
+    "todo": 1,
     "sysId": "1002",
     "fileInsights": [],
     "aiTodos": [],
     "created": "2026-11-01",
     "address": "340 E 2ND ST STE 401 LOS ANGELES, CA 90012",
-    "notes": "å·²ç¼ 15 å°å·ååä¿¡ï¼0 åè¦",
-    "submitted_count": 0,
-    "timeline": []
+    "notes": "Keating/BOSS Bonds 線上申請已提交，Step 6 顯示申請審核中；Type 1 continuous bond $50,000，起保日期 11/15/2026。已回信 bonds@thekeatingagency.com 請對方審核並告知後續步驟與時程；報價與付費須經確認後再進行。",
+    "submitted_count": 1,
+    "timeline": [
+      {
+        "t": "2026-11-12 02:58",
+        "e": "已回信 Keating/BOSS Bonds：線上 continuous bond $50,000 申請已提交，Step 6 審核中，待保險公司核保回覆報價"
+      }
+    ]
   },
   {
     "no": "98",
