@@ -740,6 +740,20 @@
         "tm": "10/29 18:25",
         "src": "📩 mholtschneider@lexington",
         "tx": "自動回覆休假中，急件打 410-625-0800，無指定轉介人。"
+      },
+      {
+        "e": "email",
+        "src": "Linda Corbett <Linda.Corbett@gallaghertransport.com>",
+        "tt": "RE: Continuous Customs Bond for Ongoing Entries",
+        "tm": "11/11 21:14",
+        "tx": "Gallagher Transport Linda Corbett 回覆，要求補進口產品、貨值與原產國；另註明 11/26 感恩節休館。"
+      },
+      {
+        "e": "email",
+        "src": "Steve Pniewski - ARTEMUS <spniewski@artemus.us>",
+        "tt": "RE: Continuous Customs Bond Underwriting",
+        "tm": "11/11 21:14",
+        "tx": "ARTEMUS Steve Pniewski 回覆，僅承作委託自家報關的進口客戶，確認我方是否走其清關；與獨立 bond 需求不完全吻合。"
       }
     ],
     "64": [
@@ -1350,6 +1364,13 @@
         "txCn": "测试测试",
         "txEn": "Test test",
         "key": "note_1793624045166"
+      },
+      {
+        "e": "email",
+        "src": "Rick Bredow <rick@bossbonds.com>",
+        "tt": "Need help completing your BOSS Bonds application?",
+        "tm": "11/11 21:14",
+        "tx": "BOSS Bonds Rick Bredow 第二次來信提醒申請表仍是 Draft，願提供協助；線上表單尚待起保日期、條款同意與後續送出。"
       }
     ],
     "93": [
@@ -3947,6 +3968,36 @@
       "type": "info",
       "body": "The \"Personal Calendar\" folder has been created.",
       "atts": []
+    },
+    {
+      "c": "Honeywell",
+      "from": "Rick Bredow <rick@bossbonds.com>",
+      "sub": "Need help completing your BOSS Bonds application?",
+      "t": "11/11 06:00",
+      "unread": false,
+      "type": "reply",
+      "body": "BOSS Bonds 來信提醒 Honeywell LLC 申請表仍為 Draft，願協助完成；無附件。",
+      "atts": []
+    },
+    {
+      "c": "Huntington Ingalls",
+      "from": "Linda Corbett <Linda.Corbett@gallaghertransport.com>",
+      "sub": "RE: Continuous Customs Bond for Ongoing Entries",
+      "t": "11/10 22:05",
+      "unread": false,
+      "type": "reply",
+      "body": "Gallagher Transport 要求提供進口產品、貨值與原產國；另提醒 11/26 感恩節休館。無附件。",
+      "atts": []
+    },
+    {
+      "c": "Huntington Ingalls",
+      "from": "Steve Pniewski - ARTEMUS <spniewski@artemus.us>",
+      "sub": "RE: Continuous Customs Bond Underwriting",
+      "t": "11/10 22:39",
+      "unread": false,
+      "type": "reply",
+      "body": "ARTEMUS 僅承作委託自家報關的進口客戶，確認我方是否走其清關；無附件。",
+      "atts": []
     }
   ],
   "logs": [
@@ -3994,6 +4045,16 @@
       "t": "10/30 07:27",
       "c": "Oliveware 收 Just Your Broker Inc. 婉拒，標 tag 已關閉。",
       "o": "1 婉拒"
+    },
+    {
+      "t": "11/11 21:13",
+      "c": "每日郵件同步：新入帳 0 封，Huntington 兩家 broker 回覆要產品與貨值資料，Honeywell BOSS 表單 Draft 提醒。",
+      "o": "0 封新信"
+    },
+    {
+      "t": "11/11 21:14",
+      "c": "每日郵件同步：新入帳 3 封，Huntington 兩家 broker 回覆要產品與貨值資料，Honeywell BOSS 表單 Draft 提醒。",
+      "o": "3 封新信"
     }
   ],
   "files": {
