@@ -1799,5 +1799,23 @@
     "date": "Thu, 12 Nov 2026 02:58:06 +0800",
     "client": 90,
     "body_preview": "回信 Keating Agency：Honeywell International LLC Type 1 continuous bond $50,000 線上申請已提交，表單顯示審核中，請對方審核並告知後續步驟與時程。"
+  },
+  {
+    "to": "christianjgpunzalan@nervaqon.live",
+    "from": "\"mira.castillo@freightright.com via SurveyMonkey\" <member@surveymonkeyuser.com>",
+    "subject": "Your Freight Quote with Freight Right",
+    "date": "Wed, 11 Nov 2026 18:02:51 +0000",
+    "client": 8,
+    "body_preview": "Freight Right 透過 SurveyMonkey 發送報價體驗滿意度調查，屬自動化調查信，未提出補件要求，亦無附件。",
+    "attachment": ""
+  },
+  {
+    "to": "jaliarthomas@sagewareinc.com",
+    "from": "Okta <noreply@okta.com>",
+    "subject": "New sign-on notification",
+    "date": "Thu, 12 Nov 2026 12:31:29 +0000 (UTC)",
+    "client": 7,
+    "body_preview": "Okta 通知 Sageware 帳戶在 Chrome Windows 11 出現新裝置登入，地點為 Hillsboro Oregon，屬安全通知，未提出補件要求，亦無附件。",
+    "attachment": ""
   }
 ]

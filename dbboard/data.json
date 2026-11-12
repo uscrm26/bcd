@@ -3686,31 +3686,31 @@
       "nm": "Sageware",
       "em": "jaliarthomas@sagewareinc.com",
       "st": "ok",
-      "unread": 0
+      "unread": 1
     },
     {
       "nm": "Nervaqon",
       "em": "christianjgpunzalan@nervaqon.live",
       "st": "ok",
-      "unread": 0
+      "unread": 1
     },
     {
       "nm": "Home Depot",
       "em": "amjadbahmad@home-depot.live",
       "st": "ok",
-      "unread": 1
+      "unread": 0
     },
     {
       "nm": "Honeywell",
       "em": "allysonbrennafankuchen@honeywellinternational.live",
       "st": "ok",
-      "unread": 0
+      "unread": 1
     },
     {
       "nm": "Huntington",
       "em": "jessicakeyates@huntingtoningallsindustries.live",
       "st": "ok",
-      "unread": 0
+      "unread": 2
     },
     {
       "nm": "JELD-WEN",
@@ -3752,7 +3752,7 @@
       "nm": "Lennar",
       "em": "coreymheaward@lennar.live",
       "st": "ok",
-      "unread": 0
+      "unread": 1
     }
   ],
   "emails": [
@@ -4065,6 +4065,11 @@
     }
   ],
   "logs": [
+    {
+      "t": "11/12 21:40",
+      "c": "每日郵件同步：已排除已出 bond 的 Immunora，完成 14 個未完成客戶信箱檢查。今日無 broker 實質回覆；Nervaqon 收到 Freight Right 滿意度調查，Sageware 收到 Okta 新裝置登入通知，兩封均無附件，亦無補件要求。",
+      "o": "14 戶已檢查，2 封自動通知，0 個 broker 實質回覆"
+    },
     {
       "t": "11/12 19:11",
       "c": "Oliveware importer number 更正電郵已寄出並補存 Sent 第 15 封；根因確認新系統原型硬編碼 43-2187231，BorderBuddy 最終 21 前綴屬人工接手後的獨立轉錄或編輯錯誤，具體按鍵未查得。",
