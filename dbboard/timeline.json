@@ -53,6 +53,14 @@
   ],
   "3": [
     {
+      "e": "audit",
+      "tt": "EIN 更正查證",
+      "tm": "11/12 18:25",
+      "who": "Doubao",
+      "act": "record",
+      "tx": "IRS 正本與最終 Bluebird POA 均為 42-5322248；BorderBuddy 後台及 POA 誤登 212187231／21-2187231，更正電郵待確認寄出。"
+    },
+    {
       "e": "email",
       "tt": "Bluebird CHB åè¦",
       "tm": "11/04 20:56",
