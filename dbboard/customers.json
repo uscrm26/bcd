@@ -85,9 +85,17 @@
     "sysId": "1005",
     "created": "2026-11-01",
     "address": "2725 JEFFERSON ST. STE 6 CARLSBAD, CA 92008",
-    "notes": "IRS CP575G 正本 EIN 42-5322248；BorderBuddy 後台與已簽 POA 誤登 212187231／21-2187231，更正電郵已備妥待確認；INV-5780 已全額付款。",
+    "notes": "IRS CP575G 正確 EIN 42-5322248；更正電郵已寄出並補存 Sent 第 15 封，BorderBuddy 後台 212187231 與 POA 21-2187231 待對方更正；INV-5780 已全額付款。",
     "submitted_count": 3,
     "timeline": [
+      {
+        "date": "11/12",
+        "action": "根因調查：10 月 30 日新系統原型首次建立時，硬編碼 Oliveware EIN 為 43-2187231，同一版本舊看板仍正確列示 42-5322248；其後資料遷移將錯號帶入 data.json 與 customers.json。11 月 4 日 BorderBuddy 自動化沿用錯誤種子資料，軌跡可見輸入 43 與尾號 2187231；最終已簽 POA 卻呈現 21 前綴，現有軌跡未見自動化把 43 改為 21，且最終提交發生在人工接手後，判斷 21 前綴屬另一層人工轉錄或編輯錯誤，具體按鍵無法從現有記錄重構。倉庫無 43 或 21 錯號對應 IRS 文件，不支持第二組 EIN 說法。"
+      },
+      {
+        "date": "11/12",
+        "action": "已向 service@borderbuddy.com 寄出 importer number 更正電郵，主旨為 Correction Required: Importer Number for Oliveware LLC；電郵已補存 Sent 並回讀為 Sent 第 15 封。信件告知正確 EIN 42-5322248，後台錯存 212187231，POA 錯列 21-2187231，請對方確認直接更正或作廢重簽，並確認 INV-5780 全額付款已入帳且更正不另收費。"
+      },
       {
         "date": "11/12",
         "action": "重新核對 IRS CP575G 與 Mac 最終 Bluebird POA，確認正確 EIN 為 42-5322248；BorderBuddy 後台及已簽 POA 誤登 212187231／21-2187231，已備更正電郵，待主機確認後寄出，並請對方確認 INV-5780 款項已入帳且更正不另收費。"
